@@ -1,0 +1,14 @@
+D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/232g6p3e/x86/CMakeFiles/app.dir
+D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/232g6p3e/x86/CMakeFiles/install/local.dir
+D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/232g6p3e/x86/CMakeFiles/install.dir
+D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/232g6p3e/x86/CMakeFiles/edit_cache.dir
+D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/232g6p3e/x86/CMakeFiles/rebuild_cache.dir
+D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/232g6p3e/x86/CMakeFiles/list_install_components.dir
+D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/232g6p3e/x86/CMakeFiles/install/strip.dir
+D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/232g6p3e/x86/oboe-bin/CMakeFiles/oboe.dir
+D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/232g6p3e/x86/oboe-bin/CMakeFiles/install/local.dir
+D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/232g6p3e/x86/oboe-bin/CMakeFiles/install.dir
+D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/232g6p3e/x86/oboe-bin/CMakeFiles/edit_cache.dir
+D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/232g6p3e/x86/oboe-bin/CMakeFiles/rebuild_cache.dir
+D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/232g6p3e/x86/oboe-bin/CMakeFiles/list_install_components.dir
+D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/232g6p3e/x86/oboe-bin/CMakeFiles/install/strip.dir

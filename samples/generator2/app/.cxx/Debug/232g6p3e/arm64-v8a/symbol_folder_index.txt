@@ -1,0 +1,1 @@
+D:\Dropbox\Android\GeneratorAndroid\samples\generator2\app\build\intermediates\cxx\Debug\232g6p3e\obj\arm64-v8a

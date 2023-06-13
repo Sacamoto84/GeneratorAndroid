@@ -1,0 +1,2 @@
+D:\Dropbox\Android\GeneratorAndroid\CMakeLists.txt
+D:\Dropbox\Android\GeneratorAndroid\samples\generator2\app\src\main\cpp\CMakeLists.txt

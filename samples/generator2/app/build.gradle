@@ -1,0 +1,294 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
+
+    id 'com.google.gms.google-services'
+
+}
+
+
+android {
+    
+    kotlinOptions {
+        freeCompilerArgs += [
+                "-P",
+                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" + project.buildDir.absolutePath + "/compose_metrics"
+        ]
+        freeCompilerArgs += [
+                "-P",
+                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" + project.buildDir.absolutePath + "/compose_metrics"
+        ]
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file('D:\\AndroidKey\\MyKey.jks')
+            //storeFile file('/home/ivan/Android/AndroidKey/MyKey.jks')
+            storePassword '11111111'
+            keyAlias 'Sakamoto'
+            keyPassword '11111111'
+        }
+        release {
+            storeFile file('D:\\AndroidKey\\MyKey.jks')
+            storePassword '11111111'
+            keyPassword '11111111'
+            keyAlias 'Sakamoto'
+        }
+    }
+
+    compileSdk 33
+
+    namespace 'com.example.generator2'
+
+    defaultConfig {
+        applicationId "com.example.generator2"
+        minSdk 23
+        targetSdk 33
+        versionCode 2416
+        versionName "2.4.1.6"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+        externalNativeBuild {
+            cmake {
+                cppFlags ''
+            }
+        }
+        signingConfig signingConfigs.release
+    }
+
+    buildTypes {
+
+        release {
+            minifyEnabled true //false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+
+        debug {
+            signingConfig signingConfigs.debug
+            debuggable true
+        }
+
+        benchmark {
+            initWith buildTypes.release //
+            signingConfig signingConfigs.debug
+            matchingFallbacks = ['release']
+            debuggable false
+            //proguardFiles "benckmark-rules.pro"
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'benchmark-rules.pro'
+
+        }
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    buildFeatures {
+        compose true
+        prefab true
+    }
+
+    composeOptions {
+        //kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerExtensionVersion = "1.4.7"
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path file('src/main/cpp/CMakeLists.txt')
+            version '3.18.1'
+        }
+    }
+}
+
+dependencies {
+    
+    //https://developer.android.com/studio/preview/features
+    implementation "androidx.compose.runtime:runtime-tracing:1.0.0-alpha03"
+
+    implementation 'androidx.core:core-ktx:1.10.1'
+
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
+    implementation 'androidx.activity:activity-compose:1.7.2'
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.4.3"
+
+    implementation 'androidx.benchmark:benchmark-macro-junit4:1.1.1'
+    implementation 'androidx.profileinstaller:profileinstaller:1.3.1'
+    implementation "androidx.startup:startup-runtime:1.1.1"
+
+    implementation 'com.snatik:storage:2.1.0'
+    implementation 'com.github.flipagram:android-assetcopier:0.1.1'
+    implementation "com.orhanobut:hawk:2.0.1"
+
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.appcompat:appcompat-resources:1.6.1'
+
+    //implementation("io.coil-kt:coil-compose:2.2.2")
+    //implementation("io.coil-kt:coil-gif:2.2.2")
+
+    //implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+
+    //Кастомные слайдеры
+    //https://github.com/SmartToolFactory/Compose-Colorful-Sliders
+    //implementation 'com.github.SmartToolFactory:Compose-Colorful-Sliders:1.0.1'
+
+    //Кастомные слайдеры
+    //https://github.com/krottv/compose-sliders
+    //implementation "com.github.krottv:compose-sliders:0.1.14"
+
+    //Обработчик нажатий
+    //https://github.com/SmartToolFactory/Compose-Extended-Gestures
+    implementation 'com.github.SmartToolFactory:Compose-Extended-Gestures:1.0.0'
+
+    //implementation 'com.github.seniorjoinu:reliable-udp:0.3.1' //Udp
+
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    //Цвета
+    //https://materialui.co/colors/
+    //https://github.com/PatilSiddhesh/Holi
+    implementation 'com.siddroid:holi:1.0.1'
+
+    //Разрешения
+    //https://github.com/alexstyl/warden
+    implementation 'com.alexstyl:warden:1.0.0-alpha2'
+
+///////////////////
+    //Compose
+
+    implementation "androidx.compose.ui:ui-android:$compose_version"
+    implementation "androidx.compose.material:material-android:$compose_version"
+    implementation "androidx.compose.material3:material3:1.2.0-alpha02"
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    debugImplementation "androidx.compose.ui:ui-tooling-android:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling-preview-android:$compose_version"
+    implementation "androidx.compose.ui:ui-util-android:$compose_version"
+    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+
+    implementation "androidx.compose.animation:animation-android:$compose_version"
+    implementation "androidx.compose.animation:animation-core-android:$compose_version"
+    implementation "androidx.compose.animation:animation-graphics-android:$compose_version"
+
+///////////////////
+    //accompanist
+    implementation "com.google.accompanist:accompanist-navigation-animation:0.31.3-beta"
+    implementation "com.google.accompanist:accompanist-drawablepainter:0.31.3-beta"
+    //implementation "com.google.accompanist:accompanist-webview:0.28.0"
+    implementation "com.google.accompanist:accompanist-pager:0.31.3-beta"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.31.3-beta"
+    implementation "com.google.accompanist:accompanist-permissions:0.31.3-beta"
+///////////////////
+    //lottie анимация
+    //implementation 'com.airbnb.android:lottie:5.2.0'
+    //implementation 'com.airbnb.android:lottie-compose:5.2.0'
+///////////////////
+    //Hilt
+    implementation "com.google.dagger:hilt-android:2.45"
+    implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
+    kapt "com.google.dagger:hilt-compiler:2.45"
+    //implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03'
+    kapt "androidx.hilt:hilt-compiler:1.0.0"
+///////////////////
+
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1'
+
+    //Навигация
+    implementation 'androidx.navigation:navigation-compose:2.6.0'
+
+    //https://github.com/tfaki/ComposableSweetToast?ref=androidexample365.com
+    implementation 'com.github.tfaki:ComposableSweetToast:1.0.1'
+
+    //ZIP https://github.com/arnab-kundu/Storage
+    //mplementation 'com.github.arnab-kundu:Storage:1.0.2'
+
+
+    //Google Sign-In for Android
+//    implementation 'com.google.android.gms:play-services-auth:20.4.1'
+//    implementation 'com.google.android.gms:play-services-location:21.0.1'
+
+    // Import the Firebase BoM
+//    implementation platform('com.google.firebase:firebase-bom:31.1.1')
+
+    // Add the dependency for the Firebase SDK for Google Analytics
+//    implementation 'com.google.firebase:firebase-analytics-ktx:21.2.0'
+
+    // TODO: Add the dependencies for any other Firebase products you want to use
+    // See https://firebase.google.com/docs/android/setup#available-libraries
+    // For example, add the dependencies for Firebase Authentication and Cloud Firestore
+//    implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'//Аутентификация
+//    implementation 'com.google.firebase:firebase-firestore-ktx:24.4.4' //Облако Firestore
+//    implementation 'com.google.firebase:firebase-storage-ktx:20.1.0'  //Облачное хранилище
+//    implementation 'com.google.firebase:firebase-auth:21.1.0'
+//    implementation 'com.firebaseui:firebase-ui-auth:8.0.2'
+
+    //splashscreen
+    //implementation("androidx.core:core-splashscreen:1.0.0")
+
+    //https://github.com/vincentrussell/java-ini-parser
+    //implementation "com.github.vincentrussell:java-ini-parser:1.3"
+    implementation 'commons-io:commons-io:20030203.000550'
+    implementation "org.apache.commons:commons-lang3:3.12.0"
+
+    implementation 'com.github.yagmurerdogan:Toastic:1.0.1'
+
+    //Поддержка md
+    //https://github.com/jeziellago/compose-markdown
+    implementation 'com.github.jeziellago:compose-markdown:0.3.1'
+
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+
+
+
+    implementation "com.github.adrielcafe.pufferdb:core:1.1.1"
+    implementation "com.github.adrielcafe.pufferdb:android:1.1.1"
+    //implementation "com.github.adrielcafe.pufferdb:coroutines:1.1.1"
+
+    implementation 'com.tencent:mmkv:1.2.16'
+
+    //implementation 'com.dropbox.core:dropbox-core-sdk:5.4.4'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.21"
+
+    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
+
+
+    implementation "io.karn:notify:1.4.0"
+
+    //implementation 'com.github.jojoyel:head-up-banner:1.0.0'
+
+
+
+    // Core (required)
+    implementation "com.github.adrielcafe.satchel:satchel-core:1.0.3"
+    // Storers
+    implementation "com.github.adrielcafe.satchel:satchel-storer-encrypted-file:1.0.3"
+
+
+
+}
+
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes true
+}

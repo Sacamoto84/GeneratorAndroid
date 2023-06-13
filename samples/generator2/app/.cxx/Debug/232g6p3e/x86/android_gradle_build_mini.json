@@ -1,0 +1,34 @@
+{
+  "buildFiles": [
+    "D:\\Dropbox\\Android\\GeneratorAndroid\\CMakeLists.txt",
+    "D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\user\\AppData\\Local\\Android\\Sdk\\cmake\\3.18.1\\bin\\ninja.exe",
+      "-C",
+      "D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\.cxx\\Debug\\232g6p3e\\x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\user\\AppData\\Local\\Android\\Sdk\\cmake\\3.18.1\\bin\\ninja.exe",
+    "-C",
+    "D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\.cxx\\Debug\\232g6p3e\\x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "app::@6890427a1f51a3e7e1df": {
+      "artifactName": "app",
+      "abi": "x86",
+      "output": "D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\build\\intermediates\\cxx\\Debug\\232g6p3e\\obj\\x86\\libapp.so",
+      "runtimeFiles": []
+    },
+    "oboe::@2eb8bc11657237233fcf": {
+      "artifactName": "oboe",
+      "abi": "x86",
+      "output": "D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\.cxx\\Debug\\232g6p3e\\x86\\oboe-bin\\liboboe.a",
+      "runtimeFiles": []
+    }
+  }
+}
