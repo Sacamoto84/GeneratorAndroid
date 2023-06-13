@@ -31,7 +31,6 @@ class VMConfig @Inject constructor(
     @ApplicationContext
     private val context: Context,
     var backup: Backup,
-    var firebase : Firebas
 ) : ViewModel(){
 
 

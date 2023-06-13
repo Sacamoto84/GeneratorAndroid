@@ -37,6 +37,7 @@ import com.example.generator2.backup.MMKv
 import com.example.generator2.di.Hub
 import com.example.generator2.model.mmkv
 import com.example.generator2.presets.presetsGetListFile
+import com.example.generator2.presets.presetsGetListName
 import com.example.generator2.screens.config.ScreenConfig
 import com.example.generator2.screens.editor.ScreenEditor
 import com.example.generator2.screens.mainscreen4.Mainsreen4
@@ -144,8 +145,10 @@ class MainActivity : ComponentActivity() {
         val s = satchel2.get<Int>("22")
         s
 
-        val list = presetsGetListFile(applicationContext)
+        val list = presetsGetListFile()
         list
+        val l = presetsGetListName()
+        l
 
         if (!isInitialized) {
             val t = this
