@@ -20,13 +20,8 @@ fun presetsCreateFile(name: String) {
             serializer = RawSatchelSerializer
         )
 
-
-
-
     //Количество звезд в перссете, для сортировки
     satchel["star"] = LiveData.star.value
-
-
 
     satchel["ch1_EN"] = LiveData.ch1_EN.value
     satchel["ch1_Carrier_Filename"] = LiveData.ch1_Carrier_Filename.value
