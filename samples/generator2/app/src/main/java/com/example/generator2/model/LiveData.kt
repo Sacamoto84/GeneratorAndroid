@@ -72,7 +72,10 @@ object LiveData {
 
 
 
-
+        //Количество звезд
+        val star = MutableStateFlow(0)
+        //Имя текущего пресета
+        val presetsName = MutableStateFlow("")
 
 
 }
