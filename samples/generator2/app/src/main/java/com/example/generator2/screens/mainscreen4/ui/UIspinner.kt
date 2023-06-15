@@ -22,6 +22,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import com.example.generator2.model.LiveData
 import com.example.generator2.model.itemList
+import com.example.generator2.model.itemlistAM
+import com.example.generator2.model.itemlistCarrier
+import com.example.generator2.model.itemlistFM
 
 object UIspinner {
 
@@ -38,11 +41,11 @@ object UIspinner {
         val expanded = remember { mutableStateOf(false) }
 
         //Выбор с каким списком работать
-        var itemlist: ArrayList<itemList> = LiveData.itemlistCarrier
+        var itemlist: ArrayList<itemList> = itemlistCarrier
         when (Mod) {
-            "CR" -> itemlist = LiveData.itemlistCarrier
-            "AM" -> itemlist = LiveData.itemlistAM
-            "FM" -> itemlist = LiveData.itemlistFM
+            "CR" -> itemlist = itemlistCarrier
+            "AM" -> itemlist = itemlistAM
+            "FM" -> itemlist = itemlistFM
         }
 
         //Текущий текст

@@ -4,6 +4,9 @@ import android.content.Context
 import com.example.generator2.di.Hub
 import com.example.generator2.model.LiveData
 import com.example.generator2.model.itemList
+import com.example.generator2.model.itemlistAM
+import com.example.generator2.model.itemlistCarrier
+import com.example.generator2.model.itemlistFM
 import com.example.generator2.model.mmkv
 import com.example.generator2.util.Utils
 import flipagram.assetcopylib.AssetCopier
@@ -50,13 +53,13 @@ fun initialization(context: Context, hub: Hub) {
             Timber.i("arrFilesCarrier start")
             val arrFilesCarrier: Array<String> = Utils.listFileInCarrier() //Заполняем список
             for (i in arrFilesCarrier.indices) {
-                LiveData.itemlistCarrier.add(itemList(patchCarrier, arrFilesCarrier[i], 0))
+                itemlistCarrier.add(itemList(patchCarrier, arrFilesCarrier[i], 0))
             }
             val arrFilesMod: Array<String> =
                 Utils.listFileInMod() //Получение списка файлов в папке Mod
             for (i in arrFilesMod.indices) {
-                LiveData.itemlistAM.add(itemList(patchMod, arrFilesMod[i], 1))
-                LiveData.itemlistFM.add(itemList(patchMod, arrFilesMod[i], 0))
+                itemlistAM.add(itemList(patchMod, arrFilesMod[i], 1))
+                itemlistFM.add(itemList(patchMod, arrFilesMod[i], 0))
             }
             Timber.i("arrFilesCarrier end")
 

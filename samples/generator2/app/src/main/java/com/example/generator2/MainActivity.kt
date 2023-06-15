@@ -5,9 +5,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,32 +21,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.style.TextAlign
 import cafe.adriel.pufferdb.android.AndroidPufferDB
-import cafe.adriel.satchel.Satchel
-import cafe.adriel.satchel.encrypter.bypass.BypassSatchelEncrypter
-import cafe.adriel.satchel.ktx.get
-import cafe.adriel.satchel.serializer.raw.RawSatchelSerializer
-import cafe.adriel.satchel.storer.file.FileSatchelStorer
-import com.example.generator2.backup.MMKv
 import com.example.generator2.di.Hub
 import com.example.generator2.model.mmkv
-import com.example.generator2.presets.presetsGetListFile
-import com.example.generator2.presets.presetsGetListName
 import com.example.generator2.presets.presetsInit
-import com.example.generator2.screens.config.ScreenConfig
-import com.example.generator2.screens.editor.ScreenEditor
-import com.example.generator2.screens.mainscreen4.Mainsreen4
-import com.example.generator2.screens.scripting.ScreenScriptCommon
-import com.example.generator2.screens.scripting.ScreenScriptInfo
 import com.example.generator2.theme.Generator2Theme
 import com.example.generator2.theme.colorDarkBackground
-import com.example.generator2.util.Utils
-
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.example.generator2.update.Update
+import com.example.generator2.util.Utils
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.tencent.mmkv.MMKV
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -59,7 +40,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import libs.KeepScreenOn
 import timber.log.Timber
-import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.system.exitProcess
@@ -69,14 +49,7 @@ import kotlin.system.exitProcess
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-
-
-
-
-
-
     //private val global: VMMain4 by viewModels()
-
 
     @Inject
     lateinit var hub: Hub
@@ -122,33 +95,7 @@ class MainActivity : ComponentActivity() {
         val rootDir = MMKV.initialize(this, AppPath().config)
         println("mmkv root: $rootDir")
 
-
-
-        val satchel =
-            Satchel.with(
-                storer = FileSatchelStorer(File(AppPath().presets,"s1.txt")),
-                encrypter = BypassSatchelEncrypter,
-                serializer = RawSatchelSerializer
-            )
-        satchel["11"] = 344
-
-
-        val satchel2 =
-            Satchel.with(
-                storer = FileSatchelStorer(File(AppPath().presets,"s2.txt")),
-                encrypter = BypassSatchelEncrypter,
-                serializer = RawSatchelSerializer
-            )
-
-        satchel2["22"] = 344
-
-
-        val s = satchel2.get<Int>("22")
-        s
-
         presetsInit()
-
-
 
 
         if (!isInitialized) {
