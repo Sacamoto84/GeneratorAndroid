@@ -11,7 +11,7 @@ import java.io.File
 /**
  * Создание пресета по имени
  */
-fun presetsCreateFile(name: String) {
+fun presetsSaveFile(name: String) {
 
     val satchel =
         Satchel.with(
@@ -22,6 +22,9 @@ fun presetsCreateFile(name: String) {
 
     //Количество звезд в перссете, для сортировки
     satchel["star"] = LiveData.star.value
+
+    LiveData.presetsName.value = name
+    satchel["presetsName"] = name
 
     satchel["ch1_EN"] = LiveData.ch1_EN.value
     satchel["ch1_Carrier_Filename"] = LiveData.ch1_Carrier_Filename.value
@@ -81,5 +84,7 @@ fun presetsCreateFile(name: String) {
     // Пауза в тиках
     satchel["impulse0timeImpPause"] = LiveData.impulse0timeImpPause.value
     satchel["impulse1timeImpPause"] = LiveData.impulse1timeImpPause.value
+
+
 
 }
