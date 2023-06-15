@@ -40,6 +40,7 @@ fun M4BottomAppBarComponent(
             Icon(painter = painterResource(R.drawable.line3_2), contentDescription = null)
         }
 
+
         //Иконка устройства
         IconButton(
             onClick = toggleDrawer
