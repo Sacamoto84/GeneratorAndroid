@@ -1,6 +1,5 @@
 package com.example.generator2.screens.mainscreen4
 
-import CardCarrier
 import android.annotation.SuppressLint
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
@@ -15,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.example.generator2.model.LiveData
+import com.example.generator2.presets.ui.DialogPresets
 import com.example.generator2.screens.mainscreen4.card.CardCard
 import com.example.generator2.screens.mainscreen4.card.CardCommander
 import com.example.generator2.screens.mainscreen4.ui.DrawerContentBottom
@@ -55,7 +54,8 @@ fun Mainsreen4(
     DialogNewVersion()
     DialogDownloading()
 
-
+    //Диалог пресетов
+    DialogPresets()
 
 
 
