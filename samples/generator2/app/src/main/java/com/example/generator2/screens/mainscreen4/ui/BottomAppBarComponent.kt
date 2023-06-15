@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import com.example.generator2.R
 import com.example.generator2.navController
+import com.example.generator2.presets.Presets
 import com.example.generator2.theme.colorLightBackground
 import com.example.generator2.screens.mainscreen4.VMMain4
 import com.example.generator2.vm.StateCommandScript
@@ -54,50 +55,58 @@ fun M4BottomAppBarComponent(
         }
 
         //Управление скриптами
-        if ((global.hub.script.state == StateCommandScript.ISRUNNING) || (global.hub.script.state == StateCommandScript.ISPAUSE)) {
+//       if ((global.hub.script.state == StateCommandScript.ISRUNNING) || (global.hub.script.state == StateCommandScript.ISPAUSE)) {
+//            //Пауза
+//            IconButton(onClick = {
+//
+//                if (global.hub.script.state != StateCommandScript.ISPAUSE) global.hub.script.command(
+//                    StateCommandScript.PAUSE
+//                )
+//                else {
+//                    global.hub.script.state = StateCommandScript.ISRUNNING
+//                    global.hub.script.end = false
+//                }
+//
+//            }) {
+//
+//                if (global.hub.script.state != StateCommandScript.ISPAUSE)
+//                    Icon(
+//                        painter = painterResource(
+//                            R.drawable.pause
+//                        ), contentDescription = null
+//                    )
+//                else
+//                    Icon(
+//                        painter = painterResource(
+//                            R.drawable.play
+//                        ), contentDescription = null
+//                    )
+//
+//            }
+//        } else {
+//            //Старт
+//            IconButton(onClick = {
+//                global.hub.script.command(StateCommandScript.START)
+//            }) {
+//                Icon(painter = painterResource(R.drawable.play), contentDescription = null)
+//            }
+//        }
+//
+//        //Стоп
+//        IconButton(onClick = {
+//            global.hub.script.command(StateCommandScript.STOP)
+//        }) {
+//            Icon(painter = painterResource(R.drawable.stop), contentDescription = null)
+//        }
 
-            //Пауза
-            IconButton(onClick = {
 
-                if (global.hub.script.state != StateCommandScript.ISPAUSE) global.hub.script.command(
-                    StateCommandScript.PAUSE
-                )
-                else {
-                    global.hub.script.state = StateCommandScript.ISRUNNING
-                    global.hub.script.end = false
-                }
-
-            }) {
-
-                if (global.hub.script.state != StateCommandScript.ISPAUSE)
-                    Icon(
-                        painter = painterResource(
-                            R.drawable.pause
-                        ), contentDescription = null
-                    )
-                else
-                    Icon(
-                        painter = painterResource(
-                            R.drawable.play
-                        ), contentDescription = null
-                    )
-
-            }
-        } else {
-            //Старт
-            IconButton(onClick = {
-                global.hub.script.command(StateCommandScript.START)
-            }) {
-                Icon(painter = painterResource(R.drawable.play), contentDescription = null)
-            }
-        }
-
-        //Стоп
         IconButton(onClick = {
-            global.hub.script.command(StateCommandScript.STOP)
+                  Presets.isOpenDialog.value = true
         }) {
-            Icon(painter = painterResource(R.drawable.stop), contentDescription = null)
+            Icon(painter = painterResource(R.drawable.box), contentDescription = null)
         }
+
+
 
         Spacer(modifier = Modifier.weight(1f))
 
