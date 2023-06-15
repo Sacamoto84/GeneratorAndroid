@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.navigation.NavHostController
+import com.example.generator2.presets.ui.DialogPresets
 import com.example.generator2.screens.config.ScreenConfig
 import com.example.generator2.screens.editor.ScreenEditor
 import com.example.generator2.screens.mainscreen4.Mainsreen4
@@ -80,6 +81,15 @@ fun Navigation()
         ) {
             ScreenConfig()
         }
+
+        //Экран настройки программы
+        composable("presets",
+            enterTransition = { fadeIn(animationSpec = tween(0)) },
+            exitTransition = { fadeOut(animationSpec = tween(0)) }
+        ) {
+            DialogPresets()
+        }
+
 
     }
 

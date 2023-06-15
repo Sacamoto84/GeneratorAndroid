@@ -1,6 +1,11 @@
 package com.example.generator2.presets
 
-fun presetsGetListName(): List<String> {
-    val list = presetsGetListFile()
-    return list.map { it.absolutePath.substringAfterLast('/').substringBeforeLast('.') }
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
+
+fun presetsGetListName(): SnapshotStateList<String> {
+    val list = presetsGetListFile().sorted()
+    val l2 = list.map { it.absolutePath.substringAfterLast('/').substringBeforeLast('.') }
+
+    return l2.toMutableStateList()
 }

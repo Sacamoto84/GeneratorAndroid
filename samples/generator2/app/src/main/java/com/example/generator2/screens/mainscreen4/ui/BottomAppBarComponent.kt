@@ -101,7 +101,7 @@ fun M4BottomAppBarComponent(
 
 
         IconButton(onClick = {
-                  Presets.isOpenDialog.value = true
+            navController.navigate("presets")
         }) {
             Icon(painter = painterResource(R.drawable.box), contentDescription = null)
         }

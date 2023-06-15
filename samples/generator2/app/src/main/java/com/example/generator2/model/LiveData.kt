@@ -1,5 +1,6 @@
 package com.example.generator2.model
 
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.LiveData
 import com.example.generator2.backup.MMKv
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,10 +68,13 @@ data class dataLiveData(
     val star: MutableStateFlow<Int> = MutableStateFlow(0),                    //PR PS
 
     //Имя текущего пресета
-    val presetsName: MutableStateFlow<String> = MutableStateFlow("")          //PR PS(name)
+    val presetsName: MutableStateFlow<String> = MutableStateFlow(""),         //PR PS(name)
+
 
 
 )
+
+var m4recompose = mutableIntStateOf(0) //Для обновления главного экрана
 
 var itemlistCarrier: ArrayList<itemList> = ArrayList() //Создать список
 var itemlistAM: ArrayList<itemList> = ArrayList()      //Создать список
@@ -82,5 +86,5 @@ var MAINFOLDER: File? = null
 
 val mmkv = MMKv()
 
-val LiveData: dataLiveData = dataLiveData()
+var LiveData: dataLiveData = dataLiveData()
 

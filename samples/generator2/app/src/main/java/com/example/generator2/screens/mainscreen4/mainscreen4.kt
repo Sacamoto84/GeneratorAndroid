@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.model.LiveData
+import com.example.generator2.model.m4recompose
 import com.example.generator2.presets.ui.DialogPresets
 import com.example.generator2.screens.mainscreen4.card.CardCard
 import com.example.generator2.screens.mainscreen4.card.CardCommander
@@ -33,7 +34,7 @@ fun Mainsreen4(
     vm: VMMain4 = hiltViewModel()
 ) {
 
-    Timber.e("mainsreen4mainsreen4mainsreen4mainsreen4mainsreen4mainsreen4")
+    Timber.e("mainsreen4")
 
     val coroutineScope = rememberCoroutineScope()
     val drawerState: BottomDrawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
@@ -53,15 +54,6 @@ fun Mainsreen4(
 
     DialogNewVersion()
     DialogDownloading()
-
-    //Диалог пресетов
-    DialogPresets()
-
-
-
-
-
-
 
     Scaffold(
         bottomBar = {
