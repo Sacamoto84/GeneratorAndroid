@@ -35,22 +35,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.R
 import com.example.generator2.model.LiveData
-import com.example.generator2.model.m4recompose
 import com.example.generator2.navController
 import com.example.generator2.presets.Presets
 import com.example.generator2.presets.presetsGetListName
 import com.example.generator2.presets.presetsReadFile
+import com.example.generator2.presets.presetsVM
 import com.siddroid.holi.colors.MaterialColor
 import libs.modifier.scrollbar
 
 val PresetsDialogRecompose = mutableIntStateOf(0)
 
 @Composable
-fun DialogPresets() {
+fun DialogPresets(vm: presetsVM = hiltViewModel()) {
 
     Presets.presetList = presetsGetListName()
 
@@ -85,7 +84,7 @@ fun DialogPresets() {
                         bottom = it.calculateBottomPadding()
                     )
             ) {
-                Content()
+                Content(vm)
             }
         }
 
@@ -97,7 +96,7 @@ fun DialogPresets() {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun Content() {
+private fun Content(vm: presetsVM) {
 
     val state: LazyListState = rememberLazyListState()
 
@@ -129,13 +128,7 @@ private fun Content() {
                     .padding(top = 4.dp, bottom = 4.dp)
                     .combinedClickable(
                         onClick = {
-
-                            val l = presetsReadFile(item)
-                            LiveData = l
-
-                            navController.popBackStack()
-
-
+                            vm.onClickPresetsRead(item)
                         }, onLongClick = {
                             Presets.isOpenDialogDeleteRenameName = item
                             Presets.isOpenDialogDeleteRename.value = true

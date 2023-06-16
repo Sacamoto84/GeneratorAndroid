@@ -189,36 +189,18 @@ class AudioDevice(private var context: Context, var playbackEngine: PlaybackEngi
         playbackEngine.setCarrier_fr(1, obj.ch2_Carrier_Fr.value )
         playbackEngine.setAM_fr     (0, obj.ch1_AM_Fr.value )
         playbackEngine.setAM_fr     (1, obj.ch2_AM_Fr.value )
-        //playbackEngine.setFM_Base   (0, obj.ch1_FM_Base.value )
-        //playbackEngine.setFM_Base   (1, obj.ch2_FM_Base.value )
         playbackEngine.setFM_Dev    (0, obj.ch1_FM_Dev.value )
         playbackEngine.setFM_Dev    (1, obj.ch2_FM_Dev.value )
         playbackEngine.setFM_fr     (0, obj.ch1_FM_Fr.value )
         playbackEngine.setFM_fr     (1, obj.ch2_FM_Fr.value )
 
-        GlobalScope.launch(Dispatchers.IO) {
-            utils.Spinner_Send_Buffer("CH0", "CR", obj.ch1_Carrier_Filename.value )
-        }
+        GlobalScope.launch(Dispatchers.IO) { utils.Spinner_Send_Buffer("CH0", "CR", obj.ch1_Carrier_Filename.value ) }
+        GlobalScope.launch(Dispatchers.IO) { utils.Spinner_Send_Buffer("CH0", "AM", obj.ch1_AM_Filename.value ) }
+        GlobalScope.launch(Dispatchers.IO) { utils.Spinner_Send_Buffer("CH0", "FM", obj.ch1_FM_Filename.value ) }
 
-        GlobalScope.launch(Dispatchers.IO) {
-            utils.Spinner_Send_Buffer("CH0", "AM", obj.ch1_AM_Filename.value )
-        }
-
-        GlobalScope.launch(Dispatchers.IO) {
-            utils.Spinner_Send_Buffer("CH0", "FM", obj.ch1_FM_Filename.value )
-        }
-
-        GlobalScope.launch(Dispatchers.IO) {
-            utils.Spinner_Send_Buffer("CH1", "CR", obj.ch2_Carrier_Filename.value )
-        }
-
-        GlobalScope.launch(Dispatchers.IO) {
-            utils.Spinner_Send_Buffer("CH1", "AM", obj.ch2_AM_Filename.value )
-        }
-
-        GlobalScope.launch(Dispatchers.IO) {
-            utils.Spinner_Send_Buffer("CH1", "FM", obj.ch2_FM_Filename.value )
-        }
+        GlobalScope.launch(Dispatchers.IO) {utils.Spinner_Send_Buffer("CH1", "CR", obj.ch2_Carrier_Filename.value ) }
+        GlobalScope.launch(Dispatchers.IO) {utils.Spinner_Send_Buffer("CH1", "AM", obj.ch2_AM_Filename.value ) }
+        GlobalScope.launch(Dispatchers.IO) {utils.Spinner_Send_Buffer("CH1", "FM", obj.ch2_FM_Filename.value ) }
 
         playbackEngine.setMono(obj.mono.value)
         playbackEngine.setInvertPhase(obj.invert.value)
@@ -238,7 +220,6 @@ class AudioDevice(private var context: Context, var playbackEngine: PlaybackEngi
 
         playbackEngine.setImpulsePauseTime(0, obj.impulse0timeImpPause.value)
         playbackEngine.setImpulsePauseTime(1, obj.impulse1timeImpPause.value)
-
 
         Timber.i("sendAlltoGen() End")
     }

@@ -1,18 +1,15 @@
 package com.example.generator2.screens.mainscreen4
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.generator2.*
 import com.example.generator2.di.Hub
 import com.example.generator2.element.Console2
-import com.example.generator2.model.LiveData
+import com.example.generator2.isInitialized
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber

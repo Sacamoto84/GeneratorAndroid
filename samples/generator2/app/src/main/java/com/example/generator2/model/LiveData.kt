@@ -8,67 +8,67 @@ import java.io.File
 
 data class dataLiveData(
 
-    var ch1_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),              //PR PS
-    var ch1_Carrier_Filename: MutableStateFlow<String> = MutableStateFlow("Sine"),//PR PS
-    var ch1_Carrier_Fr: MutableStateFlow<Float> = MutableStateFlow(400.0f),       //PR PS//Частота несущей
-    var ch1_AM_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),           //PR PS
-    var ch1_AM_Filename: MutableStateFlow<String> = MutableStateFlow("09_Ramp"),  //PR PS
-    var ch1_AM_Fr: MutableStateFlow<Float> = MutableStateFlow(8.7f),              //PR PS
-    var ch1_FM_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),           //PR PS
-    var ch1_FM_Filename: MutableStateFlow<String> = MutableStateFlow("06_CHIRP"), //PR PS
-    var ch1_FM_Dev: MutableStateFlow<Float> = MutableStateFlow(1100f),            //PR PS //Частота базы
-    var ch1_FM_Fr: MutableStateFlow<Float> = MutableStateFlow(5.1f),              //PR PS
+    var ch1_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),              //PR PS PC
+    var ch1_Carrier_Filename: MutableStateFlow<String> = MutableStateFlow("Sine"),//PR PS PC
+    var ch1_Carrier_Fr: MutableStateFlow<Float> = MutableStateFlow(400.0f),       //PR PS PC //Частота несущей
+    var ch1_AM_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),           //PR PS PC
+    var ch1_AM_Filename: MutableStateFlow<String> = MutableStateFlow("09_Ramp"),  //PR PS PC
+    var ch1_AM_Fr: MutableStateFlow<Float> = MutableStateFlow(8.7f),              //PR PS PC
+    var ch1_FM_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),           //PR PS PC
+    var ch1_FM_Filename: MutableStateFlow<String> = MutableStateFlow("06_CHIRP"), //PR PS PC
+    var ch1_FM_Dev: MutableStateFlow<Float> = MutableStateFlow(1100f),            //PR PS PC //Частота базы
+    var ch1_FM_Fr: MutableStateFlow<Float> = MutableStateFlow(5.1f),              //PR PS PC
 
     var ch2_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),
-    var ch2_Carrier_Filename: MutableStateFlow<String> = MutableStateFlow("Sine"), //PR PS
-    var ch2_Carrier_Fr: MutableStateFlow<Float> = MutableStateFlow(2000.0f),     //PR PS Частота несущей
-    var ch2_AM_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),          //PR PS
-    var ch2_AM_Filename: MutableStateFlow<String> = MutableStateFlow("09_Ramp"), //PR PS
-    var ch2_AM_Fr: MutableStateFlow<Float> = MutableStateFlow(8.7f),             //PR PS
-    var ch2_FM_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),          //PR PS
-    var ch2_FM_Filename: MutableStateFlow<String> = MutableStateFlow("06_CHIRP"),//PR PS
-    var ch2_FM_Dev: MutableStateFlow<Float> = MutableStateFlow(1100f),           //PR PS Частота базы
-    var ch2_FM_Fr: MutableStateFlow<Float> = MutableStateFlow(5.1f),             //PR PS
+    var ch2_Carrier_Filename: MutableStateFlow<String> = MutableStateFlow("Sine"), //PR PS PC
+    var ch2_Carrier_Fr: MutableStateFlow<Float> = MutableStateFlow(2000.0f),     //PR PS PC Частота несущей
+    var ch2_AM_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),          //PR PS PC
+    var ch2_AM_Filename: MutableStateFlow<String> = MutableStateFlow("09_Ramp"), //PR PS PC
+    var ch2_AM_Fr: MutableStateFlow<Float> = MutableStateFlow(8.7f),             //PR PS PC
+    var ch2_FM_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),          //PR PS PC
+    var ch2_FM_Filename: MutableStateFlow<String> = MutableStateFlow("06_CHIRP"),//PR PS PC
+    var ch2_FM_Dev: MutableStateFlow<Float> = MutableStateFlow(1100f),           //PR PS PC Частота базы
+    var ch2_FM_Fr: MutableStateFlow<Float> = MutableStateFlow(5.1f),             //PR PS PC
 
-    var volume0: MutableStateFlow<Float> = MutableStateFlow(1f),              //PR PS Используется для AudioDevice = maxVolume0 * currentVolume0
-    var volume1: MutableStateFlow<Float> = MutableStateFlow(1f),              //PR PS
+    var volume0: MutableStateFlow<Float> = MutableStateFlow(1f),              //PR PS PC Используется для AudioDevice = maxVolume0 * currentVolume0
+    var volume1: MutableStateFlow<Float> = MutableStateFlow(1f),              //PR PS PC
 
 
-    var mono: MutableStateFlow<Boolean> = MutableStateFlow(false),            //PR PS Режим повторения настроек второго канала с первым
-    var invert: MutableStateFlow<Boolean> = MutableStateFlow(false),          //PR PS Инверсия сигнала во втором канале, только при моно
+    var mono: MutableStateFlow<Boolean> = MutableStateFlow(false),            //PR PS PC Режим повторения настроек второго канала с первым
+    var invert: MutableStateFlow<Boolean> = MutableStateFlow(false),          //PR PS PC Инверсия сигнала во втором канале, только при моно
 
-    var shuffle: MutableStateFlow<Boolean> = MutableStateFlow(false),         //PR PS меняем левый и правый канал в стерео режиме
+    var shuffle: MutableStateFlow<Boolean> = MutableStateFlow(false),         //PR PS PC меняем левый и правый канал в стерео режиме
 
-    var enL: MutableStateFlow<Boolean> = MutableStateFlow(true),              //PR PS
-    var enR: MutableStateFlow<Boolean> = MutableStateFlow(true),              //PR PS
+    var enL: MutableStateFlow<Boolean> = MutableStateFlow(true),              //PR PS PC
+    var enR: MutableStateFlow<Boolean> = MutableStateFlow(true),              //PR PS PC
 
-    var maxVolume0: MutableStateFlow<Float> = MutableStateFlow(0.9f),         //PR PS JsonVolume максимальная громкость усилителя
-    var maxVolume1: MutableStateFlow<Float> = MutableStateFlow(0.9f),         //PR PS
+    var maxVolume0: MutableStateFlow<Float> = MutableStateFlow(0.9f),         //PR PS PC JsonVolume максимальная громкость усилителя
+    var maxVolume1: MutableStateFlow<Float> = MutableStateFlow(0.9f),         //PR PS PC
 
-    var currentVolume0: MutableStateFlow<Float> = MutableStateFlow(1.0f),     //PR PS Громкость канала на регуляторе 0 100 JsonConfig()
-    var currentVolume1: MutableStateFlow<Float> = MutableStateFlow(1.0f),     //PR PS
+    var currentVolume0: MutableStateFlow<Float> = MutableStateFlow(1.0f),     //PR PS PC Громкость канала на регуляторе 0 100 JsonConfig()
+    var currentVolume1: MutableStateFlow<Float> = MutableStateFlow(1.0f),     //PR PS PC
 
-    var ch1AmDepth: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS Глубина AM модуляции
-    var ch2AmDepth: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS Глубина AM модуляции
+    var ch1AmDepth: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC Глубина AM модуляции
+    var ch2AmDepth: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC Глубина AM модуляции
     /**
      *  ### Импульсный режим
      */
-    val impulse0: MutableStateFlow<Boolean> = MutableStateFlow(false),        //PR PS Импульсный режим канала
-    val impulse1: MutableStateFlow<Boolean> = MutableStateFlow(false),        //PR PS
+    val impulse0: MutableStateFlow<Boolean> = MutableStateFlow(false),        //PR PS PC Импульсный режим канала
+    val impulse1: MutableStateFlow<Boolean> = MutableStateFlow(false),        //PR PS PC
 
     // Ширина импульса в тиках
-    val impulse0timeImp: MutableStateFlow<Int> = MutableStateFlow(9),         //PR PS
-    val impulse1timeImp: MutableStateFlow<Int> = MutableStateFlow(9),         //PR PS
+    val impulse0timeImp: MutableStateFlow<Int> = MutableStateFlow(9),         //PR PS PC
+    val impulse1timeImp: MutableStateFlow<Int> = MutableStateFlow(9),         //PR PS PC
 
     // Пауза в тиках
-    val impulse0timeImpPause: MutableStateFlow<Int> = MutableStateFlow(9),    //PR PS
-    val impulse1timeImpPause: MutableStateFlow<Int> = MutableStateFlow(9),    //PR PS
+    val impulse0timeImpPause: MutableStateFlow<Int> = MutableStateFlow(9),    //PR PS PC
+    val impulse1timeImpPause: MutableStateFlow<Int> = MutableStateFlow(9),    //PR PS PC
 
     //Количество звезд
-    val star: MutableStateFlow<Int> = MutableStateFlow(0),                    //PR PS
+    val star: MutableStateFlow<Int> = MutableStateFlow(0),                    //PR PS PC
 
     //Имя текущего пресета
-    val presetsName: MutableStateFlow<String> = MutableStateFlow(""),         //PR PS(name)
+    val presetsName: MutableStateFlow<String> = MutableStateFlow(""),         //PR PS(name) PC
 
 
 
@@ -86,5 +86,5 @@ var MAINFOLDER: File? = null
 
 val mmkv = MMKv()
 
-var LiveData: dataLiveData = dataLiveData()
+val LiveData: dataLiveData = dataLiveData()
 
