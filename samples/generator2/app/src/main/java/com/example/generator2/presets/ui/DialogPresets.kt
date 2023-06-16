@@ -16,19 +16,17 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -165,22 +163,20 @@ private fun TopBar() {
 private fun BottomBar() {
     Row(
         modifier = Modifier
-            .height(40.dp)
+            .height(48.dp)
             .fillMaxWidth()
             .background(Color.LightGray),
-        horizontalArrangement = Arrangement.SpaceAround
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
     ) {
 
-        //Spacer(modifier = Modifier.width(16.dp))
-
-        IconButton(
-            onClick = {
-                Presets.isOpenDialogNewFile.value = true
-            }) {
-            Icon(painter = painterResource(R.drawable.add2), contentDescription = null)
-        }
-
-        OutlinedButton(onClick = { navController.popBackStack() }) {
+        OutlinedButton(
+            onClick = { navController.popBackStack() },
+            colors = ButtonDefaults.buttonColors(
+                contentColor = Color.Black,
+                containerColor = Color.White
+            )
+        ) {
             Text(text = "Закрыть")
         }
 

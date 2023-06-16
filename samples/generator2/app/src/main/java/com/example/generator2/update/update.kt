@@ -18,7 +18,7 @@ object Update{
 
 
     private const val owner = "Sacamoto84"
-    private const val repo  = "GeneratorAndroid3"
+    private const val repo  = "GeneratorAndroid"
 
     var isDownloading = MutableStateFlow(false)
     var isDownloaded  = MutableStateFlow(false)

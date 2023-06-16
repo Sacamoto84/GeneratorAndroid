@@ -108,7 +108,10 @@ fun M4BottomAppBarComponent(
         IconButton(onClick = {
             navController.navigate("presets")
         }) {
-            Icon(painter = painterResource(R.drawable.folder_open2), contentDescription = null)
+            Icon(painter = painterResource(R.drawable.folder_open2), contentDescription = null,
+                modifier = Modifier
+                    .size(36.dp)
+            )
         }
 
 

@@ -47,8 +47,8 @@ android {
         applicationId "com.example.generator2"
         minSdk 23
         targetSdk 33
-        versionCode 2416
-        versionName "2.4.1.6"
+        versionCode 2003
+        versionName "2.0.0.5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -92,7 +92,7 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = "17"
     }
     buildFeatures {
         compose true
@@ -117,7 +117,10 @@ android {
 }
 
 dependencies {
-    
+
+    //implementation("com.android.tools.lint:lint-gradle:31.0.2")
+
+
     //https://developer.android.com/studio/preview/features
     implementation "androidx.compose.runtime:runtime-tracing:1.0.0-alpha03"
 

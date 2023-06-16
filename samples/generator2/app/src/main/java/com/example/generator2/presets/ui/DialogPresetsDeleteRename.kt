@@ -41,6 +41,7 @@ import com.example.generator2.screens.scripting.ui.refresh
 import com.example.generator2.screens.scripting.vm.VMScripting
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.theme.colorLightBackground
+import com.example.generator2.util.toast
 import java.io.File
 
 private val Corner = 8.dp
@@ -105,7 +106,8 @@ fun DialogPresetsDeleteRename(name: String) {
 
                         Presets.isOpenDialogDeleteRename.value = false
 
-                        Toast.makeText(context, "Renamed", Toast.LENGTH_LONG).show()
+                        toast.show("Renamed")
+
                     }),
                     textStyle = TextStyle(
                         fontSize = 18.sp, fontFamily = FontFamily(Font(R.font.jetbrains)),
