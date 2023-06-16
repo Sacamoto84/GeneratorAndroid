@@ -106,7 +106,11 @@ fun M4BottomAppBarComponent(
             Icon(painter = painterResource(R.drawable.box), contentDescription = null)
         }
 
+        IconButton(onClick = {
 
+        }) {
+            Icon(painter = painterResource(R.drawable.save), contentDescription = null, modifier = Modifier.size(36.dp))
+        }
 
         Spacer(modifier = Modifier.weight(1f))
 

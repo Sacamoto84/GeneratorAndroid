@@ -40,19 +40,22 @@ lateinit var customTypeface: Typeface
 
 
 @Composable
-fun VolumeControl(value : ()-> Float , onValueChange: (Float) -> Unit) {
+fun VolumeControl(value : Float , onValueChange: (Float) -> Unit) {
 
     val H = 48.dp
     val W = 72.dp
 
     val onValueChangeState = rememberUpdatedState(onValueChange)
 
-    var volume by remember { mutableFloatStateOf(value()) }
+    //var volume by remember { mutableFloatStateOf(value) }
+
+    var volume = value
 
     //val pxValue = with(LocalDensity.current) { 16.dp.toPx() }
 
-    val pxValue = LocalDensity.current.run { 30.dp.toPx() - 28.dp.toPx() * value() }
-    var position by rememberSaveable{ mutableFloatStateOf(pxValue) }
+    val pxValue = LocalDensity.current.run { 30.dp.toPx() - 28.dp.toPx() * value }
+
+    var position by remember{ mutableFloatStateOf(pxValue) }
 
     //Показать инфо
     var showInfo by remember { mutableStateOf(false) }
@@ -61,7 +64,6 @@ fun VolumeControl(value : ()-> Float , onValueChange: (Float) -> Unit) {
         targetValue = if (showInfo) 1f else 0f,
         animationSpec = tween(durationMillis = 200), label = ""
     )
-
 
 
     Box(
@@ -105,6 +107,9 @@ fun VolumeControl(value : ()-> Float , onValueChange: (Float) -> Unit) {
             //println("h px:$h")
             //println("h dp:${h.toDp()}")
 
+            value
+
+            //Фон
             drawRoundRect(
                 color = colorDarkBackground,
                 topLeft = Offset(0f, 0f),
@@ -112,6 +117,7 @@ fun VolumeControl(value : ()-> Float , onValueChange: (Float) -> Unit) {
                 cornerRadius = CornerRadius(8.dp.toPx(), (8.dp.toPx()))
             )
 
+            //Зеленый
             drawRoundRect(
                 color = MaterialColor.GREEN_700,
                 topLeft = Offset(2.dp.toPx(), position),

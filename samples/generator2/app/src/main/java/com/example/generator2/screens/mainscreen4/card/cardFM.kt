@@ -226,7 +226,7 @@ fun CardFM(str: String = "CH0") {
                     LiveData.currentVolume1.collectAsState()
 
             VolumeControl(
-                value = { v.value },
+                value =  v.value,
                 onValueChange = {
 
                     println("onValueChange $it")

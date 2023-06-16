@@ -22,9 +22,7 @@ class presetsVM @Inject constructor(
     fun onClickPresetsRead(name : String) {
 
         presetsToLiveData(presetsReadFile(name))
-
         hub.audioDevice.sendAlltoGen()
-
         navController.popBackStack()
     }
 

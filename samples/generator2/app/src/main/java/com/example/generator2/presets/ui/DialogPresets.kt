@@ -37,11 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.R
-import com.example.generator2.model.LiveData
 import com.example.generator2.navController
 import com.example.generator2.presets.Presets
 import com.example.generator2.presets.presetsGetListName
-import com.example.generator2.presets.presetsReadFile
 import com.example.generator2.presets.presetsVM
 import com.siddroid.holi.colors.MaterialColor
 import libs.modifier.scrollbar
@@ -87,8 +85,6 @@ fun DialogPresets(vm: presetsVM = hiltViewModel()) {
                 Content(vm)
             }
         }
-
-
     }
 
 }
@@ -184,11 +180,9 @@ private fun BottomBar() {
             Icon(painter = painterResource(R.drawable.add2), contentDescription = null)
         }
 
-
         OutlinedButton(onClick = { navController.popBackStack() }) {
             Text(text = "Закрыть")
         }
-
 
     }
 }

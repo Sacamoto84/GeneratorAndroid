@@ -16,10 +16,7 @@ fun observe(hub: Hub) {
     GlobalScope.launch(dispatchers) { LiveData.volume0.collect {hub.playbackEngine.setVolume(0, it ) } }
     GlobalScope.launch(dispatchers) { LiveData.volume1.collect {hub.playbackEngine.setVolume(1, it ) } }
     //
-    GlobalScope.launch(dispatchers) { LiveData.ch1_EN.collect {
-        Timber.i("LiveData.ch1_EN.collect $it")
-        hub.playbackEngine.setEN(0, it )
-    } }
+    GlobalScope.launch(dispatchers) { LiveData.ch1_EN.collect {hub.playbackEngine.setEN(0, it ) } }
     GlobalScope.launch(dispatchers) { LiveData.ch2_EN.collect {hub.playbackEngine.setEN(1, it ) } }
 
     //
