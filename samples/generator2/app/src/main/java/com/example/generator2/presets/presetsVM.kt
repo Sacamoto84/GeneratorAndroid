@@ -3,7 +3,6 @@ package com.example.generator2.presets
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.example.generator2.di.Hub
-import com.example.generator2.model.LiveData
 import com.example.generator2.navController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -22,8 +21,7 @@ class presetsVM @Inject constructor(
      */
     fun onClickPresetsRead(name : String) {
 
-        val l = presetsReadFile(name)
-        LiveData = l.copy()
+        presetsToLiveData(presetsReadFile(name))
 
         hub.audioDevice.sendAlltoGen()
 

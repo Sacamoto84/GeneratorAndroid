@@ -2,35 +2,32 @@ package com.example.generator2.presets
 
 import com.example.generator2.model.LiveData
 import com.example.generator2.model.dataLiveData
-import kotlinx.coroutines.flow.MutableStateFlow
 
 fun presetsToLiveData(data: dataLiveData) {
 
-
     LiveData.presetsName.value = data.presetsName.value
 
-    LiveData.ch1_EN = data.ch1_EN
-    LiveData.ch1_Carrier_Filename = data.ch1_Carrier_Filename
-    LiveData.ch1_Carrier_Fr = data.ch1_Carrier_Fr
-    LiveData.ch1_AM_EN = data.ch1_AM_EN
-    LiveData.ch1_AM_Filename = data.ch1_AM_Filename
-    LiveData.ch1_AM_Fr = data.ch1_AM_Fr
-    LiveData.ch1_FM_EN = data.ch1_FM_EN
-    LiveData.ch1_FM_Filename = data.ch1_FM_Filename
-    LiveData.ch1_FM_Dev = data.ch1_FM_Dev
-    LiveData.ch1_FM_Fr = data.ch1_FM_Fr
+    LiveData.ch1_EN.value = data.ch1_EN.value
+    LiveData.ch1_Carrier_Filename.value = data.ch1_Carrier_Filename.value
+    LiveData.ch1_Carrier_Fr.value = data.ch1_Carrier_Fr.value
+    LiveData.ch1_AM_EN.value = data.ch1_AM_EN.value
+    LiveData.ch1_AM_Filename.value = data.ch1_AM_Filename.value
+    LiveData.ch1_AM_Fr.value = data.ch1_AM_Fr.value
+    LiveData.ch1_FM_EN.value = data.ch1_FM_EN.value
+    LiveData.ch1_FM_Filename.value = data.ch1_FM_Filename.value
+    LiveData.ch1_FM_Dev.value = data.ch1_FM_Dev.value
+    LiveData.ch1_FM_Fr.value = data.ch1_FM_Fr.value
 
-    LiveData.ch2_EN = data.ch2_EN
-    LiveData.ch2_Carrier_Filename = data.ch2_Carrier_Filename
-    LiveData.ch2_Carrier_Fr = data.ch2_Carrier_Fr
-    LiveData.ch2_AM_EN = data.ch2_AM_EN
-    LiveData.ch2_AM_Filename = data.ch2_AM_Filename
-    LiveData.ch2_AM_Fr = data.ch2_AM_Fr
-    LiveData.ch2_FM_EN = data.ch2_FM_EN
-    LiveData.ch2_FM_Filename = data.ch2_FM_Filename
-    LiveData.ch2_FM_Dev = data.ch2_FM_Dev
-    LiveData.ch2_FM_Fr = data.ch2_FM_Fr
-
+    LiveData.ch2_EN.value = data.ch2_EN.value
+    LiveData.ch2_Carrier_Filename.value = data.ch2_Carrier_Filename.value
+    LiveData.ch2_Carrier_Fr.value = data.ch2_Carrier_Fr.value
+    LiveData.ch2_AM_EN.value = data.ch2_AM_EN.value
+    LiveData.ch2_AM_Filename.value = data.ch2_AM_Filename.value
+    LiveData.ch2_AM_Fr.value = data.ch2_AM_Fr.value
+    LiveData.ch2_FM_EN.value = data.ch2_FM_EN.value
+    LiveData.ch2_FM_Filename.value = data.ch2_FM_Filename.value
+    LiveData.ch2_FM_Dev.value = data.ch2_FM_Dev.value
+    LiveData.ch2_FM_Fr.value = data.ch2_FM_Fr.value
 
 
     LiveData.volume0.value = data.volume0.value
