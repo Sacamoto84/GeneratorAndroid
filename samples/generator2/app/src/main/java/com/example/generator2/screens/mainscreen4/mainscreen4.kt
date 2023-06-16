@@ -12,11 +12,16 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.model.LiveData
 import com.example.generator2.model.m4recompose
+import com.example.generator2.presets.Presets
 import com.example.generator2.presets.ui.DialogPresets
+import com.example.generator2.presets.ui.DialogPresetsNewFile
 import com.example.generator2.screens.mainscreen4.card.CardCard
 import com.example.generator2.screens.mainscreen4.card.CardCommander
 import com.example.generator2.screens.mainscreen4.ui.DrawerContentBottom
@@ -55,7 +60,23 @@ fun Mainsreen4(
     DialogNewVersion()
     DialogDownloading()
 
+    if (Presets.isOpenDialogNewFile.collectAsState().value) {
+        DialogPresetsNewFile()
+    }
+
     Scaffold(
+
+        topBar = {
+            Text(
+                text = LiveData.presetsName.collectAsState().value,
+                color = Color.LightGray,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+        },
+
         bottomBar = {
             M4BottomAppBarComponent(
                 toggleDrawer,
@@ -141,7 +162,7 @@ fun Mainsreen4(
                 )
                 {
                     if (!it)
-                        //CardCarrier("CH1")
+                    //CardCarrier("CH1")
                         CardCard("CH1")
                     else Spacer(
                         modifier = Modifier

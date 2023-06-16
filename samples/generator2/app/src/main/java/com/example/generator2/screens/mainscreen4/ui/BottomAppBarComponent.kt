@@ -1,10 +1,14 @@
 package com.example.generator2.screens.mainscreen4.ui
 
 import android.content.Intent
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material.BottomAppBar
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -13,16 +17,17 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
-import androidx.navigation.NavHostController
 import com.example.generator2.R
+import com.example.generator2.model.LiveData
 import com.example.generator2.navController
 import com.example.generator2.presets.Presets
-import com.example.generator2.theme.colorLightBackground
+import com.example.generator2.presets.presetsSaveFile
 import com.example.generator2.screens.mainscreen4.VMMain4
-import com.example.generator2.vm.StateCommandScript
+import com.example.generator2.theme.colorLightBackground
 
 
 //Нижняя панель с кнопками
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun M4BottomAppBarComponent(
     toggleDrawer: () -> Unit, global: VMMain4
@@ -103,13 +108,36 @@ fun M4BottomAppBarComponent(
         IconButton(onClick = {
             navController.navigate("presets")
         }) {
-            Icon(painter = painterResource(R.drawable.box), contentDescription = null)
+            Icon(painter = painterResource(R.drawable.folder_open2), contentDescription = null)
         }
 
-        IconButton(onClick = {
 
-        }) {
-            Icon(painter = painterResource(R.drawable.save), contentDescription = null, modifier = Modifier.size(36.dp))
+        //Сохранить
+        IconButton(
+            onClick = { }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.save),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(36.dp)
+                    .combinedClickable(
+                        onClick = {
+
+                            if (LiveData.presetsName.value == "") {
+                                Presets.isOpenDialogNewFile.value = true
+                            } else {
+                                presetsSaveFile(LiveData.presetsName.value)
+                            }
+
+
+                        },
+                        onLongClick = {
+                            Presets.isOpenDialogNewFile.value = true
+                        })
+
+
+            )
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -118,10 +146,8 @@ fun M4BottomAppBarComponent(
             onClick = { navController.navigate("script") }) {
             Icon(painter = painterResource(R.drawable.script3), contentDescription = null)
         }
-        
+
         IconButton(modifier = Modifier.testTag("edit"),
-
-
             onClick = { navController.navigate("editor") }) {
             Icon(painter = painterResource(R.drawable.editor), contentDescription = null)
         }

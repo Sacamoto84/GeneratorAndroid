@@ -136,8 +136,14 @@ dependencies {
     implementation "androidx.startup:startup-runtime:1.1.1"
 
     implementation 'com.snatik:storage:2.1.0'
+
+
+    //Копирование Assert в папку
+    //https://github.com/morristech/android-assetcopier
     implementation 'com.github.flipagram:android-assetcopier:0.1.1'
-    implementation "com.orhanobut:hawk:2.0.1"
+
+
+    //implementation "com.orhanobut:hawk:2.0.1"
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.appcompat:appcompat-resources:1.6.1'
@@ -272,7 +278,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
 
 
-    implementation "io.karn:notify:1.4.0"
+    //implementation "io.karn:notify:1.4.0"
 
     //implementation 'com.github.jojoyel:head-up-banner:1.0.0'
 
@@ -285,6 +291,7 @@ dependencies {
 
     //https://github.com/aclassen/ComposeReorderable
     implementation("org.burnoutcrew.composereorderable:reorderable:0.9.6")
+
     //https://github.com/a914-gowtham/compose-ratingbar
     implementation 'com.github.a914-gowtham:compose-ratingbar:1.3.4'
 

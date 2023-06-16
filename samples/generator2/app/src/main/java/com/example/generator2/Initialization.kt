@@ -2,13 +2,13 @@ package com.example.generator2
 
 import android.content.Context
 import com.example.generator2.di.Hub
-import com.example.generator2.model.LiveData
 import com.example.generator2.model.itemList
 import com.example.generator2.model.itemlistAM
 import com.example.generator2.model.itemlistCarrier
 import com.example.generator2.model.itemlistFM
 import com.example.generator2.model.mmkv
 import com.example.generator2.util.Utils
+import com.example.generator2.util.toast
 import flipagram.assetcopylib.AssetCopier
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +29,8 @@ fun initialization(context: Context, hub: Hub) {
 
 //Инициализация
     if ((!isInitialized) && (PermissionStorage.hasPermissions(context))) {
+
+        toast.initialized(context)
 
         GlobalScope.launch(Dispatchers.IO) {
             Timber.i("Типа инициализация Start")

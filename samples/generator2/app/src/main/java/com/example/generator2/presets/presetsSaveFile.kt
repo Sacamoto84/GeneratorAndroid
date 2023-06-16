@@ -6,6 +6,7 @@ import cafe.adriel.satchel.serializer.raw.RawSatchelSerializer
 import cafe.adriel.satchel.storer.file.FileSatchelStorer
 import com.example.generator2.AppPath
 import com.example.generator2.model.LiveData
+import com.example.generator2.util.toast
 import java.io.File
 
 /**
@@ -85,6 +86,6 @@ fun presetsSaveFile(name: String) {
     satchel["impulse0timeImpPause"] = LiveData.impulse0timeImpPause.value
     satchel["impulse1timeImpPause"] = LiveData.impulse1timeImpPause.value
 
-
+    toast.show("Пресет $name сохранен")
 
 }
