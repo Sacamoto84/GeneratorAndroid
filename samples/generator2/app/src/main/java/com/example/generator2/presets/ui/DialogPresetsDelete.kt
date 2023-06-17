@@ -2,6 +2,7 @@ package com.example.generator2.presets.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -41,15 +42,10 @@ import com.example.generator2.theme.colorLightBackground
 import com.example.generator2.util.toast
 import java.io.File
 
-class DialogPresetsDelete {
-}
-
 private val Corner = 8.dp
 
 @Composable
 fun DialogPresetsDelete(name: String) {
-
-    val context = LocalContext.current
 
     println("DialogDeleteRename name:$name")
 
@@ -65,42 +61,36 @@ fun DialogPresetsDelete(name: String) {
             ), shape = RoundedCornerShape(Corner), backgroundColor = colorDarkBackground
         ) {
 
-                Button(
-                    onClick = {
+            Button(
+                onClick = {
 
-                        val pathDocuments = AppPath().presets+"/${name}.txt"
-                        File(pathDocuments).delete()
+                    val pathDocuments = AppPath().presets + "/${name}.txt"
+                    File(pathDocuments).delete()
 
-                        Presets.presetList.clear()
-                        Presets.presetList = presetsGetListName()
+                    Presets.presetList.clear()
+                    Presets.presetList = presetsGetListName()
 
-                        PresetsDialogRecompose.intValue++
+                    PresetsDialogRecompose.intValue++
 
-                        Presets.isOpenDialogDelete.value = false
+                    Presets.isOpenDialogDelete.value = false
 
-                    },
-                    modifier = Modifier.fillMaxWidth().height(72.dp)
-                        .padding(start = 16.dp, end = 16.dp, top = 0.dp, bottom = 16.dp),
-                    shape = RoundedCornerShape(Corner),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
-                ) {
-                    Text(
-                        "Delete",
-                        fontSize = 28.sp,
-                        color = Color.White,
-                        modifier = Modifier.offset(0.dp, (0).dp)
-                    )
-                }
-
-
-
-
-
-
-
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    //.height(72.dp)
+                    .padding(16.dp),
+                shape = RoundedCornerShape(Corner),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
+            ) {
+                Text(
+                    "Delete",
+                    fontSize = 28.sp,
+                    color = Color.White,
+                    modifier = Modifier.offset(0.dp, (0).dp)
+                )
+            }
 
         }
-
 
     }
 

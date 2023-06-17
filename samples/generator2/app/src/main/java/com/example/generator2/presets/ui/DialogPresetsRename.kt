@@ -2,6 +2,7 @@ package com.example.generator2.presets.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -46,9 +47,7 @@ private val Corner = 8.dp
 
 @Composable
 fun DialogPresetsRename(name: String) {
-
-    val context = LocalContext.current
-
+    
     println("DialogDeleteRename name:$name")
 
     var value by remember { mutableStateOf("") }
@@ -57,7 +56,9 @@ fun DialogPresetsRename(name: String) {
 
     Dialog(onDismissRequest = { Presets.isOpenDialogRename.value = false }) {
         Card(
-            Modifier.width(220.dp), elevation = 8.dp, border = BorderStroke(
+            Modifier.width(220.dp)
+                
+            , elevation = 8.dp, border = BorderStroke(
                 1.dp, Color.Gray
             ), shape = RoundedCornerShape(Corner), backgroundColor = colorDarkBackground
         ) {
@@ -65,10 +66,10 @@ fun DialogPresetsRename(name: String) {
             Column {
 
                 Text(
-                    text = "Rename",
+                    text = "Переименовать",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
+                        .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 16.dp)
                     //.clip(RoundedCornerShape(Corner)).background(Color.DarkGray)
                     ,
                     textAlign = TextAlign.Center, fontSize = 16.sp, fontFamily = FontFamily(Font(R.font.jetbrains)), color = Color.LightGray
@@ -77,7 +78,9 @@ fun DialogPresetsRename(name: String) {
                 OutlinedTextField(
                     value = value,
                     onValueChange = { value = it },
-                    modifier = Modifier.height(58.dp).padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                    modifier = Modifier
+                        .height(58.dp)
+                        .padding(start = 16.dp, end = 16.dp, bottom = 0.dp),
                     colors = TextFieldDefaults.textFieldColors(
                         textColor = Color.LightGray, leadingIconColor = Color.LightGray,
                         backgroundColor = colorLightBackground, focusedIndicatorColor = Color.Transparent ),
@@ -110,6 +113,8 @@ fun DialogPresetsRename(name: String) {
                         fontSize = 18.sp, fontFamily = FontFamily(Font(R.font.jetbrains)),
                     ),
                 )
+                
+                Spacer(modifier = Modifier.height(16.dp))
 
             }
 
