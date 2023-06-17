@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module version="4">
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$/../../../../debug-utils">
-      <sourceFolder url="file://$MODULE_DIR$/../../../../debug-utils" type="native-Source-root" />
+    <content url="file://$MODULE_DIR$/../../../../shared">
+      <sourceFolder url="file://$MODULE_DIR$/../../../../shared" type="native-header-root" />
     </content>
     <content url="file://$MODULE_DIR$/../../../../../src">
       <sourceFolder url="file://$MODULE_DIR$/../../../../../src" type="native-Source-root" />
     </content>
+    <content url="file://$MODULE_DIR$/../../../../debug-utils">
+      <sourceFolder url="file://$MODULE_DIR$/../../../../debug-utils" type="native-Source-root" />
+    </content>
     <content url="file://$MODULE_DIR$/../../../../../include">
       <sourceFolder url="file://$MODULE_DIR$/../../../../../include" type="native-header-root" />
-    </content>
-    <content url="file://$MODULE_DIR$/../../../../shared">
-      <sourceFolder url="file://$MODULE_DIR$/../../../../shared" type="native-header-root" />
     </content>
     <content url="file://$MODULE_DIR$/../../../app/src/main">
       <sourceFolder url="file://$MODULE_DIR$/../../../app/src/main/cpp" type="native-Source-root" />

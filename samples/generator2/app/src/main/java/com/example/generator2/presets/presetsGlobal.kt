@@ -16,6 +16,12 @@ object Presets{
     var isOpenDialogDeleteRename= MutableStateFlow(false)
 
     //Открыть диалог создания нового пресета
+    var isOpenDialogRename= MutableStateFlow(false)
+
+    //Открыть диалог создания нового пресета
+    var isOpenDialogDelete = MutableStateFlow(false)
+
+    //Открыть диалог создания нового пресета
     var isOpenDialogDeleteRenameName = ""
 
 }
