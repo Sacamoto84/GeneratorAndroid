@@ -3,6 +3,7 @@ package com.example.generator2.screens.config.molecule
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
 import androidx.compose.material3.Text
@@ -34,7 +35,7 @@ private fun EditConfig(
             text = text, color = Color.LightGray,
             maxLines = 3,
             minLines = 1,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f).padding(start = 8.dp)
         )
 
         editConfig(
@@ -60,8 +61,8 @@ fun ConfigConstrain(vm: VMConfig) {
     EditConfig("Минимальная частота FM девиации", LiveConstrain.minFMDev, vm)
     EditConfig("Максимальная частота FM девиации", LiveConstrain.maxFMDev, vm)
 
-    EditConfig("Минимальная частота AM модуляции", LiveConstrain.minModAmFm, vm)
-    EditConfig("Максимальная частота AM модуляции", LiveConstrain.maxModAmFm, vm)
+    EditConfig("Минимальная частота AM FM модуляции", LiveConstrain.minModAmFm, vm)
+    EditConfig("Максимальная частота AM FM модуляции", LiveConstrain.maxModAmFm, vm)
 
 
     Divider()
