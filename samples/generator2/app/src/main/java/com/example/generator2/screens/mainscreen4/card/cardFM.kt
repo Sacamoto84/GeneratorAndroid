@@ -44,6 +44,7 @@ import com.example.generator2.screens.mainscreen4.ui.MainscreenTextBoxPlus2Line
 import com.example.generator2.screens.mainscreen4.ui.UIspinner
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.theme.colorLightBackground2
+import kotlinx.coroutines.flow.update
 import libs.modifier.noRippleClickable
 
 @Composable
@@ -227,21 +228,20 @@ fun CardFM(str: String = "CH0") {
 
             VolumeControl(
                 value =  v.value,
-                onValueChange = {
+                onValueChange = { it1 ->
 
-                    println("onValueChange $it")
+                    println("onValueChange $it1")
 
                     if (str == "CH0") {
 
-                        LiveData.currentVolume0.value = it
-                        LiveData.volume0.value =
-                            LiveData.currentVolume0.value * LiveData.maxVolume0.value
+                        LiveData.currentVolume0.update { it1 }
+                        LiveData.volume0.update { it1 * LiveData.maxVolume0.value  }
+
 
                     } else {
 
-                        LiveData.currentVolume1.value = it
-                        LiveData.volume1.value =
-                            LiveData.currentVolume1.value * LiveData.maxVolume1.value
+                        LiveData.currentVolume1.update {  it1 }
+                        LiveData.volume1.update { it1 * LiveData.maxVolume1.value}
                     }
 
                 })
