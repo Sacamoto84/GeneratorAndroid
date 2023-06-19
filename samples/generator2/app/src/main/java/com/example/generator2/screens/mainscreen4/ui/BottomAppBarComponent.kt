@@ -145,15 +145,20 @@ fun M4BottomAppBarComponent(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        IconButton(modifier = Modifier.testTag("buttonM4GoToScript"),
-            onClick = { navController.navigate("script") }) {
-            Icon(painter = painterResource(R.drawable.script3), contentDescription = null)
+        IconButton(modifier = Modifier.testTag("edit"),
+            onClick = { navController.navigate("html") }) {
+            Icon(painter = painterResource(R.drawable.info), contentDescription = null)
         }
 
-        IconButton(modifier = Modifier.testTag("edit"),
-            onClick = { navController.navigate("editor") }) {
-            Icon(painter = painterResource(R.drawable.editor), contentDescription = null)
-        }
+//        IconButton(modifier = Modifier.testTag("buttonM4GoToScript"),
+//            onClick = { navController.navigate("script") }) {
+//            Icon(painter = painterResource(R.drawable.script3), contentDescription = null)
+//        }
+
+//        IconButton(modifier = Modifier.testTag("edit"),
+//            onClick = { navController.navigate("editor") }) {
+//            Icon(painter = painterResource(R.drawable.editor), contentDescription = null)
+//        }
 
         Spacer(modifier = Modifier.weight(0.2f))
 

@@ -17,6 +17,7 @@ import androidx.navigation.NavHostController
 import com.example.generator2.presets.ui.DialogPresets
 import com.example.generator2.screens.config.ScreenConfig
 import com.example.generator2.screens.editor.ScreenEditor
+import com.example.generator2.screens.html.Html
 import com.example.generator2.screens.mainscreen4.Mainsreen4
 import com.example.generator2.screens.scripting.ScreenScriptCommon
 import com.example.generator2.screens.scripting.ScreenScriptInfo
@@ -90,6 +91,14 @@ fun Navigation()
             DialogPresets()
         }
 
+
+        //Экран настройки программы
+        composable("html",
+            enterTransition = { fadeIn(animationSpec = tween(0)) },
+            exitTransition = { fadeOut(animationSpec = tween(0)) }
+        ) {
+            Html()
+        }
 
     }
 

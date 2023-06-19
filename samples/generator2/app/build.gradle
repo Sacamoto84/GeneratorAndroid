@@ -202,7 +202,7 @@ dependencies {
     //accompanist
     implementation "com.google.accompanist:accompanist-navigation-animation:0.31.3-beta"
     implementation "com.google.accompanist:accompanist-drawablepainter:0.31.3-beta"
-    //implementation "com.google.accompanist:accompanist-webview:0.28.0"
+    implementation "com.google.accompanist:accompanist-webview:0.28.0"
     implementation "com.google.accompanist:accompanist-pager:0.31.3-beta"
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.31.3-beta"
     implementation "com.google.accompanist:accompanist-permissions:0.31.3-beta"
