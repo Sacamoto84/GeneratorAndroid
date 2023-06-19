@@ -113,10 +113,6 @@ fun ScreenEditor(global: VMMain4 = hiltViewModel()) {
             }
 
 
-
-
-
-
             Box(
                 modifier = Modifier
                     .padding(8.dp)
@@ -132,6 +128,13 @@ fun ScreenEditor(global: VMMain4 = hiltViewModel()) {
             ) {
                 EditorCanvas()
             }
+
+
+
+
+
+            //Блок кнопок для линкования
+            EditorLinkButtons(Modifier.weight(1f))
 
 
         }

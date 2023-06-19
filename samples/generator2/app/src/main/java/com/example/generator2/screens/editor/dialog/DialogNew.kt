@@ -22,8 +22,8 @@ import com.example.generator2.screens.editor.ui.model
 import com.example.generator2.theme.colorDarkBackground
 
 
-val comboboxLine = ComboBox(listOf("2","4","6","16", "32", "128 ", "256", "512"))
-val comboboxRow = ComboBox(listOf("4", "8", "16", "32", "64", "128 ", "256", "512"))
+val comboboxLine = ComboBox(listOf("2","4","6","16", "32", "128", "256", "512"))
+val comboboxRow = ComboBox(listOf("4", "8", "16", "32", "64", "128", "256", "512"))
 
 @Composable
 fun DialogNew(openDialog: MutableState<Boolean>) {
@@ -57,7 +57,7 @@ fun DialogNew(openDialog: MutableState<Boolean>) {
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
-                Row() {
+                Row {
 
                     Icon(
                         painter = painterResource(R.drawable.column_triple),
