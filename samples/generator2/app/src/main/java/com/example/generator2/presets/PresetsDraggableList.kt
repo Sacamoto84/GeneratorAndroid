@@ -1,14 +1,10 @@
 package com.example.generator2.presets
 
-import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
@@ -23,14 +19,10 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.gowtham.ratingbar.RatingBar
-import com.gowtham.ratingbar.RatingBarStyle
-import com.gowtham.ratingbar.StepSize
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
-import timber.log.Timber
 
 @Preview
 @Composable
@@ -76,21 +68,6 @@ fun PresetsDraggableList() {
                 ) {
 
                     Text(item)
-
-                    RatingBar(
-                        modifier = Modifier,
-                        size = 24.dp,
-                        spaceBetween = 1.dp,
-                        stepSize = StepSize.ONE,
-                        value = rating,
-                        style = RatingBarStyle.Fill(),
-                        onValueChange = {
-                            rating = it
-                        },
-                        onRatingChanged = {
-                            Timber.tag("TAG").d("onRatingChanged: %s", it)
-                        }
-                    )
 
                 }
             }

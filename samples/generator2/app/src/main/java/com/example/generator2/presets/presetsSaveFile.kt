@@ -49,10 +49,6 @@ fun presetsSaveFile(name: String) {
     satchel["ch2_FM_Dev"] = LiveData.ch2_FM_Dev.value //Частота базы
     satchel["ch2_FM_Fr"] = LiveData.ch2_FM_Fr.value
 
-    //Используется для AudioDevice = maxVolume0 * currentVolume0
-    satchel["volume0"] = LiveData.volume0.value
-    satchel["volume1"] = LiveData.volume1.value
-
     satchel["mono"] = LiveData.mono.value //Режим повторения настроек второго канала с первым
     satchel["invert"] = LiveData.invert.value //Инверсия сигнала во втором канале, только при моно
     satchel["shuffle"] = LiveData.shuffle.value //меняем левый и правый канал в стерео режиме
@@ -67,6 +63,10 @@ fun presetsSaveFile(name: String) {
     //Громкость канала на регуляторе 0 100 JsonConfig()
     satchel["currentVolume0"] = LiveData.currentVolume0.value
     satchel["currentVolume1"] = LiveData.currentVolume1.value
+
+    //Используется для AudioDevice = maxVolume0 * currentVolume0
+    satchel["volume0"] = LiveData.volume0.value
+    satchel["volume1"] = LiveData.volume1.value
 
     satchel["ch1AmDepth"] = LiveData.ch1AmDepth.value  //Глубина AM модуляции
     satchel["ch2AmDepth"] = LiveData.ch2AmDepth.value  //Глубина AM модуляции

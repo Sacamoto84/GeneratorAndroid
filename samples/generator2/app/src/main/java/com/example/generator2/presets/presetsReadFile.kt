@@ -47,10 +47,6 @@ fun presetsReadFile(name: String): dataLiveData {
     data.ch2_FM_Dev.value = satchel.getOrDefault("ch2_FM_Dev", 1100f) //Частота базы
     data.ch2_FM_Fr.value = satchel.getOrDefault("ch2_FM_Fr", 5.1f)
 
-    //Используется для AudioDevice = maxVolume0 * currentVolume0
-    data.volume0.value = satchel.getOrDefault("volume0", 1f)
-    data.volume1.value = satchel.getOrDefault("volume1", 1f)
-
     data.mono.value =
         satchel.getOrDefault("mono", false) //Режим повторения настроек второго канала с первым
     data.invert.value =
@@ -69,6 +65,10 @@ fun presetsReadFile(name: String): dataLiveData {
     //Громкость канала на регуляторе 0 100 JsonConfig()
     data.currentVolume0.value = satchel.getOrDefault("currentVolume0", 1f)
     data.currentVolume1.value = satchel.getOrDefault("currentVolume1", 1f)
+
+    //Используется для AudioDevice = maxVolume0 * currentVolume0
+    data.volume0.value = satchel.getOrDefault("volume0", 1f)
+    data.volume1.value = satchel.getOrDefault("volume1", 1f)
 
     data.ch1AmDepth.value = satchel.getOrDefault("ch1AmDepth", 1f)  //Глубина AM модуляции
     data.ch2AmDepth.value = satchel.getOrDefault("ch2AmDepth", 1f)  //Глубина AM модуляции

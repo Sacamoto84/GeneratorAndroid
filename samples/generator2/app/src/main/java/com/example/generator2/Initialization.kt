@@ -21,8 +21,6 @@ import java.io.File
 import java.io.IOException
 
 var isInitialized = false  //Признак того что произошла инициализация
-var isInitialized1 = false //Признак того что произошла инициализация
-var isInitialized2 = false //Признак того что произошла инициализация
 
 @OptIn(DelicateCoroutinesApi::class)
 fun initialization(context: Context, hub: Hub) {
@@ -65,54 +63,19 @@ fun initialization(context: Context, hub: Hub) {
             }
             Timber.i("arrFilesCarrier end")
 
-            isInitialized1 = true
+            observe(hub)
+
+            mmkv.readConstrain()
+            mmkv.readConfig()
+            mmkv.readVolume()
+            mmkv.readImpulse()
+
+            isInitialized = true
+
+            hub.audioDevice.sendAlltoGen()
 
             Timber.i("Типа инициализация End")
         }
-
-        GlobalScope.launch(Dispatchers.IO) {
-
-            val numDeferred1 = async {
-                //hub.backup.json.readJsonConfig()
-                //Puffer().readConfig()
-                mmkv.readConfig()
-                true
-            }
-            val numDeferred2 = async {
-                //hub.backup.json.readJsonConstrain()
-                mmkv.readConstrain()
-                true
-            }
-            val numDeferred3 = async {
-                //hub.backup.json.readJsonVolume()
-                mmkv.readVolume()
-                true
-            }
-
-            val numDeferred4 = async {
-                //hub.backup.json.readJsonVolume()
-                mmkv.readImpulse()
-                true
-            }
-
-
-            isInitialized2 = numDeferred1.await() and numDeferred2.await() and numDeferred3.await() and numDeferred4.await()
-
-        }
-
-        GlobalScope.launch(Dispatchers.IO) {
-            while (!isInitialized) {
-                delay(10)
-                isInitialized = isInitialized1 and isInitialized2
-            }
-
-            hub.audioDevice.sendAlltoGen()
-            observe(hub)
-            hub.playbackEngine.StartListening()
-
-        }
-
-
 
     }
 
