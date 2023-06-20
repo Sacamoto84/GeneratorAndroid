@@ -1181,11 +1181,11 @@ InputSync.prototype ={
 DR_EXPLAIN.namespace( 'DR_EXPLAIN.data_menu' );
 DR_EXPLAIN.data_menu = {
     // menu
-    DREX_NODE_NAMES: ["Безымянный","1. Основной экран","1.1. Нижний бар","1.2. Сохранение пресетов","1.3. Открытие пресетов и управление ими","1.4. Средний блок","1.5. Блок генератора"],
-    DREX_NODE_LINKS: ["bezymyannyj.htm","osnovnoj_ehkran.htm","nizhnij_bar.htm","sokhranenie_presetov.htm","otkrytie_presetov_i_upravlenie_imi.htm","srednij_blok.htm","blok_generatora.htm"],
-    DREX_NODE_CHILD_START: [1,2,7,7,7,7,7],
-    DREX_NODE_CHILD_END: [2,7,7,7,7,7,7],
-    DREX_MENU_TYPE: 2,
+    DREX_NODE_NAMES: ["Безымянный","","Нижний бар","Сохранение пресетов","Открытие пресетов и управление ими","Средний блок","Блок генератора","Настройки"],
+    DREX_NODE_LINKS: ["bezymyannyj.htm","_.htm","nizhnij_bar.htm","sokhranenie_presetov.htm","otkrytie_presetov_i_upravlenie_imi.htm","srednij_blok.htm","blok_generatora.htm","nastrojki.htm"],
+    DREX_NODE_CHILD_START: [1,2,8,8,8,8,8,8],
+    DREX_NODE_CHILD_END: [2,8,8,8,8,8,8,8],
+    DREX_MENU_TYPE: 1,
     DREX_HAS_ROOT_NODE: 0};
 
 

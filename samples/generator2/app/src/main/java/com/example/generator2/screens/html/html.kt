@@ -8,7 +8,7 @@ import com.google.accompanist.web.rememberWebViewState
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun Html() {
-    val state = rememberWebViewState("file:///android_asset/html/index.htm")
+    val state = rememberWebViewState("file:///android_asset/html/_.htm")
     WebView(state, onCreated = { it.settings.javaScriptEnabled = true })
 }
 

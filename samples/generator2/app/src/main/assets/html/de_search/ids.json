@@ -1,8 +1,0 @@
-{
-	"1": ["1. Основной экран", "osnovnoj_ehkran.htm", []],
-	"2": ["1.1. Нижний бар", "nizhnij_bar.htm", [1]],
-	"3": ["1.2. Сохранение пресетов", "sokhranenie_presetov.htm", [1]],
-	"4": ["1.3. Открытие пресетов и управление ими", "otkrytie_presetov_i_upravlenie_imi.htm", [1]],
-	"5": ["1.4. Средний блок", "srednij_blok.htm", [1]],
-	"6": ["1.5. Блок генератора", "blok_generatora.htm", [1]]
-}

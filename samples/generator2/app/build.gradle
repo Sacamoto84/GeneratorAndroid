@@ -47,8 +47,8 @@ android {
         applicationId "com.example.generator2"
         minSdk 23
         targetSdk 33
-        versionCode 2005
-        versionName "2.0.0.5"
+        versionCode 2006
+        versionName "2.0.0.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

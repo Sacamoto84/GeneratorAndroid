@@ -84,9 +84,6 @@ font-weight:normal;
 img.de_780D01ADE8
 {
 margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px;}
-img.de_D457E58A2E
-{
-margin-top: 0px; margin-right: 8px; margin-bottom: 8px; margin-left: 8px;}
 span.de_B261420348
 {
 	font-size: 14pt;
@@ -183,6 +180,42 @@ span.de_F010B72055
 	counter-increment: list-counter-4;
 }
 .list-counter-4 > div > div[class='list-marker-chm'] {
+	display: inline-block;
+	text-align: left;
+	zoom: 1;
+	padding: 0;
+	margin: 0;
+	*display: inline;
+}
+.list-counter-5 > div > * {
+	text-indent: 0px;}
+.list-counter-5 > div > div[class='list-marker']:before {
+	display: inline-block;
+	text-align: left;
+	padding: 0;
+	margin: 0;
+	content: '' counter(list-counter-5, disc) '\00a0';
+	counter-increment: list-counter-5;
+}
+.list-counter-5 > div > div[class='list-marker-chm'] {
+	display: inline-block;
+	text-align: left;
+	zoom: 1;
+	padding: 0;
+	margin: 0;
+	*display: inline;
+}
+.list-counter-6 > div > * {
+	text-indent: 0px;}
+.list-counter-6 > div > div[class='list-marker']:before {
+	display: inline-block;
+	text-align: left;
+	padding: 0;
+	margin: 0;
+	content: '' counter(list-counter-6, disc) '\00a0';
+	counter-increment: list-counter-6;
+}
+.list-counter-6 > div > div[class='list-marker-chm'] {
 	display: inline-block;
 	text-align: left;
 	zoom: 1;
