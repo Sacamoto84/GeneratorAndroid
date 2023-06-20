@@ -61,9 +61,10 @@ fun DialogPresets(vm: presetsVM = hiltViewModel()) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 32.dp, end = 32.dp, top = 32.dp, bottom = 32.dp),
-        shape = RoundedCornerShape(size = 10.dp),
-        color = Color.White
+            //.padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
+        ,
+        shape = RoundedCornerShape(size = 8.dp),
+        color = Color(0xFFF8F8F8)
     ) {
 
 
@@ -110,7 +111,7 @@ private fun Content(vm: presetsVM) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(end = 4.dp)
+            .padding(start = 8.dp, end = 8.dp)
             .scrollbar(
                 count = count,
                 state = state,
@@ -124,15 +125,35 @@ private fun Content(vm: presetsVM) {
     )
     {
 
+        item {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+            )
+        }
+
+
+
+
         itemsIndexed(Presets.presetList)
         { index, item ->
 
-            Row(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+                    .background(Color(0xFFF0F0F0))
+                    .border(1.dp, Color(0xFFE0E0E0), shape = RoundedCornerShape(8.dp))
+
+
+            ) {
                 Text(
                     modifier = Modifier
-                        .fillMaxWidth().weight(1f)
-                        .padding(start = 4.dp, top = 4.dp, bottom = 4.dp)
-                        .offset(x=0.dp, y = 6.dp)
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(start = 8.dp, top = 4.dp, bottom = 4.dp)
+                        .offset(x = 0.dp, y = 8.dp)
                         //.border(1.dp, Color.Black)
                         .combinedClickable(
                             onClick = {
@@ -141,7 +162,7 @@ private fun Content(vm: presetsVM) {
                                 //Presets.isOpenDialogDeleteRenameName = item
                                 //Presets.isOpenDialogDeleteRename.value = true
                             }),
-                    text = "$index $item", fontSize = 24.sp, fontWeight = FontWeight.Bold,
+                    text = "$index $item", fontSize = 22.sp, fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily(Font(R.font.neomatrixcode))
                 )
 
@@ -152,7 +173,8 @@ private fun Content(vm: presetsVM) {
                     Presets.isOpenDialogRename.value = true
 
                 }) {
-                    Icon(painter = painterResource(R.drawable.edit), contentDescription = null,
+                    Icon(
+                        painter = painterResource(R.drawable.edit), contentDescription = null,
                         modifier = Modifier
                         //.size(36.dp),
                         ,
@@ -166,10 +188,11 @@ private fun Content(vm: presetsVM) {
                     Presets.isOpenDialogDelete.value = true
 
                 }) {
-                    Icon(painter = painterResource(R.drawable.delete), contentDescription = null,
+                    Icon(
+                        painter = painterResource(R.drawable.delete), contentDescription = null,
                         modifier = Modifier
-                            //.size(36.dp),
-                                ,
+                        //.size(36.dp),
+                        ,
                         tint = Color.Black
                     )
                 }
@@ -177,12 +200,13 @@ private fun Content(vm: presetsVM) {
             }
 
 
-
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .padding(start = 4.dp)
-                .background(Color.LightGray))
+//            Spacer(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(1.dp)
+//                    .padding(start = 4.dp)
+//                    .background(Color.LightGray)
+//            )
 
 
         }

@@ -53,6 +53,7 @@ private fun EditConfig(
 @Composable
 fun ConfigConstrain(vm: VMConfig) {
 
+    Config_header("Ограничение частот")
 
     EditConfig("Минимальная частота несущей", LiveConstrain.minCR, vm)
     EditConfig("Максимальная частота несущей", LiveConstrain.maxCR, vm)
