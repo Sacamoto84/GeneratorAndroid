@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
         val s = mmkv.m.actualSize()
         super.onPause()
         println("...................onPause $s")
-        exitProcess(0)
+        //exitProcess(0)
     }
 
     @SuppressLint("CoroutineCreationDuringComposition")

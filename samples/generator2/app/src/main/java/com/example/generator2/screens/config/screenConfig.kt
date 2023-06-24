@@ -30,7 +30,6 @@ val modifierGreenButton = Modifier
     .fillMaxWidth()
     .height(40.dp)
 
-@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun ScreenConfig(
@@ -38,7 +37,6 @@ fun ScreenConfig(
 ) {
 
     //Выводится информация по бекап файлу
-    var backupMessage by remember { mutableStateOf("1") }
 
     val focusManager = LocalFocusManager.current
 

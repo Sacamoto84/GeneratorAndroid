@@ -18,9 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.model.LiveData
-import com.example.generator2.model.m4recompose
 import com.example.generator2.presets.Presets
-import com.example.generator2.presets.ui.DialogPresets
 import com.example.generator2.presets.ui.DialogPresetsNewFile
 import com.example.generator2.screens.mainscreen4.card.CardCard
 import com.example.generator2.screens.mainscreen4.card.CardCommander
@@ -38,6 +36,8 @@ import timber.log.Timber
 fun Mainsreen4(
     vm: VMMain4 = hiltViewModel()
 ) {
+
+    //val vm = hiltViewModel<VMMain4>()
 
     Timber.e("mainsreen4")
 

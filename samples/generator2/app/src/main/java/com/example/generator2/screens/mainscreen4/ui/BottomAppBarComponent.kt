@@ -5,6 +5,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Icon
@@ -160,22 +161,22 @@ fun M4BottomAppBarComponent(
 //            Icon(painter = painterResource(R.drawable.editor), contentDescription = null)
 //        }
 
-        Spacer(modifier = Modifier.weight(0.2f))
+        Spacer(modifier = Modifier.width(8.dp))
 
-        val context = LocalContext.current
-        IconButton(onClick = {
-            //global.hub.backup.json.saveJsonConfig()
-            //Puffer().saveConfig()
-            //exitProcess(0)
-
-            val intent = Intent(Intent.ACTION_MAIN)
-            intent.addCategory(Intent.CATEGORY_HOME)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(context, intent, null)
-
-        }) {
-            Icon(painter = painterResource(R.drawable.close4), contentDescription = null)
-        }
+//        val context = LocalContext.current
+//        IconButton(onClick = {
+//            //global.hub.backup.json.saveJsonConfig()
+//            //Puffer().saveConfig()
+//            //exitProcess(0)
+//
+//            val intent = Intent(Intent.ACTION_MAIN)
+//            intent.addCategory(Intent.CATEGORY_HOME)
+//            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//            startActivity(context, intent, null)
+//
+//        }) {
+//            Icon(painter = painterResource(R.drawable.close4), contentDescription = null)
+//        }
 
         //Spacer(modifier = Modifier.weight(0.1f))
 
