@@ -68,7 +68,7 @@ typedef struct {
     uint32_t timeImpPause;      //Ширина паузы
 
 
-
+    uint32_t impulse50StartFireTime; //Время старта когда произошел Fire
 
 
 } _structure_ch;
@@ -89,8 +89,8 @@ extern void resetAllPhase();
 extern bool enL;
 extern bool enR;
 
-extern float parameterFloat0;
-extern float parameterFloat1;
+extern float parameterFloat0; //50 Импульс CH1 время действия импульса 1 сек
+extern float parameterFloat1; //50 Импульс CH1 время действия импульса 1 сек
 extern float parameterFloat2;
 extern float parameterFloat3;
 extern float parameterFloat4;

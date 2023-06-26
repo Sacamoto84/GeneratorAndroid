@@ -162,3 +162,9 @@
 14	1570	709512663	CMakeFiles/app.dir/jni_bridge.cpp.o	7618060e081e37ac
 18	1789	709512664	CMakeFiles/app.dir/HelloOboeEngine.cpp.o	f7ce0dd02c3582b3
 1789	1981	709512664	D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/build/intermediates/cxx/Debug/232g6p3e/obj/arm64-v8a/libapp.so	cdb7c718879d79d9
+36	1821	709514520	CMakeFiles/app.dir/generator.cpp.o	c540b816ddcabeab
+15	1300	709514603	CMakeFiles/app.dir/jni_bridge2.cpp.o	f66d33f183e4f29d
+11	1303	709514603	CMakeFiles/app.dir/jni_bridgeImpulse.cpp.o	7d7920c3ccbfb0b8
+8	1372	709514603	CMakeFiles/app.dir/jni_bridge.cpp.o	7618060e081e37ac
+17	1556	709514603	CMakeFiles/app.dir/HelloOboeEngine.cpp.o	f7ce0dd02c3582b3
+1556	1693	709514603	D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/build/intermediates/cxx/Debug/232g6p3e/obj/arm64-v8a/libapp.so	cdb7c718879d79d9

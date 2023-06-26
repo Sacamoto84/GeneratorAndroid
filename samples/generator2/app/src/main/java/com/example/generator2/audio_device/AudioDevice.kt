@@ -221,6 +221,24 @@ class AudioDevice(private var context: Context, var playbackEngine: PlaybackEngi
         playbackEngine.setImpulsePauseTime(0, obj.impulse0timeImpPause.value)
         playbackEngine.setImpulsePauseTime(1, obj.impulse1timeImpPause.value)
 
+        playbackEngine.setParameterFloat(0, obj.parameterFloat0.value)
+        playbackEngine.setParameterFloat(1, obj.parameterFloat1.value)
+        playbackEngine.setParameterFloat(2, obj.parameterFloat2.value)
+        playbackEngine.setParameterFloat(3, obj.parameterFloat3.value)
+        playbackEngine.setParameterFloat(4, obj.parameterFloat4.value)
+        playbackEngine.setParameterFloat(5, obj.parameterFloat5.value)
+        playbackEngine.setParameterFloat(6, obj.parameterFloat6.value)
+        playbackEngine.setParameterFloat(7, obj.parameterFloat7.value)
+
+        playbackEngine.setParameterInt(0, obj.parameterInt0.value)
+        playbackEngine.setParameterInt(1, obj.parameterInt1.value)
+        playbackEngine.setParameterInt(2, obj.parameterInt2.value)
+        playbackEngine.setParameterInt(3, obj.parameterInt3.value)
+        playbackEngine.setParameterInt(4, obj.parameterInt4.value)
+        playbackEngine.setParameterInt(5, obj.parameterInt5.value)
+        playbackEngine.setParameterInt(6, obj.parameterInt6.value)
+        playbackEngine.setParameterInt(7, obj.parameterInt7.value)
+
         Timber.i("sendAlltoGen() End")
     }
 

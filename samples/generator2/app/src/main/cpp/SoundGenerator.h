@@ -50,7 +50,7 @@ public:
             else
                 //renderImpulseChanel(&CH2, numFrames);
 
-            renderImpulseSine50Chanel(&CH2, numFrames);
+                renderImpulseSine50Chanel(&CH2, numFrames);
 
             //Нормальный режим
             if (!shuffle)
@@ -101,7 +101,7 @@ public:
             }
         }
 
-        std::vector<float> data (audioData, audioData +  numFrames );
+        std::vector<float> data(audioData, audioData + numFrames);
         send(data);
 
     }
@@ -124,7 +124,7 @@ public:
                 if ((deltaTime >= 0) && (deltaTime < timeImp))
                     O = 1.0F;
 
-                if ((deltaTime >= timeImp) && (deltaTime < timeImp+timeImpPause))
+                if ((deltaTime >= timeImp) && (deltaTime < timeImp + timeImpPause))
                     O = 0;
 
                 if ((deltaTime >= timeImp + timeImpPause) &&
@@ -157,14 +157,26 @@ public:
 //    };
 
 
+
+
+
     //Импульсный режим Sine 50Hz
-    void renderImpulseSine50Chanel(_structure_ch *CH, int numFrames)
-    {
+    void renderImpulseSine50Chanel(_structure_ch *CH, int numFrames) {
+
         float O;
+
+        int valueFr = constrain(parameterInt0, 1, 50); //Частота импульсов
+        float valueTimeImp = constrain(parameterFloat0, 0.5F, 5.0F); //Время импульсов
 
         for (int i = 0; i < numFrames; i++) {
 
-            if (CH->impulseGlobalTime % 4800 == 0)
+            if (parameterInt2 == 1) {
+                parameterInt2 = 0;
+                CH->impulse50StartFireTime = CH->impulseGlobalTime;
+            }
+
+            if ((CH->impulseGlobalTime % (int) (48000 / (valueFr)) == 0) &&
+                ((CH->impulseGlobalTime - CH->impulse50StartFireTime) <= (int)(valueTimeImp * 48000.0F)))
                 CH->impulseStartTime = CH->impulseGlobalTime;
 
             if (CH->CH_EN) {
@@ -172,12 +184,11 @@ public:
                 int deltaTime = CH->impulseGlobalTime - CH->impulseStartTime;
 
                 if (deltaTime < 960)
-                    O = CH->Volume * (float)(SINE_960[deltaTime] - 2048)/2048.0F;
+                    O = CH->Volume * (float) (SINE_960[deltaTime] - 2048) / 2048.0F;
                 else
                     O = 0;
 
-            }
-            else
+            } else
                 O = 0;
 
             CH->mBuffer[i] = O;
@@ -218,17 +229,17 @@ public:
                     CH->phase_accumulator_am = CH->phase_accumulator_am + CH->rAM;
 
                     O = CH->Volume
-                        * (float) (CH->buffer_carrier[CH->phase_accumulator_carrier >> 22] - 2048.0F) / 2048.0F  //-1..1
+                        * (float) (CH->buffer_carrier[CH->phase_accumulator_carrier >> 22] -
+                                   2048.0F) / 2048.0F  //-1..1
 
 
 
 
                         //* ((float) CH->buffer_am[CH->phase_accumulator_am >> 22] / 4095.0F); //0..1
 
-                         * map (  ((float) CH->buffer_am[CH->phase_accumulator_am >> 22] / 4095.0F) , 0.0F, 1.0F, 1.0F - CH->AmDepth, 1.0F);
-
-
-
+                        *
+                        map(((float) CH->buffer_am[CH->phase_accumulator_am >> 22] / 4095.0F), 0.0F,
+                            1.0F, 1.0F - CH->AmDepth, 1.0F);
 
 
                 } else
@@ -310,6 +321,17 @@ public:
 
     float map(float x, long in_min, float in_max, float out_min, float out_max) {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    }
+
+
+    template<class T>
+    const T &constrain(const T &x, const T &a, const T &b) {
+        if (x < a) {
+            return a;
+        } else if (b < x) {
+            return b;
+        } else
+            return x;
     }
 
 };

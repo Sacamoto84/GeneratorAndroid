@@ -89,8 +89,8 @@ fun presetsReadFile(name: String, path : String = AppPath().presets ): dataLiveD
     data.impulse1timeImpPause.value = satchel.getOrDefault("impulse1timeImpPause", 9)
 
 
-    data.parameterFloat0.value = satchel.getOrDefault("parameterFloat0", 0.0F)
-    data.parameterFloat1.value = satchel.getOrDefault("parameterFloat1", 0.0F)
+    data.parameterFloat0.value = satchel.getOrDefault("parameterFloat0", 1.0F) //50 Импульс CH1 время действия импульса 1 сек
+    data.parameterFloat1.value = satchel.getOrDefault("parameterFloat1", 1.0F) //50 Импульс CH2 время действия импульса 1 сек
     data.parameterFloat2.value = satchel.getOrDefault("parameterFloat2", 0.0F)
     data.parameterFloat3.value = satchel.getOrDefault("parameterFloat3", 0.0F)
     data.parameterFloat4.value = satchel.getOrDefault("parameterFloat4", 0.0F)
@@ -98,8 +98,8 @@ fun presetsReadFile(name: String, path : String = AppPath().presets ): dataLiveD
     data.parameterFloat6.value = satchel.getOrDefault("parameterFloat6", 0.0F)
     data.parameterFloat7.value = satchel.getOrDefault("parameterFloat7", 0.0F)
 
-    data.parameterInt0.value = satchel.getOrDefault("parameterInt0", 0)
-    data.parameterInt1.value = satchel.getOrDefault("parameterInt1", 0)
+    data.parameterInt0.value = satchel.getOrDefault("parameterInt0", 1) //PR PS PC 50 Импульс CH1 Частота от 1Гц до 50Гц
+    data.parameterInt1.value = satchel.getOrDefault("parameterInt1", 1) //PR PS PC 50 Импульс CH2 Частота от 1Гц до 50Гц
     data.parameterInt2.value = satchel.getOrDefault("parameterInt2", 0)
     data.parameterInt3.value = satchel.getOrDefault("parameterInt3", 0)
     data.parameterInt4.value = satchel.getOrDefault("parameterInt4", 0)
