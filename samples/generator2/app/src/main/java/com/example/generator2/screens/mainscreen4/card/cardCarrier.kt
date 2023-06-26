@@ -149,6 +149,9 @@ fun CardCarrier(str: String = "CH0") {
 
 
                 val items = listOf(
+                    "20",
+                    "50",
+                    "100",
                     "600",
                     "800",
                     "1000",

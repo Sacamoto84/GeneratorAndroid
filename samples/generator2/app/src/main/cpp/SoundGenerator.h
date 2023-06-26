@@ -41,12 +41,16 @@ public:
             if (!CH1.impulseMode)
                 renderChanel(&CH1, numFrames);
             else
-                renderImpulseChanel(&CH1, numFrames);
+                //renderImpulseChanel(&CH1, numFrames);
+                renderImpulseSine50Chanel(&CH1, numFrames);
+
 
             if (!CH2.impulseMode)
                 renderChanel(&CH2, numFrames);
             else
-                renderImpulseChanel(&CH2, numFrames);
+                //renderImpulseChanel(&CH2, numFrames);
+
+            renderImpulseSine50Chanel(&CH2, numFrames);
 
             //Нормальный режим
             if (!shuffle)
@@ -104,6 +108,7 @@ public:
 
     //std::unique_ptr<float[]> mBuffer = std::make_unique<float[]>(4096);
 
+    //Импульсный режим
     void renderImpulseChanel(_structure_ch *CH, int numFrames) {
 
         float O = 0.0F;
@@ -139,6 +144,55 @@ public:
 
             if (CH->impulseGlobalTime % 4800 == 0)
                 CH->impulseStartTime = CH->impulseGlobalTime;
+
+        }
+
+    }
+
+//    enum class State
+//    {
+//        NotStarted,
+//        Working,
+//        Shutdown
+//    };
+
+
+    //Импульсный режим Sine 50Hz
+    void renderImpulseSine50Chanel(_structure_ch *CH, int numFrames)
+    {
+        float O = 0.0F;
+
+        for (int i = 0; i < numFrames; i++) {
+
+            if (CH->impulseGlobalTime % 4800 == 0)
+                CH->impulseStartTime = CH->impulseGlobalTime;
+
+            if (CH->CH_EN) {
+
+                int deltaTime = CH->impulseGlobalTime - CH->impulseStartTime;
+
+
+                if (deltaTime < 960)
+                {
+
+                    O = CH->Volume
+                        * (float)(SINE_960[deltaTime] - 2048)/2048.0F;
+                    //O = O;
+                }
+                else
+                {
+                    O = 0;
+                }
+
+
+            } else
+                O = 0;
+
+            CH->mBuffer[i] = O;
+
+            CH->impulseGlobalTime++;
+
+
 
         }
 
