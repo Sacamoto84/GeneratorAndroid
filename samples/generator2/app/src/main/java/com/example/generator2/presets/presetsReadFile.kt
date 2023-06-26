@@ -9,11 +9,11 @@ import com.example.generator2.AppPath
 import com.example.generator2.model.dataLiveData
 import java.io.File
 
-fun presetsReadFile(name: String): dataLiveData {
+fun presetsReadFile(name: String, path : String = AppPath().presets ): dataLiveData {
 
     val satchel =
         Satchel.with(
-            storer = FileSatchelStorer(File(AppPath().presets, "${name}.txt")),
+            storer = FileSatchelStorer(File(path, "${name}.txt")),
             encrypter = BypassSatchelEncrypter,
             serializer = RawSatchelSerializer
         )
@@ -88,6 +88,24 @@ fun presetsReadFile(name: String): dataLiveData {
     data.impulse0timeImpPause.value = satchel.getOrDefault("impulse0timeImpPause", 9)
     data.impulse1timeImpPause.value = satchel.getOrDefault("impulse1timeImpPause", 9)
 
+
+    data.parameterFloat0.value = satchel.getOrDefault("parameterFloat0", 0.0F)
+    data.parameterFloat1.value = satchel.getOrDefault("parameterFloat1", 0.0F)
+    data.parameterFloat2.value = satchel.getOrDefault("parameterFloat2", 0.0F)
+    data.parameterFloat3.value = satchel.getOrDefault("parameterFloat3", 0.0F)
+    data.parameterFloat4.value = satchel.getOrDefault("parameterFloat4", 0.0F)
+    data.parameterFloat5.value = satchel.getOrDefault("parameterFloat5", 0.0F)
+    data.parameterFloat6.value = satchel.getOrDefault("parameterFloat6", 0.0F)
+    data.parameterFloat7.value = satchel.getOrDefault("parameterFloat7", 0.0F)
+
+    data.parameterInt0.value = satchel.getOrDefault("parameterInt0", 0)
+    data.parameterInt1.value = satchel.getOrDefault("parameterInt1", 0)
+    data.parameterInt2.value = satchel.getOrDefault("parameterInt2", 0)
+    data.parameterInt3.value = satchel.getOrDefault("parameterInt3", 0)
+    data.parameterInt4.value = satchel.getOrDefault("parameterInt4", 0)
+    data.parameterInt5.value = satchel.getOrDefault("parameterInt5", 0)
+    data.parameterInt6.value = satchel.getOrDefault("parameterInt6", 0)
+    data.parameterInt7.value = satchel.getOrDefault("parameterInt7", 0)
 
 
     return data

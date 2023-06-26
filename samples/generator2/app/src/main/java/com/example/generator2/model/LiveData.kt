@@ -1,7 +1,6 @@
 package com.example.generator2.model
 
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.lifecycle.LiveData
 import com.example.generator2.backup.MMKv
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.io.File
@@ -70,7 +69,23 @@ data class dataLiveData(
     //Имя текущего пресета
     val presetsName: MutableStateFlow<String> = MutableStateFlow(""),         //PR PS(name) PC
 
+    val parameterFloat0: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
+    val parameterFloat1: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
+    val parameterFloat2: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
+    val parameterFloat3: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
+    val parameterFloat4: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
+    val parameterFloat5: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
+    val parameterFloat6: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
+    val parameterFloat7: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
 
+    val parameterInt0: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
+    val parameterInt1: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
+    val parameterInt2: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
+    val parameterInt3: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
+    val parameterInt4: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
+    val parameterInt5: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
+    val parameterInt6: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
+    val parameterInt7: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
 
 )
 

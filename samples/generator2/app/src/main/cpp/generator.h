@@ -15,6 +15,8 @@
 
 typedef struct {
 
+    int ch; //Номер канала 1 2
+
     bool CH_EN;
     int AM_EN;
     int FM_EN;
@@ -68,6 +70,7 @@ typedef struct {
 
 
 
+
 } _structure_ch;
 
 extern _structure_ch CH1;
@@ -85,5 +88,25 @@ extern void resetAllPhase();
 
 extern bool enL;
 extern bool enR;
+
+extern float parameterFloat0;
+extern float parameterFloat1;
+extern float parameterFloat2;
+extern float parameterFloat3;
+extern float parameterFloat4;
+extern float parameterFloat5;
+extern float parameterFloat6;
+extern float parameterFloat7;
+
+extern int parameterInt0;
+extern int parameterInt1;
+extern int parameterInt2;
+extern int parameterInt3;
+extern int parameterInt4;
+extern int parameterInt5;
+extern int parameterInt6;
+extern int parameterInt7;
+
+
 
 #endif

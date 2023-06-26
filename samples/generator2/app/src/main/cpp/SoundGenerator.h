@@ -160,7 +160,7 @@ public:
     //Импульсный режим Sine 50Hz
     void renderImpulseSine50Chanel(_structure_ch *CH, int numFrames)
     {
-        float O = 0.0F;
+        float O;
 
         for (int i = 0; i < numFrames; i++) {
 
@@ -171,28 +171,18 @@ public:
 
                 int deltaTime = CH->impulseGlobalTime - CH->impulseStartTime;
 
-
                 if (deltaTime < 960)
-                {
-
-                    O = CH->Volume
-                        * (float)(SINE_960[deltaTime] - 2048)/2048.0F;
-                    //O = O;
-                }
+                    O = CH->Volume * (float)(SINE_960[deltaTime] - 2048)/2048.0F;
                 else
-                {
                     O = 0;
-                }
 
-
-            } else
+            }
+            else
                 O = 0;
 
             CH->mBuffer[i] = O;
 
             CH->impulseGlobalTime++;
-
-
 
         }
 
@@ -287,6 +277,9 @@ public:
 
         enL = true;
         enR = true;
+
+        CH1.ch = 1;
+        CH2.ch = 2;
 
     }
 

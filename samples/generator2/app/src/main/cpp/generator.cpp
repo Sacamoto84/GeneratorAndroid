@@ -17,6 +17,28 @@ bool enR = true;
 void setToMono() { Mono = true; } // Перевод в режим моно
 void setToStereo() { Mono = false; } // Перевод в режим стерео
 
+float parameterFloat0 = 0.0f;
+float parameterFloat1 = 0.0f;
+float parameterFloat2 = 0.0f;
+float parameterFloat3 = 0.0f;
+float parameterFloat4 = 0.0f;
+float parameterFloat5 = 0.0f;
+float parameterFloat6 = 0.0f;
+float parameterFloat7 = 0.0f;
+
+int parameterInt0 = 0;
+int parameterInt1 = 0;
+int parameterInt2 = 0;
+int parameterInt3 = 0;
+int parameterInt4 = 0;
+int parameterInt5 = 0;
+int parameterInt6 = 0;
+int parameterInt7 = 0;
+
+
+
+
+
 void resetAllPhase() {
     CH1.rC = 0;
     CH2.rC = 0;

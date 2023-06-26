@@ -2,6 +2,7 @@ package com.example.generator2.presets
 
 import cafe.adriel.satchel.Satchel
 import cafe.adriel.satchel.encrypter.bypass.BypassSatchelEncrypter
+import cafe.adriel.satchel.ktx.getOrDefault
 import cafe.adriel.satchel.serializer.raw.RawSatchelSerializer
 import cafe.adriel.satchel.storer.file.FileSatchelStorer
 import com.example.generator2.AppPath
@@ -12,11 +13,11 @@ import java.io.File
 /**
  * Создание пресета по имени
  */
-fun presetsSaveFile(name: String) {
+fun presetsSaveFile(name: String, path: String = AppPath().presets) {
 
     val satchel =
         Satchel.with(
-            storer = FileSatchelStorer(File(AppPath().presets, "${name}.txt")),
+            storer = FileSatchelStorer(File(path, "${name}.txt")),
             encrypter = BypassSatchelEncrypter,
             serializer = RawSatchelSerializer
         )
@@ -24,7 +25,9 @@ fun presetsSaveFile(name: String) {
     //Количество звезд в перссете, для сортировки
     satchel["star"] = LiveData.star.value
 
-    LiveData.presetsName.value = name
+    if (name != "default")
+        LiveData.presetsName.value = name
+
     satchel["presetsName"] = name
 
     satchel["ch1_EN"] = LiveData.ch1_EN.value
@@ -85,6 +88,25 @@ fun presetsSaveFile(name: String) {
     // Пауза в тиках
     satchel["impulse0timeImpPause"] = LiveData.impulse0timeImpPause.value
     satchel["impulse1timeImpPause"] = LiveData.impulse1timeImpPause.value
+
+
+    satchel["parameterFloat0"] = LiveData.parameterFloat0.value
+    satchel["parameterFloat1"] = LiveData.parameterFloat1.value
+    satchel["parameterFloat2"] = LiveData.parameterFloat2.value
+    satchel["parameterFloat3"] = LiveData.parameterFloat3.value
+    satchel["parameterFloat4"] = LiveData.parameterFloat4.value
+    satchel["parameterFloat5"] = LiveData.parameterFloat5.value
+    satchel["parameterFloat6"] = LiveData.parameterFloat6.value
+    satchel["parameterFloat7"] = LiveData.parameterFloat7.value
+
+    satchel["parameterInt0"] = LiveData.parameterInt0.value
+    satchel["parameterInt1"] = LiveData.parameterInt1.value
+    satchel["parameterInt2"] = LiveData.parameterInt2.value
+    satchel["parameterInt3"] = LiveData.parameterInt3.value
+    satchel["parameterInt4"] = LiveData.parameterInt4.value
+    satchel["parameterInt5"] = LiveData.parameterInt5.value
+    satchel["parameterInt6"] = LiveData.parameterInt6.value
+    satchel["parameterInt7"] = LiveData.parameterInt7.value
 
     toast.show("Пресет $name сохранен")
 

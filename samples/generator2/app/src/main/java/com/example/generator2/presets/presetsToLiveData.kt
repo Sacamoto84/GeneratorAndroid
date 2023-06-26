@@ -67,15 +67,22 @@ fun presetsToLiveData(data: dataLiveData) {
     //Количество звезд
     LiveData.star.value = data.star.value
 
+    LiveData.parameterFloat0.value =data.parameterFloat0.value
+    LiveData.parameterFloat1.value =data.parameterFloat1.value
+    LiveData.parameterFloat2.value =data.parameterFloat2.value
+    LiveData.parameterFloat3.value =data.parameterFloat3.value
+    LiveData.parameterFloat4.value =data.parameterFloat4.value
+    LiveData.parameterFloat5.value =data.parameterFloat5.value
+    LiveData.parameterFloat6.value =data.parameterFloat6.value
+    LiveData.parameterFloat7.value =data.parameterFloat7.value
 
-
-
-
-
-
-
-
-
-
+    LiveData.parameterInt0.value = data.parameterInt0.value
+    LiveData.parameterInt1.value = data.parameterInt1.value
+    LiveData.parameterInt2.value = data.parameterInt2.value
+    LiveData.parameterInt3.value = data.parameterInt3.value
+    LiveData.parameterInt4.value = data.parameterInt4.value
+    LiveData.parameterInt5.value = data.parameterInt5.value
+    LiveData.parameterInt6.value = data.parameterInt6.value
+    LiveData.parameterInt7.value = data.parameterInt7.value
 
 }

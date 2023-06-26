@@ -7,14 +7,14 @@ import com.example.generator2.model.itemlistAM
 import com.example.generator2.model.itemlistCarrier
 import com.example.generator2.model.itemlistFM
 import com.example.generator2.model.mmkv
+import com.example.generator2.presets.presetsReadFile
+import com.example.generator2.presets.presetsToLiveData
 import com.example.generator2.util.Utils
 import com.example.generator2.util.toast
 import flipagram.assetcopylib.AssetCopier
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
@@ -66,9 +66,11 @@ fun initialization(context: Context, hub: Hub) {
             observe(hub)
 
             mmkv.readConstrain()
-            mmkv.readConfig()
-            mmkv.readVolume()
-            mmkv.readImpulse()
+
+            presetsToLiveData(presetsReadFile("default", path = AppPath().config))
+            hub.audioDevice.sendAlltoGen()
+
+            //mmkv.readVolume()
 
             isInitialized = true
 

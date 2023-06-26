@@ -77,7 +77,23 @@ fun observe(hub: Hub) {
     GlobalScope.launch(dispatchers) { LiveData.impulse0timeImpPause.collect {hub.playbackEngine.setImpulsePauseTime(0, it) } }
     GlobalScope.launch(dispatchers) { LiveData.impulse1timeImpPause.collect {hub.playbackEngine.setImpulsePauseTime(1, it) } }
 
+    GlobalScope.launch(dispatchers) { LiveData.parameterFloat0.collect {hub.playbackEngine.setParameterFloat(0, it) } }
+    GlobalScope.launch(dispatchers) { LiveData.parameterFloat1.collect {hub.playbackEngine.setParameterFloat(1, it) } }
+    GlobalScope.launch(dispatchers) { LiveData.parameterFloat2.collect {hub.playbackEngine.setParameterFloat(2, it) } }
+    GlobalScope.launch(dispatchers) { LiveData.parameterFloat3.collect {hub.playbackEngine.setParameterFloat(3, it) } }
+    GlobalScope.launch(dispatchers) { LiveData.parameterFloat4.collect {hub.playbackEngine.setParameterFloat(4, it) } }
+    GlobalScope.launch(dispatchers) { LiveData.parameterFloat5.collect {hub.playbackEngine.setParameterFloat(5, it) } }
+    GlobalScope.launch(dispatchers) { LiveData.parameterFloat6.collect {hub.playbackEngine.setParameterFloat(6, it) } }
+    GlobalScope.launch(dispatchers) { LiveData.parameterFloat7.collect {hub.playbackEngine.setParameterFloat(7, it) } }
 
+    GlobalScope.launch(dispatchers) { LiveData.parameterInt0.collect {hub.playbackEngine.setParameterInt(0, it) } }
+    GlobalScope.launch(dispatchers) { LiveData.parameterInt1.collect {hub.playbackEngine.setParameterInt(1, it) } }
+    GlobalScope.launch(dispatchers) { LiveData.parameterInt2.collect {hub.playbackEngine.setParameterInt(2, it) } }
+    GlobalScope.launch(dispatchers) { LiveData.parameterInt3.collect {hub.playbackEngine.setParameterInt(3, it) } }
+    GlobalScope.launch(dispatchers) { LiveData.parameterInt4.collect {hub.playbackEngine.setParameterInt(4, it) } }
+    GlobalScope.launch(dispatchers) { LiveData.parameterInt5.collect {hub.playbackEngine.setParameterInt(5, it) } }
+    GlobalScope.launch(dispatchers) { LiveData.parameterInt6.collect {hub.playbackEngine.setParameterInt(6, it) } }
+    GlobalScope.launch(dispatchers) { LiveData.parameterInt7.collect {hub.playbackEngine.setParameterInt(7, it) } }
 
     Timber.i("observe()-------------------------------------------------------------- End")
 

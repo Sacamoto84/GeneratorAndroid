@@ -32,12 +32,12 @@ class VMMain4 @Inject constructor(
         consoleLog.println("")
         //observe()
 
-        print("unit5Load()..")
+        //print("unit5Load()..")
 
-        hub.script.unit5Load() //Загрузить тест
+        //hub.script.unit5Load() //Загрузить тест
         println("OK")
         print("launchScriptScope()..")
-        launchScriptScope() //Запуск скриптового потока
+        //launchScriptScope() //Запуск скриптового потока
         println("OK")
 
         while(!isInitialized)
