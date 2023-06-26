@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+samples/generator2/app/.cxx
+*.bin
+*.lock
