@@ -40,17 +40,21 @@ public:
             //stereo
             if (!CH1.impulseMode)
                 renderChanel(&CH1, numFrames);
-            else
-                //renderImpulseChanel(&CH1, numFrames);
-                renderImpulseSine50Chanel(&CH1, numFrames);
-
+            else {
+                if (parameterInt4 == 0)
+                    renderImpulseChanel(&CH1, numFrames);
+                else
+                    renderImpulseSine50Chanel(&CH1, numFrames);
+            }
 
             if (!CH2.impulseMode)
                 renderChanel(&CH2, numFrames);
-            else
-                //renderImpulseChanel(&CH2, numFrames);
-
-                renderImpulseSine50Chanel(&CH2, numFrames);
+            else {
+                if (parameterInt4 == 0)
+                    renderImpulseChanel(&CH2, numFrames);
+                else
+                    renderImpulseSine50Chanel(&CH2, numFrames);
+            }
 
             //Нормальный режим
             if (!shuffle)
@@ -165,18 +169,52 @@ public:
 
         float O;
 
-        int valueFr = constrain(parameterInt0, 1, 50); //Частота импульсов
-        float valueTimeImp = constrain(parameterFloat0, 0.5F, 5.0F); //Время импульсов
+        if (CH->ch == 0) return;
+
+        int valueFr = 1;
+        float valueTimeImp = 0.5F;
+
+        if (CH->ch == 1) {
+            valueFr = constrain(parameterInt0, 1, 50); //Частота импульсов
+            valueTimeImp = constrain(parameterFloat0, 0.5F, 5.0F); //Время импульсов
+        }
+        if (CH->ch == 2) {
+            valueFr = constrain(parameterInt1, 1, 50); //Частота импульсов
+            valueTimeImp = constrain(parameterFloat1, 0.5F, 5.0F); //Время импульсов
+        }
+
 
         for (int i = 0; i < numFrames; i++) {
 
-            if (parameterInt2 == 1) {
-                parameterInt2 = 0;
-                CH->impulse50StartFireTime = CH->impulseGlobalTime;
+            if (CH->ch == 1) {
+                parameterInt2 = 2;
+
+                if (parameterInt2 == 1) {
+                    parameterInt2 = 0;
+                    CH->impulse50StartFireTime = CH->impulseGlobalTime;
+                }
+
+                if (parameterInt2 == 2) {
+                    CH->impulse50StartFireTime = CH->impulseGlobalTime;
+                }
+            }
+
+            if (CH->ch == 2) {
+                parameterInt3 = 2;
+                if (parameterInt3 == 1) {
+                    parameterInt3 = 0;
+                    CH->impulse50StartFireTime = CH->impulseGlobalTime;
+                }
+
+                if (parameterInt3 == 2) {
+                    CH->impulse50StartFireTime = CH->impulseGlobalTime;
+                }
+
             }
 
             if ((CH->impulseGlobalTime % (int) (48000 / (valueFr)) == 0) &&
-                ((CH->impulseGlobalTime - CH->impulse50StartFireTime) <= (int)(valueTimeImp * 48000.0F)))
+                ((CH->impulseGlobalTime - CH->impulse50StartFireTime) <=
+                 (int) (valueTimeImp * 48000.0F)))
                 CH->impulseStartTime = CH->impulseGlobalTime;
 
             if (CH->CH_EN) {

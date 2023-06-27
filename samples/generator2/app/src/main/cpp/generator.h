@@ -98,12 +98,12 @@ extern float parameterFloat5;
 extern float parameterFloat6;
 extern float parameterFloat7;
 
-extern int parameterInt0;
-extern int parameterInt1;
-extern int parameterInt2;
-extern int parameterInt3;
-extern int parameterInt4;
-extern int parameterInt5;
+extern int parameterInt0; //50 Импульс CH1 Частота от 1Гц до 50Гц
+extern int parameterInt1; //50 Импульс CH2 Частота от 1Гц до 50Гц
+extern int parameterInt2; //50 Импульс CH1 1-Fire 2-Continuous
+extern int parameterInt3; //50 Импульс CH2 1-Fire 2-Continuous
+extern int parameterInt4; //Режим импульсного режима CH1, 0-обычный 1-50Гц
+extern int parameterInt5; //Режим импульсного режима CH2, 0-обычный 1-50Гц
 extern int parameterInt6;
 extern int parameterInt7;
 
