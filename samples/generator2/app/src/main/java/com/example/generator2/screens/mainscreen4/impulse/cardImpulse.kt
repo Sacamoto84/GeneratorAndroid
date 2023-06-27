@@ -221,6 +221,7 @@ private fun RightColumnsNormal(str: String = "CH0") {
             )
 
 
+
             Image(
                 painterResource(id = R.drawable.p),
                 contentDescription = "",
