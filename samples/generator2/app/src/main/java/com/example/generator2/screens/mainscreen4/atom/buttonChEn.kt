@@ -35,7 +35,7 @@ fun ButtonChEn(str: String = "CH0") {
     Box(
         modifier = Modifier
             .padding(start = 8.dp)
-            .height(24.dp)
+            .height(48.dp)
             .width(ms4SwitchWidth)
             .border(
                 2.dp,

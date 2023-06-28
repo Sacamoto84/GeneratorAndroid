@@ -52,8 +52,8 @@ void resetAllPhase() {
     CH2.phase_accumulator_am = 0;
     CH1.phase_accumulator_fm = 0;
     CH2.phase_accumulator_fm = 0;
-    CH1.impulseGlobalTime = 0;
-    CH2.impulseGlobalTime = 0;
+    CH1.impulseGlobalTime = 1000000;
+    CH2.impulseGlobalTime = 1000000;
     CH1.AmDepth = 1.0F;
     CH2.AmDepth = 1.0F;
 }

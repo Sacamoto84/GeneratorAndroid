@@ -50,7 +50,7 @@ public:
             if (!CH2.impulseMode)
                 renderChanel(&CH2, numFrames);
             else {
-                if (parameterInt4 == 0)
+                if (parameterInt5 == 0)
                     renderImpulseChanel(&CH2, numFrames);
                 else
                     renderImpulseSine50Chanel(&CH2, numFrames);
@@ -71,7 +71,15 @@ public:
 
         } else {
             //Mono
-            renderChanel(&CH1, numFrames);
+
+            if (!CH1.impulseMode)
+                renderChanel(&CH1, numFrames);
+            else {
+                if (parameterInt4 == 0)
+                    renderImpulseChanel(&CH1, numFrames);
+                else
+                    renderImpulseSine50Chanel(&CH1, numFrames);
+            }
 
             if (!Invert) {
 
@@ -187,7 +195,7 @@ public:
         for (int i = 0; i < numFrames; i++) {
 
             if (CH->ch == 1) {
-                parameterInt2 = 2;
+                //parameterInt2 = 2;
 
                 if (parameterInt2 == 1) {
                     parameterInt2 = 0;
@@ -200,7 +208,7 @@ public:
             }
 
             if (CH->ch == 2) {
-                parameterInt3 = 2;
+                //parameterInt3 = 2;
                 if (parameterInt3 == 1) {
                     parameterInt3 = 0;
                     CH->impulse50StartFireTime = CH->impulseGlobalTime;
@@ -329,6 +337,28 @@ public:
 
         CH1.ch = 1;
         CH2.ch = 2;
+
+        parameterInt0 = 0;
+        parameterInt1 = 0;
+        parameterInt2 = 0;
+        parameterInt3 = 0;
+        parameterInt4 = 0;
+        parameterInt5 = 0;
+        parameterInt6 = 0;
+        parameterInt7 = 0;
+
+        parameterFloat0 = 0.0f;
+        parameterFloat1 = 0.0f;
+        parameterFloat2 = 0.0f;
+        parameterFloat3 = 0.0f;
+        parameterFloat4 = 0.0f;
+        parameterFloat5 = 0.0f;
+        parameterFloat6 = 0.0f;
+        parameterFloat7 = 0.0f;
+
+
+        CH1.impulseGlobalTime = 10000000;
+        CH2.impulseGlobalTime = 10000000;
 
     }
 

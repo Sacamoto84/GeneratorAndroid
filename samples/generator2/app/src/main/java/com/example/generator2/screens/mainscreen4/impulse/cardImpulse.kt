@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,7 +49,11 @@ import com.example.generator2.screens.mainscreen4.atom.VolumeControl
 import com.example.generator2.screens.mainscreen4.ms4SwitchWidth
 import com.example.generator2.theme.colorGreen
 import com.example.generator2.theme.colorOrange
+import com.example.generator2.util.format
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -154,114 +159,131 @@ private fun RightColumnsNormal(str: String = "CH0") {
     val p =
         if (str == "CH0") LiveData.impulse0timeImpPause.collectAsState() else LiveData.impulse1timeImpPause.collectAsState()
 
-    /**
-     * ### Первая строка
-     */
-    Row(
-        Modifier
-            .padding(top = 8.dp)
-            .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
-    ) {
+    Column {
 
 
+        /**
+         * ### Первая строка
+         */
         Row(
             Modifier
-                .fillMaxWidth()
-                .padding(end = 8.dp), horizontalArrangement = Arrangement.End
+                .padding(top = 8.dp)
+                .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
         ) {
 
 
-            Image(
-                painterResource(id = R.drawable.w1),
-                contentDescription = "",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier.size(32.dp)
-            )
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(end = 8.dp), horizontalArrangement = Arrangement.End
+            ) {
 
-            Spacer(modifier = Modifier.width(8.dp))
-            //Text(text = "Ширина импульса", color = Color.LightGray)
 
-            ButtonIterator(
-                text = (w.value * 20.833).toInt().toString() + " us",
-                value = w.value,
-                onValueChange = {
-                    if (str == "CH0") LiveData.impulse0timeImp.value =
-                        it else LiveData.impulse1timeImp.value = it
-                },
-            )
+                Image(
+                    painterResource(id = R.drawable.w1),
+                    contentDescription = "",
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.size(32.dp)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+                //Text(text = "Ширина импульса", color = Color.LightGray)
+
+                ButtonIterator(
+                    text = (w.value * 20.833).toInt().toString() + " us",
+                    value = w.value,
+                    onValueChange = {
+                        if (str == "CH0") LiveData.impulse0timeImp.value =
+                            it else LiveData.impulse1timeImp.value = it
+                    },
+                )
+            }
+
+
         }
 
-
-    }
-
-    /**
-     * ### Вторая строка
-     */
-    Row(
-        Modifier
-            .padding(top = 8.dp)
-            .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
-    ) {
-
+        /**
+         * ### Вторая строка
+         */
         Row(
             Modifier
-                .fillMaxWidth()
-                .padding(end = 8.dp), horizontalArrangement = Arrangement.End
+                .padding(top = 8.dp)
+                .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
         ) {
 
-            val all = ((w.value * 20.833) * 2 + p.value * 20.833).toInt()
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(end = 8.dp), horizontalArrangement = Arrangement.End
+            ) {
 
-            Text(
-                text = "All $all us",
-                color = Color.LightGray,
-                fontSize = 18.sp,
-                modifier = Modifier
-                    .padding(end = 8.dp)
-                    .offset(4.dp, 0.dp),
-            )
+                val all = ((w.value * 20.833) * 2 + p.value * 20.833).toInt()
 
-
-
-
-
-
-
-
+                Text(
+                    text = "All $all us",
+                    color = Color.LightGray,
+                    fontSize = 18.sp,
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .offset(4.dp, 0.dp),
+                )
 
 
-            Image(
-                painterResource(id = R.drawable.p),
-                contentDescription = "",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier.size(32.dp)
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
 
 
-            ButtonIterator(
-                text = (p.value * 20.833).toInt().toString() + " us",
-                value = p.value,
-                onValueChange = {
-                    var v = it
-                    if (v <= 0) v = 0
-                    if (str == "CH0") LiveData.impulse0timeImpPause.value =
-                        v else LiveData.impulse1timeImpPause.value = v
 
 
-                },
-            )
+
+
+
+
+                Image(
+                    painterResource(id = R.drawable.p),
+                    contentDescription = "",
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.size(32.dp)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+
+                ButtonIterator(
+                    text = (p.value * 20.833).toInt().toString() + " us",
+                    value = p.value,
+                    onValueChange = {
+                        var v = it
+                        if (v <= 0) v = 0
+                        if (str == "CH0") LiveData.impulse0timeImpPause.value =
+                            v else LiveData.impulse1timeImpPause.value = v
+
+
+                    },
+                )
+            }
+
+
         }
 
-
     }
-
 
 }
 
 
 @Composable
 private fun RightColumns50(str: String = "CH0") {
+
+    val scope = rememberCoroutineScope()
+
+    //Частота импульсов
+    val impFr = if (str == "CH0")
+        LiveData.parameterInt0.collectAsState()
+    else
+        LiveData.parameterInt1.collectAsState()
+
+    val impTime = if (str == "CH0")
+        LiveData.parameterFloat0.collectAsState()
+    else
+        LiveData.parameterFloat1.collectAsState()
 
     Column(
         modifier = Modifier
@@ -270,20 +292,32 @@ private fun RightColumns50(str: String = "CH0") {
     ) {
 
         Text(
-            text = "Частота импульсов 1..50 Гц",
+            text = "Количество импульсов 1..50 в сек",
             color = Color.LightGray,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
 
         Text(
-            text = "50 Гц",
+            text = "${impFr.value}",
             color = Color.LightGray,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
 
-        Slider(value = 5f, onValueChange = {}, valueRange = 1f..50f)
+
+
+
+        Slider(value = impFr.value.toFloat(), onValueChange = {
+
+            if (str == "CH0")
+                LiveData.parameterInt0.value = it.toInt()
+            else
+                LiveData.parameterInt1.value = it.toInt()
+
+        }, valueRange = 1f..50f, steps = 49)
+
+
 
         Text(
             text = "Время импульса 0,5..5 Сек",
@@ -293,15 +327,37 @@ private fun RightColumns50(str: String = "CH0") {
         )
 
         Text(
-            text = "50 Гц",
+            text = impTime.value.format(1) + " Сек",
             color = Color.LightGray,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
 
-        Slider(value = 5f, onValueChange = {}, valueRange = 1f..50f)
+        Slider(value = impTime.value, onValueChange = {
 
-        Button(onClick = { /*TODO*/ }) {
+            if (str == "CH0")
+                LiveData.parameterFloat0.value = it
+            else
+                LiveData.parameterFloat1.value = it
+
+        }, valueRange = 0.5f..5f,
+            steps = 44)
+
+        Button(onClick = {
+            scope.launch(Dispatchers.IO) {
+
+                if (str == "CH0") {
+                    LiveData.parameterInt2.value = 1
+                    delay(100)
+                    LiveData.parameterInt2.value = 0
+                } else {
+                    LiveData.parameterInt3.value = 1
+                    delay(100)
+                    LiveData.parameterInt3.value = 0
+                }
+
+            }
+        }) {
             Text(text = "Fire")
         }
 
