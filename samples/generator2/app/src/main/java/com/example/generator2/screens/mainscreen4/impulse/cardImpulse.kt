@@ -226,7 +226,7 @@ private fun RightColumnsNormal(str: String = "CH0") {
 
 
 
-            
+
 
 
             Image(

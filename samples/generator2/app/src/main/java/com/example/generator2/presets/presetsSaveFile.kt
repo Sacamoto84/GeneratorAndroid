@@ -108,6 +108,7 @@ fun presetsSaveFile(name: String, path: String = AppPath().presets) {
     satchel["parameterInt6"] = LiveData.parameterInt6.value
     satchel["parameterInt7"] = LiveData.parameterInt7.value
 
-    toast.show("Пресет $name сохранен")
+    if (name != "default")
+        toast.show("Пресет $name сохранен")
 
 }

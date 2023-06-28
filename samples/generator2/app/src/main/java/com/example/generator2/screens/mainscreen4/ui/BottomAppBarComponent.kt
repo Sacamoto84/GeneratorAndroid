@@ -128,7 +128,7 @@ fun M4BottomAppBarComponent(
                     .combinedClickable(
                         onClick = {
 
-                            if (LiveData.presetsName.value == "") {
+                            if ((LiveData.presetsName.value == "") || (LiveData.presetsName.value == "default")) {
                                 Presets.isOpenDialogNewFile.value = true
                             } else {
                                 presetsSaveFile(LiveData.presetsName.value)
