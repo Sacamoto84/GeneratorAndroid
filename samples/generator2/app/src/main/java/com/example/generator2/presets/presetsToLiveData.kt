@@ -50,19 +50,6 @@ fun presetsToLiveData(data: dataLiveData) {
 
     LiveData.ch1AmDepth.value = data.ch1AmDepth.value
     LiveData.ch2AmDepth.value = data.ch2AmDepth.value
-    /**
-     *  ### Импульсный режим
-     */
-    LiveData.impulse0.value = data.impulse0.value
-    LiveData.impulse1.value = data.impulse1.value
-
-    // Ширина импульса в тиках
-    LiveData.impulse0timeImp.value = data.impulse0timeImp.value
-    LiveData.impulse1timeImp.value = data.impulse1timeImp.value
-
-    // Пауза в тиках
-    LiveData.impulse0timeImpPause.value = data.impulse0timeImpPause.value
-    LiveData.impulse1timeImpPause.value = data.impulse1timeImpPause.value
 
     //Количество звезд
     LiveData.star.value = data.star.value

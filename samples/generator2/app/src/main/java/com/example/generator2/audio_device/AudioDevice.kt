@@ -212,15 +212,6 @@ class AudioDevice(private var context: Context, var playbackEngine: PlaybackEngi
         playbackEngine.setAmDepth(0, obj.ch1AmDepth.value)
         playbackEngine.setAmDepth(1, obj.ch2AmDepth.value)
 
-        playbackEngine.setImpulse(0, obj.impulse0.value)
-        playbackEngine.setImpulse(1, obj.impulse1.value)
-
-        playbackEngine.setImpulseWidthTime(0, obj.impulse0timeImp.value)
-        playbackEngine.setImpulseWidthTime(1, obj.impulse1timeImp.value)
-
-        playbackEngine.setImpulsePauseTime(0, obj.impulse0timeImpPause.value)
-        playbackEngine.setImpulsePauseTime(1, obj.impulse1timeImpPause.value)
-
         playbackEngine.setParameterFloat(0, obj.parameterFloat0.value)
         playbackEngine.setParameterFloat(1, obj.parameterFloat1.value)
         playbackEngine.setParameterFloat(2, obj.parameterFloat2.value)

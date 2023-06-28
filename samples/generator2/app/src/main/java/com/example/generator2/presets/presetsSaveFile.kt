@@ -74,22 +74,6 @@ fun presetsSaveFile(name: String, path: String = AppPath().presets) {
     satchel["ch1AmDepth"] = LiveData.ch1AmDepth.value  //Глубина AM модуляции
     satchel["ch2AmDepth"] = LiveData.ch2AmDepth.value  //Глубина AM модуляции
 
-    /**
-     *  ### Импульсный режим
-     */
-
-    satchel["impulse0"] = LiveData.impulse0.value    //Импульсный режим канала
-    satchel["impulse1"] = LiveData.impulse1.value
-
-    // Ширина импульса в тиках
-    satchel["impulse0timeImp"] = LiveData.impulse0timeImp.value
-    satchel["impulse1timeImp"] = LiveData.impulse1timeImp.value
-
-    // Пауза в тиках
-    satchel["impulse0timeImpPause"] = LiveData.impulse0timeImpPause.value
-    satchel["impulse1timeImpPause"] = LiveData.impulse1timeImpPause.value
-
-
     satchel["parameterFloat0"] = LiveData.parameterFloat0.value
     satchel["parameterFloat1"] = LiveData.parameterFloat1.value
     satchel["parameterFloat2"] = LiveData.parameterFloat2.value

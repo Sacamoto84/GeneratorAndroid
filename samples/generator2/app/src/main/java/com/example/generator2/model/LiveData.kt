@@ -49,19 +49,6 @@ data class dataLiveData(
 
     var ch1AmDepth: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC Глубина AM модуляции
     var ch2AmDepth: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC Глубина AM модуляции
-    /**
-     *  ### Импульсный режим
-     */
-    val impulse0: MutableStateFlow<Boolean> = MutableStateFlow(false),        //PR PS PC Импульсный режим канала
-    val impulse1: MutableStateFlow<Boolean> = MutableStateFlow(false),        //PR PS PC
-
-    // Ширина импульса в тиках
-    val impulse0timeImp: MutableStateFlow<Int> = MutableStateFlow(9),         //PR PS PC
-    val impulse1timeImp: MutableStateFlow<Int> = MutableStateFlow(9),         //PR PS PC
-
-    // Пауза в тиках
-    val impulse0timeImpPause: MutableStateFlow<Int> = MutableStateFlow(9),    //PR PS PC
-    val impulse1timeImpPause: MutableStateFlow<Int> = MutableStateFlow(9),    //PR PS PC
 
     //Количество звезд
     val star: MutableStateFlow<Int> = MutableStateFlow(0),                    //PR PS PC
@@ -69,8 +56,8 @@ data class dataLiveData(
     //Имя текущего пресета
     val presetsName: MutableStateFlow<String> = MutableStateFlow(""),         //PR PS(name) PC
 
-    val parameterFloat0: MutableStateFlow<Float> = MutableStateFlow(1.0f), //PR PS PC 50 Импульс CH1 время действия импульса 1 сек
-    val parameterFloat1: MutableStateFlow<Float> = MutableStateFlow(1.0f), //PR PS PC 50 Импульс CH2 время действия импульса 1 сек
+    val parameterFloat0: MutableStateFlow<Float> = MutableStateFlow(1.0f), //PR PS PC
+    val parameterFloat1: MutableStateFlow<Float> = MutableStateFlow(1.0f), //PR PS PC
     val parameterFloat2: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
     val parameterFloat3: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
     val parameterFloat4: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
@@ -78,12 +65,12 @@ data class dataLiveData(
     val parameterFloat6: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
     val parameterFloat7: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
 
-    val parameterInt0: MutableStateFlow<Int> = MutableStateFlow(1), //PR PS PC 50 Импульс CH1 Частота от 1Гц до 50Гц
-    val parameterInt1: MutableStateFlow<Int> = MutableStateFlow(1), //PR PS PC 50 Импульс CH2 Частота от 1Гц до 50Гц
-    val parameterInt2: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC 50 Импульс CH1 Fire
-    val parameterInt3: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC 50 Импульс CH2 Fire
-    val parameterInt4: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC Режим импульсного режима CH1, 0-обычный 1-50Гц
-    val parameterInt5: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC Режим импульсного режима CH2, 0-обычный 1-50Гц
+    val parameterInt0: MutableStateFlow<Int> = MutableStateFlow(1), //PR PS PC
+    val parameterInt1: MutableStateFlow<Int> = MutableStateFlow(1), //PR PS PC
+    val parameterInt2: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
+    val parameterInt3: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
+    val parameterInt4: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
+    val parameterInt5: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
     val parameterInt6: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
     val parameterInt7: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
 

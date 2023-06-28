@@ -20,3 +20,10 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -dontobfuscate
+
+
+# Указывает ProGuard удалить Trace Processor Shell
+# Замените "com.example.traceprocessorshell" на фактический путь к классу Trace Processor Shell
+
+-keep class com.example.traceprocessorshell.** { *; }
+-dontwarn com.example.traceprocessorshell.**

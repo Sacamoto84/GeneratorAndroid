@@ -40,10 +40,8 @@ class PlaybackEngine(val context: Context) : DataCallback {
         if (defaultFramesPerBurst < 1152) defaultFramesPerBurst = 1152
         native_setDefaultStreamValues(defaultSampleRate, defaultFramesPerBurst)
 
-        Log.i(
-            "!!!",
-            "---PlaybackEngine.setDefaultStreamValues()>>>defaultSampleRate:$defaultSampleRate>>>defaultFramesPerBurst:$defaultFramesPerBurst"
-        )
+        Timber.tag("!!!")
+            .i("---PlaybackEngine.setDefaultStreamValues()>>>defaultSampleRate:" + defaultSampleRate + ">>>defaultFramesPerBurst:" + defaultFramesPerBurst)
 
     }
 
@@ -116,30 +114,20 @@ class PlaybackEngine(val context: Context) : DataCallback {
         return mEngineHandle != 0L && native_isLatencyDetectionSupported(mEngineHandle)
     }
 
-    //Установка частоты
-    fun setVolume(CH: Int, value: Float) {
-        if (mEngineHandle != 0L) native_setVolume(mEngineHandle, CH, value)
-    }
+    /**
+     * Установка громкости 0..1
+     */
+    fun setVolume(ch: Int, value: Float) { if (mEngineHandle != 0L) native_setVolume(mEngineHandle, ch, value) }
 
-    fun resetAllPhase() {
-        if (mEngineHandle != 0L) native_resetAllPhase(mEngineHandle)
-    }
+    fun resetAllPhase() { if (mEngineHandle != 0L) native_resetAllPhase(mEngineHandle) }
 
-    fun setMono(mono: Boolean) {
-        if (mEngineHandle != 0L) native_setMono(mEngineHandle, mono)
-    }
+    fun setMono(mono: Boolean) { if (mEngineHandle != 0L) native_setMono(mEngineHandle, mono) }
 
-    fun setInvertPhase(invert: Boolean) {
-        if (mEngineHandle != 0L) native_setInvertPhase(mEngineHandle, invert)
-    }
+    fun setInvertPhase(invert: Boolean) { if (mEngineHandle != 0L) native_setInvertPhase(mEngineHandle, invert) }
 
-    fun setEnL(enL: Boolean) {
-        if (mEngineHandle != 0L) native_setEnL(mEngineHandle, enL)
-    }
+    fun setEnL(enL: Boolean) { if (mEngineHandle != 0L) native_setEnL(mEngineHandle, enL) }
 
-    fun setEnR(enR: Boolean) {
-        if (mEngineHandle != 0L) native_setEnR(mEngineHandle, enR)
-    }
+    fun setEnR(enR: Boolean) { if (mEngineHandle != 0L) native_setEnR(mEngineHandle, enR) }
 
     fun setShuffle(shuffle: Boolean) {
         if (mEngineHandle != 0L) native_setShuffle(mEngineHandle, shuffle)
@@ -147,30 +135,18 @@ class PlaybackEngine(val context: Context) : DataCallback {
 
     //Внешняя функция
     //Включалки
-    fun setEN(CH: Int, EN: Boolean) {
-        if (mEngineHandle != 0L) native_setCH_EN(mEngineHandle, CH, EN)
-    }
+    fun setEN(ch: Int, en: Boolean) { if (mEngineHandle != 0L) native_setCH_EN(mEngineHandle, ch, en) }
 
-    fun setAM_EN(CH: Int, EN: Boolean) {
-        if (mEngineHandle != 0L) native_setCH_AMEN(mEngineHandle, CH, EN)
-    }
+    fun setAM_EN(ch: Int, en: Boolean) { if (mEngineHandle != 0L) native_setCH_AMEN(mEngineHandle, ch, en) }
 
-    fun setFM_EN(CH: Int, EN: Boolean) {
-        if (mEngineHandle != 0L) native_setCH_FMEN(mEngineHandle, CH, EN)
-    }
+    fun setFM_EN(CH: Int, EN: Boolean) { if (mEngineHandle != 0L) native_setCH_FMEN(mEngineHandle, CH, EN) }
 
     //Установка частоты
-    fun setCarrier_fr(CH: Int, fr: Float) {
-        if (mEngineHandle != 0L) native_setCH_Carrier_fr(mEngineHandle, CH, fr)
-    }
+    fun setCarrier_fr(CH: Int, fr: Float) { if (mEngineHandle != 0L) native_setCH_Carrier_fr(mEngineHandle, CH, fr) }
 
-    fun setAM_fr(CH: Int, fr: Float) {
-        if (mEngineHandle != 0L) native_setCH_AM_fr(mEngineHandle, CH, fr)
-    }
+    fun setAM_fr(CH: Int, fr: Float) { if (mEngineHandle != 0L) native_setCH_AM_fr(mEngineHandle, CH, fr) }
 
-    fun setFM_fr(CH: Int, fr: Float) {
-        if (mEngineHandle != 0L) native_setCH_FM_fr(mEngineHandle, CH, fr)
-    }
+    fun setFM_fr(CH: Int, fr: Float) { if (mEngineHandle != 0L) native_setCH_FM_fr(mEngineHandle, CH, fr) }
 
     //Отправляем буффер 2048 байт
     fun CH_Send_Buffer(CH: Int, mod: Int, buf: ByteArray?) {
@@ -187,28 +163,6 @@ class PlaybackEngine(val context: Context) : DataCallback {
      */
     fun setAmDepth(ch: Int, depth: Float) {
         if (mEngineHandle != 0L) native_setAmDepth(mEngineHandle, ch, depth)
-    }
-
-
-    /**
-     * # Импульс
-     */
-    fun setImpulse(CH: Int, EN: Boolean) {
-        if (mEngineHandle != 0L) native_setCH_Impulse(mEngineHandle, CH, EN)
-    }
-
-    /**
-     * Установка ширины импульса
-     */
-    fun setImpulseWidthTime(ch: Int, width: Int) {
-        if (mEngineHandle != 0L) native_setImpulseWidthTime(mEngineHandle, ch, width)
-    }
-
-    /**
-     * Установка времени паузы импульса
-     */
-    fun setImpulsePauseTime(ch: Int, width: Int) {
-        if (mEngineHandle != 0L) native_setImpulsePauseTime(mEngineHandle, ch, width)
     }
 
     fun setParameterFloat(index: Int, value: Float) {
@@ -237,8 +191,6 @@ class PlaybackEngine(val context: Context) : DataCallback {
     private external fun native_getCurrentOutputLatencyMillis(engineHandle: Long): Double
     private external fun native_isLatencyDetectionSupported(engineHandle: Long): Boolean
     private external fun native_setDefaultStreamValues(sampleRate: Int, framesPerBurst: Int)
-    //Мои функции
-    //Переключалка
 
 
     private external fun native_setEnL(engineHandle: Long, value: Boolean)
@@ -294,26 +246,9 @@ class PlaybackEngine(val context: Context) : DataCallback {
     private external fun native_setAmDepth(engineHandle: Long, ch: Int, depth: Float)
 
 
-    /**
-     * # Импульс
-     * ## Включение режима импульс
-     */
-    private external fun native_setCH_Impulse(engineHandle: Long, CH: Int, EN: Boolean)
+    private external fun native_setParameterFloat(engineHandle: Long, index: Int, value: Float)
 
-    /**
-     * Установка ширины импульса
-     */
-    private external fun native_setImpulseWidthTime(engineHandle: Long, ch: Int, width: Int)
-
-    /**
-     * Установка времени паузы
-     */
-    private external fun native_setImpulsePauseTime(engineHandle: Long, ch: Int, width: Int)
-
-
-    external fun native_setParameterFloat(engineHandle: Long, index: Int, value: Float)
-
-    external fun native_setParameterInt(engineHandle: Long, index: Int, value: Int)
+    private external fun native_setParameterInt(engineHandle: Long, index: Int, value: Int)
 
 
     fun StartListening() {

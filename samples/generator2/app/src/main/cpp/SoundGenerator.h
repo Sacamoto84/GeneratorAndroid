@@ -38,23 +38,8 @@ public:
         if (!Mono) {
 
             //stereo
-            if (!CH1.impulseMode)
-                renderChanel(&CH1, numFrames);
-            else {
-                if (parameterInt4 == 0)
-                    renderImpulseChanel(&CH1, numFrames);
-                else
-                    renderImpulseSine50Chanel(&CH1, numFrames);
-            }
-
-            if (!CH2.impulseMode)
-                renderChanel(&CH2, numFrames);
-            else {
-                if (parameterInt5 == 0)
-                    renderImpulseChanel(&CH2, numFrames);
-                else
-                    renderImpulseSine50Chanel(&CH2, numFrames);
-            }
+            renderChanel(&CH1, numFrames);
+            renderChanel(&CH2, numFrames);
 
             //Нормальный режим
             if (!shuffle)
@@ -72,14 +57,7 @@ public:
         } else {
             //Mono
 
-            if (!CH1.impulseMode)
-                renderChanel(&CH1, numFrames);
-            else {
-                if (parameterInt4 == 0)
-                    renderImpulseChanel(&CH1, numFrames);
-                else
-                    renderImpulseSine50Chanel(&CH1, numFrames);
-            }
+            renderChanel(&CH1, numFrames);
 
             if (!Invert) {
 
@@ -119,131 +97,6 @@ public:
     }
 
     //std::unique_ptr<float[]> mBuffer = std::make_unique<float[]>(4096);
-
-    //Импульсный режим
-    void renderImpulseChanel(_structure_ch *CH, int numFrames) {
-
-        float O = 0.0F;
-        int timeImp = CH->timeImp;
-        int timeImpPause = CH->timeImpPause;
-
-        for (int i = 0; i < numFrames; i++) {
-
-            if (CH->CH_EN) {
-
-                int deltaTime = CH->impulseGlobalTime - CH->impulseStartTime;
-
-                if ((deltaTime >= 0) && (deltaTime < timeImp))
-                    O = 1.0F;
-
-                if ((deltaTime >= timeImp) && (deltaTime < timeImp + timeImpPause))
-                    O = 0;
-
-                if ((deltaTime >= timeImp + timeImpPause) &&
-                    (deltaTime < 2 * timeImp + timeImpPause))
-                    O = -1.0F;
-
-                if (deltaTime >= 2 * timeImp + timeImpPause)
-                    O = 0;
-
-
-            } else
-                O = 0;
-
-            CH->mBuffer[i] = O;
-
-            CH->impulseGlobalTime++;
-
-            if (CH->impulseGlobalTime % 4800 == 0)
-                CH->impulseStartTime = CH->impulseGlobalTime;
-
-        }
-
-    }
-
-//    enum class State
-//    {
-//        NotStarted,
-//        Working,
-//        Shutdown
-//    };
-
-
-
-
-
-    //Импульсный режим Sine 50Hz
-    void renderImpulseSine50Chanel(_structure_ch *CH, int numFrames) {
-
-        float O;
-
-        if (CH->ch == 0) return;
-
-        int valueFr = 1;
-        float valueTimeImp = 0.5F;
-
-        if (CH->ch == 1) {
-            valueFr = constrain(parameterInt0, 1, 50); //Частота импульсов
-            valueTimeImp = constrain(parameterFloat0, 0.5F, 5.0F); //Время импульсов
-        }
-        if (CH->ch == 2) {
-            valueFr = constrain(parameterInt1, 1, 50); //Частота импульсов
-            valueTimeImp = constrain(parameterFloat1, 0.5F, 5.0F); //Время импульсов
-        }
-
-
-        for (int i = 0; i < numFrames; i++) {
-
-            if (CH->ch == 1) {
-                //parameterInt2 = 2;
-
-                if (parameterInt2 == 1) {
-                    parameterInt2 = 0;
-                    CH->impulse50StartFireTime = CH->impulseGlobalTime;
-                }
-
-                if (parameterInt2 == 2) {
-                    CH->impulse50StartFireTime = CH->impulseGlobalTime;
-                }
-            }
-
-            if (CH->ch == 2) {
-                //parameterInt3 = 2;
-                if (parameterInt3 == 1) {
-                    parameterInt3 = 0;
-                    CH->impulse50StartFireTime = CH->impulseGlobalTime;
-                }
-
-                if (parameterInt3 == 2) {
-                    CH->impulse50StartFireTime = CH->impulseGlobalTime;
-                }
-
-            }
-
-            if ((CH->impulseGlobalTime % (int) (48000 / (valueFr)) == 0) &&
-                ((CH->impulseGlobalTime - CH->impulse50StartFireTime) <=
-                 (int) (valueTimeImp * 48000.0F)))
-                CH->impulseStartTime = CH->impulseGlobalTime;
-
-            if (CH->CH_EN) {
-
-                int deltaTime = CH->impulseGlobalTime - CH->impulseStartTime;
-
-                if (deltaTime < 960)
-                    O = CH->Volume * (float) (SINE_960[deltaTime] - 2048) / 2048.0F;
-                else
-                    O = 0;
-
-            } else
-                O = 0;
-
-            CH->mBuffer[i] = O;
-
-            CH->impulseGlobalTime++;
-
-        }
-
-    }
 
     void renderChanel(_structure_ch *CH, int numFrames) {
 
@@ -355,10 +208,6 @@ public:
         parameterFloat5 = 0.0f;
         parameterFloat6 = 0.0f;
         parameterFloat7 = 0.0f;
-
-
-        CH1.impulseGlobalTime = 10000000;
-        CH2.impulseGlobalTime = 10000000;
 
     }
 

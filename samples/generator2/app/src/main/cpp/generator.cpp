@@ -17,8 +17,8 @@ bool enR = true;
 void setToMono() { Mono = true; } // Перевод в режим моно
 void setToStereo() { Mono = false; } // Перевод в режим стерео
 
-float parameterFloat0 = 1.0f; //50 Импульс CH1 время действия импульса 1 сек
-float parameterFloat1 = 1.0f; //50 Импульс CH2 время действия импульса 1 сек
+float parameterFloat0 = 0.0f;
+float parameterFloat1 = 0.0f;
 float parameterFloat2 = 0.0f;
 float parameterFloat3 = 0.0f;
 float parameterFloat4 = 0.0f;
@@ -26,12 +26,12 @@ float parameterFloat5 = 0.0f;
 float parameterFloat6 = 0.0f;
 float parameterFloat7 = 0.0f;
 
-int parameterInt0 = 1; //50 Импульс CH1 Частота от 1Гц до 50Гц
-int parameterInt1 = 1; //50 Импульс CH2 Частота от 1Гц до 50Гц
-int parameterInt2 = 0; //50 Импульс CH1 1-Fire 2-Continuous
-int parameterInt3 = 0; //50 Импульс CH2 1-Fire 2-Continuous
-int parameterInt4 = 0; //Режим импульсного режима CH1, 0-обычный 1-50Гц
-int parameterInt5 = 0; //Режим импульсного режима CH2, 0-обычный 1-50Гц
+int parameterInt0 = 0;
+int parameterInt1 = 0;
+int parameterInt2 = 0;
+int parameterInt3 = 0;
+int parameterInt4 = 0;
+int parameterInt5 = 0;
 int parameterInt6 = 0;
 int parameterInt7 = 0;
 
@@ -52,8 +52,6 @@ void resetAllPhase() {
     CH2.phase_accumulator_am = 0;
     CH1.phase_accumulator_fm = 0;
     CH2.phase_accumulator_fm = 0;
-    CH1.impulseGlobalTime = 1000000;
-    CH2.impulseGlobalTime = 1000000;
     CH1.AmDepth = 1.0F;
     CH2.AmDepth = 1.0F;
 }

@@ -62,21 +62,6 @@ fun observe(hub: Hub) {
     GlobalScope.launch(dispatchers) { LiveData.ch1AmDepth.collect {hub.playbackEngine.setAmDepth(0, it) } }
     GlobalScope.launch(dispatchers) { LiveData.ch2AmDepth.collect {hub.playbackEngine.setAmDepth(1, it) } }
 
-    /**
-     * Импульсный режим
-     */
-
-    GlobalScope.launch(dispatchers) { LiveData.impulse0.collect {hub.playbackEngine.setImpulse(0, it) } }
-    GlobalScope.launch(dispatchers) { LiveData.impulse1.collect {hub.playbackEngine.setImpulse(1, it) } }
-
-    // Установка ширины импульса
-    GlobalScope.launch(dispatchers) { LiveData.impulse0timeImp.collect {hub.playbackEngine.setImpulseWidthTime(0, it) } }
-    GlobalScope.launch(dispatchers) { LiveData.impulse1timeImp.collect {hub.playbackEngine.setImpulseWidthTime(1, it) } }
-
-    // Установка паузы импульса
-    GlobalScope.launch(dispatchers) { LiveData.impulse0timeImpPause.collect {hub.playbackEngine.setImpulsePauseTime(0, it) } }
-    GlobalScope.launch(dispatchers) { LiveData.impulse1timeImpPause.collect {hub.playbackEngine.setImpulsePauseTime(1, it) } }
-
     GlobalScope.launch(dispatchers) { LiveData.parameterFloat0.collect {hub.playbackEngine.setParameterFloat(0, it) } }
     GlobalScope.launch(dispatchers) { LiveData.parameterFloat1.collect {hub.playbackEngine.setParameterFloat(1, it) } }
     GlobalScope.launch(dispatchers) { LiveData.parameterFloat2.collect {hub.playbackEngine.setParameterFloat(2, it) } }

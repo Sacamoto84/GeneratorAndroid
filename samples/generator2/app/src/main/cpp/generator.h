@@ -57,20 +57,6 @@ typedef struct {
 
     float AmDepth; //Глубина AM модуляции
 
-    //Импульсный режим
-    bool     impulseMode;       //true - включен импульсный режим, false режим генератора
-
-    //Impulse
-    uint32_t impulseGlobalTime; //Инкремент каждые 1/48000
-    uint32_t impulseStartTime;  //Время с которого начался импульс
-
-    uint32_t timeImp;           //Ширина импульса
-    uint32_t timeImpPause;      //Ширина паузы
-
-
-    uint32_t impulse50StartFireTime; //Время старта когда произошел Fire
-
-
 } _structure_ch;
 
 extern _structure_ch CH1;

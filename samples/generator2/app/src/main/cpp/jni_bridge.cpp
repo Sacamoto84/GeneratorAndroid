@@ -351,32 +351,6 @@ Java_com_example_generator2_PlaybackEngine_native_1setInvertPhase(
 
 //CH EN
 JNIEXPORT void JNICALL
-Java_com_example_generator2_PlaybackEngine_native_1setCH_1Impulse(
-        JNIEnv *env,
-        jclass,
-        jlong engineHandle,
-        jint CH,
-        jboolean EN) {
-
-    HelloOboeEngine *engine = reinterpret_cast<HelloOboeEngine *>(engineHandle);
-    if (engine == nullptr) {
-        LOGE("Engine handle is invalid, call createHandle() to create a new one");
-        return;
-    }
-
-    LOGI("JNI:setCH_1Impulse: CH:%d EN:%d", CH, EN);
-
-    {
-        if (CH)
-            CH2.impulseMode = EN;
-        else
-            CH1.impulseMode = EN;
-    }
-}
-
-
-//CH EN
-JNIEXPORT void JNICALL
 Java_com_example_generator2_PlaybackEngine_native_1setCH_1EN(
         JNIEnv *env,
         jclass,
