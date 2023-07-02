@@ -3,7 +3,6 @@ package com.example.generator2.backup
 import com.example.generator2.model.LiveConstrain
 import com.example.generator2.model.LiveData
 import com.tencent.mmkv.MMKV
-import timber.log.Timber
 
 //val rootDir = MMKV.initialize(this, AppPath().config)
 //println("mmkv root: $rootDir")

@@ -3,8 +3,10 @@ package com.example.generator2.screens.mainscreen4.ui
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
@@ -105,10 +107,19 @@ object UIspinner {
                     )
                 }
 
+
+
+
+
+
                 DropdownMenu(
                     expanded = expanded.value,
                     onDismissRequest = { expanded.value = false },
-                    modifier = Modifier.background( color = if (transparent) Color(0) else Color(0xFF454954)),
+                    modifier = Modifier.background(
+                        color = if (transparent) Color(0) else Color(
+                            0xFF454954
+                        )
+                    ),
                     properties = PopupProperties()
 
                 )
@@ -116,9 +127,11 @@ object UIspinner {
 
                     itemlist.forEach {
                         DropdownMenuItem(
-                            modifier = Modifier
+                            modifier = Modifier.padding(2.dp)
                                 .background(Color(0xFF454954))
-                                .width(340.dp),
+                                .width(340.dp)
+                                .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
+                            ,
                             onClick = {
                                 currentValue = it.name
                                 expanded.value = false

@@ -1,8 +1,5 @@
 package com.example.generator2.screens.config
 
-import androidx.compose.material.*
-import androidx.compose.material.ExposedDropdownMenuDefaults.outlinedTextFieldColors
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
