@@ -7,6 +7,7 @@ import cafe.adriel.satchel.serializer.raw.RawSatchelSerializer
 import cafe.adriel.satchel.storer.file.FileSatchelStorer
 import com.example.generator2.AppPath
 import com.example.generator2.model.DataLiveData
+import kotlinx.coroutines.flow.MutableStateFlow
 import java.io.File
 
 fun presetsReadFile(name: String, path : String = AppPath().presets ): DataLiveData {
@@ -73,10 +74,10 @@ fun presetsReadFile(name: String, path : String = AppPath().presets ): DataLiveD
     data.ch1AmDepth.value = satchel.getOrDefault("ch1AmDepth", 1f)  //Глубина AM модуляции
     data.ch2AmDepth.value = satchel.getOrDefault("ch2AmDepth", 1f)  //Глубина AM модуляции
 
-    data.parameterFloat0.value = satchel.getOrDefault("parameterFloat0", 0.0F)
-    data.parameterFloat1.value = satchel.getOrDefault("parameterFloat1", 0.0F)
-    data.parameterFloat2.value = satchel.getOrDefault("parameterFloat2", 0.0F)
-    data.parameterFloat3.value = satchel.getOrDefault("parameterFloat3", 0.0F)
+    data.parameterFloat0.value = satchel.getOrDefault("parameterFloat0", 1000.0F) //CH1 FM min
+    data.parameterFloat1.value = satchel.getOrDefault("parameterFloat1", 2000.0F) //CH1 FM max
+    data.parameterFloat2.value = satchel.getOrDefault("parameterFloat2", 1000.0F) //CH2 FM min
+    data.parameterFloat3.value = satchel.getOrDefault("parameterFloat3", 2000.0F) //CH2 FM max
     data.parameterFloat4.value = satchel.getOrDefault("parameterFloat4", 0.0F)
     data.parameterFloat5.value = satchel.getOrDefault("parameterFloat5", 0.0F)
     data.parameterFloat6.value = satchel.getOrDefault("parameterFloat6", 0.0F)

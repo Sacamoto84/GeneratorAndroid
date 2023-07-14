@@ -53,6 +53,8 @@ fun MainScreenTextBoxGuest(
     color : Color = Color.LightGray
     ) {
 
+    val s =  rememberUpdatedState(sensing)
+
     val onValueChangeState = rememberUpdatedState(onValueChange)
     var incrementalAngle by remember { mutableFloatStateOf(value) }
     incrementalAngle = value //valueRemember.value
@@ -76,11 +78,9 @@ fun MainScreenTextBoxGuest(
                     onDrag =
                     { change, dragAmount ->
 
-                        Timber.w("dragAmount= $dragAmount")
-
                         change.consume()
 
-                        incrementalAngle -= dragAmount.y * sensing - dragAmount.x * sensing
+                        incrementalAngle -= dragAmount.y * s.value - dragAmount.x * s.value
 
                         if (incrementalAngle > range.endInclusive)
                             incrementalAngle = range.endInclusive

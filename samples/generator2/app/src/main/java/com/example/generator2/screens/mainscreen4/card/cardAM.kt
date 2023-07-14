@@ -38,6 +38,7 @@ import com.example.generator2.screens.mainscreen4.textStyleEditFontFamily
 import com.example.generator2.screens.mainscreen4.textStyleEditFontSize
 import com.example.generator2.screens.mainscreen4.ui.InfinitySlider
 import com.example.generator2.screens.mainscreen4.ui.MainScreenTextBoxGuest
+import com.example.generator2.screens.mainscreen4.ui.MainscreenTextBoxAndDropdownMenu
 import com.example.generator2.screens.mainscreen4.ui.UIspinner
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.theme.colorLightBackground2
@@ -56,14 +57,14 @@ fun CardAM(str: String = "CH0") {
     Column {
 
         Box(
-            modifier = Modifier
-                .background(Color.DarkGray) //colorGreen else colorOrange)
-                .height(1.dp)
-                .fillMaxWidth()
+                modifier = Modifier
+                        .background(Color.DarkGray) //colorGreen else colorOrange)
+                        .height(1.dp)
+                        .fillMaxWidth()
         )
 
         Row(
-            Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically
+                Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically
         ) {
 
             val amFr: State<Float?> = if (str == "CH0") {
@@ -75,100 +76,113 @@ fun CardAM(str: String = "CH0") {
 
             // Кнопка включения AM
             Box(
-                modifier = Modifier
-                    .padding(start = 8.dp)
-                    .height(48.dp)
-                    .width(ms4SwitchWidth)
-                    .border(
-                        2.dp,
-                        color = if (amEN.value!!) Color(0xFF1B5E20) else Color.DarkGray,
-                        RoundedCornerShape(8.dp)
-                    )
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(
-                        color = if (amEN.value!!) Color(0xFF01AE0F) else colorDarkBackground
-                    )
-                    .noRippleClickable(onClick = {
-                        if (str == "CH0") LiveData.ch1_AM_EN.value =
-                            !LiveData.ch1_AM_EN.value
-                        else LiveData.ch2_AM_EN.value = !LiveData.ch2_AM_EN.value
-                    }) //.shadow(1.dp, shape = RoundedCornerShape(8.dp), ambientColor = Color.Blue)
-                , contentAlignment = Alignment.Center
+                    modifier = Modifier
+                            .padding(start = 8.dp)
+                            .height(48.dp)
+                            .width(ms4SwitchWidth)
+                            .border(
+                                    2.dp,
+                                    color = if (amEN.value!!) Color(0xFF1B5E20) else Color.DarkGray,
+                                    RoundedCornerShape(8.dp)
+                            )
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(
+                                    color = if (amEN.value!!) Color(0xFF01AE0F) else colorDarkBackground
+                            )
+                            .noRippleClickable(onClick = {
+                                if (str == "CH0") LiveData.ch1_AM_EN.value =
+                                        !LiveData.ch1_AM_EN.value
+                                else LiveData.ch2_AM_EN.value = !LiveData.ch2_AM_EN.value
+                            }) //.shadow(1.dp, shape = RoundedCornerShape(8.dp), ambientColor = Color.Blue)
+                    , contentAlignment = Alignment.Center
             ) {
 
 
                 Text(
-                    text = "AM",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                    color = if (amEN.value!!) colorDarkBackground else Color.LightGray,
-                    style = textStyleButtonOnOff
+                        text = "AM",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                        color = if (amEN.value!!) colorDarkBackground else Color.LightGray,
+                        style = textStyleButtonOnOff
                 )
             }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-            var expanded by remember { mutableStateOf(false) }
-            var selectedIndex by remember { mutableIntStateOf(0) }
-
-            Box(
-                Modifier
-                    .padding(start = 0.dp)
-                    .height(48.dp)
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .noRippleClickable { expanded = true }) {
-
-                //Частота модуляции
-                MainScreenTextBoxGuest(
-                    String.format("%.1f", amFr.value),
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .height(48.dp)
-                        .fillMaxSize(),
+            val sensing = if (amFr.value!! < 10.0F) LiveConstrain.sensetingSliderAmFm.floatValue else LiveConstrain.sensetingSliderAmFm.floatValue * 10f
+            println("sensing $sensing")
+            MainscreenTextBoxAndDropdownMenu(
+                    str = String.format("%.1f", amFr.value),
+                    modifier = Modifier.weight(1f),
+                    items = listOf("0.1", "1.0", "5.5", "10.0", "40.0", "100.0"),
                     value = amFr.value!!,
-                    sensing = if (amFr.value!! < 10.0F) LiveConstrain.sensetingSliderAmFm.value else LiveConstrain.sensetingSliderAmFm.value * 10f,
+                    onChange = { if (str == "CH0") LiveData.ch1_AM_Fr.value = it else LiveData.ch2_AM_Fr.value = it },
+                    sensing = sensing,
                     range = LiveConstrain.rangeSliderAmFm,
-                    onValueChange = {
-                        if (str == "CH0") LiveData.ch1_AM_Fr.value =
-                            it else LiveData.ch2_AM_Fr.value = it
-                    },
-                    fontSize = textStyleEditFontSize,
-                    fontFamily = textStyleEditFontFamily
-                )
+            )
 
-                val items = listOf("0.1", "1.0", "5.5", "10.0", "40.0", "100.0")
 
-                DropdownMenu(
-                    offset = DpOffset(8.dp, 4.dp),
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier
-                        //.width(80.dp)
-                        .background(
-                            colorLightBackground2
-                        )
-                        .border(1.dp, color = Color.DarkGray, shape = RoundedCornerShape(16.dp))
-                ) {
-
-                    items.forEachIndexed { index, s ->
-                        DropdownMenuItem(onClick = {
-                            selectedIndex = index
-                            expanded = false
-
-                            if (str == "CH0") {
-                                LiveData.ch1_AM_Fr.value = s.toFloat()
-                            } else {
-                                LiveData.ch2_AM_Fr.value = s.toFloat()
-                            }
-
-                        })
-                        {
-                            Text(text = s, color = Color.White)
-                        }
-                    }
-                }
-            }
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//            var expanded by remember { mutableStateOf(false) }
+//            var selectedIndex by remember { mutableIntStateOf(0) }
+//
+//            Box(
+//                Modifier
+//                    .padding(start = 0.dp)
+//                    .height(48.dp)
+//                    .fillMaxWidth()
+//                    .weight(1f)
+//                    .noRippleClickable { expanded = true }) {
+//
+//                //Частота модуляции
+//                MainScreenTextBoxGuest(
+//                    String.format("%.1f", amFr.value),
+//                    modifier = Modifier
+//                        .padding(start = 8.dp)
+//                        .height(48.dp)
+//                        .fillMaxSize(),
+//                    value = amFr.value!!,
+//                    sensing = if (amFr.value!! < 10.0F) LiveConstrain.sensetingSliderAmFm.floatValue else LiveConstrain.sensetingSliderAmFm.floatValue * 10f,
+//                    range = LiveConstrain.rangeSliderAmFm,
+//                    onValueChange = {
+//                        if (str == "CH0") LiveData.ch1_AM_Fr.value =
+//                            it else LiveData.ch2_AM_Fr.value = it
+//                    },
+//                    fontSize = textStyleEditFontSize,
+//                    fontFamily = textStyleEditFontFamily
+//                )
+//
+//                val items = listOf("0.1", "1.0", "5.5", "10.0", "40.0", "100.0")
+//
+//                DropdownMenu(
+//                    offset = DpOffset(8.dp, 4.dp),
+//                    expanded = expanded,
+//                    onDismissRequest = { expanded = false },
+//                    modifier = Modifier
+//                        //.width(80.dp)
+//                        .background(
+//                            colorLightBackground2
+//                        )
+//                        .border(1.dp, color = Color.DarkGray, shape = RoundedCornerShape(16.dp))
+//                ) {
+//
+//                    items.forEachIndexed { index, s ->
+//                        DropdownMenuItem(onClick = {
+//                            selectedIndex = index
+//                            expanded = false
+//
+//                            if (str == "CH0") {
+//                                LiveData.ch1_AM_Fr.value = s.toFloat()
+//                            } else {
+//                                LiveData.ch2_AM_Fr.value = s.toFloat()
+//                            }
+//
+//                        })
+//                        {
+//                            Text(text = s, color = Color.White)
+//                        }
+//                    }
+//                }
+//            }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
             val amDepth: State<Float?> = if (str == "CH0") {
@@ -178,30 +192,30 @@ fun CardAM(str: String = "CH0") {
             }
 
             InfinitySlider(
-                value = amDepth.value,
-                sensing = 0.001f,
-                range = 0f..1f,
-                onValueChange = {
-                    if (str == "CH0") LiveData.ch1AmDepth.value =
-                        it else LiveData.ch2AmDepth.value = it
-                },
-                modifier = modifierInfinitySlider,
-                vertical = true,
-                invert = true,
-                visibleText = false,
-                text = (amDepth.value?.times(100F))?.toInt().toString()
+                    value = amDepth.value,
+                    sensing = 0.001f,
+                    range = 0f..1f,
+                    onValueChange = {
+                        if (str == "CH0") LiveData.ch1AmDepth.value =
+                                it else LiveData.ch2AmDepth.value = it
+                    },
+                    modifier = modifierInfinitySlider,
+                    vertical = true,
+                    invert = true,
+                    visibleText = false,
+                    text = (amDepth.value?.times(100F))?.toInt().toString()
             )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
             UIspinner.Spinner(
-                str,
-                "AM",
-                modifier = Modifier
-                    .padding(top = 0.dp, start = 8.dp, end = 8.dp)
-                    .wrapContentWidth()
-                    .clip(shape = RoundedCornerShape(4.dp)),
-                filename = if (str == "CH0") LiveData.ch1_AM_Filename.collectAsState()
-                else LiveData.ch1_AM_Filename.collectAsState()
+                    str,
+                    "AM",
+                    modifier = Modifier
+                            .padding(top = 0.dp, start = 8.dp, end = 8.dp)
+                            .wrapContentWidth()
+                            .clip(shape = RoundedCornerShape(4.dp)),
+                    filename = if (str == "CH0") LiveData.ch1_AM_Filename.collectAsState()
+                    else LiveData.ch1_AM_Filename.collectAsState()
 
             )
 

@@ -30,66 +30,64 @@ import timber.log.Timber
 
 @Composable
 fun MainscreenTextBoxAndDropdownMenu(
-    str : String,
-    modifier: Modifier = Modifier,
-    enable : Boolean = true,
-    items: List<String>,
-    value : Float,
-    onChange : (Float)-> Unit,
-    sensing: Float = LiveConstrain.sensetingSliderCr.value * 2,
-    range: ClosedFloatingPointRange<Float> = LiveConstrain.rangeSliderCr
-)
-{
+        str: String,
+        modifier: Modifier = Modifier,
+        enable: Boolean = true,
+        items: List<String>,
+        value: Float,
+        onChange: (Float) -> Unit,
+        sensing: Float = LiveConstrain.sensetingSliderCr.floatValue * 2,
+        range: ClosedFloatingPointRange<Float> = LiveConstrain.rangeSliderCr
+) {
     var expanded by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableIntStateOf(0) }
 
     Box(
-        Modifier
-            .padding(start = 0.dp)
-            .height(48.dp)
-            .fillMaxWidth()
-            //.weight(1f)
-            .then(modifier)
-            .noRippleClickable {
-                if (enable)
-                    expanded = true
-            }
+            Modifier
+                    .padding(start = 0.dp)
+                    .height(48.dp)
+                    .fillMaxWidth()
+                    //.weight(1f)
+                    .then(modifier)
+                    .noRippleClickable {
+                        if (enable)
+                            expanded = true
+                    }
     )
     {
 
         MainScreenTextBoxGuest(
-            str = str,
-            modifier = Modifier
-                .padding(start = 8.dp)
-                .height(48.dp)
-                .fillMaxSize(),
+                str = str,
+                modifier = Modifier
+                        .padding(start = 8.dp)
+                        .height(48.dp)
+                        .fillMaxSize(),
 
-            value = value,
-            sensing = sensing,
-            range = range,
-            onValueChange = { it1 ->
+                value = value,
+                sensing = sensing,
+                range = range,
+                onValueChange = { it1 ->
 
-                Timber.e(it1.toString())
+                    Timber.e(it1.toString())
 
-                if (enable)
-                {
-                    onChange(it1)
-                }
+                    if (enable)
+                        onChange(it1)
 
-            },
-            fontSize = textStyleEditFontSize,
-            fontFamily = textStyleEditFontFamily,
-            color = if (enable) Color.LightGray else Color.DarkGray
+
+                },
+                fontSize = textStyleEditFontSize,
+                fontFamily = textStyleEditFontFamily,
+                color = if (enable) Color.LightGray else Color.DarkGray
         )
 
         DropdownMenu(
-            offset = DpOffset(12.dp, 4.dp),
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier
-                //.width(80.dp)
-                .background(colorLightBackground2)
-                .border(1.dp, color = Color.DarkGray, shape = RoundedCornerShape(16.dp))
+                offset = DpOffset(12.dp, 4.dp),
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier
+                        //.width(80.dp)
+                        .background(colorLightBackground2)
+                        .border(1.dp, color = Color.DarkGray, shape = RoundedCornerShape(16.dp))
         ) {
 
             items.forEachIndexed { index, s ->
@@ -97,10 +95,10 @@ fun MainscreenTextBoxAndDropdownMenu(
                     selectedIndex = index
                     expanded = false
 
+
                     if (enable)
-                    {
                         onChange(s.toFloat())
-                    }
+
 
                 })
                 {
