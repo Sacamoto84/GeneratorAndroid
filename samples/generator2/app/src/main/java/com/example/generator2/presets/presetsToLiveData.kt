@@ -1,9 +1,9 @@
 package com.example.generator2.presets
 
+import com.example.generator2.model.DataLiveData
 import com.example.generator2.model.LiveData
-import com.example.generator2.model.dataLiveData
 
-fun presetsToLiveData(data: dataLiveData) {
+fun presetsToLiveData(data: DataLiveData) {
 
     LiveData.presetsName.value = data.presetsName.value
 

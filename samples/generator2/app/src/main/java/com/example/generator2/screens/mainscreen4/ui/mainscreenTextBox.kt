@@ -49,7 +49,8 @@ fun MainScreenTextBoxGuest(
     range: ClosedFloatingPointRange<Float> = 0f..1000f,
     useDrag : Boolean = false,
     fontSize: TextUnit = 24.sp,
-    fontFamily: FontFamily = FontFamily.Default
+    fontFamily: FontFamily = FontFamily.Default,
+    color : Color = Color.LightGray
     ) {
 
     val onValueChangeState = rememberUpdatedState(onValueChange)
@@ -61,32 +62,6 @@ fun MainScreenTextBoxGuest(
     }
 
     var contentAlignment by remember { mutableStateOf(Alignment.Center) }
-
-//    val animatedContent = @Composable { alignment: Alignment ->
-//
-//        AnimatedContent(
-//            targetState = alignment, label = "",
-//
-//            transitionSpec = {
-//                (expandHorizontally(animationSpec = tween(10000)){-it/10})
-//                    .togetherWith(shrinkHorizontally(animationSpec = tween(10000)){-it/10}
-//                    )
-//            },
-//
-//            )
-//        { targetAlignment ->
-//
-//            Text(
-//                text = str,
-//                textAlign = if (targetAlignment == Alignment.Center) TextAlign.Center else TextAlign.Start,
-//                modifier = Modifier.fillMaxWidth(),
-//                color = Color.LightGray,
-//                fontSize = fontSize,
-//                fontWeight = FontWeight.Bold
-//            )
-//
-//        }
-//    }
 
     Box(
         Modifier
@@ -142,7 +117,7 @@ fun MainScreenTextBoxGuest(
             text = str,
             textAlign = if (contentAlignment == Alignment.Center) TextAlign.Center else TextAlign.Start,
             modifier = Modifier.fillMaxWidth(),
-            color = Color.LightGray,
+            color = color,
             fontSize = fontSize,
             fontFamily = fontFamily,
             fontWeight = FontWeight.Bold

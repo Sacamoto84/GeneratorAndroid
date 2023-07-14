@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
@@ -62,17 +65,12 @@ fun CardFM(str: String = "CH0") {
         LiveData.ch2_FM_Fr.collectAsState()
     }
 
-    val carrierFr: State<Float?> = if (str == "CH0") {
-        LiveData.ch1_Carrier_Fr.collectAsState()
-    } else {
-        LiveData.ch2_Carrier_Fr.collectAsState()
-    }
 
-    val fmDev: State<Float?> = if (str == "CH0") {
-        LiveData.ch1_FM_Dev.collectAsState()
-    } else {
-        LiveData.ch2_FM_Dev.collectAsState()
-    }
+
+
+
+
+
 
     Column()
     {
@@ -152,7 +150,7 @@ fun CardFM(str: String = "CH0") {
                     },
                     fontSize = textStyleEditFontSize,
                     fontFamily = textStyleEditFontFamily
-                    )
+                )
 
                 val items = listOf("0.1", "1.0", "5.5", "10.0", "40.0", "100.0")
 
@@ -218,91 +216,12 @@ fun CardFM(str: String = "CH0") {
 
 /////////////////////////
 
-        Row {
+        //Вторая строка
 
-            val v =
-                if (str == "CH0")
-                    LiveData.currentVolume0.collectAsState()
-                else
-                    LiveData.currentVolume1.collectAsState()
-
-            VolumeControl(
-                value =  v.value,
-                onValueChange = { it1 ->
-
-                    println("onValueChange $it1")
-
-                    if (str == "CH0") {
-
-                        LiveData.currentVolume0.update { it1 }
-                        LiveData.volume0.update { it1 * LiveData.maxVolume0.value  }
+        SecondLine(str)
 
 
-                    } else {
 
-                        LiveData.currentVolume1.update {  it1 }
-                        LiveData.volume1.update { it1 * LiveData.maxVolume1.value}
-                    }
-
-                })
-
-            Column {
-
-                Row(
-                    Modifier
-                        .padding(top = 8.dp, start = 0.dp, end = 8.dp)
-                        .height(48.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                )
-                {
-
-                    MainscreenTextBoxPlus2Line(
-                        String.format("± %d", fmDev.value!!.toInt()),
-                        String.format("%d", carrierFr.value!!.toInt() + fmDev.value!!.toInt()),
-                        String.format("%d", carrierFr.value!!.toInt() - fmDev.value!!.toInt()),
-                        Modifier
-                            .padding(start = 8.dp)
-                            .fillMaxHeight()
-                            .fillMaxWidth()
-                            .weight(1f)
-                    )
-
-
-                    InfinitySlider(
-                        value = fmDev.value,
-                        sensing = LiveConstrain.sensetingSliderFmDev.value * 8,
-                        range = LiveConstrain.rangeSliderFmDev,
-                        onValueChange = {
-                            if (str == "CH0") LiveData.ch1_FM_Dev.value =
-                                it else LiveData.ch2_FM_Dev.value = it
-                        },
-                        modifier = modifierInfinitySlider,
-                        vertical = true,
-                        invert = true,
-                        visibleText = false
-                    )
-
-                    InfinitySlider(
-                        value = fmDev.value,
-                        sensing = LiveConstrain.sensetingSliderFmDev.value,
-                        range = LiveConstrain.rangeSliderFmDev,
-                        onValueChange = {
-                            if (str == "CH0") LiveData.ch1_FM_Dev.value =
-                                it else LiveData.ch2_FM_Dev.value = it
-                        },
-                        modifier = modifierInfinitySlider,
-                        vertical = true,
-                        invert = true,
-                        visibleText = false
-                    )
-
-
-                }
-
-
-            }
-
-        }
 
 
 
@@ -322,3 +241,157 @@ fun CardFM(str: String = "CH0") {
 
     }
 }
+
+
+@Composable
+private fun SecondLine(str: String = "CH0") {
+
+    val fmSelectMode: State<Int?> = if (str == "CH0") {
+        LiveData.parameterInt0.collectAsState() //CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс
+    } else {
+        LiveData.parameterInt1.collectAsState() //CH2 режим выбора частот FM модуляции 0-обычный 1-минимум макс
+    }
+
+    Row {
+
+        Volume(str)
+
+        //Переключение режима
+
+        Button(onClick = {
+
+            if (str == "CH0") {
+
+                if (LiveData.parameterInt0.value == 0)
+                    LiveData.parameterInt0.value = 1
+                else
+                    LiveData.parameterInt0.value = 0
+            }
+            else
+            {
+                if (LiveData.parameterInt1.value == 0)
+                    LiveData.parameterInt1.value = 1
+                else
+                    LiveData.parameterInt1.value = 0
+            }
+
+        }
+        ,
+
+            modifier = Modifier
+                .padding(start = 8.dp, top = 8.dp)
+                .height(48.dp)
+                .width(32.dp)
+,
+            colors = ButtonDefaults.buttonColors( backgroundColor = Color.Gray )
+
+
+        ) {
+
+        }
+
+        if (fmSelectMode.value == 0) {
+            SecondLineMode0(str)
+        } else {
+            SecondLineMode1(str)
+        }
+
+    }
+}
+
+@Composable
+private fun SecondLineMode1(str: String) {
+
+}
+
+@Composable
+private fun SecondLineMode0(str: String) {
+
+    val carrierFr: State<Float?> = if (str == "CH0") {
+        LiveData.ch1_Carrier_Fr.collectAsState()
+    } else {
+        LiveData.ch2_Carrier_Fr.collectAsState()
+    }
+
+    val fmDev: State<Float?> = if (str == "CH0") {
+        LiveData.ch1_FM_Dev.collectAsState()
+    } else {
+        LiveData.ch2_FM_Dev.collectAsState()
+    }
+
+    Row(
+        Modifier
+            .padding(top = 8.dp, start = 0.dp, end = 8.dp)
+            .height(48.dp),
+        verticalAlignment = Alignment.CenterVertically
+    )
+    {
+
+        MainscreenTextBoxPlus2Line(
+            String.format("± %d", fmDev.value!!.toInt()),
+            String.format("%d", carrierFr.value!!.toInt() + fmDev.value!!.toInt()),
+            String.format("%d", carrierFr.value!!.toInt() - fmDev.value!!.toInt()),
+            Modifier
+                .padding(start = 8.dp)
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .weight(1f)
+        )
+
+        InfinitySlider(
+            value = fmDev.value,
+            sensing = LiveConstrain.sensetingSliderFmDev.value * 8,
+            range = LiveConstrain.rangeSliderFmDev,
+            onValueChange = {
+                if (str == "CH0") LiveData.ch1_FM_Dev.value =
+                    it else LiveData.ch2_FM_Dev.value = it
+            },
+            modifier = modifierInfinitySlider,
+            vertical = true,
+            invert = true,
+            visibleText = false
+        )
+
+        InfinitySlider(
+            value = fmDev.value,
+            sensing = LiveConstrain.sensetingSliderFmDev.value,
+            range = LiveConstrain.rangeSliderFmDev,
+            onValueChange = {
+                if (str == "CH0") LiveData.ch1_FM_Dev.value =
+                    it else LiveData.ch2_FM_Dev.value = it
+            },
+            modifier = modifierInfinitySlider,
+            vertical = true,
+            invert = true,
+            visibleText = false
+        )
+
+
+    }
+}
+
+
+@Composable
+private fun Volume(str: String = "CH0") {
+    VolumeControl(
+
+        value = if (str == "CH0")
+            LiveData.currentVolume0.collectAsState().value
+        else
+            LiveData.currentVolume1.collectAsState().value,
+
+        onValueChange = { it1 ->
+
+            println("onValueChange $it1")
+
+            if (str == "CH0") {
+                LiveData.currentVolume0.update { it1 }
+                LiveData.volume0.update { it1 * LiveData.maxVolume0.value }
+            } else {
+                LiveData.currentVolume1.update { it1 }
+                LiveData.volume1.update { it1 * LiveData.maxVolume1.value }
+            }
+
+        })
+}
+

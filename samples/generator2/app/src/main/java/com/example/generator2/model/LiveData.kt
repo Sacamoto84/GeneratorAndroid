@@ -5,7 +5,7 @@ import com.example.generator2.backup.MMKv
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.io.File
 
-data class dataLiveData(
+data class DataLiveData(
 
     var ch1_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),              //PR PS PC
     var ch1_Carrier_Filename: MutableStateFlow<String> = MutableStateFlow("Sine"),//PR PS PC
@@ -56,17 +56,17 @@ data class dataLiveData(
     //Имя текущего пресета
     val presetsName: MutableStateFlow<String> = MutableStateFlow(""),         //PR PS(name) PC
 
-    val parameterFloat0: MutableStateFlow<Float> = MutableStateFlow(1.0f), //PR PS PC
-    val parameterFloat1: MutableStateFlow<Float> = MutableStateFlow(1.0f), //PR PS PC
-    val parameterFloat2: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
-    val parameterFloat3: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
-    val parameterFloat4: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
-    val parameterFloat5: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
-    val parameterFloat6: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
-    val parameterFloat7: MutableStateFlow<Float> = MutableStateFlow(0.0f), //PR PS PC
+    val parameterFloat0: MutableStateFlow<Float> = MutableStateFlow(1000.0f), //PR PS PC CH1 FM min
+    val parameterFloat1: MutableStateFlow<Float> = MutableStateFlow(2000.0f), //PR PS PC CH1 FM max
+    val parameterFloat2: MutableStateFlow<Float> = MutableStateFlow(1500.0f), //PR PS PC CH2 FM min
+    val parameterFloat3: MutableStateFlow<Float> = MutableStateFlow(2500.0f), //PR PS PC CH2 FM max
+    val parameterFloat4: MutableStateFlow<Float> = MutableStateFlow(0.0f),    //PR PS PC
+    val parameterFloat5: MutableStateFlow<Float> = MutableStateFlow(0.0f),    //PR PS PC
+    val parameterFloat6: MutableStateFlow<Float> = MutableStateFlow(0.0f),    //PR PS PC
+    val parameterFloat7: MutableStateFlow<Float> = MutableStateFlow(0.0f),    //PR PS PC
 
-    val parameterInt0: MutableStateFlow<Int> = MutableStateFlow(1), //PR PS PC
-    val parameterInt1: MutableStateFlow<Int> = MutableStateFlow(1), //PR PS PC
+    val parameterInt0: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс
+    val parameterInt1: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CH2 режим выбора частот FM модуляции 0-обычный 1-минимум макс
     val parameterInt2: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
     val parameterInt3: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
     val parameterInt4: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
@@ -88,5 +88,5 @@ var MAINFOLDER: File? = null
 
 val mmkv = MMKv()
 
-val LiveData: dataLiveData = dataLiveData()
+val LiveData: DataLiveData = DataLiveData()
 

@@ -6,10 +6,10 @@ import cafe.adriel.satchel.ktx.getOrDefault
 import cafe.adriel.satchel.serializer.raw.RawSatchelSerializer
 import cafe.adriel.satchel.storer.file.FileSatchelStorer
 import com.example.generator2.AppPath
-import com.example.generator2.model.dataLiveData
+import com.example.generator2.model.DataLiveData
 import java.io.File
 
-fun presetsReadFile(name: String, path : String = AppPath().presets ): dataLiveData {
+fun presetsReadFile(name: String, path : String = AppPath().presets ): DataLiveData {
 
     val satchel =
         Satchel.with(
@@ -18,7 +18,7 @@ fun presetsReadFile(name: String, path : String = AppPath().presets ): dataLiveD
             serializer = RawSatchelSerializer
         )
 
-    val data = dataLiveData()
+    val data = DataLiveData()
 
     data.presetsName.value = name
 
