@@ -1,6 +1,10 @@
 package com.example.generator2.screens.mainscreen4.card
 
+import CardAM
 import CardCarrier
+import CardFM
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,7 +25,15 @@ fun CardCard(str: String = "CH0") {
             .padding(start = 8.dp, end = 8.dp)
     )
     {
-        CardCarrier(str)
+
+        Column {
+            CardCarrier(str)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            CardAM(str)
+            CardFM(str)
+        }
+
     }
 
 }

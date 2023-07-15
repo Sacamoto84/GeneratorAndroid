@@ -78,6 +78,12 @@ fun presetsReadFile(name: String, path : String = AppPath().presets ): DataLiveD
     data.parameterFloat1.value = satchel.getOrDefault("parameterFloat1", 2000.0F) //CH1 FM max
     data.parameterFloat2.value = satchel.getOrDefault("parameterFloat2", 1000.0F) //CH2 FM min
     data.parameterFloat3.value = satchel.getOrDefault("parameterFloat3", 2000.0F) //CH2 FM max
+
+    if (data.parameterFloat0.value < 10f) data.parameterFloat0.value = 1000f
+    if (data.parameterFloat1.value < 10f) data.parameterFloat1.value = 2000f
+    if (data.parameterFloat2.value < 10f) data.parameterFloat2.value = 1000f
+    if (data.parameterFloat3.value < 10f) data.parameterFloat3.value = 2000f
+
     data.parameterFloat4.value = satchel.getOrDefault("parameterFloat4", 0.0F)
     data.parameterFloat5.value = satchel.getOrDefault("parameterFloat5", 0.0F)
     data.parameterFloat6.value = satchel.getOrDefault("parameterFloat6", 0.0F)

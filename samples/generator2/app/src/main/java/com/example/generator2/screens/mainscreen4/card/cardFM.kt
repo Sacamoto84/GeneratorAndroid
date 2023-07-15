@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -29,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
@@ -67,13 +65,6 @@ fun CardFM(str: String = "CH0") {
     } else {
         LiveData.ch2_FM_Fr.collectAsState()
     }
-
-
-
-
-
-
-
 
     Column()
     {
@@ -145,7 +136,7 @@ fun CardFM(str: String = "CH0") {
                                 .fillMaxSize(),
 
                         value = fmFr.value!!,
-                        sensing = if (fmFr.value!! < 10.0F) LiveConstrain.sensetingSliderAmFm.value else LiveConstrain.sensetingSliderAmFm.value * 10f,
+                        sensing = if (fmFr.value!! < 10.0F) LiveConstrain.sensetingSliderAmFm.floatValue else LiveConstrain.sensetingSliderAmFm.floatValue * 10f,
                         range = LiveConstrain.rangeSliderAmFm,
                         onValueChange = {
                             if (str == "CH0") LiveData.ch1_FM_Fr.value =
@@ -245,7 +236,6 @@ fun CardFM(str: String = "CH0") {
     }
 }
 
-
 @Composable
 private fun SecondLine(str: String = "CH0") {
 
@@ -264,7 +254,6 @@ private fun SecondLine(str: String = "CH0") {
         Button(onClick = {
 
             if (str == "CH0") {
-
                 if (LiveData.parameterInt0.value == 0)
                     LiveData.parameterInt0.value = 1
                 else
@@ -289,11 +278,7 @@ private fun SecondLine(str: String = "CH0") {
 
         }
 
-        if (fmSelectMode.value == 0) {
-            SecondLineMode0(str)
-        } else {
-            SecondLineMode1(str)
-        }
+        if (fmSelectMode.value == 0) SecondLineMode0(str) else SecondLineMode1(str)
 
     }
 }
@@ -301,18 +286,8 @@ private fun SecondLine(str: String = "CH0") {
 @Composable
 private fun SecondLineMode1(str: String) {
 
-    val fmMin: State<Float> = if (str == "CH0") {
-        LiveData.parameterFloat0.collectAsState()
-    } else {
-        LiveData.parameterFloat2.collectAsState()
-    }
-
-    val fmMax: State<Float> = if (str == "CH0") {
-        LiveData.parameterFloat1.collectAsState()
-    } else {
-        LiveData.parameterFloat3.collectAsState()
-    }
-
+    val fmMin: State<Float> = if (str == "CH0") LiveData.parameterFloat0.collectAsState() else LiveData.parameterFloat2.collectAsState()
+    val fmMax: State<Float> = if (str == "CH0") LiveData.parameterFloat1.collectAsState() else LiveData.parameterFloat3.collectAsState()
 
     Row(
             Modifier
@@ -441,7 +416,6 @@ private fun SecondLineMode0(str: String) {
 
     }
 }
-
 
 @Composable
 private fun Volume(str: String = "CH0") {

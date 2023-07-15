@@ -37,110 +37,102 @@ import libs.modifier.noRippleClickable
 @Composable
 fun CardCarrier(str: String = "CH0") {
 
-    val chEN: State<Boolean> = if (str == "CH0") {
-        LiveData.ch1_EN.collectAsState()
-    } else {
-        LiveData.ch2_EN.collectAsState()
-    }
+    val chEN: State<Boolean> =
+        if (str == "CH0") LiveData.ch1_EN.collectAsState() else LiveData.ch2_EN.collectAsState()
 
-    val carrierFr: State<Float> = if (str == "CH0") {
-        LiveData.ch1_Carrier_Fr.collectAsState()
-    } else {
-        LiveData.ch2_Carrier_Fr.collectAsState()
-    }
+    val carrierFr: State<Float> =
+        if (str == "CH0") LiveData.ch1_Carrier_Fr.collectAsState() else LiveData.ch2_Carrier_Fr.collectAsState()
 
-
-    val fmSelectMode: State<Int?> = if (str == "CH0") {
+    val fmSelectMode: State<Int?> = if (str == "CH0")
         LiveData.parameterInt0.collectAsState() //CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс
-    } else {
+    else
         LiveData.parameterInt1.collectAsState() //CH2 режим выбора частот FM модуляции 0-обычный 1-минимум макс
-    }
 
     Column {
 
         Box(
-                modifier = Modifier
-                        .background(if (str == "CH0") colorGreen else colorOrange)
-                        .height(8.dp)
-                        .fillMaxWidth(), contentAlignment = Alignment.Center
+            modifier = Modifier
+                .background(if (str == "CH0") colorGreen else colorOrange)
+                .height(8.dp)
+                .fillMaxWidth(), contentAlignment = Alignment.Center
         ) {}
 
 
         Row(
-                Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically
+            Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically
         ) {
 
             // Кнопка включения канала
             Box(modifier = Modifier
-                    .padding(start = 8.dp)
-                    .height(48.dp)
-                    .width(ms4SwitchWidth)
-                    .border(
-                            2.dp,
-                            color = if (chEN.value) Color(0xFF1B5E20) else Color.DarkGray,
-                            RoundedCornerShape(8.dp)
-                    )
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(
-                            color = if (chEN.value) Color(0xFF4DD0E1) else colorDarkBackground
-                    )
-                    .noRippleClickable(onClick = {
-                        if (str == "CH0") LiveData.ch1_EN.value = !LiveData.ch1_EN.value
-                        else LiveData.ch2_EN.value = !LiveData.ch2_EN.value
-                        println("Кнопка")
-                    }), contentAlignment = Alignment.Center) {
+                .padding(start = 8.dp)
+                .height(48.dp)
+                .width(ms4SwitchWidth)
+                .border(
+                    2.dp,
+                    color = if (chEN.value) Color(0xFF1B5E20) else Color.DarkGray,
+                    RoundedCornerShape(8.dp)
+                )
+                .clip(RoundedCornerShape(8.dp))
+                .background(
+                    color = if (chEN.value) Color(0xFF4DD0E1) else colorDarkBackground
+                )
+                .noRippleClickable(onClick = {
+                    if (str == "CH0") LiveData.ch1_EN.value = !LiveData.ch1_EN.value
+                    else LiveData.ch2_EN.value = !LiveData.ch2_EN.value
+                    println("Кнопка")
+                }), contentAlignment = Alignment.Center
+            ) {
                 Text(
-                        text = if (chEN.value) "On" else "Off",
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth(),
-                        color = if (chEN.value) colorDarkBackground else Color.LightGray,
-                        style = textStyleButtonOnOff
+                    text = if (chEN.value) "On" else "Off",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                    color = if (chEN.value) colorDarkBackground else Color.LightGray,
+                    style = textStyleButtonOnOff
                 )
             }
 
 
 
             MainscreenTextBoxAndDropdownMenu(
-                    str = String.format("%d", carrierFr.value.toInt()),
-                    modifier = Modifier.weight(1f),
-                    enable = fmSelectMode.value == 0,
-                    items = listOf(
-                            "100", "600", "800", "1000", "1500", "2000", "2500", "3000", "3500", "4000"
-                    ),
-                    value = carrierFr.value,
-                    onChange = {
-                        if (fmSelectMode.value == 0)
-                            if (str == "CH0") LiveData.ch1_Carrier_Fr.value = it
-                            else
-                                LiveData.ch2_Carrier_Fr.value = it
-                    },
+                str = String.format("%d", carrierFr.value.toInt()),
+                modifier = Modifier.weight(1f),
+                enable = fmSelectMode.value == 0,
+                items = listOf(
+                    "100", "600", "800", "1000", "1500", "2000", "2500", "3000", "3500", "4000"
+                ),
+                value = carrierFr.value,
+                onChange = {
+                    if (fmSelectMode.value == 0)
+                        if (str == "CH0") LiveData.ch1_Carrier_Fr.value =
+                            it else LiveData.ch2_Carrier_Fr.value = it
+                },
             )
 
 
 
             InfinitySlider(
-                    value = carrierFr.value,
-                    sensing = LiveConstrain.sensetingSliderCr.value / 4,
-                    range = LiveConstrain.rangeSliderCr,
-                    onValueChange = {
-                        if (fmSelectMode.value == 0) if (str == "CH0") LiveData.ch1_Carrier_Fr.value =
-                                it else LiveData.ch2_Carrier_Fr.value = it
-                    },
-                    modifier = modifierInfinitySlider,
-                    vertical = true,
-                    invert = true,
-                    visibleText = false
+                value = carrierFr.value,
+                sensing = LiveConstrain.sensetingSliderCr.value / 4,
+                range = LiveConstrain.rangeSliderCr,
+                onValueChange = {
+                    if (fmSelectMode.value == 0) if (str == "CH0") LiveData.ch1_Carrier_Fr.value =
+                        it else LiveData.ch2_Carrier_Fr.value = it
+                },
+                modifier = modifierInfinitySlider,
+                vertical = true,
+                invert = true,
+                visibleText = false
             )
 
             UIspinner.Spinner(
-                    CH = str,
-                    Mod = "CR",
-                    modifier = Modifier
-                            .padding(top = 0.dp, start = 8.dp, end = 8.dp)
-                            .wrapContentWidth()
-                            .clip(shape = RoundedCornerShape(4.dp)),
-                    filename = if (str == "CH0") LiveData.ch1_Carrier_Filename.collectAsState()
-                    else LiveData.ch2_Carrier_Filename.collectAsState()
+                CH = str,
+                Mod = "CR",
+                modifier = Modifier
+                    .padding(top = 0.dp, start = 8.dp, end = 8.dp)
+                    .wrapContentWidth()
+                    .clip(shape = RoundedCornerShape(4.dp)),
+                filename = if (str == "CH0") LiveData.ch1_Carrier_Filename.collectAsState()
+                else LiveData.ch2_Carrier_Filename.collectAsState()
             )
 
         }
@@ -158,11 +150,6 @@ fun CardCarrier(str: String = "CH0") {
         //                colors = SliderDefaults.colors(thumbColor = Color.LightGray),
         //                steps = stepSliderCr
         //            )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        CardAM(str)
-        CardFM(str)
 
     }
 
