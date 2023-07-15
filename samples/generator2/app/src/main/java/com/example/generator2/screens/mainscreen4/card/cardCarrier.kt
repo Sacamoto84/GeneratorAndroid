@@ -3,7 +3,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -102,18 +101,20 @@ fun CardCarrier(str: String = "CH0") {
                 ),
                 value = carrierFr.value,
                 onChange = {
+
                     if (fmSelectMode.value == 0)
                         if (str == "CH0") LiveData.ch1_Carrier_Fr.value =
                             it else LiveData.ch2_Carrier_Fr.value = it
                 },
+                range = 50f..10000f
             )
 
 
 
             InfinitySlider(
                 value = carrierFr.value,
-                sensing = LiveConstrain.sensetingSliderCr.value / 4,
-                range = LiveConstrain.rangeSliderCr,
+                sensing = LiveConstrain.sensetingSliderCr.floatValue / 4,
+                range = 50f..10000f,
                 onValueChange = {
                     if (fmSelectMode.value == 0) if (str == "CH0") LiveData.ch1_Carrier_Fr.value =
                         it else LiveData.ch2_Carrier_Fr.value = it

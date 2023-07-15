@@ -34,19 +34,9 @@ class MMKv {
 
         print("saveJsonConstrain..")
 
-        m.putFloat("sensetingSliderCr", LiveConstrain.sensetingSliderCr.value)
-        m.putFloat("sensetingSliderFmDev", LiveConstrain.sensetingSliderFmDev.value)
-        m.putFloat("sensetingSliderFmBase", LiveConstrain.sensetingSliderFmBase.value)
-
-        m.putFloat("sensetingSliderAmFm", LiveConstrain.sensetingSliderAmFm.value)
-        m.putFloat("minCR", LiveConstrain.minCR.value)
-        m.putFloat("maxCR", LiveConstrain.maxCR.value)
-        m.putFloat("minModAmFm", LiveConstrain.minModAmFm.value)
-        m.putFloat("maxModAmFm", LiveConstrain.maxModAmFm.value)
-        m.putFloat("minFMBase", LiveConstrain.minFMBase.value)
-        m.putFloat("maxFMBase", LiveConstrain.maxFMBase.value)
-        m.putFloat("minFMDev", LiveConstrain.minFMDev.value)
-        m.putFloat("maxFMDev", LiveConstrain.maxFMDev.value)
+        m.putFloat("sensetingSliderCr", LiveConstrain.sensetingSliderCr.floatValue)
+        m.putFloat("sensetingSliderFmDev", LiveConstrain.sensetingSliderFmDev.floatValue)
+        m.putFloat("sensetingSliderAmFm", LiveConstrain.sensetingSliderAmFm.floatValue)
 
         println("ok")
     }
@@ -54,18 +44,9 @@ class MMKv {
     fun readConstrain() {
         print("readConstrain..")
 
-        LiveConstrain.sensetingSliderCr.value = m.getFloat("sensetingSliderCr", 0.2F)
-        LiveConstrain.sensetingSliderFmDev.value = m.getFloat("sensetingSliderFmDev", 0.2f)
-        LiveConstrain.sensetingSliderFmBase.value = m.getFloat("sensetingSliderFmBase", 0.2f)
-        LiveConstrain.sensetingSliderAmFm.value = m.getFloat("sensetingSliderAmFm", 0.01f)
-        LiveConstrain.minCR.value = m.getFloat("minCR", 600f)
-        LiveConstrain.maxCR.value = m.getFloat("maxCR", 4000f)
-        LiveConstrain.minModAmFm.value = m.getFloat("minModAmFm", 0.1f)
-        LiveConstrain.maxModAmFm.value = m.getFloat("maxModAmFm", 100f)
-        LiveConstrain.minFMBase.value = m.getFloat("minFMBase", 1000f)
-        LiveConstrain.maxFMBase.value = m.getFloat("maxFMBase", 3000f)
-        LiveConstrain.minFMDev.value = m.getFloat("minFMDev", 1f)
-        LiveConstrain.maxFMDev.value = m.getFloat("maxFMDev", 2500f)
+        LiveConstrain.sensetingSliderCr.floatValue = m.getFloat("sensetingSliderCr", 0.2F)
+        LiveConstrain.sensetingSliderFmDev.floatValue = m.getFloat("sensetingSliderFmDev", 0.2f)
+        LiveConstrain.sensetingSliderAmFm.floatValue = m.getFloat("sensetingSliderAmFm", 0.01f)
 
         println("ok")
     }

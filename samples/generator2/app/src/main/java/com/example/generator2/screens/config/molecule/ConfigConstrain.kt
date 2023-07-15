@@ -53,19 +53,6 @@ private fun EditConfig(
 @Composable
 fun ConfigConstrain(vm: VMConfig) {
 
-    Config_header("Ограничение частот")
-
-    EditConfig("Минимальная частота несущей", LiveConstrain.minCR, vm)
-    EditConfig("Максимальная частота несущей", LiveConstrain.maxCR, vm)
-
-
-    EditConfig("Минимальная частота FM девиации", LiveConstrain.minFMDev, vm)
-    EditConfig("Максимальная частота FM девиации", LiveConstrain.maxFMDev, vm)
-
-    EditConfig("Минимальная частота AM FM модуляции", LiveConstrain.minModAmFm, vm)
-    EditConfig("Максимальная частота AM FM модуляции", LiveConstrain.maxModAmFm, vm)
-
-
     Divider()
     Config_header("Чувствительность слайдера")
 

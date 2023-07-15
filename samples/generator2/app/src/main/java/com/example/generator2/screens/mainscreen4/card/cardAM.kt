@@ -117,7 +117,7 @@ fun CardAM(str: String = "CH0") {
                     value = amFr.value!!,
                     onChange = { if (str == "CH0") LiveData.ch1_AM_Fr.value = it else LiveData.ch2_AM_Fr.value = it },
                     sensing = sensing,
-                    range = LiveConstrain.rangeSliderAmFm,
+                    range = 0.1f..200f,
             )
 
 

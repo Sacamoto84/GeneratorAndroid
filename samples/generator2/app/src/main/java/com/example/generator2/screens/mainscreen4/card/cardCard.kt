@@ -29,7 +29,6 @@ fun CardCard(str: String = "CH0") {
         Column {
             CardCarrier(str)
             Spacer(modifier = Modifier.height(8.dp))
-
             CardAM(str)
             CardFM(str)
         }

@@ -37,7 +37,7 @@ fun MainscreenTextBoxAndDropdownMenu(
         value: Float,
         onChange: (Float) -> Unit,
         sensing: Float = LiveConstrain.sensetingSliderCr.floatValue * 2,
-        range: ClosedFloatingPointRange<Float> = LiveConstrain.rangeSliderCr
+        range: ClosedFloatingPointRange<Float>
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableIntStateOf(0) }
