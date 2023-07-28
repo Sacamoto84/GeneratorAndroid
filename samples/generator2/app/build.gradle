@@ -45,10 +45,10 @@ android {
 
     defaultConfig {
         applicationId "com.example.generator2"
-        minSdk 23
+        minSdk 24
         targetSdk 34
         versionCode 2007
-        versionName "2.0.0.7"
+        versionName "2.0.0.5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -309,6 +309,8 @@ dependencies {
     // AppMetrica SDK.
     implementation 'com.yandex.android:mobmetricalib:5.3.0'
     implementation 'com.yandex.android:mobmetricalib-ndk-crashes:1.1.0'
+
+    implementation 'com.github.varungulatii:Kdownloader:1.0.4'
 
 }
 

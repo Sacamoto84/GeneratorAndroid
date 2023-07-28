@@ -28,8 +28,10 @@ import com.example.generator2.presets.presetsSaveFile
 import com.example.generator2.theme.Generator2Theme
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.update.Update
+import com.example.generator2.update.kDownloader
 import com.example.generator2.util.Utils
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.kdownloader.KDownloader
 import com.tencent.mmkv.MMKV
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
@@ -39,6 +41,23 @@ import libs.KeepScreenOn
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+
+//AppMetrica.reportEvent('Button clicked!', '{}');
+
+//String eventParameters = "{\"name\":\"Alice\", \"age\":\"18\"}";
+//YandexMetrica.reportEvent("New person", eventParameters);
+
+//YandexMetrica.reportEvent("Updates installed");
+
+//try {
+//    Integer.valueOf("00xffWr0ng");
+//} catch (Throwable error) {
+//    YandexMetrica.reportError("Error while parsing some integer number", error);
+//}
+
+//YandexMetrica.reportError(String message, Throwable error)
+//YandexMetrica.reportError(String groupIdentifier, String message)
+//YandexMetrica.reportError(String groupIdentifier, String message, Throwable error)
 
 val API_key = "f6c5d62e-e201-4d03-8322-b7e738a4759f"
 
@@ -69,6 +88,10 @@ class MainActivity : ComponentActivity() {
         YandexMetrica.activate(applicationContext, config) // Automatic tracking of user activity.
         YandexMetrica.enableActivityAutoTracking(application)
         YandexMetrica.reportEvent("Запуск")
+
+
+        kDownloader = KDownloader.create(applicationContext)
+
 
         AndroidPufferDB.init(applicationContext)
 

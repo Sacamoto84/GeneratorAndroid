@@ -25,8 +25,7 @@ import com.example.generator2.screens.mainscreen4.card.CardCommander
 import com.example.generator2.screens.mainscreen4.ui.DrawerContentBottom
 import com.example.generator2.screens.mainscreen4.ui.M4BottomAppBarComponent
 import com.example.generator2.theme.colorDarkBackground
-import com.example.generator2.update.ui.DialogDownloading
-import com.example.generator2.update.ui.DialogNewVersion
+import com.example.generator2.update.ui.WigetUpdate
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -54,12 +53,6 @@ fun Mainsreen4(
         }
     }
 
-
-
-
-    DialogNewVersion()
-    DialogDownloading()
-
     if (Presets.isOpenDialogNewFile.collectAsState().value) {
         DialogPresetsNewFile()
     }
@@ -67,14 +60,19 @@ fun Mainsreen4(
     Scaffold(
 
         topBar = {
-            Text(
-                text = LiveData.presetsName.collectAsState().value,
-                color = Color.LightGray,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Column {
+
+                WigetUpdate()
+
+                Text(
+                    text = LiveData.presetsName.collectAsState().value,
+                    color = Color.LightGray,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         },
 
         bottomBar = {
