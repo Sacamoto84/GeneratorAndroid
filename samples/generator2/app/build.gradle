@@ -39,14 +39,14 @@ android {
         }
     }
 
-    compileSdk 33
+    compileSdk 34
 
     namespace 'com.example.generator2'
 
     defaultConfig {
         applicationId "com.example.generator2"
         minSdk 23
-        targetSdk 33
+        targetSdk 34
         versionCode 2007
         versionName "2.0.0.7"
 
@@ -218,7 +218,7 @@ dependencies {
     //Hilt
     implementation "com.google.dagger:hilt-android:2.47"
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
-    kapt "com.google.dagger:hilt-compiler:2.45"
+    kapt "com.google.dagger:hilt-compiler:2.47"
     //implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03'
     kapt "androidx.hilt:hilt-compiler:1.0.0"
 ///////////////////
