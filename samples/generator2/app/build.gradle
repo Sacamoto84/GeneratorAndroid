@@ -104,7 +104,7 @@ android {
 
     composeOptions {
         //kotlinCompilerExtensionVersion compose_version
-        kotlinCompilerExtensionVersion = "1.4.7"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packagingOptions {
         resources {
@@ -190,7 +190,7 @@ dependencies {
 
     implementation "androidx.compose.ui:ui-android:$compose_version"
     implementation "androidx.compose.material:material-android:$compose_version"
-    implementation "androidx.compose.material3:material3:1.2.0-alpha02"
+    implementation "androidx.compose.material3:material3:1.2.0-alpha03"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     debugImplementation "androidx.compose.ui:ui-tooling-android:$compose_version"
@@ -204,19 +204,19 @@ dependencies {
 
 ///////////////////
     //accompanist
-    implementation "com.google.accompanist:accompanist-navigation-animation:0.31.3-beta"
-    implementation "com.google.accompanist:accompanist-drawablepainter:0.31.3-beta"
-    implementation "com.google.accompanist:accompanist-webview:0.28.0"
-    implementation "com.google.accompanist:accompanist-pager:0.31.3-beta"
-    implementation "com.google.accompanist:accompanist-systemuicontroller:0.31.3-beta"
-    implementation "com.google.accompanist:accompanist-permissions:0.31.3-beta"
+    implementation "com.google.accompanist:accompanist-navigation-animation:0.31.6-rc"
+    implementation "com.google.accompanist:accompanist-drawablepainter:0.31.6-rc"
+    implementation "com.google.accompanist:accompanist-webview:0.31.6-rc"
+    implementation "com.google.accompanist:accompanist-pager:0.31.6-rc"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.31.6-rc"
+    implementation "com.google.accompanist:accompanist-permissions:0.31.6-rc"
 ///////////////////
     //lottie анимация
     //implementation 'com.airbnb.android:lottie:5.2.0'
     //implementation 'com.airbnb.android:lottie-compose:5.2.0'
 ///////////////////
     //Hilt
-    implementation "com.google.dagger:hilt-android:2.45"
+    implementation "com.google.dagger:hilt-android:2.47"
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
     kapt "com.google.dagger:hilt-compiler:2.45"
     //implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03'
@@ -226,7 +226,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1'
 
     //Навигация
-    implementation 'androidx.navigation:navigation-compose:2.6.0'
+    implementation 'androidx.navigation:navigation-compose:2.7.0-rc01'
 
     //https://github.com/tfaki/ComposableSweetToast?ref=androidexample365.com
     implementation 'com.github.tfaki:ComposableSweetToast:1.0.1'
@@ -279,7 +279,7 @@ dependencies {
     implementation 'com.tencent:mmkv:1.2.16'
 
     //implementation 'com.dropbox.core:dropbox-core-sdk:5.4.4'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.21"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.0"
 
     // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
     implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
@@ -305,6 +305,10 @@ dependencies {
 
     //implementation 'dev.ricknout.composesensors:composesensors:0.2.0'
 
+    //f6c5d62e-e201-4d03-8322-b7e738a4759f
+    // AppMetrica SDK.
+    implementation 'com.yandex.android:mobmetricalib:5.3.0'
+    implementation 'com.yandex.android:mobmetricalib-ndk-crashes:1.1.0'
 
 }
 

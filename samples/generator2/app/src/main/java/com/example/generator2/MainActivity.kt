@@ -31,6 +31,8 @@ import com.example.generator2.update.Update
 import com.example.generator2.util.Utils
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.tencent.mmkv.MMKV
+import com.yandex.metrica.YandexMetrica
+import com.yandex.metrica.YandexMetricaConfig
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import libs.KeepScreenOn
@@ -38,6 +40,7 @@ import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
+val API_key = "f6c5d62e-e201-4d03-8322-b7e738a4759f"
 
 @Singleton
 @AndroidEntryPoint
@@ -58,6 +61,14 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        // Creating an extended library configuration.
+        val config = YandexMetricaConfig.newConfigBuilder(API_key).withLogs().build() // Initializing the AppMetrica SDK.
+        // Initializing the AppMetrica SDK.
+        YandexMetrica.activate(applicationContext, config) // Automatic tracking of user activity.
+        YandexMetrica.enableActivityAutoTracking(application)
+        YandexMetrica.reportEvent("Запуск")
 
         AndroidPufferDB.init(applicationContext)
 
