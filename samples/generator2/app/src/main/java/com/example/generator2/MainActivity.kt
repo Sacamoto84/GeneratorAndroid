@@ -59,7 +59,7 @@ import javax.inject.Singleton
 //YandexMetrica.reportError(String groupIdentifier, String message)
 //YandexMetrica.reportError(String groupIdentifier, String message, Throwable error)
 
-val API_key = "8253ef79-0f6a-4fe1-8290-52fa849de5b8"
+val API_key = "5ca5814f-74a8-46c1-ab17-da3101e88888"
 
 @Singleton
 @AndroidEntryPoint
@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         presetsSaveFile("default", AppPath().config)
-
+R.drawable.add
         val s = mmkv.m.actualSize()
         super.onPause()
         println("...................onPause $s")
