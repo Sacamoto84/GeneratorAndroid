@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import libs.lan.ping
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import timber.log.Timber
@@ -82,6 +83,16 @@ object Update {
                 return@launch
             }
 
+            val s3url = "http://77.91.87.34:10000/gen3/$externalVersion.Release.apk"
+
+            if (ping(s3url))
+                url = s3url
+            else
+                YandexMetrica.reportEvent(
+                    "Update", "Отсутствуют файл в S3 $externalVersion.Release.apk"
+                )
+
+            //url = "http://77.91.87.34:10000/gen3/2.4.0.0.Release.apk"
 
             //Определение веса версий
             try {
@@ -120,7 +131,8 @@ object Update {
                             .tag("TAG")
                             .build()
 
-                        kDownloader.enqueue(request,
+                        kDownloader.enqueue(
+                            request,
                             onStart = {
                                 println("Запуск закачки")
                             },

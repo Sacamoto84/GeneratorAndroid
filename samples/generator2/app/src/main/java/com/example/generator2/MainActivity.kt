@@ -59,7 +59,7 @@ import javax.inject.Singleton
 //YandexMetrica.reportError(String groupIdentifier, String message)
 //YandexMetrica.reportError(String groupIdentifier, String message, Throwable error)
 
-val API_key = "f6c5d62e-e201-4d03-8322-b7e738a4759f"
+val API_key = "8253ef79-0f6a-4fe1-8290-52fa849de5b8"
 
 @Singleton
 @AndroidEntryPoint
@@ -83,11 +83,22 @@ class MainActivity : ComponentActivity() {
 
 
         // Creating an extended library configuration.
-        val config = YandexMetricaConfig.newConfigBuilder(API_key).withLogs().build() // Initializing the AppMetrica SDK.
+        val config = YandexMetricaConfig.newConfigBuilder(API_key)
+            .withLogs()
+            .build() // Initializing the AppMetrica SDK.
         // Initializing the AppMetrica SDK.
         YandexMetrica.activate(applicationContext, config) // Automatic tracking of user activity.
         YandexMetrica.enableActivityAutoTracking(application)
         YandexMetrica.reportEvent("Запуск")
+        YandexMetrica.reportEvent("1")
+        YandexMetrica.reportEvent("2")
+        YandexMetrica.reportEvent("3")
+        YandexMetrica.reportEvent("4")
+        YandexMetrica.reportEvent("5")
+        YandexMetrica.reportEvent("6")
+        YandexMetrica.reportEvent("7")
+        YandexMetrica.reportEvent("8")
+        YandexMetrica.reportEvent("9")
 
 
         kDownloader = KDownloader.create(applicationContext)
