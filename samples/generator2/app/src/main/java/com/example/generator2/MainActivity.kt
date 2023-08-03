@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import cafe.adriel.pufferdb.android.AndroidPufferDB
 import com.example.generator2.di.Hub
 import com.example.generator2.model.mmkv
+import com.example.generator2.mp3.play
 import com.example.generator2.presets.presetsInit
 import com.example.generator2.presets.presetsSaveFile
 import com.example.generator2.theme.Generator2Theme
@@ -124,6 +125,10 @@ R.drawable.add
 //        }
 
         Utils.ContextMainActivity = applicationContext
+
+
+        play()
+
 
         setContent {
 
