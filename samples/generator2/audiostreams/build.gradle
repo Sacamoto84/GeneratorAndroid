@@ -40,7 +40,8 @@ android {
     }
 	
 	namespace 'c.ponom.audiuostreams'
-	
+    ndkVersion '26.0.10404224 rc1'
+
 }
 
 
