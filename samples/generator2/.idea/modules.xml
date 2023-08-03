@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/generator2.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/generator2.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/audiostreams/generator2.audiostreams.main.iml" filepath="$PROJECT_DIR$/.idea/modules/audiostreams/generator2.audiostreams.main.iml" />
     </modules>
   </component>
 </project>
