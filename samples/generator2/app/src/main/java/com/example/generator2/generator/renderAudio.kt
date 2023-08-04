@@ -2,20 +2,20 @@ package com.example.generator2.generator
 
 import com.example.generator2.model.LiveData
 
-fun renderAudio(): FloatArray {
+fun renderAudio(numFrames : Int = 1024): FloatArray {
 
     val enL = LiveData.enL.value
     val enR = LiveData.enR.value
 
-    val numFrames = 1024
+    //val numFrames = 1024
 
-    val buf: FloatArray = FloatArray(numFrames * 2)
+    val buf: FloatArray = FloatArray(numFrames)
 
     if (!LiveData.mono.value) {
 
         //stereo
-        val l = renderChanel(ch1, 1024)
-        val r = renderChanel(ch2, 1024)
+        val l = renderChanel(ch1, numFrames/2)
+        val r = renderChanel(ch2, numFrames/2)
 
         //Нормальный режим
         if (!LiveData.shuffle.value)

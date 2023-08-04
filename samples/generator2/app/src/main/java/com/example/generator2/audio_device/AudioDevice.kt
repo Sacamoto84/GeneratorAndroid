@@ -40,8 +40,8 @@ class AudioDevice(private var context: Context, var playbackEngine: PlaybackEngi
 
             Timber.i("AudioDevice init{}")
 
-            playbackEngine.create()
-            playbackEngine.start()
+            //playbackEngine.create()
+            //playbackEngine.start()
 
             println("┌----------------------┐")
             println("│  AudioDevice init{}  │")
@@ -65,7 +65,7 @@ class AudioDevice(private var context: Context, var playbackEngine: PlaybackEngi
 
     fun getDeviceId()
     {
-        mDeviceId = playbackEngine.getAudioDeviceId()
+        //mDeviceId = playbackEngine.getAudioDeviceId()
     }
 
 
@@ -92,7 +92,7 @@ class AudioDevice(private var context: Context, var playbackEngine: PlaybackEngi
                 println(deviceList.joinToString("\n"))
                 println("└----------------------------------------------------------------------------┘")
 
-                mDeviceId = playbackEngine.getAudioDeviceId()
+                //mDeviceId = playbackEngine.getAudioDeviceId()
 
 
             }
@@ -112,7 +112,7 @@ class AudioDevice(private var context: Context, var playbackEngine: PlaybackEngi
                 println(deviceList.joinToString(", "))
                 println("└----------------------------------------------------------------------------┘")
 
-                mDeviceId = playbackEngine.getAudioDeviceId()
+                //mDeviceId = playbackEngine.getAudioDeviceId()
 
             }
 
@@ -135,7 +135,7 @@ class AudioDevice(private var context: Context, var playbackEngine: PlaybackEngi
 
         println("id : ${getPlaybackDeviceId(i)}")
 
-        playbackEngine.setAudioDeviceId(getPlaybackDeviceId(i));
+        //playbackEngine.setAudioDeviceId(getPlaybackDeviceId(i));
 
 
     }
@@ -177,23 +177,6 @@ class AudioDevice(private var context: Context, var playbackEngine: PlaybackEngi
 
         val obj = LiveData
 
-        playbackEngine.setVolume    (0, obj.volume0.value )
-        playbackEngine.setVolume    (1, obj.volume1.value )
-        playbackEngine.setEN        (0, obj.ch1_EN.value )
-        playbackEngine.setEN        (1, obj.ch2_EN.value )
-        playbackEngine.setAM_EN     (0, obj.ch1_AM_EN.value )
-        playbackEngine.setAM_EN     (1, obj.ch2_AM_EN.value )
-        playbackEngine.setFM_EN     (0, obj.ch1_FM_EN.value )
-        playbackEngine.setFM_EN     (1, obj.ch2_FM_EN.value )
-        playbackEngine.setCarrier_fr(0, obj.ch1_Carrier_Fr.value )
-        playbackEngine.setCarrier_fr(1, obj.ch2_Carrier_Fr.value )
-        playbackEngine.setAM_fr     (0, obj.ch1_AM_Fr.value )
-        playbackEngine.setAM_fr     (1, obj.ch2_AM_Fr.value )
-        playbackEngine.setFM_Dev    (0, obj.ch1_FM_Dev.value )
-        playbackEngine.setFM_Dev    (1, obj.ch2_FM_Dev.value )
-        playbackEngine.setFM_fr     (0, obj.ch1_FM_Fr.value )
-        playbackEngine.setFM_fr     (1, obj.ch2_FM_Fr.value )
-
         GlobalScope.launch(Dispatchers.IO) { utils.Spinner_Send_Buffer("CH0", "CR", obj.ch1_Carrier_Filename.value ) }
         GlobalScope.launch(Dispatchers.IO) { utils.Spinner_Send_Buffer("CH0", "AM", obj.ch1_AM_Filename.value ) }
         GlobalScope.launch(Dispatchers.IO) { utils.Spinner_Send_Buffer("CH0", "FM", obj.ch1_FM_Filename.value ) }
@@ -201,34 +184,6 @@ class AudioDevice(private var context: Context, var playbackEngine: PlaybackEngi
         GlobalScope.launch(Dispatchers.IO) {utils.Spinner_Send_Buffer("CH1", "CR", obj.ch2_Carrier_Filename.value ) }
         GlobalScope.launch(Dispatchers.IO) {utils.Spinner_Send_Buffer("CH1", "AM", obj.ch2_AM_Filename.value ) }
         GlobalScope.launch(Dispatchers.IO) {utils.Spinner_Send_Buffer("CH1", "FM", obj.ch2_FM_Filename.value ) }
-
-        playbackEngine.setMono(obj.mono.value)
-        playbackEngine.setInvertPhase(obj.invert.value)
-
-        playbackEngine.setEnL(obj.enL.value)
-        playbackEngine.setEnR(obj.enR.value)
-        playbackEngine.setShuffle(obj.shuffle.value)
-
-        playbackEngine.setAmDepth(0, obj.ch1AmDepth.value)
-        playbackEngine.setAmDepth(1, obj.ch2AmDepth.value)
-
-        playbackEngine.setParameterFloat(0, obj.parameterFloat0.value)
-        playbackEngine.setParameterFloat(1, obj.parameterFloat1.value)
-        playbackEngine.setParameterFloat(2, obj.parameterFloat2.value)
-        playbackEngine.setParameterFloat(3, obj.parameterFloat3.value)
-        playbackEngine.setParameterFloat(4, obj.parameterFloat4.value)
-        playbackEngine.setParameterFloat(5, obj.parameterFloat5.value)
-        playbackEngine.setParameterFloat(6, obj.parameterFloat6.value)
-        playbackEngine.setParameterFloat(7, obj.parameterFloat7.value)
-
-        playbackEngine.setParameterInt(0, obj.parameterInt0.value)
-        playbackEngine.setParameterInt(1, obj.parameterInt1.value)
-        playbackEngine.setParameterInt(2, obj.parameterInt2.value)
-        playbackEngine.setParameterInt(3, obj.parameterInt3.value)
-        playbackEngine.setParameterInt(4, obj.parameterInt4.value)
-        playbackEngine.setParameterInt(5, obj.parameterInt5.value)
-        playbackEngine.setParameterInt(6, obj.parameterInt6.value)
-        playbackEngine.setParameterInt(7, obj.parameterInt7.value)
 
         Timber.i("sendAlltoGen() End")
     }

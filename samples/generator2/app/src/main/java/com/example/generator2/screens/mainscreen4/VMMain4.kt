@@ -64,20 +64,21 @@ class VMMain4 @Inject constructor(
 
         viewModelScope.launch(Dispatchers.Main) {
 
-            while (true) {
-                if ( hub.audioDevice.playbackEngine.getNeedAllData() == 1) {
-                    hub.audioDevice.playbackEngine.resetNeedAllData()
-                    delay(200)
-                    println("Global Отсылаем все данные")
-                    withContext(Dispatchers.IO)
-                    {
-                        hub.audioDevice.sendAlltoGen()
-                        hub.audioDevice.getDeviceId()
-                    }
-
-                }
-                delay(1000)
-            }
+//            while (true) {
+//                if ( hub.audioDevice.playbackEngine.getNeedAllData() == 1)
+//                {
+//                    //hub.audioDevice.playbackEngine.resetNeedAllData()
+//                    delay(200)
+//                    println("Global Отсылаем все данные")
+//                    withContext(Dispatchers.IO)
+//                    {
+//                        hub.audioDevice.sendAlltoGen()
+//                        hub.audioDevice.getDeviceId()
+//                    }
+//
+//                }
+//                delay(1000)
+//            }
         }
 
     }

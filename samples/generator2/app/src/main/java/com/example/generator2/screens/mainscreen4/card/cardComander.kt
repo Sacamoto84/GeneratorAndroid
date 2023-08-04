@@ -93,7 +93,11 @@ fun CardCommander(vm: VMMain4) {
             }
             //Spacer(modifier = Modifier.width(8.dp))
 
-            IconButton(onClick = { vm.hub.audioDevice.playbackEngine.resetAllPhase() }) {
+            IconButton(onClick = {
+
+                //vm.hub.audioDevice.playbackEngine.resetAllPhase()
+
+            }) {
                 Icon(
                     painter = painterResource(R.drawable.reset_phase),
                     contentDescription = null,

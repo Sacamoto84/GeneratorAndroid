@@ -61,11 +61,11 @@ fun DrawerContentBottom(
                         GlobalScope.launch(Dispatchers.Main) {
                             val numDeferred1 = async{
                                 work = true
-                                global.hub.audioDevice.playbackEngine.stop()
-                                global.hub.audioDevice.playbackEngine.delete()
-                                global.hub.audioDevice.playbackEngine.create()
+                                //global.hub.audioDevice.playbackEngine.stop()
+                                //global.hub.audioDevice.playbackEngine.delete()
+                                //global.hub.audioDevice.playbackEngine.create()
                                 global.hub.audioDevice.OnItemSelectedListener(index)
-                                global.hub.audioDevice.playbackEngine.start()
+                                //global.hub.audioDevice.playbackEngine.start()
                                 //global.audioDevice.getDeviceId()
                                 //delay(2000)
                                 //global.sendAlltoGen()

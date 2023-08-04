@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import cafe.adriel.pufferdb.android.AndroidPufferDB
 import com.example.generator2.di.Hub
+import com.example.generator2.generator.generatorRun
 import com.example.generator2.model.mmkv
 import com.example.generator2.mp3.play
 import com.example.generator2.presets.presetsInit
@@ -126,8 +127,8 @@ R.drawable.add
 
         Utils.ContextMainActivity = applicationContext
 
-
-        play()
+        generatorRun()
+        //play()
 
 
         setContent {

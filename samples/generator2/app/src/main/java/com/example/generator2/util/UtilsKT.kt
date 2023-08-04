@@ -1,13 +1,16 @@
 package com.example.generator2.util
 
 import android.content.Context
+import c.ponom.audiuostreams.audiostreams.ArrayUtils.byteToShortArrayLittleEndian
 import com.example.generator2.PlaybackEngine
+import com.example.generator2.generator.ch1
+import com.example.generator2.generator.ch2
 import java.io.File
 import java.io.IOException
 
 fun Float.format(digits: Int) = "%.${digits}f".format(this)
 
-class UtilsKT ( private var context: Context , private var playbackEngine: PlaybackEngine) {
+class UtilsKT(private var context: Context, private var playbackEngine: PlaybackEngine) {
 
     /**
      * Получить список файлов по пути
@@ -87,6 +90,7 @@ class UtilsKT ( private var context: Context , private var playbackEngine: Playb
 
 
     //Для спиннера, отсылка массива
+    @OptIn(ExperimentalUnsignedTypes::class)
     fun Spinner_Send_Buffer(
         CH: String,
         Mod: String,
@@ -100,7 +104,24 @@ class UtilsKT ( private var context: Context , private var playbackEngine: Playb
         if (Mod == "AM") mod = 1
         if (Mod == "FM") mod = 2
         if (CH == "CH1") ch = 1
-        playbackEngine.CH_Send_Buffer(ch, mod, buf) //Послали буффер
+
+        if (CH == "CH0") {
+            when (Mod) {
+                "AM" -> ch1.buffer_am = byteToShortArrayLittleEndian(buf)
+                "FM" -> ch1.buffer_fm = byteToShortArrayLittleEndian(buf)
+                else -> ch1.buffer_carrier = byteToShortArrayLittleEndian(buf)
+            }
+        }else
+        {
+            when (Mod) {
+                "AM" -> ch2.buffer_am = byteToShortArrayLittleEndian(buf)
+                "FM" -> ch2.buffer_fm = byteToShortArrayLittleEndian(buf)
+                else -> ch2.buffer_carrier = byteToShortArrayLittleEndian(buf)
+            }
+        }
+
+        //playbackEngine.CH_Send_Buffer(ch, mod, buf) //Послали буффер
+
     }
 
 
