@@ -1,6 +1,8 @@
 package com.example.generator2.model
 
+import android.media.AudioFormat.ENCODING_PCM_FLOAT
 import androidx.compose.runtime.mutableIntStateOf
+import c.ponom.audiuostreams.audiostreams.AudioTrackOutputStream
 import com.example.generator2.backup.MMKv
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.io.File
@@ -89,4 +91,6 @@ var MAINFOLDER: File? = null
 val mmkv = MMKv()
 
 val LiveData: DataLiveData = DataLiveData()
+
+
 

@@ -15,7 +15,6 @@ import java.io.IOException
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class AudioTrackOutputStream private constructor() : AudioOutputStream(){
 
-
     private var currentVolume: Float=1f
 
     /**
@@ -52,14 +51,16 @@ class AudioTrackOutputStream private constructor() : AudioOutputStream(){
     constructor(
         sampleRateInHz: Int,
         channels: Int,
-        minBufferMs: Int = 0
+        minBufferMs: Int = 0,
+        encoding: Int = ENCODING_PCM_16BIT
+
     ) : this() {
         sampleRate = sampleRateInHz
         channelConfig=channelConfig(channels)
          if (!(channelConfig== CHANNEL_OUT_MONO ||channelConfig== CHANNEL_OUT_STEREO))
             throw IllegalArgumentException("Only 1 or 2 channels(CHANNEL_OUT_MONO " +
                     "and CHANNEL_OUT_STEREO) supported")
-        encoding= ENCODING_PCM_16BIT
+        //encoding = encoding
         channelsCount=channels
         bytesPerSample = 2
         frameSize =bytesPerSample*channelsCount
