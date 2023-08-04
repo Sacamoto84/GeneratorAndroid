@@ -69,7 +69,7 @@ class AudioTrackOutputStream private constructor() : AudioOutputStream(){
             .setSampleRate(sampleRate)
             .setChannelMask(channelConfig)
             .build()
-        val minBuffer =getMinBufferSize(sampleRate, channelConfig, encoding)
+        val minBuffer = getMinBufferSize(sampleRate, channelConfig, encoding)
         Log.d(TAG, "AUDIO TRACK: MIN.BUFFER.SIZE=$minBuffer bytes")
         audioOut=AudioTrack.Builder()
             .setAudioFormat(audioFormat)
