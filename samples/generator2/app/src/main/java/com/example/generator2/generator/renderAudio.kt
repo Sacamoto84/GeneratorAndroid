@@ -2,88 +2,78 @@ package com.example.generator2.generator
 
 import com.example.generator2.model.LiveData
 
+fun renderAudio(): FloatArray {
 
-@OptIn(ExperimentalUnsignedTypes::class)
-fun renderChanel(CH: StructureCh, numFrames: Int): FloatArray {
+    val enL = LiveData.enL.value
+    val enR = LiveData.enR.value
 
-    var o: Float
+    val numFrames = 1024
 
-    val rC: UInt
-    val rAM: UInt
-    val rFM: UInt
+    val buf: FloatArray = FloatArray(numFrames * 2)
 
-    val enCH: Boolean
-    val enAM: Boolean
-    val enFM: Boolean
+    if (!LiveData.mono.value) {
 
-    val volume: Float
-    val amDepth: Float
+        //stereo
+        val l = renderChanel(ch1, 1024)
+        val r = renderChanel(ch2, 1024)
 
+        //Нормальный режим
+        if (!LiveData.shuffle.value)
+            for (i in 0 until numFrames) {
 
+                if (enL)
+                    buf[i * 2] = l[i]
+                else
+                    buf[i * 2] = 0F
+                if (enR)
+                    buf[i * 2 + 1] = r[i]
+                else buf[i * 2 + 1] = 0F
 
-    if (CH.ch == 0) {
-        rC = convertHzToR(LiveData.ch1_Carrier_Fr.value).toUInt()
-        rAM = convertHzToR(LiveData.ch1_AM_Fr.value).toUInt()
-        rFM = convertHzToR(LiveData.ch1_FM_Fr.value).toUInt()
-        enCH = LiveData.ch1_EN.value
-        enAM = LiveData.ch1_AM_EN.value
-        enFM = LiveData.ch1_FM_EN.value
-        volume = LiveData.volume0.value
-        amDepth = LiveData.ch1AmDepth.value
+            }
+        else
+            for (i in 0 until numFrames) {
+                if (enL)
+                    buf[i * 2] = r[i]
+                else
+                    buf[i * 2] = 0F
+                if (enR)
+                    buf[i * 2 + 1] = l[i]
+                else buf[i * 2 + 1] = 0F
+            }
     } else {
-        rC = convertHzToR(LiveData.ch2_Carrier_Fr.value).toUInt()
-        rAM = convertHzToR(LiveData.ch2_AM_Fr.value).toUInt()
-        rFM = convertHzToR(LiveData.ch1_FM_Fr.value).toUInt()
-        enCH = LiveData.ch2_EN.value
-        enAM = LiveData.ch2_AM_EN.value
-        enFM = LiveData.ch2_FM_EN.value
-        volume = LiveData.volume1.value
-        amDepth = LiveData.ch2AmDepth.value
+        //Mono
+        val m = renderChanel(ch1, 1024)
+
+        if (!LiveData.invert.value) {
+
+            for (i in 0 until numFrames) {
+
+                if (enL)
+                    buf[i * 2] = m[i]
+                else
+                    buf[i * 2] = 0F
+                if (enR)
+                    buf[i * 2 + 1] = m[i]
+                else buf[i * 2 + 1] = 0F
+
+            }
+
+        } else {
+            //Invert
+            for (i in 0 until numFrames) {
+
+                if (enL)
+                    buf[i * 2] = m[i]
+                else
+                    buf[i * 2] = 0F
+                if (enR)
+                    buf[i * 2 + 1] = m[i] * (-1.0f)
+                else buf[i * 2 + 1] = 0F
+
+            }
+        }
     }
 
-
-    //std::fill_n(CH->mBuffer, numFrames, 0);
-
-    val mBuffer : FloatArray = FloatArray(numFrames)
-
-    for (i in 0 until numFrames) {
-
-        if (enCH) {
-
-            if (enFM) {
-                CH.phase_accumulator_fm += rFM
-                CH.phase_accumulator_carrier += convertHzToR(
-                    CH.buffer_fm[CH.phase_accumulator_fm.shr(
-                        22
-                    ).toInt()].toFloat()
-                ).toUInt()
-            } else
-                CH.phase_accumulator_carrier += rC
-
-            if (enAM) {
-                CH.phase_accumulator_am += rAM
-                //-1..1
-                o = volume * (CH.buffer_carrier[CH.phase_accumulator_carrier.shr(22)
-                    .toInt()].toFloat() - 2048.0F) / 2048.0F *
-                        map(
-                            (CH.buffer_am[CH.phase_accumulator_am.shr(22)
-                                .toInt()].toFloat() / 4095.0F),
-                            0.0F,
-                            1.0F,
-                            1.0F - amDepth,
-                            1.0F
-                        )
-            } else
-                o = volume * (CH.buffer_carrier[CH.phase_accumulator_carrier.shr(22)
-                    .toInt()].toFloat() - 2048.0F) / 2048.0F
-
-        } else
-            o = 0F
-
-        mBuffer[i] = o
-
-    }
-
-    return mBuffer
+    return buf
 
 }
