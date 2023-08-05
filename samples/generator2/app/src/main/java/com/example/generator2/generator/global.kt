@@ -3,7 +3,7 @@ package com.example.generator2.generator
 import android.media.AudioFormat
 import c.ponom.audiuostreams.audiostreams.AudioTrackOutputStream
 
-val GeneratorAudioOut = AudioTrackOutputStream(48000, 2, 100, AudioFormat.ENCODING_PCM_16BIT)
+
 
 
 val ch1 : StructureCh = StructureCh(ch = 0)
