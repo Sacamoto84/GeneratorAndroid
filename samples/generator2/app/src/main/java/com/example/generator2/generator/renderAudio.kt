@@ -9,7 +9,7 @@ fun renderAudio(numFrames : Int = 1024): FloatArray {
 
     //val numFrames = 1024
 
-    val buf: FloatArray = FloatArray(numFrames)
+    var buf: FloatArray = FloatArray(numFrames)
 
     if (!LiveData.mono.value) {
 
@@ -19,17 +19,23 @@ fun renderAudio(numFrames : Int = 1024): FloatArray {
 
         //Нормальный режим
         if (!LiveData.shuffle.value)
-            for (i in 0 until numFrames) {
 
-                if (enL)
-                    buf[i * 2] = l[i]
-                else
-                    buf[i * 2] = 0F
-                if (enR)
-                    buf[i * 2 + 1] = r[i]
-                else buf[i * 2 + 1] = 0F
+            buf = mergeArrays(l, r)
 
-            }
+//            for (i in 0 until numFrames) {
+//
+//                if (enL)
+//                    buf[i * 2] = l[i]
+//                else
+//                    buf[i * 2] = 0F
+//                if (enR)
+//                    buf[i * 2 + 1] = r[i]
+//                else buf[i * 2 + 1] = 0F
+//
+//            }
+
+
+
         else
             for (i in 0 until numFrames) {
                 if (enL)
@@ -75,5 +81,26 @@ fun renderAudio(numFrames : Int = 1024): FloatArray {
     }
 
     return buf
+
+}
+
+fun mergeArrays(array1: FloatArray, array2: FloatArray): FloatArray
+{
+    val combinedArray = FloatArray(array1.size + array2.size) { 0F }
+
+    var index1 = 0
+    var index2 = 0
+
+    for (i in combinedArray.indices) {
+        if (i % 2 == 0) {
+            combinedArray[i] = array1[index1]
+            index1++
+        } else {
+            combinedArray[i] = array2[index2]
+            index2++
+        }
+    }
+
+    return combinedArray
 
 }
