@@ -127,8 +127,8 @@ R.drawable.add
 
         Utils.ContextMainActivity = applicationContext
 
-        generatorRun()
-        //play()
+        //generatorRun()
+        play()
 
 
         setContent {
