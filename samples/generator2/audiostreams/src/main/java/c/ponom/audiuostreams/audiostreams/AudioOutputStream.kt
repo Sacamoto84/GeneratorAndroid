@@ -6,8 +6,7 @@ import androidx.annotation.IntRange
 import java.io.IOException
 import java.io.OutputStream
 
-abstract class AudioOutputStream :
-    OutputStream,  AutoCloseable{
+abstract class AudioOutputStream : OutputStream,  AutoCloseable{
 
     /**  Class constructor.
      * @author Sergey Ponomarev, 2022, 461300@mail.ru

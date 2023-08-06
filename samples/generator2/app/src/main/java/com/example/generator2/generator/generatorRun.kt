@@ -5,7 +5,7 @@ import c.ponom.audiuostreams.audiostreams.AudioTrackOutputStream
 import c.ponom.audiuostreams.audiostreams.StreamPump
 import timber.log.Timber
 
-val GeneratorAudioOut = AudioTrackOutputStream(48000, 2, 100, AudioFormat.ENCODING_PCM_16BIT)
+
 
 fun generatorRun()
 {
@@ -14,7 +14,7 @@ fun generatorRun()
 
     try {
         audioInStream = GeneratorInputStream()
-        audioOutStream = GeneratorAudioOut
+        audioOutStream = AudioTrackOutputStream(48000, 2, 100, AudioFormat.ENCODING_PCM_16BIT)
     } catch (e: Exception) {
         return
     }

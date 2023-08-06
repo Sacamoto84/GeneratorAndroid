@@ -18,7 +18,7 @@ data class StructureCh  (
     var buffer_am: ShortArray = ShortArray(1024),
     var buffer_fm: ShortArray = ShortArray(1024),
 
-    //var source_buffer_fm: UIntArray = UIntArray(1024), //Используется для перерасчета модуляции
+    var source_buffer_fm: ShortArray = ShortArray(1024), //Используется для перерасчета модуляции
 
     //Аккумуляторы
     var phase_accumulator_carrier: UInt = 0u,
