@@ -7,6 +7,8 @@ import android.media.AudioFormat.ENCODING_PCM_16BIT
 import android.media.MediaCodec
 import android.media.MediaCodec.CodecException
 import android.media.MediaExtractor
+import android.media.MediaExtractor.SEEK_TO_CLOSEST_SYNC
+import android.media.MediaExtractor.SEEK_TO_PREVIOUS_SYNC
 import android.media.MediaFormat
 import android.net.Uri
 import c.ponom.audiuostreams.audiostreams.ArrayUtils.byteToShortArrayLittleEndian
@@ -120,17 +122,23 @@ class AudioFileSoundStream : AudioInputStream, AutoCloseable {
     @Throws(IOException::class, IllegalArgumentException::class)
     private fun createStream(track: Int) {
         extractor.selectTrack(track)
+
         if (track > extractor.trackCount - 1 || track < 0) {
             extractor.release()
             throw IllegalArgumentException("No such track in file")
         }
+
         val format: MediaFormat
         val mimeString: String
         try {
+
             format = extractor.getTrackFormat(track)
+
             mimeString = format.getString("mime").toString()
+
             if (!mimeString.contains("audio"))
                 throw IllegalArgumentException("Wrong file - no audio tracks found")
+
             duration = format.getLong("durationUs").div(1000)
             sampleRate = format.getInteger("sample-rate")
             channelsCount = format.getInteger("channel-count")
@@ -138,13 +146,18 @@ class AudioFileSoundStream : AudioInputStream, AutoCloseable {
             //  при открытии 6 канального (5.1) файла на обычном девайсе, кодек справляется с этим
             //  под капотом сам отдавая 2 канала но это не документировано
             if (channelsCount > 2) channelsCount = 2
+
             encoding = if (format.containsKey("pcm-encoding")) {
                 format.getInteger("pcm-encoding")
-            } else ENCODING_PCM_16BIT //если ключа нет то 16 битный звук
+            }
+            else
+                ENCODING_PCM_16BIT //если ключа нет то 16 битный звук
+
             if (encoding != ENCODING_PCM_16BIT) {
                 extractor.release()
                 throw IllegalArgumentException("audio track is not ENCODING_PCM_16BIT")
             }
+
             mediaFormat = format
             channelConfig = channelConfig(channelsCount)
         } catch (e: ClassCastException) {
@@ -172,6 +185,9 @@ class AudioFileSoundStream : AudioInputStream, AutoCloseable {
             extractor.release()
             throw IllegalArgumentException("Wrong format or track #$track is DRM protected")
         }
+
+        extractor.seekTo(1_000_000, SEEK_TO_CLOSEST_SYNC) //Перемотка
+
         fillBufferQueue()
     }
 
