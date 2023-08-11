@@ -54,12 +54,16 @@ class AudioFileSoundStream : AudioInputStream, AutoCloseable {
     private var currentBufferChunk = BufferedChunk()
     private var mainBuffer: ByteBuffer = ByteBuffer.allocate(MAX_BUFFER_SIZE)
     private var lastBuffer = false
-    private var closed = false
+            var closed = false
     private var fatalErrorInBuffer = false
     private var bufferQueue: ArrayBlockingQueue<BufferedChunk> = ArrayBlockingQueue(QUEUE_SIZE, true)
     private var bytesTotalCount = 0
     private var bytesFinalCount = 0
+
     private var released = false
+
+
+
 
     /**
      * Class constructor.
@@ -186,10 +190,18 @@ class AudioFileSoundStream : AudioInputStream, AutoCloseable {
             throw IllegalArgumentException("Wrong format or track #$track is DRM protected")
         }
 
-        extractor.seekTo(1_000_000, SEEK_TO_CLOSEST_SYNC) //Перемотка
+        //extractor.seekTo(1_000_000, SEEK_TO_CLOSEST_SYNC) //Перемотка
 
         fillBufferQueue()
     }
+
+    /**
+     * Перемотка на позицию
+     */
+    fun seekToUs(us : Long) {
+        extractor.seekTo(us, SEEK_TO_CLOSEST_SYNC) //Перемотка
+    }
+
 
     @Throws(IllegalArgumentException::class, NullPointerException::class, CodecException::class)
     override fun read(): Int {
@@ -419,6 +431,10 @@ class AudioFileSoundStream : AudioInputStream, AutoCloseable {
             } else
                 presentationTimeUs = extractor.sampleTime
 
+            timestampMP3 = presentationTimeUs // Время воспроизведения
+
+            //println(presentationTimeUs)
+
             codec.queueInputBuffer(
                 inputBufIndex,
                 0,
@@ -432,6 +448,7 @@ class AudioFileSoundStream : AudioInputStream, AutoCloseable {
                 extractor.advance()
 
         }
+
         return inputEOS
     }
 
@@ -473,6 +490,7 @@ class AudioFileSoundStream : AudioInputStream, AutoCloseable {
         var isLastBuffer: Boolean = true
         var inFatalError: Boolean = false
         var exception: Exception? = null
+        var timeStamp : Long = 0
     }
 }
 

@@ -18,6 +18,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.R
+import com.example.generator2.mp3.mp3Duration
+import com.example.generator2.mp3.mp3TimeStamp
 import com.example.generator2.navController
 import com.example.generator2.screens.config.molecule.ConfigConstrain
 import com.example.generator2.screens.config.molecule.ConfigVolume
@@ -52,6 +54,10 @@ fun ScreenConfig(
                 { detectTapGestures(onTap = { focusManager.clearFocus() }) }
         ) {
 
+            
+            Text(text =  "${mp3TimeStamp.collectAsState().value}", color = Color.White)
+            Text(text =  "${mp3Duration.collectAsState().value}", color = Color.White)
+            
             Divider()
             Config_header(Update.currentVersion)
             Divider()

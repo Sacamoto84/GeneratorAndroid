@@ -6,6 +6,7 @@ import c.ponom.audiuostreams.audiostreams.StreamPump
 import timber.log.Timber
 
 
+const val sampleRate = 192000
 
 fun generatorRun()
 {
@@ -13,8 +14,8 @@ fun generatorRun()
     val audioOutStream: AudioTrackOutputStream
 
     try {
-        audioInStream = GeneratorInputStream()
-        audioOutStream = AudioTrackOutputStream(48000, 2, 100, AudioFormat.ENCODING_PCM_16BIT)
+        audioInStream = GeneratorInputStream(sampleRate)
+        audioOutStream = AudioTrackOutputStream(sampleRate, 2, 100, AudioFormat.ENCODING_PCM_16BIT)
     } catch (e: Exception) {
         return
     }

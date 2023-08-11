@@ -145,14 +145,22 @@ abstract class AudioInputStream protected constructor() :    InputStream(), Auto
     /**
      * The current time position of audio stream in ms from begin, calculated from the number
      * of bytes read from stream
+     *
+     * Текущая временная позиция аудиопотока в мс от начала, рассчитанная по количеству байтов, прочитанных из потока
      */
     @Volatile
     open var timestamp=0L
         protected set
 
 
+    @Volatile
+    open var timestampMP3=0L
+        protected set
+
     /**
      * The number of bytes already read from stream
+     *
+     * Количество байтов, уже прочитанных из потока
      * */
     @Volatile
     open var bytesRead = 0L
@@ -176,6 +184,10 @@ abstract class AudioInputStream protected constructor() :    InputStream(), Auto
      *
      * Override the method to return -1 if there is no estimated stream length (for example,
      * for endless streams)
+     *
+     * предполагаемое общее количество байтов в потоке, рассчитанное на основе продолжительности потока, если она известна,
+     * или -1 если продолжительность неизвестна
+     * Переопределите метод, чтобы он возвращал -1, если расчетная длина потока отсутствует (например, для бесконечных потоков).
      */
     open fun totalBytesEstimate():Long{
         val bytesEstimate=((this.sampleRate*this.duration*bytesPerSample*

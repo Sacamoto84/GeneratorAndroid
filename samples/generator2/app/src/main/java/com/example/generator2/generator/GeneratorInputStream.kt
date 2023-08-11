@@ -5,13 +5,13 @@ import c.ponom.audiuostreams.audiostreams.AudioInputStream
 
 
 @Suppress("ConvertSecondaryConstructorToPrimary")
-class GeneratorInputStream : AudioInputStream() {
+class GeneratorInputStream (sampleRate : Int = 48000): AudioInputStream() {
 
     private var closed: Boolean = false
 
     init {
 
-        this.sampleRate = 48000
+        this.sampleRate = sampleRate
         this.encoding = AudioFormat.ENCODING_PCM_16BIT
         this.channelsCount = 2
 
