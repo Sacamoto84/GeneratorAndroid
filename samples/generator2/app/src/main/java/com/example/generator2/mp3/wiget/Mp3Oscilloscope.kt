@@ -94,7 +94,7 @@ fun Mp3Ooscilloscope() {
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
-            .background(Color.DarkGray)
+            .background(Color.Black)
     )
     {
 
@@ -105,7 +105,9 @@ fun Mp3Ooscilloscope() {
         )
         {
 
-            println("update $update")
+            update
+
+            //println("update $update")
 
             val w = size.width
             val h = size.height

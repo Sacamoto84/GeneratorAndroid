@@ -14,8 +14,6 @@ val bufferQueueAudioProcessor: FIFO<ShortArray> = FIFO(4)
 class myAudioProcessor : AudioProcessor {
 
 
-
-
     companion object {
         const val SAMPLE_SIZE = 4096
 
@@ -38,10 +36,6 @@ class myAudioProcessor : AudioProcessor {
 
     private var outputBuffer: ByteBuffer = AudioProcessor.EMPTY_BUFFER
     private var processBuffer = AudioProcessor.EMPTY_BUFFER
-
-
-
-
 
 
     //inputAudioFormat.sampleRate, inputAudioFormat.channelCount, C.ENCODING_PCM_FLOAT)
@@ -103,7 +97,7 @@ class myAudioProcessor : AudioProcessor {
             processBuffer.clear()
         }
 
-        val buf = ShortArray(size/2)
+        val buf = ShortArray(size / 2)
         var index = 0
 
         while (position < limit) {
@@ -111,8 +105,9 @@ class myAudioProcessor : AudioProcessor {
             if (channelCount == 2) {
                 for (channelIndex in 0 until channelCount) { //current = inputBuffer.getShort(position + 2 * channelIndex)
 
-                    val current: Short = if (channelIndex == 0) if (enr) inputBuffer.getShort(position) else 0
-                            else if (enl) inputBuffer.getShort(position + 2) else 0
+                    val current: Short =
+                        if (channelIndex == 0) if (enr) inputBuffer.getShort(position) else 0
+                        else if (enl) inputBuffer.getShort(position + 2) else 0
 
                     processBuffer.putShort(current)
 
@@ -135,8 +130,6 @@ class myAudioProcessor : AudioProcessor {
             }
 
 
-
-
         }
 
         inputBuffer.position(limit)
@@ -146,7 +139,8 @@ class myAudioProcessor : AudioProcessor {
 
 //        val buf = ShortArray()
 //
-        bufferQueueAudioProcessor.enqueue(buf)
+        if (buf.isNotEmpty())
+            bufferQueueAudioProcessor.enqueue(buf)
 
     }
 
@@ -176,7 +170,7 @@ class myAudioProcessor : AudioProcessor {
         flush()
         processBuffer = AudioProcessor.EMPTY_BUFFER
         inputAudioFormat =
-                AudioProcessor.AudioFormat(Format.NO_VALUE, Format.NO_VALUE, Format.NO_VALUE)
+            AudioProcessor.AudioFormat(Format.NO_VALUE, Format.NO_VALUE, Format.NO_VALUE)
     }
 
 
