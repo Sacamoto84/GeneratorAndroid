@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.model.LiveData
+import com.example.generator2.mp3.wiget.Mp3Ooscilloscope
 import com.example.generator2.presets.Presets
 import com.example.generator2.presets.ui.DialogPresetsNewFile
 import com.example.generator2.screens.mainscreen4.card.CardCard
@@ -127,11 +128,14 @@ fun Mainsreen4(
                         .weight(1f)
                 )
 
+                Mp3Ooscilloscope()
+
+
+
                 Column()
                 {
                     //CardCarrier("CH0")
                     CardCard("CH0")
-
                     Spacer(modifier = Modifier.height(8.dp))
                     CardCommander(vm)                                                     //<-- Commander
                     Spacer(modifier = Modifier.height(8.dp))

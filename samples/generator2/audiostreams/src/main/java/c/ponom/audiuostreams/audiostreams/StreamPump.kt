@@ -15,15 +15,17 @@ import java.io.IOException
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class StreamPump @JvmOverloads constructor(
     val inputStream: AudioInputStream,
-    val outputStream: AudioOutputStream,
+    val outputStream: AudioOutputStream? = null,
     val bufferSize: Int = 8192,
     var onEachPump: ((b: ByteArray) -> Unit) = {},
+    var onEachPumpShort: ((b: ShortArray) -> Unit) = {},
     var onWrite: (bytesWritten: Long) -> Unit = {},
     var onFinish: () -> Unit = {},
     var onFatalError: (e: Exception) -> Unit = {}
 ) {
     var state: State = NOT_READY
         private set
+
     private var canPumpShorts = false
     private val byteBuffer: ByteArray
     private val shortBuffer: ShortArray
@@ -69,7 +71,8 @@ class StreamPump @JvmOverloads constructor(
                             onWrite(bytesSent)
                             //у меня микрофонный поток может вернуть не -1 при ошибке,
                             // поэтому не на -1 проверка
-                            outputStream.writeShorts(shortBuffer, 0, read)
+                            outputStream?.writeShorts(shortBuffer, 0, read)
+                            onEachPumpShort(shortBuffer)
                             val a = shortToByteArrayLittleEndian(shortBuffer)
                             onEachPump(a)
                             continue
@@ -79,7 +82,7 @@ class StreamPump @JvmOverloads constructor(
                         if (read >= 0) {
                             bytesSent += read
                             onWrite(bytesSent)
-                            outputStream.write(byteBuffer, 0, read)
+                            outputStream?.write(byteBuffer, 0, read)
                             onEachPump(byteBuffer)
                             continue
                         } else read = -1
@@ -87,7 +90,7 @@ class StreamPump @JvmOverloads constructor(
                     if (autoClose) try {
                         //normal close
                         inputStream.close()
-                        outputStream.close()
+                        outputStream?.close()
                         state = FINISHED
                         onFinish.invoke()
                         break
@@ -108,7 +111,7 @@ class StreamPump @JvmOverloads constructor(
                     e.printStackTrace()
                     if (autoClose) try {
                         inputStream.close()
-                        outputStream.close()
+                        outputStream?.close()
                         break
                     } catch (e: IOException) {
                         // секция ловит ошибку в закрытии потоков.
@@ -134,7 +137,7 @@ class StreamPump @JvmOverloads constructor(
                 state = FINISHED
                 if (autoClose) try {
                     inputStream.close()
-                    outputStream.close()
+                    outputStream?.close()
                 } catch (e: IOException) {
                     e.printStackTrace()
                     onFatalError(e)
@@ -185,7 +188,9 @@ class StreamPump @JvmOverloads constructor(
     }
 
     init {
-        canPumpShorts = inputStream.canReadShorts() && outputStream.canWriteShorts()
+
+        canPumpShorts = inputStream.canReadShorts() && outputStream?.canWriteShorts() ?: true
+
         if (bufferSize < 2) {
             throw IllegalArgumentException("Buffer size should be at least 2 bytes")
         } else {

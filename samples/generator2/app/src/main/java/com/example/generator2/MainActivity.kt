@@ -24,6 +24,7 @@ import cafe.adriel.pufferdb.android.AndroidPufferDB
 import com.example.generator2.di.Hub
 import com.example.generator2.generator.generatorRun
 import com.example.generator2.model.mmkv
+import com.example.generator2.mp3.PlayerMP3
 import com.example.generator2.mp3.play
 import com.example.generator2.presets.presetsInit
 import com.example.generator2.presets.presetsSaveFile
@@ -38,7 +39,10 @@ import com.tencent.mmkv.MMKV
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import libs.KeepScreenOn
 import timber.log.Timber
 import javax.inject.Inject
@@ -63,8 +67,11 @@ import javax.inject.Singleton
 
 val API_key = "5ca5814f-74a8-46c1-ab17-da3101e88888"
 
+lateinit var player : PlayerMP3
+
 @Singleton
 @AndroidEntryPoint
+@androidx.media3.common.util.UnstableApi
 class MainActivity : ComponentActivity() {
 
     @Inject
@@ -92,15 +99,6 @@ R.drawable.add
         YandexMetrica.activate(applicationContext, config) // Automatic tracking of user activity.
         YandexMetrica.enableActivityAutoTracking(application)
         YandexMetrica.reportEvent("Запуск")
-        YandexMetrica.reportEvent("1")
-        YandexMetrica.reportEvent("2")
-        YandexMetrica.reportEvent("3")
-        YandexMetrica.reportEvent("4")
-        YandexMetrica.reportEvent("5")
-        YandexMetrica.reportEvent("6")
-        YandexMetrica.reportEvent("7")
-        YandexMetrica.reportEvent("8")
-        YandexMetrica.reportEvent("9")
 
 
         kDownloader = KDownloader.create(applicationContext)
@@ -128,7 +126,12 @@ R.drawable.add
         Utils.ContextMainActivity = applicationContext
 
         //generatorRun()
-        play()
+        //play()
+
+        player = PlayerMP3(this)
+        GlobalScope.launch(Dispatchers.IO) {
+            //player.playUri()
+        }
 
 
         setContent {

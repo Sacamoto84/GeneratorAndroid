@@ -1,12 +1,8 @@
 package c.ponom.audiuostreams.audiostreams
 
-import android.media.AudioFormat.*
-import android.media.AudioFormat.Builder
-import android.media.AudioTrack
-import android.media.AudioTrack.*
-import android.util.Log
-import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
+import android.media.AudioFormat.CHANNEL_OUT_MONO
+import android.media.AudioFormat.CHANNEL_OUT_STEREO
+import android.media.AudioFormat.ENCODING_PCM_16BIT
 import java.io.IOException
 
 
@@ -20,8 +16,6 @@ class AudioTrackToMemory private constructor() : AudioOutputStream(){
     constructor(
         sampleRateInHz: Int,
         channels: Int,
-        minBufferMs: Int = 0,
-        encoding: Int = ENCODING_PCM_16BIT
 
     ) : this() {
 

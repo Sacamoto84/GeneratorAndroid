@@ -49,46 +49,46 @@ val mp3Duration = MutableStateFlow<Long>(0)
 @OptIn(DelicateCoroutinesApi::class)
 fun play() {
 
-    val audioIn = AudioFileSoundStream(AppPath().download + "/1.mp3")
-    //val audioOut = AudioTrackOutputStream(audioIn.sampleRate, audioIn.channelsCount, 0)
-    val audioOut = AudioTrackToMemory(audioIn.sampleRate, audioIn.channelsCount, 0)
-
-
-    GlobalScope.launch(Dispatchers.IO) {
-        while (!audioIn.closed) {
-            delay(100)
-            mp3TimeStamp.value = audioIn.timestampMP3
-            mp3Duration.value = audioIn.duration
-
-            //println(audioIn.timestampMP3)
-        }
-    }
-
-    val datetime = System.currentTimeMillis()
-
-    audioPump = StreamPump(audioIn, audioOut, 2048,
-        onEachPump = {
-            recordLevel.postValue(getRMSVolume(byteToShortArrayLittleEndian(it)).toFloat())
-        },
-        onWrite = {
-            //bytesPassed.postValue(it.toInt())
-        },
-        onFinish = {
-            val now = System.currentTimeMillis() - datetime
-
-            //recorderState.postValue(STOPPED_READY)
-            Timber.e("-----------------------------")
-            Timber.e("| Окончание воспроизведения")
-            Timber.e("| Время воспроизведения $now ms")
-            Timber.e("-----------------------------")
-        },
-        onFatalError = {
-            Timber.tag(TAG).e("Error=%s", it.localizedMessage)
-        })
-
-    //audioOut.play()
-
-    audioPump.start(true)
-    //recorderState.postValue(PLAYING)
+//    val audioIn = AudioFileSoundStream(AppPath().download + "/1.mp3")
+//    //val audioOut = AudioTrackOutputStream(audioIn.sampleRate, audioIn.channelsCount, 0)
+//    val audioOut = AudioTrackToMemory(audioIn.sampleRate, audioIn.channelsCount, 0)
+//
+//
+//    GlobalScope.launch(Dispatchers.IO) {
+//        while (!audioIn.closed) {
+//            delay(100)
+//            mp3TimeStamp.value = audioIn.timestampMP3
+//            mp3Duration.value = audioIn.duration
+//
+//            //println(audioIn.timestampMP3)
+//        }
+//    }
+//
+//    val datetime = System.currentTimeMillis()
+//
+//    audioPump = StreamPump(audioIn, audioOut, 2048,
+//        onEachPump = {
+//            recordLevel.postValue(getRMSVolume(byteToShortArrayLittleEndian(it)).toFloat())
+//        },
+//        onWrite = {
+//            //bytesPassed.postValue(it.toInt())
+//        },
+//        onFinish = {
+//            val now = System.currentTimeMillis() - datetime
+//
+//            //recorderState.postValue(STOPPED_READY)
+//            Timber.e("-----------------------------")
+//            Timber.e("| Окончание воспроизведения")
+//            Timber.e("| Время воспроизведения $now ms")
+//            Timber.e("-----------------------------")
+//        },
+//        onFatalError = {
+//            Timber.tag(TAG).e("Error=%s", it.localizedMessage)
+//        })
+//
+//    //audioOut.play()
+//
+//    audioPump.start(true)
+//    //recorderState.postValue(PLAYING)
 
 }

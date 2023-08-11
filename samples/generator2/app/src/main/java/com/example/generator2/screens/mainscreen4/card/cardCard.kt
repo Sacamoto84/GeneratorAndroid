@@ -3,6 +3,8 @@ package com.example.generator2.screens.mainscreen4.card
 import CardAM
 import CardCarrier
 import CardFM
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,12 +19,12 @@ import com.example.generator2.theme.colorLightBackground
 @Composable
 fun CardCard(str: String = "CH0") {
 
-    Card(
-        backgroundColor = colorLightBackground,
+    Box(
+
         modifier = Modifier
             .height(258.dp)
             .fillMaxWidth()
-            .padding(start = 8.dp, end = 8.dp)
+            .padding(start = 0.dp, end = 0.dp).background(colorLightBackground)
     )
     {
 

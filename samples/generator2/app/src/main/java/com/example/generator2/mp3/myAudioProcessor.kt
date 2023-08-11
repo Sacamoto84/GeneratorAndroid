@@ -1,13 +1,19 @@
+package com.example.generator2.mp3
+
 import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.audio.AudioProcessor
 import com.example.generator2.model.LiveData
+import libs.structure.FIFO
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import kotlin.experimental.and
+
+val bufferQueueAudioProcessor: FIFO<ShortArray> = FIFO(4)
 
 @androidx.media3.common.util.UnstableApi
 class myAudioProcessor : AudioProcessor {
+
+
 
 
     companion object {
@@ -32,6 +38,10 @@ class myAudioProcessor : AudioProcessor {
 
     private var outputBuffer: ByteBuffer = AudioProcessor.EMPTY_BUFFER
     private var processBuffer = AudioProcessor.EMPTY_BUFFER
+
+
+
+
 
 
     //inputAudioFormat.sampleRate, inputAudioFormat.channelCount, C.ENCODING_PCM_FLOAT)
@@ -93,18 +103,21 @@ class myAudioProcessor : AudioProcessor {
             processBuffer.clear()
         }
 
-        while (position < limit) {
+        val buf = ShortArray(size/2)
+        var index = 0
 
+        while (position < limit) {
 
             if (channelCount == 2) {
                 for (channelIndex in 0 until channelCount) { //current = inputBuffer.getShort(position + 2 * channelIndex)
 
-                    val current: Short =
-                            if (channelIndex == 0) if (enr) inputBuffer.getShort(position) else 0
+                    val current: Short = if (channelIndex == 0) if (enr) inputBuffer.getShort(position) else 0
                             else if (enl) inputBuffer.getShort(position + 2) else 0
 
                     processBuffer.putShort(current)
 
+                    buf[index] = current
+                    index++
                 }
                 position += channelCount * 2
             }
@@ -115,7 +128,13 @@ class myAudioProcessor : AudioProcessor {
                 processBuffer.putShort(currentR)
                 processBuffer.putShort(currentL)
                 position += 2
+                buf[index] = currentR
+                index++
+                buf[index] = currentL
+                index++
             }
+
+
 
 
         }
@@ -124,6 +143,10 @@ class myAudioProcessor : AudioProcessor {
 
         processBuffer.flip()
         outputBuffer = this.processBuffer
+
+//        val buf = ShortArray()
+//
+        bufferQueueAudioProcessor.enqueue(buf)
 
     }
 

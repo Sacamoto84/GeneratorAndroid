@@ -25,7 +25,7 @@ private const val MAX_BUFFER_SIZE = 512 * 1024
 private const val RESERVE_BUFFER_SIZE = 32 * 1024
 const val MAX_READ_SIZE = MAX_BUFFER_SIZE - 128 * 1024
 private const val TIMEOUT_US = 0L
-private const val QUEUE_SIZE = 4
+const val QUEUE_SIZE = 4
 
 /**
  * @author Sergey Ponomarev,2022, 461300@mail.ru
@@ -62,7 +62,7 @@ class AudioFileSoundStream : AudioInputStream, AutoCloseable {
 
     private var released = false
 
-
+    lateinit var format: MediaFormat
 
 
     /**
@@ -132,7 +132,7 @@ class AudioFileSoundStream : AudioInputStream, AutoCloseable {
             throw IllegalArgumentException("No such track in file")
         }
 
-        val format: MediaFormat
+
         val mimeString: String
         try {
 
@@ -222,6 +222,7 @@ class AudioFileSoundStream : AudioInputStream, AutoCloseable {
      */
     @Throws(IOException::class, IllegalArgumentException::class, NullPointerException::class)
     override fun read(b: ByteArray?, off: Int, len: Int): Int {
+
         if (b == null) throw NullPointerException("Null byte array passed")
         if (len == 0) return 0
         if (closed) throw IOException("Stream already closed")
