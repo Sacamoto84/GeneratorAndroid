@@ -4,6 +4,11 @@ import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.audio.AudioProcessor
 import com.example.generator2.model.LiveData
+import com.example.generator2.mp3.stream.channelDataStreamOutAudioProcessor
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import libs.structure.FIFO
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -76,6 +81,7 @@ class myAudioProcessor : AudioProcessor {
     }
 
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun queueInput(inputBuffer: ByteBuffer) {
 
         val enl = LiveData.enL.value
@@ -140,7 +146,10 @@ class myAudioProcessor : AudioProcessor {
 //        val buf = ShortArray()
 //
         if (buf.isNotEmpty())
-            bufferQueueAudioProcessor.enqueue(buf)
+            GlobalScope.launch(Dispatchers.IO) {
+                channelDataStreamOutAudioProcessor.send(buf)
+            }
+            //bufferQueueAudioProcessor.enqueue(buf)
 
     }
 

@@ -6,8 +6,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -16,8 +23,8 @@ import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import com.example.generator2.mp3.bufferQueueAudioProcessor
-import com.example.generator2.player
-
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
 
 
 //position->modelPosition
@@ -33,58 +40,67 @@ fun map(
 /**
  * Создать точки из signal для отображения
  */
-fun createPoint(size: Size, buf : ShortArray, rl : String = "R"): MutableList<Offset> {
+fun createPoint(size: Size, buf: ShortArray, rl: String = "R"): MutableList<Offset> {
 
     val w = size.width
     val h = size.height
 
     val points = mutableListOf<Offset>()
 
-
-
     //signal[signal.lastIndex] = signal[signal.lastIndex - 1]
-if (buf.isNotEmpty()) {
-    val R = ShortArray(buf.size / 2)
-    val L = ShortArray(buf.size / 2)
+    if (buf.isNotEmpty()) {
+        val R = ShortArray(buf.size / 2)
+        val L = ShortArray(buf.size / 2)
 
-    var index1 = 0
-    var index2 = 0
+        var index1 = 0
+        var index2 = 0
 
-    for (i in buf.indices) {
-        if (i % 2 == 0) {
-            R[index1] = buf[i]
-            index1++
-        } else {
-            L[index2] = buf[i]
-            index2++
+        for (i in buf.indices) {
+            if (i % 2 == 0) {
+                R[index1] = buf[i]
+                index1++
+            } else {
+                L[index2] = buf[i]
+                index2++
+            }
         }
+
+        var RL: ShortArray = R
+
+        if (rl == "L")
+            RL = L
+
+        for (x in 0 until w.toInt()) {
+            val mapX: Int =
+                map(x.toFloat(), 0f, w - 1f, 0f, (RL.size - 1f)).toInt().coerceIn(0, RL.size - 1)
+            val v = RL[mapX].toFloat()
+            val y = map(v, Short.MIN_VALUE.toFloat(), Short.MAX_VALUE.toFloat(), 0f, h - 1f)
+            points.add(Offset(x.toFloat(), y))
+        }
+
     }
-
-    var RL: ShortArray = R
-
-    if (rl == "L")
-        RL = L
-
-    for (x in 0 until w.toInt()) {
-        val mapX: Int =
-            map(x.toFloat(), 0f, w - 1f, 0f, (RL.size - 1f)).toInt().coerceIn(0, RL.size - 1)
-        val v = RL[mapX].toFloat()
-        val y = map(v, Short.MIN_VALUE.toFloat(), Short.MAX_VALUE.toFloat(), 0f, h - 1f)
-        points.add(Offset(x.toFloat(), y))
-    }
-
-}
 
     return points
 }
 
 
-//bufferQueueAudioProcessor
-
 @Composable
-fun Mp3Ooscilloscope() {
+fun Mp3Oscilloscope(inData: Channel<ShortArray>) {
 
-    val update = bufferQueueAudioProcessor.updateInput.collectAsState().value
+    //val update = bufferQueueAudioProcessor.updateInput.collectAsState().value
+
+    var update by remember { mutableIntStateOf(0) }
+
+    var buf = ShortArray(0)
+
+    LaunchedEffect(key1 = true)
+    {
+        while (true) {
+            buf = inData.receive()
+            update++
+            println(">>>Update -> $update")
+        }
+    }
 
     SideEffect {
         //println("update $update")
@@ -112,38 +128,35 @@ fun Mp3Ooscilloscope() {
             val w = size.width
             val h = size.height
 
-            val buf = bufferQueueAudioProcessor.dequeue()
-            val sizeBuf = buf?.size
+            //val buf = bufferQueueAudioProcessor.dequeue()
+
+            val sizeBuf = buf.size
             println(sizeBuf)
             //2304
 
-            if (buf != null) {
-                val pointsR = createPoint(size, buf, "R")
+            val pointsR = createPoint(size, buf, "R")
 
-                drawPoints( //                brush = Brush.linearGradient(
-                    //                    colors = listOf(Color.Red, Color.Yellow)
-                    //                ),
-                    color = Color.Green,
-                    points = pointsR,
-                    cap = StrokeCap.Round,
-                    pointMode = PointMode.Polygon,
-                    strokeWidth = 3f
-                )
+            drawPoints( //                brush = Brush.linearGradient(
+                //                    colors = listOf(Color.Red, Color.Yellow)
+                //                ),
+                color = Color.Green,
+                points = pointsR,
+                cap = StrokeCap.Round,
+                pointMode = PointMode.Polygon,
+                strokeWidth = 3f
+            )
 
-                val pointsL = createPoint(size, buf, "L")
+            val pointsL = createPoint(size, buf, "L")
 
-                drawPoints( //                brush = Brush.linearGradient(
-                    //                    colors = listOf(Color.Red, Color.Yellow)
-                    //                ),
-                    color = Color.Magenta,
-                    points = pointsL,
-                    cap = StrokeCap.Round,
-                    pointMode = PointMode.Polygon,
-                    strokeWidth = 3f
-                )
-
-            }
-
+            drawPoints( //                brush = Brush.linearGradient(
+                //                    colors = listOf(Color.Red, Color.Yellow)
+                //                ),
+                color = Color.Magenta,
+                points = pointsL,
+                cap = StrokeCap.Round,
+                pointMode = PointMode.Polygon,
+                strokeWidth = 3f
+            )
 
 
             //val sizeBufRL = player.bufR.capacity() //Размер всего буфера

@@ -7,7 +7,8 @@ import androidx.media3.common.Player
 import androidx.media3.common.Tracks
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.transformer.EditedMediaItem
-import java.nio.ShortBuffer
+import com.example.generator2.mp3.stream.compressDataToPoints
+import com.example.generator2.mp3.stream.dataCompressor
 
 @androidx.media3.common.util.UnstableApi
 class PlayerMP3(val context: Context) {
@@ -43,6 +44,10 @@ class PlayerMP3(val context: Context) {
 
 
     init {
+
+        dataCompressor()
+        compressDataToPoints()
+
         player = ExoPlayer.Builder(context, renderersFactory(context)).build()
         player.addListener(listener)
 
@@ -63,41 +68,39 @@ class PlayerMP3(val context: Context) {
 
 
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    var bigBuffer: ShortBuffer = ShortBuffer.allocate(0)
-    var bufR: ShortBuffer = ShortBuffer.allocate(0)
-    var bufL: ShortBuffer = ShortBuffer.allocate(0)
-    fun playUri(uri: Uri = uriCurrent) {
-        val pump = PumpMp3ToMemory(uri,
-
-            onDone = {
-                bigBuffer = it
-                //Toast.makeText(context, "sd", Toast.LENGTH_SHORT).show()
-
-
-                bufL = ShortBuffer.allocate(0)
-                bufR = ShortBuffer.allocate(0)
-
-                bigBuffer.rewind()
-                val c = bigBuffer.capacity() / 2
-                bufL = ShortBuffer.allocate(c)
-                bufR = ShortBuffer.allocate(c)
-
-                for (i in 0 until c step 2) {
-                    val t = bigBuffer.get(i)
-                    bufR.put(t)
-                    val tt = bigBuffer.get(i+1)
-                    bufL.put(tt)
-                }
-
-                bigBuffer = ShortBuffer.allocate(0)
-
-                println("onDone..........................................bigBuffer")
-
-            }
-
-        ).run()
-
-    }
+//    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//    var bigBuffer: ShortBuffer = ShortBuffer.allocate(0)
+//    var bufR: ShortBuffer = ShortBuffer.allocate(0)
+//    var bufL: ShortBuffer = ShortBuffer.allocate(0)
+//    fun playUri(uri: Uri = uriCurrent) {
+//        val pump = PumpMp3ToMemory(uri,
+//
+//            onDone = {
+//                bigBuffer = it
+//                //Toast.makeText(context, "sd", Toast.LENGTH_SHORT).show()
+//
+//
+//                bufL = ShortBuffer.allocate(0)
+//                bufR = ShortBuffer.allocate(0)
+//
+//                bigBuffer.rewind()
+//                val c = bigBuffer.capacity() / 2
+//                bufL = ShortBuffer.allocate(c)
+//                bufR = ShortBuffer.allocate(c)
+//
+//                for (i in 0 until c step 2) {
+//                    val t = bigBuffer.get(i)
+//                    bufR.put(t)
+//                    val tt = bigBuffer.get(i+1)
+//                    bufL.put(tt)
+//                }
+//
+//                bigBuffer = ShortBuffer.allocate(0)
+//
+//                println("onDone..........................................bigBuffer")
+//
+//            }
+//        ).run()
+//    }
 
 }
