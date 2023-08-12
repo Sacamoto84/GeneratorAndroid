@@ -94,7 +94,7 @@ fun Mp3Ooscilloscope() {
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
-            .background(Color.Black)
+            .background(Color(0xFF0E0E0E))
     )
     {
 
@@ -123,7 +123,7 @@ fun Mp3Ooscilloscope() {
                 drawPoints( //                brush = Brush.linearGradient(
                     //                    colors = listOf(Color.Red, Color.Yellow)
                     //                ),
-                    color = Color.Yellow,
+                    color = Color.Green,
                     points = pointsR,
                     cap = StrokeCap.Round,
                     pointMode = PointMode.Polygon,
