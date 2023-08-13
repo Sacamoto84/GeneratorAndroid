@@ -1,8 +1,9 @@
 package com.example.generator2.mp3.stream
 
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
+import com.example.generator2.mp3.channelDataOutRoll
+import com.example.generator2.mp3.channelDataStreamOutAudioProcessor
+import com.example.generator2.mp3.channelDataStreamOutCompressor
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -18,11 +19,20 @@ val compressorCount = mutableFloatStateOf(1f)
 val roll512 : FIFO<ShortArray> = FIFO(512)
 val roll256 : FIFO<ShortArray> = FIFO(256)
 val roll128 : FIFO<ShortArray> = FIFO(128)
-val roll64 : FIFO<ShortArray> = FIFO(64)
+
+val roll64  : MutableList<ShortArray> = mutableListOf()
 
 @OptIn(DelicateCoroutinesApi::class)
 fun dataCompressor() {
     GlobalScope.launch(Dispatchers.IO) {
+
+        val a = arrayOf<Short>(0,0,0,0,0,0).toShortArray()
+        repeat(64)
+        {
+            roll64.add(a)
+        }
+
+
         while (true) {
             val out = mutableListOf<Short>()
             if (compressorCount.floatValue >= 1.0F) {
@@ -33,6 +43,18 @@ fun dataCompressor() {
                 for (i in 0 until compressorCount.floatValue.toInt()) {
                     val buf = channelDataStreamOutAudioProcessor.receive()
                     out.addAll(buf.toList())
+
+
+
+                    if (compressorCount.floatValue >= 64) {
+                        while (roll64.size > 64) roll64.removeAt(0)
+                        roll64.add(buf)
+                        val rollBuf = roll64.flatMap { it.asIterable() }.toShortArray()
+                        channelDataOutRoll.send(rollBuf)
+                    }
+
+
+
                 }
                 channelDataStreamOutCompressor.send(out.toShortArray())
 

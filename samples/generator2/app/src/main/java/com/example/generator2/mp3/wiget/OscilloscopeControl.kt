@@ -5,9 +5,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.example.generator2.mp3.stream.OSCILLSYNC
+import com.example.generator2.mp3.OSCILLSYNC
 import com.example.generator2.mp3.stream.compressorCount
-import com.example.generator2.mp3.stream.oscillSync
+import com.example.generator2.mp3.oscillSync
 
 
 @Composable

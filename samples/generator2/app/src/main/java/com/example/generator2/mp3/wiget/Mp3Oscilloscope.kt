@@ -2,39 +2,25 @@ package com.example.generator2.mp3.wiget
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
-import com.example.generator2.mp3.bufferQueueAudioProcessor
-import com.example.generator2.mp3.stream.channelDataOutPoints
+import com.example.generator2.mp3.channelDataOutPoints
 import com.example.generator2.mp3.stream.oscilloscopeH
 import com.example.generator2.mp3.stream.oscilloscopeW
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.channels.Channel
-
-
-
-
 
 
 @Composable
@@ -51,7 +37,7 @@ fun Mp3Oscilloscope() {
         while (true) {
             pairPoints = channelDataOutPoints.receive()
             update++
-            println(">>>Update -> $update")
+            //println(">>>Update -> $update")
         }
     }
 
@@ -90,19 +76,19 @@ fun Mp3Oscilloscope() {
                 color = Color.Green,
                 points = pairPoints.first,
                 cap = StrokeCap.Round,
-                pointMode = PointMode.Polygon,
+                pointMode = PointMode.Points,
                 strokeWidth = 3f
             )
             
-            drawPoints( //                brush = Brush.linearGradient(
-                //                    colors = listOf(Color.Red, Color.Yellow)
-                //                ),
-                color = Color.Magenta,
-                points = pairPoints.second,
-                cap = StrokeCap.Round,
-                pointMode = PointMode.Polygon,
-                strokeWidth = 3f
-            )
+//            drawPoints( //                brush = Brush.linearGradient(
+//                //                    colors = listOf(Color.Red, Color.Yellow)
+//                //                ),
+//                color = Color.Magenta,
+//                points = pairPoints.second,
+//                cap = StrokeCap.Round,
+//                pointMode = PointMode.Polygon,
+//                strokeWidth = 3f
+//            )
 
         }
 

@@ -52,8 +52,10 @@ class PlayerMP3(val context: Context) {
         player.addListener(listener)
 
         //val uri = Uri.parse("asset:///1.mp3")
-        val uri = Uri.parse("asset:///CH Blow Me_beats_in_phase Rc.mp3")
+        //val uri = Uri.parse("asset:///CH Blow Me_beats_in_phase Rc.mp3")
         //val uri = Uri.parse("asset:///Get Hard.mp3")
+        val uri = Uri.parse("asset:///CH Teen Edition StL A.mp3")
+
 
         val a = EditedMediaItem.Builder(MediaItem.fromUri(uri)).build()
         player.setMediaItem(a.mediaItem)
