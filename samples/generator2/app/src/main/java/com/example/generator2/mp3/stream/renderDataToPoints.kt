@@ -1,7 +1,6 @@
 package com.example.generator2.mp3.stream
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -26,6 +25,9 @@ fun renderDataToPoints()
             val w = oscilloscopeW
             val h = oscilloscopeH
 
+            val bufRN: ShortArray
+            val bufLN: ShortArray
+
             if ((w == 1f) or (h == 1f))
               continue
 
@@ -49,11 +51,53 @@ fun renderDataToPoints()
                 }
             }
 
-            for (x in 0 until w.toInt()) {
-                val mapX: Int = maping(x.toFloat(), 0f, w - 1f, 0f, (bufR.size - 1f)).toInt().coerceIn(0, bufR.size - 1)
+            var indexStartSignal : Int = 0
 
-                val vR = bufR[mapX].toFloat()
-                val vL = bufL[mapX].toFloat()
+            if (compressorCount.floatValue <= 8f ) {
+
+                if (oscillSync.value == OSCILLSYNC.R) {
+                    var last: Short = 0
+                    for (i in 0 until bufR.size / 2) {
+                        val now = bufR[i]
+                        if ((last < 0) and (now >= 0)) {
+                            indexStartSignal = i
+                            break
+                        }
+                        last = now
+                    }
+                }
+
+                if (oscillSync.value == OSCILLSYNC.L) {
+                    var last: Short = 0
+                    for (i in 0 until bufL.size / 2) {
+                        val now = bufL[i]
+                        if ((last < 0) and (now >= 0)) {
+                            indexStartSignal = i
+                            break
+                        }
+                        last = now
+                    }
+                }
+
+                 bufLN = bufL.copyOfRange(indexStartSignal, (bufL.size-1)/2 + indexStartSignal)
+                 bufRN = bufR.copyOfRange(indexStartSignal, (bufR.size-1)/2 + indexStartSignal)
+            }
+            else {
+                // Для compressorCount > 8 нет синхронизации
+                bufLN = bufL
+                bufRN = bufR
+
+
+                //Режим Roll >= 64
+
+
+            }
+
+            for (x in 0 until w.toInt()) {
+                val mapX: Int = maping(x.toFloat(), 0f, w - 1f, 0f, (bufRN.size - 1f)).toInt().coerceIn(0, bufRN.size - 1)
+
+                val vR = bufRN[mapX].toFloat()
+                val vL = bufLN[mapX].toFloat()
 
                 val yR = maping(vR, Short.MIN_VALUE.toFloat(), Short.MAX_VALUE.toFloat(), 0f, h - 1f)
                 val yL = maping(vL, Short.MIN_VALUE.toFloat(), Short.MAX_VALUE.toFloat(), 0f, h - 1f)
