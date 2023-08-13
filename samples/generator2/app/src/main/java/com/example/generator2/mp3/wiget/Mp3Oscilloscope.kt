@@ -3,8 +3,11 @@ package com.example.generator2.mp3.wiget
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -35,7 +38,7 @@ import kotlinx.coroutines.channels.Channel
 
 
 @Composable
-fun Mp3Oscilloscope(inData: Channel<ShortArray>) {
+fun Mp3Oscilloscope() {
 
     //val update = bufferQueueAudioProcessor.updateInput.collectAsState().value
 
@@ -56,10 +59,10 @@ fun Mp3Oscilloscope(inData: Channel<ShortArray>) {
         //println("update $update")
     }
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
+            //.height(100.dp)
             .background(Color(0xFF0E0E0E))
     )
     {
@@ -80,14 +83,7 @@ fun Mp3Oscilloscope(inData: Channel<ShortArray>) {
 
             oscilloscopeW = size.width
             oscilloscopeH = size.height
-
-            //val buf = bufferQueueAudioProcessor.dequeue()
-
-
-            //2304
-
-
-
+            
             drawPoints( //                brush = Brush.linearGradient(
                 //                    colors = listOf(Color.Red, Color.Yellow)
                 //                ),
@@ -97,9 +93,7 @@ fun Mp3Oscilloscope(inData: Channel<ShortArray>) {
                 pointMode = PointMode.Polygon,
                 strokeWidth = 3f
             )
-
-
-
+            
             drawPoints( //                brush = Brush.linearGradient(
                 //                    colors = listOf(Color.Red, Color.Yellow)
                 //                ),
@@ -110,24 +104,9 @@ fun Mp3Oscilloscope(inData: Channel<ShortArray>) {
                 strokeWidth = 3f
             )
 
-
-            //val sizeBufRL = player.bufR.capacity() //Размер всего буфера
-//
-//            val pixelStep : Int = (sizeBufRL/w).toInt() //сколько буфера берется на пиксель
-//
-//            pixelStep
-//
-//
-//            val pixelBuf = ShortArray(pixelStep)
-//
-//            if (sizeBufRL > 0)
-//            for (i in 0 until pixelStep)
-//            {
-//                pixelBuf[i] = player.bufR.get(i)
-//            }
-
-
         }
+
+        OscilloscopeControl()
 
     }
 
