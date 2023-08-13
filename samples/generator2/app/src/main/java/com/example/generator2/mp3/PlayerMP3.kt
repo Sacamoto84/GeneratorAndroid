@@ -7,8 +7,8 @@ import androidx.media3.common.Player
 import androidx.media3.common.Tracks
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.transformer.EditedMediaItem
-import com.example.generator2.mp3.stream.compressDataToPoints
 import com.example.generator2.mp3.stream.dataCompressor
+import com.example.generator2.mp3.stream.renderDataToPoints
 
 @androidx.media3.common.util.UnstableApi
 class PlayerMP3(val context: Context) {
@@ -46,7 +46,7 @@ class PlayerMP3(val context: Context) {
     init {
 
         dataCompressor()
-        compressDataToPoints()
+        renderDataToPoints()
 
         player = ExoPlayer.Builder(context, renderersFactory(context)).build()
         player.addListener(listener)

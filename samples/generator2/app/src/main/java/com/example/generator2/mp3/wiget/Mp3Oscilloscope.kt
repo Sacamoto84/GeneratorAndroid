@@ -23,65 +23,15 @@ import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import com.example.generator2.mp3.bufferQueueAudioProcessor
+import com.example.generator2.mp3.stream.channelDataOutPoints
+import com.example.generator2.mp3.stream.oscilloscopeH
+import com.example.generator2.mp3.stream.oscilloscopeW
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 
 
-//position->modelPosition
-fun map(
-    x: Float, in_min: Float, in_max: Float, out_min: Float, out_max: Float
-): Float {
-
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
-
-}
 
 
-/**
- * Создать точки из signal для отображения
- */
-fun createPoint(size: Size, buf: ShortArray, rl: String = "R"): MutableList<Offset> {
-
-    val w = size.width
-    val h = size.height
-
-    val points = mutableListOf<Offset>()
-
-    //signal[signal.lastIndex] = signal[signal.lastIndex - 1]
-    if (buf.isNotEmpty()) {
-        val R = ShortArray(buf.size / 2)
-        val L = ShortArray(buf.size / 2)
-
-        var index1 = 0
-        var index2 = 0
-
-        for (i in buf.indices) {
-            if (i % 2 == 0) {
-                R[index1] = buf[i]
-                index1++
-            } else {
-                L[index2] = buf[i]
-                index2++
-            }
-        }
-
-        var RL: ShortArray = R
-
-        if (rl == "L")
-            RL = L
-
-        for (x in 0 until w.toInt()) {
-            val mapX: Int =
-                map(x.toFloat(), 0f, w - 1f, 0f, (RL.size - 1f)).toInt().coerceIn(0, RL.size - 1)
-            val v = RL[mapX].toFloat()
-            val y = map(v, Short.MIN_VALUE.toFloat(), Short.MAX_VALUE.toFloat(), 0f, h - 1f)
-            points.add(Offset(x.toFloat(), y))
-        }
-
-    }
-
-    return points
-}
 
 
 @Composable
@@ -91,12 +41,12 @@ fun Mp3Oscilloscope(inData: Channel<ShortArray>) {
 
     var update by remember { mutableIntStateOf(0) }
 
-    var buf = ShortArray(0)
+    var pairPoints : Pair< List<Offset>, List<Offset> > = Pair(emptyList(), emptyList())
 
     LaunchedEffect(key1 = true)
     {
         while (true) {
-            buf = inData.receive()
+            pairPoints = channelDataOutPoints.receive()
             update++
             println(">>>Update -> $update")
         }
@@ -128,31 +78,33 @@ fun Mp3Oscilloscope(inData: Channel<ShortArray>) {
             val w = size.width
             val h = size.height
 
+            oscilloscopeW = size.width
+            oscilloscopeH = size.height
+
             //val buf = bufferQueueAudioProcessor.dequeue()
 
-            val sizeBuf = buf.size
-            println(sizeBuf)
+
             //2304
 
-            val pointsR = createPoint(size, buf, "R")
+
 
             drawPoints( //                brush = Brush.linearGradient(
                 //                    colors = listOf(Color.Red, Color.Yellow)
                 //                ),
                 color = Color.Green,
-                points = pointsR,
+                points = pairPoints.first,
                 cap = StrokeCap.Round,
                 pointMode = PointMode.Polygon,
                 strokeWidth = 3f
             )
 
-            val pointsL = createPoint(size, buf, "L")
+
 
             drawPoints( //                brush = Brush.linearGradient(
                 //                    colors = listOf(Color.Red, Color.Yellow)
                 //                ),
                 color = Color.Magenta,
-                points = pointsL,
+                points = pairPoints.second,
                 cap = StrokeCap.Round,
                 pointMode = PointMode.Polygon,
                 strokeWidth = 3f
