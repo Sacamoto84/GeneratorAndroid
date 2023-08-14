@@ -1,13 +1,13 @@
 package com.example.generator2.mp3.stream
 
+import android.R.attr.path
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
 import androidx.compose.ui.geometry.Offset
 import com.example.generator2.mp3.OSCILLSYNC
 import com.example.generator2.mp3.channelDataOutBitmap
-import com.example.generator2.mp3.channelDataOutPoints
 import com.example.generator2.mp3.channelDataOutRoll
 import com.example.generator2.mp3.channelDataStreamOutCompressor
 import com.example.generator2.mp3.oscillSync
@@ -66,25 +66,28 @@ fun renderDataToPoints() {
             //if (bitmap_example == null)
 
             //bitmap_example?.recycle() // Освободите память, затем пересоздайте Bitmap
-            if (bitmap_example == null)
-            bitmap_example = Bitmap.createBitmap(w.toInt(), h.toInt(), Bitmap.Config.ARGB_8888)
+            //if (bitmap_example == null)
+            val  bitmap_example = Bitmap.createBitmap(w.toInt(), h.toInt(), Bitmap.Config.ARGB_8888)
 
             //bitmap_example!!.eraseColor(Color.GRAY)
 
-            val canvas = Canvas(bitmap_example!!)
+            val canvas = Canvas(bitmap_example)
+
+            //canvas.drawARGB(255,16,16,128)
+
+            val paintR = Paint()
+            paintR.color = 0xFFFF0000.toInt()
+            paintR.isAntiAlias = false
+            paintR.style = Paint.Style.FILL
+            paintR.strokeWidth = 2f
+            val paintL = Paint()
+            paintL.color = 0xFF00FFFF.toInt()
+            paintL.isAntiAlias = false
+            paintL.style = Paint.Style.FILL
+            paintL.strokeWidth = 2f
 
 
-            canvas.drawARGB(255,16,16,128)
 
-
-            val a = canvas.isHardwareAccelerated
-            a
-
-            val paint = Paint()
-            paint.color = 0xFFFFFFFF.toInt()
-            paint.isAntiAlias = true
-            paint.style = Paint.Style.FILL
-            paint.setStrokeWidth(5f)
 
 
             var indexStartSignal: Int = 0
@@ -142,27 +145,56 @@ fun renderDataToPoints() {
 
 ////////////////////////////////////////////////////////////////
 
+
+            val pathR = FloatArray(w.toInt()*4+16)
+            //val pathL = FloatArray(w.toInt())
+
+            val pathR1 = Array<Pt>(w.toInt()+16){Pt(0f,0f)}
+            val pathR2 =  Path()
+
+//            val pathL = Path()
+//            pathR.moveTo(0f, h/2)
+//            pathL.moveTo(0f, h/2)
+
+            var i = 0
+
             if (compressorCount.floatValue < 64) {
                 for (x in 0 until w.toInt()) {
                     val mapX: Int = maping(x.toFloat(), 0f, w - 1f, 0f, (bufRN.size - 1f)).toInt()
                         .coerceIn(0, bufRN.size - 1)
 
-                    val vR = bufRN[mapX].toFloat()
-                    val vL = bufLN[mapX].toFloat()
+                    val yR = maping(bufRN[mapX].toFloat(), Short.MIN_VALUE.toFloat(), Short.MAX_VALUE.toFloat(), 0f, h - 1f)
+                    val yL = maping(bufLN[mapX].toFloat(), Short.MIN_VALUE.toFloat(), Short.MAX_VALUE.toFloat(), 0f, h - 1f)
 
-                    val yR = maping(vR, Short.MIN_VALUE.toFloat(), Short.MAX_VALUE.toFloat(), 0f, h - 1f)
-                    val yL = maping(vL, Short.MIN_VALUE.toFloat(), Short.MAX_VALUE.toFloat(), 0f, h - 1f)
+//                    pathR[i++] = x.toFloat()
+//                    pathR[i++] = yR
 
-                    outPointR.add(Offset(x.toFloat(), yR))
-                    outPointL.add(Offset(x.toFloat(), yL))
+                    pathR1[x] = Pt(x.toFloat(), yR)
+
+                    //outPointR.add(Offset(x.toFloat(), yR))
+                    //outPointL.add(Offset(x.toFloat(), yL))
+
+                    //pathR[x] = yR
+                    //pathL[x] = yL
+                    //pathR.lineTo(x.toFloat(), yR)
 
 
-
-
-                    canvas.drawPoint(x.toFloat(), yR, paint)
-
+                    //canvas.drawPoint(x.toFloat(), yR, paintR)
+                    //canvas.drawPoint(x.toFloat(), yL, paintL)
 
                 }
+                //pathR.lineTo(w, h/2)
+                pathR2.moveTo(pathR1[0].x, pathR1[0].y)
+
+
+                // рисуем отрезки по заданным точкам
+                for (i1 in 1 until pathR1.size) {
+                    pathR2.lineTo(pathR1[i].x, pathR1[i].y)
+                }
+
+                // выводим результат
+                //canvas.drawPath(pathR2, paintR)
+
             } else {
                 //Roll логика
                 //Дано  bufRN bufLN
@@ -206,11 +238,16 @@ fun renderDataToPoints() {
             //val out: Pair<List<Offset>, List<Offset>> = Pair(outPointR.toList(), outPointL.toList())
 
             //channelDataOutPoints.send(out)
-            bitmap_example!!.prepareToDraw()
+            //bitmap_example!!.prepareToDraw()
 
-            channelDataOutBitmap.send(bitmap_example!!)
+            //canvas.drawLines(pathR, paintR)
+
+            channelDataOutBitmap.send(bitmap_example)
 
             //bitmap_example!!.recycle()
         }
     }
 }
+
+// Класс для создания точки
+internal class Pt(var x: Float, var y: Float)
