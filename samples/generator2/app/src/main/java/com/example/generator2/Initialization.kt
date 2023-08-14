@@ -68,13 +68,10 @@ fun initialization(context: Context, hub: Hub) {
             mmkv.readConstrain()
 
             presetsToLiveData(presetsReadFile("default", path = AppPath().config))
-            hub.audioDevice.sendAlltoGen()
 
             //mmkv.readVolume()
 
             isInitialized = true
-
-            hub.audioDevice.sendAlltoGen()
 
             Timber.i("Типа инициализация End")
         }

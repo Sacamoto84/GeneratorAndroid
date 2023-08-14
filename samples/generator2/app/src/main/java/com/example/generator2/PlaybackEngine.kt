@@ -11,13 +11,15 @@ interface DataCallback {
 
 class PlaybackEngine(val context: Context) : DataCallback {
 
-    //    private var mEngineHandle: Long = 0
-//
-//    init {
-//        Timber.i("PlaybackEngine() init{}")
-//        System.loadLibrary("app")
-//    }
-//
+    private var mEngineHandle: Long = 0
+
+    //
+    init {
+        Timber.i("PlaybackEngine() init{}")
+        System.loadLibrary("app")
+    }
+
+    //
 //
 //    //fun create(context: Context): Boolean {
 //    fun create(): Boolean {
@@ -75,9 +77,9 @@ class PlaybackEngine(val context: Context) : DataCallback {
 //        if (mEngineHandle != 0L) native_setAudioApi(mEngineHandle, audioApi)
 //    }
 //
-//    fun setAudioDeviceId(deviceId: Int) {
-//        if (mEngineHandle != 0L) native_setAudioDeviceId(mEngineHandle, deviceId)
-//    }
+    fun setAudioDeviceId(deviceId: Int) {
+        if (mEngineHandle != 0L) native_setAudioDeviceId(mEngineHandle, deviceId)
+    }
 //
 //    //Получить текущий номер устройства
 //    fun getAudioDeviceId(): Int {
@@ -180,7 +182,7 @@ class PlaybackEngine(val context: Context) : DataCallback {
 //    private external fun native_stopEngine(engineHandle: Long): Int
 //    private external fun native_deleteEngine(engineHandle: Long)
 //    private external fun native_setAudioApi(engineHandle: Long, audioApi: Int)
-//    private external fun native_setAudioDeviceId(engineHandle: Long, deviceId: Int)
+      private external fun native_setAudioDeviceId(engineHandle: Long, deviceId: Int)
 //    private external fun native_getAudioDeviceId(engineHandle: Long): Int
 //
 //    //Прочесть признак того что требуются новые данные

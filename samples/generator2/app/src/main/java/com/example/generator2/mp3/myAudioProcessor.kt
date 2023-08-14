@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import libs.structure.FIFO
+import timber.log.Timber
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -80,6 +81,8 @@ class myAudioProcessor : AudioProcessor {
     }
 
 
+    var buf = ShortArray(1)
+
     @OptIn(DelicateCoroutinesApi::class)
     override fun queueInput(inputBuffer: ByteBuffer) {
 
@@ -102,7 +105,9 @@ class myAudioProcessor : AudioProcessor {
             processBuffer.clear()
         }
 
-        val buf = ShortArray(size / 2)
+        //if (buf.size < size/2)
+         buf = ShortArray(size / 2) {0}
+
         var index = 0
 
         while (position < limit) {
@@ -145,9 +150,15 @@ class myAudioProcessor : AudioProcessor {
 //        val buf = ShortArray()
 //
         if (buf.isNotEmpty())
-            GlobalScope.launch(Dispatchers.IO) {
-                channelDataStreamOutAudioProcessor.send(buf)
-            }
+        {
+            val s = channelDataStreamOutAudioProcessor.trySend(buf).isSuccess
+            if (!s)
+                Timber.e("Места в канале из процессора нет")
+
+        }
+            //GlobalScope.launch(Dispatchers.IO) {
+
+            //}
             //bufferQueueAudioProcessor.enqueue(buf)
 
     }

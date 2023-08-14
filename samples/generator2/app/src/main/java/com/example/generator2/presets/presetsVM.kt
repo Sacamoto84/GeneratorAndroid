@@ -15,14 +15,11 @@ class presetsVM @Inject constructor(
     val hub: Hub
 ) : ViewModel() {
 
-
     /**
      * Чтение пресета по клику
      */
     fun onClickPresetsRead(name : String) {
-
         presetsToLiveData(presetsReadFile(name))
-        hub.audioDevice.sendAlltoGen()
         navController.popBackStack()
     }
 

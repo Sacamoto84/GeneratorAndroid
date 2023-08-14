@@ -80,15 +80,15 @@ fun Mp3Oscilloscope() {
                 strokeWidth = 3f
             )
             
-//            drawPoints( //                brush = Brush.linearGradient(
-//                //                    colors = listOf(Color.Red, Color.Yellow)
-//                //                ),
-//                color = Color.Magenta,
-//                points = pairPoints.second,
-//                cap = StrokeCap.Round,
-//                pointMode = PointMode.Polygon,
-//                strokeWidth = 3f
-//            )
+            drawPoints( //                brush = Brush.linearGradient(
+                //                    colors = listOf(Color.Red, Color.Yellow)
+                //                ),
+                color = Color.Magenta,
+                points = pairPoints.second,
+                cap = StrokeCap.Round,
+                pointMode = PointMode.Points,
+                strokeWidth = 3f
+            )
 
         }
 

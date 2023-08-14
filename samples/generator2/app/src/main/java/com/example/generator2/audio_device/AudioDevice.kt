@@ -10,7 +10,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import com.example.generator2.PlaybackEngine
 import com.example.generator2.R
-import com.example.generator2.model.LiveData
 import com.example.generator2.util.UtilsKT
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +35,7 @@ class AudioDevice(private var context: Context, var playbackEngine: PlaybackEngi
 
     init {
 
-        GlobalScope.launch(Dispatchers.Default) {
+        GlobalScope.launch(Dispatchers.IO) {
 
             Timber.i("AudioDevice init{}")
 
@@ -47,8 +46,7 @@ class AudioDevice(private var context: Context, var playbackEngine: PlaybackEngi
             println("│  AudioDevice init{}  │")
             println("└----------------------┘")
 
-            mAudioManager =
-                context.getSystemService(Context.AUDIO_SERVICE) as AudioManager //mDeviceAdapter = AudioDeviceAdapter(context)
+            mAudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager //mDeviceAdapter = AudioDeviceAdapter(context)
             mDeviceAdapter.add(
                 AudioDeviceListEntry(0, context.getString(R.string.auto_select))
             )
@@ -120,22 +118,27 @@ class AudioDevice(private var context: Context, var playbackEngine: PlaybackEngi
     }
 
 
-    fun OnItemSelectedListener(i: Int) {
-         println("Изменить устройство вывода i:${i}")
+    fun onItemSelectedListener(i: Int) {
+
+         println("Изменить устройство вывода на:${i}")
         // Start Bluetooth SCO if needed.
+
         if (isScoDevice(getPlaybackDeviceId(i)) && !mScoStarted) {
-            startBluetoothSco();
-            mScoStarted = true;
+            startBluetoothSco()
+            mScoStarted = true
             println("Start Bluetooth SCO")
-        } else if (!isScoDevice(getPlaybackDeviceId(i)) && mScoStarted) {
-            stopBluetoothSco();
-            mScoStarted = false;
-            println("Stop Bluetooth SCO")
-        }
+        } else
+
+            if (!isScoDevice(getPlaybackDeviceId(i)) && mScoStarted)
+            {
+              stopBluetoothSco()
+              mScoStarted = false
+              println("Stop Bluetooth SCO")
+            }
 
         println("id : ${getPlaybackDeviceId(i)}")
 
-        //playbackEngine.setAudioDeviceId(getPlaybackDeviceId(i));
+        playbackEngine.setAudioDeviceId(getPlaybackDeviceId(i))
 
 
     }
@@ -170,27 +173,6 @@ class AudioDevice(private var context: Context, var playbackEngine: PlaybackEngi
         val myAudioMgr = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
         myAudioMgr!!.stopBluetoothSco()
     }
-
-    fun sendAlltoGen() {
-
-        Timber.i("sendAlltoGen() Start")
-
-        val obj = LiveData
-
-        GlobalScope.launch(Dispatchers.IO) { utils.Spinner_Send_Buffer("CH0", "CR", obj.ch1_Carrier_Filename.value ) }
-        GlobalScope.launch(Dispatchers.IO) { utils.Spinner_Send_Buffer("CH0", "AM", obj.ch1_AM_Filename.value ) }
-        GlobalScope.launch(Dispatchers.IO) { utils.Spinner_Send_Buffer("CH0", "FM", obj.ch1_FM_Filename.value ) }
-
-        GlobalScope.launch(Dispatchers.IO) {utils.Spinner_Send_Buffer("CH1", "CR", obj.ch2_Carrier_Filename.value ) }
-        GlobalScope.launch(Dispatchers.IO) {utils.Spinner_Send_Buffer("CH1", "AM", obj.ch2_AM_Filename.value ) }
-        GlobalScope.launch(Dispatchers.IO) {utils.Spinner_Send_Buffer("CH1", "FM", obj.ch2_FM_Filename.value ) }
-
-        Timber.i("sendAlltoGen() End")
-    }
-
-
-
-
 
 }
 

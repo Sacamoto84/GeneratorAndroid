@@ -1,11 +1,8 @@
 package com.example.generator2.audio_device;
 
-import android.annotation.TargetApi;
 import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
-
 import androidx.annotation.NonNull;
-
 import java.util.List;
 import java.util.Vector;
 

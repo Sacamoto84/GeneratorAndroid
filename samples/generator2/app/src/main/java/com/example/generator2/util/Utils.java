@@ -50,6 +50,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class Utils {
 
     public static Context ContextMainActivity;
@@ -138,7 +140,8 @@ public class Utils {
         long len = file.length();
         byte[] fileData = new byte[(int) len];
 
-        Log.i("readFileMod2048byte:", path + " len:"+ Long.toString(len));
+        //Timber.tag("readFileMod2048byte:").i(path + " len:" + Long.toString(len));
+
         try {
             DataInputStream dis = new DataInputStream(new FileInputStream(file));
 
@@ -147,7 +150,7 @@ public class Utils {
         }
         catch (IOException e)
         {
-            Log.i("readFileMod2048byte:", "!IOException! : Error");
+            Timber.tag("readFileMod2048byte:").e("!IOException! : Error");
         }
 
         return fileData;

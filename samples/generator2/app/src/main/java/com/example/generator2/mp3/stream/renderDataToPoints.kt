@@ -138,24 +138,21 @@ fun renderDataToPoints() {
                         .coerceIn(0, bufRN.size - 1))
                 }
 
-                listIndex0
+                for (i in 0 until( listIndex0.size-1 ))
+                {
 
 
 
-//                var a = 0
-//                var b = 100
-//                repeat(1000000)
-//                {
-//                    a++
-//                    b++
-//                }
-//
-//                val array = IntArray(2)
-//                repeat(1000000)
-//                {
-//                    array[0] = array[0] + 1
-//                    array[1] = array[1] + 1
-//                }
+                    val max = bufRN.slice(  listIndex0[i]until listIndex0[i+1]).max().toFloat()
+                    val y = maping(max, Short.MIN_VALUE.toFloat(), Short.MAX_VALUE.toFloat(), 0f, h - 1f)
+                    val y1 = maping(-max, Short.MIN_VALUE.toFloat(), Short.MAX_VALUE.toFloat(), 0f, h - 1f)
+
+                    outPointR.add(Offset(i.toFloat(), y))
+                    outPointL.add(Offset(i.toFloat(), y1))
+
+                }
+
+
 
 
 

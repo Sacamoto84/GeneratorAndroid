@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.generator2.screens.mainscreen4.VMMain4
 import com.talhafaki.composablesweettoast.util.SweetToastUtil
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 /**
  * Заполняем Drawer Списка устройств
  */
+@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun DrawerContentBottom(
     global: VMMain4
@@ -64,7 +66,7 @@ fun DrawerContentBottom(
                                 //global.hub.audioDevice.playbackEngine.stop()
                                 //global.hub.audioDevice.playbackEngine.delete()
                                 //global.hub.audioDevice.playbackEngine.create()
-                                global.hub.audioDevice.OnItemSelectedListener(index)
+                                global.hub.audioDevice.onItemSelectedListener(index)
                                 //global.hub.audioDevice.playbackEngine.start()
                                 //global.audioDevice.getDeviceId()
                                 //delay(2000)
