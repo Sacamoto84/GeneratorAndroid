@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/audiostreams" />
             <option value="$PROJECT_DIR$/benchmark" />
+            <option value="$PROJECT_DIR$/tft" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />
