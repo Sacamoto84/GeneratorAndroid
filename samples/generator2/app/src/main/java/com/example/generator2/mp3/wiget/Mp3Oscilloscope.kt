@@ -1,5 +1,6 @@
 package com.example.generator2.mp3.wiget
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -17,11 +18,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
+import com.example.generator2.mp3.channelDataOutBitmap
 import com.example.generator2.mp3.channelDataOutPoints
 import com.example.generator2.mp3.stream.oscilloscopeH
 import com.example.generator2.mp3.stream.oscilloscopeW
 
+var bitmap : Bitmap? = null
 
 @Composable
 fun Mp3Oscilloscope() {
@@ -35,9 +39,12 @@ fun Mp3Oscilloscope() {
     LaunchedEffect(key1 = true)
     {
         while (true) {
-            pairPoints = channelDataOutPoints.receive()
-            update++
+            //pairPoints = channelDataOutPoints.receive()
+            //update++
             //println(">>>Update -> $update")
+
+            bitmap = channelDataOutBitmap.receive()
+            update++
         }
     }
 
@@ -49,7 +56,7 @@ fun Mp3Oscilloscope() {
         modifier = Modifier
             .fillMaxWidth()
             //.height(100.dp)
-            .background(Color(0xFF0E0E0E))
+            .background(Color(0xFF343633))
     )
     {
 
@@ -69,26 +76,29 @@ fun Mp3Oscilloscope() {
 
             oscilloscopeW = size.width
             oscilloscopeH = size.height
-            
-            drawPoints( //                brush = Brush.linearGradient(
-                //                    colors = listOf(Color.Red, Color.Yellow)
-                //                ),
-                color = Color.Green,
-                points = pairPoints.first,
-                cap = StrokeCap.Round,
-                pointMode = PointMode.Points,
-                strokeWidth = 3f
-            )
-            
-            drawPoints( //                brush = Brush.linearGradient(
-                //                    colors = listOf(Color.Red, Color.Yellow)
-                //                ),
-                color = Color.Magenta,
-                points = pairPoints.second,
-                cap = StrokeCap.Round,
-                pointMode = PointMode.Points,
-                strokeWidth = 3f
-            )
+
+            bitmap?.let { drawImage(it.asImageBitmap()) }
+
+
+//            drawPoints( //                brush = Brush.linearGradient(
+//                //                    colors = listOf(Color.Red, Color.Yellow)
+//                //                ),
+//                color = Color.Green,
+//                points = pairPoints.first,
+//                cap = StrokeCap.Round,
+//                pointMode = PointMode.Points,
+//                strokeWidth = 3f
+//            )
+//
+//            drawPoints( //                brush = Brush.linearGradient(
+//                //                    colors = listOf(Color.Red, Color.Yellow)
+//                //                ),
+//                color = Color.Magenta,
+//                points = pairPoints.second,
+//                cap = StrokeCap.Round,
+//                pointMode = PointMode.Points,
+//                strokeWidth = 3f
+//            )
 
         }
 
