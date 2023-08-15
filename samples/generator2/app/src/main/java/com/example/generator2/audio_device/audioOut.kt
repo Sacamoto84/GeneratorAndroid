@@ -1,8 +1,8 @@
 package com.example.generator2.audio_device
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.media.AudioManager
+import timber.log.Timber
 
 
 fun audioOutSpeaker(context : Context) {
@@ -27,3 +27,22 @@ fun audioOutBT( context : Context) {
     localAudioManager.startBluetoothSco()
     localAudioManager.setBluetoothScoOn(true)
 }
+
+fun getCurrentAudioDevices(context : Context)
+{
+    val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+    val a = audioManager.isSpeakerphoneOn()
+    val b = audioManager.isBluetoothScoOn()
+    val c = audioManager.isBluetoothA2dpOn()
+    val d = audioManager.isWiredHeadsetOn()
+
+    // Вывод информации о текущем устройстве вывода
+    Timber.d("Текущее устройство вывода: | Speaker $a | BTSco: $b | A2Dp: $c | Wired: $d")
+
+}
+
+
+
+
+

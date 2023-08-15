@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import cafe.adriel.pufferdb.android.AndroidPufferDB
+import com.example.generator2.audio_device.getCurrentAudioDevices
 import com.example.generator2.di.Hub
 import com.example.generator2.generator.generatorRun
 import com.example.generator2.model.mmkv
@@ -109,6 +110,15 @@ class MainActivity : ComponentActivity() {
             YandexMetrica.enableActivityAutoTracking(application)
             YandexMetrica.reportEvent("Запуск")
         }
+
+
+        GlobalScope.launch(Dispatchers.IO) {
+            while (true) {
+                getCurrentAudioDevices(applicationContext)
+                delay(1000)
+            }
+        }
+
 
 
         kDownloader = KDownloader.create(applicationContext)

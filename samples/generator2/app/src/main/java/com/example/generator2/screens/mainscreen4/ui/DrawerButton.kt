@@ -1,7 +1,7 @@
 package com.example.generator2.screens.mainscreen4.ui
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,7 +45,7 @@ fun DrawerButton(
                 Text(
                     fontWeight = FontWeight.Bold,
                     text = label,
-                    style = MaterialTheme.typography.body2,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = Color.White
                 )
             }

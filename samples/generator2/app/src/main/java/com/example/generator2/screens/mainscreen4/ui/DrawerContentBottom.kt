@@ -2,13 +2,21 @@ package com.example.generator2.screens.mainscreen4.ui
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.generator2.R
+import com.example.generator2.audio_device.audioOutBT
+import com.example.generator2.audio_device.audioOutSpeaker
+import com.example.generator2.audio_device.audioOutWired
 import com.example.generator2.screens.mainscreen4.VMMain4
 import com.talhafaki.composablesweettoast.util.SweetToastUtil
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -27,6 +35,8 @@ fun DrawerContentBottom(
 ) {
     var work by remember { mutableStateOf(false) }
     var openDialogSuccess by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
 
     if (openDialogSuccess) {
         openDialogSuccess = false
@@ -48,38 +58,26 @@ fun DrawerContentBottom(
             "Audio Devices",
             fontWeight = FontWeight.Bold,
             fontSize = 20.sp,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
+            color = Color.White
         )
 
-        //Получить список устройств
-        global.hub.audioDevice.mDeviceAdapter.forEachIndexed { index, pair ->
-            val label = pair.id.toString() + " " + pair.name.toString()
-            val imageVector = nameToPainter(pair.name.toString())
-            DrawerButton(isSelect = pair.id == global.hub.audioDevice.mDeviceId,
-                icon = imageVector,
-                label = label,
-                action = {
-                    if (!work) {
-                        GlobalScope.launch(Dispatchers.Main) {
-                            val numDeferred1 = async{
-                                work = true
-                                //global.hub.audioDevice.playbackEngine.stop()
-                                //global.hub.audioDevice.playbackEngine.delete()
-                                //global.hub.audioDevice.playbackEngine.create()
-                                global.hub.audioDevice.onItemSelectedListener(index)
-                                //global.hub.audioDevice.playbackEngine.start()
-                                //global.audioDevice.getDeviceId()
-                                //delay(2000)
-                                //global.sendAlltoGen()
-                                work = false
-                                //Toast.makeText(mContext, "Audio device changed",Toast.LENGTH_SHORT).show()
-                                openDialogSuccess = true
-                                global.hub.audioDevice.getDeviceId()}
-                            numDeferred1.await()
-                        }
-                    }
-                })
-        }
+        DrawerButton(isSelect = false,
+            icon = painterResource(R.drawable.speaker3),
+            label = "Динамик", action = { audioOutSpeaker(context) })
+
+        DrawerButton(isSelect = false,
+            icon = painterResource(R.drawable.headphones),
+            label = "Наушник", action = { audioOutWired(context) })
+
+
+        DrawerButton(isSelect = false,
+            icon = painterResource(R.drawable.bluetooth),
+            label = "Блютус", action = { audioOutBT(context) })
+
         Spacer(modifier = Modifier.height(8.dp))
     }
+
+
 }
+
