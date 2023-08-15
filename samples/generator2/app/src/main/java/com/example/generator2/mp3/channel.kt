@@ -18,6 +18,7 @@ val channelDataOutRoll = Channel<ShortArray>(1, BufferOverflow.DROP_OLDEST)
 val channelDataOutPoints = Channel < Pair< List<Offset>, List<Offset> > > (1, BufferOverflow.DROP_OLDEST)
 
 val channelDataOutBitmap = Channel <Bitmap> (1, BufferOverflow.DROP_OLDEST)
+val channelDataOutLissaguBitmap = Channel <Bitmap> (1, BufferOverflow.DROP_OLDEST)
 
 enum class OSCILLSYNC{
     NONE,
@@ -26,3 +27,14 @@ enum class OSCILLSYNC{
 }
 
 val oscillSync = mutableStateOf(OSCILLSYNC.NONE)
+
+
+// Класс для создания точки
+internal class Pt(var x: Float, var y: Float)
+
+
+var oscilloscopeW: Float = 1f
+var oscilloscopeH: Float = 1f
+
+var oscilloscopeLissaguW: Float = 1f
+var oscilloscopeLissaguH: Float = 1f

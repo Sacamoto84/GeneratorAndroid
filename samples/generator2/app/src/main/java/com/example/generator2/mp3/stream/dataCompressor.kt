@@ -1,9 +1,13 @@
 package com.example.generator2.mp3.stream
 
 import androidx.compose.runtime.mutableFloatStateOf
+import com.example.generator2.mp3.channelDataOutLissaguBitmap
 import com.example.generator2.mp3.channelDataOutRoll
 import com.example.generator2.mp3.channelDataStreamOutAudioProcessor
 import com.example.generator2.mp3.channelDataStreamOutCompressor
+import com.example.generator2.mp3.oscilloscopeLissaguH
+import com.example.generator2.mp3.oscilloscopeLissaguW
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -39,6 +43,7 @@ fun dataCompressor() {
 
         while (true) {
             val out = mutableListOf<Short>()
+
             if (compressorCount.floatValue >= 1.0F) {
 
 
@@ -46,10 +51,13 @@ fun dataCompressor() {
                     val buf = channelDataStreamOutAudioProcessor.receive()
                     out.addAll(buf.toList())
 
-
+                    GlobalScope.launch(Dispatchers.IO)
+                    {
+                        val b = dataToLissaguBitmap( buf, oscilloscopeLissaguW.toInt(), oscilloscopeLissaguH.toInt() )
+                        channelDataOutLissaguBitmap.send(b)
+                    }
 
                     if (compressorCount.floatValue >= 64) {
-
 
                         while (roll64.size > 64) roll64.removeAt(0)
                         roll64.add(buf)
@@ -60,24 +68,22 @@ fun dataCompressor() {
                         }
                         //println("Общий размер $fullSize")
                         if (fullSize > rollBuffer.size) {
-                            rollBuffer = ShortArray(fullSize){0}
+                            rollBuffer = ShortArray(fullSize) { 0 }
                         }
 
                         var index = 0
-                        roll64.forEach{
-                            for(ii in it.indices) {
+                        roll64.forEach {
+                            for (ii in it.indices) {
                                 rollBuffer[index] = it[ii]
                                 index++
                             }
                         }
-                        
+
                         //val rollBuf = roll64.flatMap { it.asIterable() }.toShortArray()
 
                         val s = channelDataOutRoll.trySend(rollBuffer).isSuccess
                         if (!s)
                             Timber.e("Нет места в channelDataOutRoll")
-
-
 
                     }
 
@@ -87,7 +93,15 @@ fun dataCompressor() {
 
 
             } else {
+                //compressorCount.floatValue < 1.0F
                 val buf = channelDataStreamOutAudioProcessor.receive()
+
+                GlobalScope.launch(Dispatchers.IO)
+                {
+                    val b = dataToLissaguBitmap( buf, oscilloscopeLissaguW.toInt(), oscilloscopeLissaguH.toInt() )
+                    channelDataOutLissaguBitmap.send(b)
+                }
+
                 val size = buf.size * compressorCount.floatValue
                 val buf2 = buf.copyOf(size.toInt())
                 out.addAll(buf2.toList())

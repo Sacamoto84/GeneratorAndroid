@@ -1,16 +1,18 @@
 package com.example.generator2.mp3.stream
 
-import android.R.attr.path
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import androidx.compose.ui.geometry.Offset
 import com.example.generator2.mp3.OSCILLSYNC
+import com.example.generator2.mp3.Pt
 import com.example.generator2.mp3.channelDataOutBitmap
 import com.example.generator2.mp3.channelDataOutRoll
 import com.example.generator2.mp3.channelDataStreamOutCompressor
 import com.example.generator2.mp3.oscillSync
+import com.example.generator2.mp3.oscilloscopeH
+import com.example.generator2.mp3.oscilloscopeW
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -18,11 +20,9 @@ import kotlinx.coroutines.launch
 import libs.maping
 
 
-var oscilloscopeW: Float = 1f
-var oscilloscopeH: Float = 1f
 
 
-private fun bufSpit(buf: ShortArray): Pair<ShortArray, ShortArray> {
+fun bufSpit(buf: ShortArray): Pair<ShortArray, ShortArray> {
     val bufR = ShortArray(buf.size / 2)
     val bufL = ShortArray(buf.size / 2)
 
@@ -42,7 +42,21 @@ private fun bufSpit(buf: ShortArray): Pair<ShortArray, ShortArray> {
     return Pair(bufR, bufL)
 }
 
-var bitmap_example: Bitmap? = null
+val paintR = Paint().apply {
+    color = 0xFFFF0000.toInt()
+    isAntiAlias = false
+    style = Paint.Style.STROKE
+    strokeWidth = 2f
+}
+
+val paintL = Paint().apply {
+    color = 0xFF00FFFF.toInt()
+    isAntiAlias = false
+    style = Paint.Style.STROKE
+    strokeWidth = 2f
+}
+
+
 
 @OptIn(DelicateCoroutinesApi::class)
 fun renderDataToPoints() {
@@ -50,8 +64,8 @@ fun renderDataToPoints() {
         while (true) {
             //val out = mutableListOf<Short>()
 
-            val outPointR = mutableListOf<Offset>()
-            val outPointL = mutableListOf<Offset>()
+            //val outPointR = mutableListOf<Offset>()
+            //val outPointL = mutableListOf<Offset>()
 
             val w = oscilloscopeW
             val h = oscilloscopeH
@@ -62,35 +76,17 @@ fun renderDataToPoints() {
             if ((w == 1f) or (h == 1f))
                 continue
 
-
             //if (bitmap_example == null)
 
             //bitmap_example?.recycle() // Освободите память, затем пересоздайте Bitmap
             //if (bitmap_example == null)
             val  bitmap_example = Bitmap.createBitmap(w.toInt(), h.toInt(), Bitmap.Config.ARGB_8888)
-
             //bitmap_example!!.eraseColor(Color.GRAY)
 
             val canvas = Canvas(bitmap_example)
+            canvas.drawARGB(255,16,16,128)
 
-            //canvas.drawARGB(255,16,16,128)
-
-            val paintR = Paint()
-            paintR.color = 0xFFFF0000.toInt()
-            paintR.isAntiAlias = false
-            paintR.style = Paint.Style.FILL
-            paintR.strokeWidth = 2f
-            val paintL = Paint()
-            paintL.color = 0xFF00FFFF.toInt()
-            paintL.isAntiAlias = false
-            paintL.style = Paint.Style.FILL
-            paintL.strokeWidth = 2f
-
-
-
-
-
-            var indexStartSignal: Int = 0
+            var indexStartSignal = 0
 
             if (compressorCount.floatValue <= 8f) {
 
@@ -125,7 +121,9 @@ fun renderDataToPoints() {
 
                 bufLN = bufL.copyOfRange(indexStartSignal, (bufL.size - 1) / 2 + indexStartSignal)
                 bufRN = bufR.copyOfRange(indexStartSignal, (bufR.size - 1) / 2 + indexStartSignal)
+
             } else {
+
                 // Для compressorCount > 8 нет синхронизации
                 if (compressorCount.floatValue < 64) {
                     val buf = channelDataStreamOutCompressor.receive()
@@ -141,24 +139,26 @@ fun renderDataToPoints() {
                     bufLN = bufL
                     bufRN = bufR
                 }
+
             }
 
 ////////////////////////////////////////////////////////////////
 
 
-            val pathR = FloatArray(w.toInt()*4+16)
+            //val pathR = FloatArray(w.toInt()*4)
             //val pathL = FloatArray(w.toInt())
 
-            val pathR1 = Array<Pt>(w.toInt()+16){Pt(0f,0f)}
-            val pathR2 =  Path()
+            val ArrayPtR = Array(w.toInt()){Pt(0f,0f)}
+            val pathR =  Path()
 
-//            val pathL = Path()
-//            pathR.moveTo(0f, h/2)
-//            pathL.moveTo(0f, h/2)
+            val ArrayPtL = Array(w.toInt()){Pt(0f,0f)}
+            val pathL =  Path()
+
 
             var i = 0
 
             if (compressorCount.floatValue < 64) {
+
                 for (x in 0 until w.toInt()) {
                     val mapX: Int = maping(x.toFloat(), 0f, w - 1f, 0f, (bufRN.size - 1f)).toInt()
                         .coerceIn(0, bufRN.size - 1)
@@ -166,34 +166,21 @@ fun renderDataToPoints() {
                     val yR = maping(bufRN[mapX].toFloat(), Short.MIN_VALUE.toFloat(), Short.MAX_VALUE.toFloat(), 0f, h - 1f)
                     val yL = maping(bufLN[mapX].toFloat(), Short.MIN_VALUE.toFloat(), Short.MAX_VALUE.toFloat(), 0f, h - 1f)
 
-//                    pathR[i++] = x.toFloat()
-//                    pathR[i++] = yR
-
-                    pathR1[x] = Pt(x.toFloat(), yR)
-
-                    //outPointR.add(Offset(x.toFloat(), yR))
-                    //outPointL.add(Offset(x.toFloat(), yL))
-
-                    //pathR[x] = yR
-                    //pathL[x] = yL
-                    //pathR.lineTo(x.toFloat(), yR)
-
-
-                    //canvas.drawPoint(x.toFloat(), yR, paintR)
-                    //canvas.drawPoint(x.toFloat(), yL, paintL)
+                    ArrayPtR[x] = Pt(x.toFloat(), yR)
+                    ArrayPtL[x] = Pt(x.toFloat(), yL)
 
                 }
-                //pathR.lineTo(w, h/2)
-                pathR2.moveTo(pathR1[0].x, pathR1[0].y)
 
-
-                // рисуем отрезки по заданным точкам
-                for (i1 in 1 until pathR1.size) {
-                    pathR2.lineTo(pathR1[i].x, pathR1[i].y)
+                pathR.moveTo(ArrayPtR[0].x, ArrayPtR[0].y)
+                pathL.moveTo(ArrayPtL[0].x, ArrayPtL[0].y)
+                for (i1 in 1 until ArrayPtR.size) {
+                    pathR.lineTo(ArrayPtR[i1].x, ArrayPtR[i1].y)
+                    pathL.lineTo(ArrayPtL[i1].x, ArrayPtL[i1].y)
                 }
 
                 // выводим результат
-                //canvas.drawPath(pathR2, paintR)
+                canvas.drawPath(pathR, paintR)
+                canvas.drawPath(pathL, paintL)
 
             } else {
                 //Roll логика
@@ -207,10 +194,10 @@ fun renderDataToPoints() {
                     )
                 }
 
-                for (i in 0 until (listIndex0.size - 1)) {
+                for (i3 in 0 until (listIndex0.size - 1)) {
 
 
-                    val max = bufRN.slice(listIndex0[i] until listIndex0[i + 1]).max().toFloat()
+                    val max = bufRN.slice(listIndex0[i3] until listIndex0[i3 + 1]).max().toFloat()
                     val y = maping(
                         max,
                         Short.MIN_VALUE.toFloat(),
@@ -226,28 +213,18 @@ fun renderDataToPoints() {
                         h - 1f
                     )
 
-                    outPointR.add(Offset(i.toFloat(), y))
-                    outPointL.add(Offset(i.toFloat(), y1))
+                    //outPointR.add(Offset(i.toFloat(), y))
+                    //outPointL.add(Offset(i.toFloat(), y1))
+
 
                 }
 
 
             }
 
-
-            //val out: Pair<List<Offset>, List<Offset>> = Pair(outPointR.toList(), outPointL.toList())
-
-            //channelDataOutPoints.send(out)
-            //bitmap_example!!.prepareToDraw()
-
-            //canvas.drawLines(pathR, paintR)
-
             channelDataOutBitmap.send(bitmap_example)
 
-            //bitmap_example!!.recycle()
         }
     }
 }
 
-// Класс для создания точки
-internal class Pt(var x: Float, var y: Float)
