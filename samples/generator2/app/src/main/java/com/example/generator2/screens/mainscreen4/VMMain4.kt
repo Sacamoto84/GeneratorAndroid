@@ -1,8 +1,10 @@
 package com.example.generator2.screens.mainscreen4
 
 import android.content.Context
+import android.media.AudioManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.generator2.audio_device.audioOutSpeaker
 import com.example.generator2.di.Hub
 import com.example.generator2.element.Console2
 import com.example.generator2.isInitialized
@@ -82,9 +84,5 @@ class VMMain4 @Inject constructor(
         }
 
     }
-
-
-
-
 
 }

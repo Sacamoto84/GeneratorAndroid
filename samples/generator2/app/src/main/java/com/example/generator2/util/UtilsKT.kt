@@ -2,7 +2,6 @@ package com.example.generator2.util
 
 import android.content.Context
 import c.ponom.audiuostreams.audiostreams.ArrayUtils.byteToShortArrayLittleEndian
-import com.example.generator2.PlaybackEngine
 import com.example.generator2.generator.ch1
 import com.example.generator2.generator.ch2
 import java.io.File
@@ -10,7 +9,7 @@ import java.io.IOException
 
 fun Float.format(digits: Int) = "%.${digits}f".format(this)
 
-class UtilsKT(private var context: Context, private var playbackEngine: PlaybackEngine) {
+class UtilsKT(private var context: Context) {
 
     /**
      * Получить список файлов по пути

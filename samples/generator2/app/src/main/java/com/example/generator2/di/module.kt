@@ -1,7 +1,6 @@
 package com.example.generator2.di
 
 import android.content.Context
-import com.example.generator2.PlaybackEngine
 import com.example.generator2.audio_device.AudioDevice
 import com.example.generator2.backup.Backup
 import com.example.generator2.screens.scripting.ui.ScriptKeyboard
@@ -23,10 +22,10 @@ object HomeActivityModule {
     @Provides
     @Singleton
     fun provideUtilsKT(
-        @ApplicationContext context: Context, playbackEngine: PlaybackEngine
+        @ApplicationContext context: Context
     ): UtilsKT {
         Timber.i("..DI provideUtilsKT()")
-        return UtilsKT(context, playbackEngine)
+        return UtilsKT(context)
     }
 
     @Provides
@@ -45,20 +44,12 @@ object HomeActivityModule {
 
     @Provides
     @Singleton
-    fun providePlaybackEngine(@ApplicationContext context: Context): PlaybackEngine {
-        Timber.i("..DI providePlaybackEngine()")
-        return PlaybackEngine(context)
-    }
-
-    @Provides
-    @Singleton
     fun provideAudioDevice(
         @ApplicationContext context: Context,
-        playbackEngine: PlaybackEngine,
         utils: UtilsKT,
     ): AudioDevice {
         Timber.i("..DI provideAudioDevice()")
-        return AudioDevice(context, playbackEngine, utils)
+        return AudioDevice(context, utils)
     }
 
     @Provides
@@ -74,7 +65,6 @@ object HomeActivityModule {
         utils: UtilsKT,
         script: Script,
         keyboard: ScriptKeyboard,
-        playbackEngine: PlaybackEngine,
         audioDevice: AudioDevice,
         backup: Backup
     ): Hub {
@@ -85,7 +75,6 @@ object HomeActivityModule {
             utils = utils,
             script = script,
             keyboard = keyboard,
-            playbackEngine = playbackEngine,
             audioDevice = audioDevice,
             backup = backup
         )

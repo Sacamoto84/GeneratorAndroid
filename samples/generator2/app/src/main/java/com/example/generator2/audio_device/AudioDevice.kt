@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
-import com.example.generator2.PlaybackEngine
 import com.example.generator2.R
 import com.example.generator2.util.UtilsKT
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -18,7 +17,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @OptIn(DelicateCoroutinesApi::class)
-class AudioDevice(private var context: Context, var playbackEngine: PlaybackEngine, var utils: UtilsKT) {
+class AudioDevice(private var context: Context, var utils: UtilsKT) {
 
     private var mDirectionType = 0
 
@@ -138,7 +137,7 @@ class AudioDevice(private var context: Context, var playbackEngine: PlaybackEngi
 
         println("id : ${getPlaybackDeviceId(i)}")
 
-        playbackEngine.setAudioDeviceId(getPlaybackDeviceId(i))
+        //playbackEngine.setAudioDeviceId(getPlaybackDeviceId(i))
 
 
     }

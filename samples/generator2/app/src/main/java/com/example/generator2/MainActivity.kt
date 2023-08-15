@@ -39,6 +39,7 @@ import com.tencent.mmkv.MMKV
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -67,7 +68,7 @@ import javax.inject.Singleton
 
 val API_key = "5ca5814f-74a8-46c1-ab17-da3101e88888"
 
-lateinit var player : PlayerMP3
+lateinit var player: PlayerMP3
 
 @Singleton
 @AndroidEntryPoint
@@ -79,34 +80,41 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         presetsSaveFile("default", AppPath().config)
-R.drawable.add
+        //R.drawable.add
         val s = mmkv.m.actualSize()
         super.onPause()
         println("...................onPause $s")
         //exitProcess(0)
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        Timber.plant(Timber.DebugTree())
 
-        // Creating an extended library configuration.
-        val config = YandexMetricaConfig.newConfigBuilder(API_key)
-            .withLogs()
-            .build() // Initializing the AppMetrica SDK.
-        // Initializing the AppMetrica SDK.
-        YandexMetrica.activate(applicationContext, config) // Automatic tracking of user activity.
-        YandexMetrica.enableActivityAutoTracking(application)
-        YandexMetrica.reportEvent("Запуск")
+        GlobalScope.launch(Dispatchers.IO) {
+            delay(5000)
+            Timber.e("Запуск Yandex Metrika")
+            // Creating an extended library configuration.
+            val config = YandexMetricaConfig.newConfigBuilder(API_key)
+                .withLogs()
+                .build() // Initializing the AppMetrica SDK.
+            // Initializing the AppMetrica SDK.
+            YandexMetrica.activate(
+                applicationContext,
+                config
+            ) // Automatic tracking of user activity.
+            YandexMetrica.enableActivityAutoTracking(application)
+            YandexMetrica.reportEvent("Запуск")
+        }
 
 
         kDownloader = KDownloader.create(applicationContext)
 
-
         AndroidPufferDB.init(applicationContext)
 
-        Timber.plant(Timber.DebugTree())
 
         Timber.i("...........................................................................")
         Timber.i("..................................onCreate.................................")
@@ -128,11 +136,10 @@ R.drawable.add
         //generatorRun()
         //play()
 
-        player = PlayerMP3(this)
-        GlobalScope.launch(Dispatchers.IO) {
+        //GlobalScope.launch(Dispatchers.IO) {
             //player.playUri()
-        }
-
+            player = PlayerMP3(applicationContext)
+        //}
 
         setContent {
 
@@ -184,11 +191,8 @@ R.drawable.add
                     }
 
                 } else {
-
                     Update.run(applicationContext)
-
                     Navigation()
-
                 }
             }
         }
