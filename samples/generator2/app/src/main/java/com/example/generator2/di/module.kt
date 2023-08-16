@@ -1,7 +1,6 @@
 package com.example.generator2.di
 
 import android.content.Context
-import com.example.generator2.audio_device.AudioDevice
 import com.example.generator2.backup.Backup
 import com.example.generator2.screens.scripting.ui.ScriptKeyboard
 import com.example.generator2.util.UtilsKT
@@ -42,15 +41,6 @@ object HomeActivityModule {
         return ScriptKeyboard(script)
     }
 
-    @Provides
-    @Singleton
-    fun provideAudioDevice(
-        @ApplicationContext context: Context,
-        utils: UtilsKT,
-    ): AudioDevice {
-        Timber.i("..DI provideAudioDevice()")
-        return AudioDevice(context, utils)
-    }
 
     @Provides
     @Singleton
@@ -65,7 +55,6 @@ object HomeActivityModule {
         utils: UtilsKT,
         script: Script,
         keyboard: ScriptKeyboard,
-        audioDevice: AudioDevice,
         backup: Backup
     ): Hub {
 
@@ -75,7 +64,6 @@ object HomeActivityModule {
             utils = utils,
             script = script,
             keyboard = keyboard,
-            audioDevice = audioDevice,
             backup = backup
         )
     }

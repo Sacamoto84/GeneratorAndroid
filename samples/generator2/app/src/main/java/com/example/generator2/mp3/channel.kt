@@ -10,6 +10,12 @@ import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
 val channelDataStreamOutAudioProcessor =
     Channel<ShortArray>(capacity = 16, BufferOverflow.DROP_OLDEST)
 
+val channelDataStreamOutGenerator =
+    Channel<ShortArray>(capacity = 16, BufferOverflow.DROP_OLDEST)
+
+
+val channelDataStreamOutMixer = Channel<ShortArray>(capacity = 16, BufferOverflow.DROP_OLDEST)
+
 val channelDataStreamOutCompressor = Channel<ShortArray>(capacity = 16, BufferOverflow.DROP_OLDEST)
 
 //Канал для Roll данных из компрессора

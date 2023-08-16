@@ -1,13 +1,11 @@
-package com.example.generator2.mp3
+package com.example.generator2.mp3.processor
 
 import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.audio.AudioProcessor
 import com.example.generator2.model.LiveData
+import com.example.generator2.mp3.channelDataStreamOutAudioProcessor
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import libs.structure.FIFO
 import timber.log.Timber
 import java.nio.ByteBuffer

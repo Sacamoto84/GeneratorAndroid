@@ -1,6 +1,7 @@
 package com.example.generator2.mp3
 
 import android.content.Context
+import android.media.AudioManager
 import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -8,6 +9,7 @@ import androidx.media3.common.Tracks
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.transformer.EditedMediaItem
 import com.example.generator2.mp3.stream.dataCompressor
+import com.example.generator2.mp3.stream.dataStreamMixer
 import com.example.generator2.mp3.stream.renderDataToPoints
 
 @androidx.media3.common.util.UnstableApi
@@ -47,6 +49,7 @@ class PlayerMP3(val context: Context) {
 
         dataCompressor()
         renderDataToPoints()
+        dataStreamMixer()
 
         player = ExoPlayer.Builder(context, renderersFactory(context)).build()
         player.addListener(listener)
@@ -55,7 +58,6 @@ class PlayerMP3(val context: Context) {
         //val uri = Uri.parse("asset:///CH Blow Me_beats_in_phase Rc.mp3")
         //val uri = Uri.parse("asset:///Get Hard.mp3")
         val uri = Uri.parse("asset:///CH Teen Edition StL A.mp3")
-
 
         val a = EditedMediaItem.Builder(MediaItem.fromUri(uri)).build()
         player.setMediaItem(a.mediaItem)

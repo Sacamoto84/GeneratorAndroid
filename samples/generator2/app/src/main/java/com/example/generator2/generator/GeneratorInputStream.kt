@@ -2,6 +2,7 @@ package com.example.generator2.generator
 
 import android.media.AudioFormat
 import c.ponom.audiuostreams.audiostreams.AudioInputStream
+import com.example.generator2.mp3.channelDataStreamOutGenerator
 
 
 @Suppress("ConvertSecondaryConstructorToPrimary")
@@ -40,6 +41,9 @@ class GeneratorInputStream (sampleRate : Int = 48000): AudioInputStream() {
         }
 
         dataArray.copyInto(b)
+
+        channelDataStreamOutGenerator.trySend(dataArray)
+
         bytesRead += length * 2
         return len
     }

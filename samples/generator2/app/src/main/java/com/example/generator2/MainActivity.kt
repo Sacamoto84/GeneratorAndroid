@@ -143,7 +143,7 @@ class MainActivity : ComponentActivity() {
 
         Utils.ContextMainActivity = applicationContext
 
-        //generatorRun()
+        generatorRun()
         //play()
 
         //GlobalScope.launch(Dispatchers.IO) {

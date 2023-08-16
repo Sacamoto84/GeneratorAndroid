@@ -5,6 +5,7 @@ import com.example.generator2.mp3.channelDataOutLissaguBitmap
 import com.example.generator2.mp3.channelDataOutRoll
 import com.example.generator2.mp3.channelDataStreamOutAudioProcessor
 import com.example.generator2.mp3.channelDataStreamOutCompressor
+import com.example.generator2.mp3.channelDataStreamOutGenerator
 import com.example.generator2.mp3.oscilloscopeLissaguH
 import com.example.generator2.mp3.oscilloscopeLissaguW
 import kotlinx.coroutines.CoroutineScope
@@ -48,7 +49,10 @@ fun dataCompressor() {
 
 
                 for (i in 0 until compressorCount.floatValue.toInt()) {
-                    val buf = channelDataStreamOutAudioProcessor.receive()
+
+                    //val buf = channelDataStreamOutAudioProcessor.receive()
+                    val buf = channelDataStreamOutGenerator.receive()
+
                     out.addAll(buf.toList())
 
                     GlobalScope.launch(Dispatchers.IO)
