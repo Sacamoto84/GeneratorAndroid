@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.example.tft'
+    namespace 'com.example.resampler'
     compileSdk 34
 
     defaultConfig {
@@ -12,11 +12,9 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
-
         externalNativeBuild {
             cmake {
-                cppFlags ''
-                //arguments '-DANDROID_STL=c++_static'
+                cppFlags ""
             }
         }
     }
@@ -27,6 +25,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "3.22.1"
+        }
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -34,26 +38,6 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-
-    externalNativeBuild {
-        cmake{
-            path file('src/main/cpp/CMakeLists.txt')
-            version '3.22.1'
-        }
-    }
-
-//    splits {
-//        abi {
-//            reset()
-//            //noinspection ChromeOsAbiSupport
-//            include "x86", "arm64-v8a", "armeabi-v7a", "x86_64"
-//            universalApk true //generate an additional APK that contains all the ABIs
-//        }
-//    }
-
-    namespace 'com.example.tft'
-    ndkVersion '26.0.10404224 rc1'
-
 }
 
 dependencies {

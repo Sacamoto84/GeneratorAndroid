@@ -62,7 +62,7 @@ class PlayerMP3(val context: Context) {
         val a = EditedMediaItem.Builder(MediaItem.fromUri(uri)).build()
         player.setMediaItem(a.mediaItem)
         player.prepare()
-        player.play()
+        //player.play()
     }
 
 

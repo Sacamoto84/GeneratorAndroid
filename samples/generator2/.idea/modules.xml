@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/generator2.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/generator2.app.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/audiostreams/generator2.audiostreams.main.iml" filepath="$PROJECT_DIR$/.idea/modules/audiostreams/generator2.audiostreams.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tft/generator2.tft.main.iml" filepath="$PROJECT_DIR$/.idea/modules/tft/generator2.tft.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/resampler/generator2.resampler.main.iml" filepath="$PROJECT_DIR$/.idea/modules/resampler/generator2.resampler.main.iml" />
     </modules>
   </component>
 </project>

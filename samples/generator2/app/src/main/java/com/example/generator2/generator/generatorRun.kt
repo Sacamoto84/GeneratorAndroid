@@ -23,13 +23,13 @@ fun generatorRun()
     val audioPump = StreamPump(audioInStream, audioOutStream, 12000,
 
         onWrite = {
-            Timber.i("*............................................")
+            //Timber.i("*............................................")
         },
         onFinish = {
-            Timber.i("onFinish........................................")
+            //Timber.i("onFinish........................................")
         },
         onFatalError = {
-            Timber.i("onFatalError........................................")
+            //Timber.i("onFatalError........................................")
         }
     )
 

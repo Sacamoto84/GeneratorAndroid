@@ -49,8 +49,8 @@ fun M4BottomAppBarComponent(
         while (true)
         {
             delay(2000)
-            r = getCurrentAudioDevices(context)
-            println(r)
+            //r = getCurrentAudioDevices(context)
+            //println(r)
         }
     }
 

@@ -2,5 +2,9 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$USER_HOME$/AppData/Local/Google/AndroidStudioPreview2022.3/device-explorer/Xiaomi MI 8/storage/emulated/0/Gen3/Config/default.txt" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/resampler/src/main/cpp/filtering.h" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/resampler/src/main/cpp/smarc.cpp" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/tft/src/main/cpp/smarc.cpp" charset="windows-1251" />
+    <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

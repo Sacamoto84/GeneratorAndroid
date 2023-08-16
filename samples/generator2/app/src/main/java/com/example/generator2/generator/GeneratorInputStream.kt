@@ -42,7 +42,7 @@ class GeneratorInputStream (sampleRate : Int = 48000): AudioInputStream() {
 
         dataArray.copyInto(b)
 
-        channelDataStreamOutGenerator.trySend(dataArray)
+        //channelDataStreamOutGenerator.trySend(dataArray)
 
         bytesRead += length * 2
         return len

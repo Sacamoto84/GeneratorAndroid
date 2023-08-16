@@ -1,4 +1,3 @@
-
 # For more information about using CMake with Android Studio, read the
 # documentation: https://d.android.com/studio/projects/add-native-code.html.
 # For more examples on how to use CMake, see https://github.com/android/ndk-samples.
@@ -10,8 +9,7 @@ cmake_minimum_required(VERSION 3.22.1)
 # Since this is the top level CMakeLists.txt, the project name is also accessible
 # with ${CMAKE_PROJECT_NAME} (both CMake variables are in-sync within the top level
 # build script scope).
-project(tft)
-
+project("resampler")
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -26,37 +24,29 @@ project(tft)
 # System.loadLibrary() and pass the name of the library defined here;
 # for GameActivity/NativeActivity derived applications, the same library name must be
 # used in the AndroidManifest.xml file.
-
-add_library(
-        tft
-        SHARED
+add_library(${CMAKE_PROJECT_NAME} SHARED
+        # List C/C++ source files with relative paths to this CMakeLists.txt.
+        resampler.cpp
         filtering.cpp
         multi_stage.cpp
         polyfilt.cpp
         remez_lp.cpp
-        smarc.c.c
-        stage_impl.cpp)
+        resampler.cpp
+        smarc.cpp
+        stage_impl.cpp
+        )
 
-# Compile Flags:
-#     Enable -Werror when building debug config
-#     Enable -Ofast
 
-#target_compile_options(tft
+
+#target_compile_options(${CMAKE_PROJECT_NAME}
 #        PRIVATE
-#        -std=c++17
-#        -Wall
-#        -Wextra-semi
-#        -Wshadow
-#        -Wshadow-field
-#        "$<$<CONFIG:RELEASE>:-Ofast>"
-#        "$<$<CONFIG:DEBUG>:-O3>"
-#        "$<$<CONFIG:DEBUG>:-Werror>")
+#        -std=c++11
+#)
 
 # Specifies libraries CMake should link to your target library. You
 # can link libraries from various origins, such as libraries defined in this
 # build script, prebuilt third-party libraries, or Android system libraries.
-
-target_link_libraries(
-        tft
+target_link_libraries(${CMAKE_PROJECT_NAME}
+        # List libraries link to the target library
         android
         log)

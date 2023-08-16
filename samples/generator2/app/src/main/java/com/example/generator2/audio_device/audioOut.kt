@@ -66,7 +66,7 @@ fun getCurrentAudioDevices(context : Context): String
     val d = audioManager.isWiredHeadsetOn()
 
     // Вывод информации о текущем устройстве вывода
-    Timber.d("Текущее устройство вывода: | Speaker $a | BTSco: $b | | Wired: $d")
+    //Timber.d("Текущее устройство вывода: | Speaker $a | BTSco: $b | | Wired: $d")
 
     var res = "Auto select"
 

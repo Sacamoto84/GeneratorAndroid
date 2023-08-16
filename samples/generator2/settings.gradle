@@ -33,4 +33,4 @@ rootProject.name = "generator2"
 include ':app'
 include ':benchmark'
 include ':audiostreams'
-include ':tft'
+include ':resampler'

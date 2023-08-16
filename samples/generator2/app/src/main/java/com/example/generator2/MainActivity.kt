@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import cafe.adriel.pufferdb.android.AndroidPufferDB
-import com.example.generator2.audio_device.getCurrentAudioDevices
+import com.example.generator2.audio_device.MyVisualizer
 import com.example.generator2.di.Hub
 import com.example.generator2.generator.generatorRun
 import com.example.generator2.model.mmkv
@@ -34,6 +34,7 @@ import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.update.Update
 import com.example.generator2.update.kDownloader
 import com.example.generator2.util.Utils
+import com.example.resampler.NativeLib
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kdownloader.KDownloader
 import com.tencent.mmkv.MMKV
@@ -70,6 +71,8 @@ import javax.inject.Singleton
 val API_key = "5ca5814f-74a8-46c1-ab17-da3101e88888"
 
 lateinit var player: PlayerMP3
+
+val vis = MyVisualizer()
 
 @Singleton
 @AndroidEntryPoint
@@ -114,10 +117,14 @@ class MainActivity : ComponentActivity() {
 
         GlobalScope.launch(Dispatchers.IO) {
             while (true) {
-                getCurrentAudioDevices(applicationContext)
+                //getCurrentAudioDevices(applicationContext)
                 delay(1000)
             }
         }
+
+
+
+       NativeLib()
 
 
 
@@ -146,10 +153,15 @@ class MainActivity : ComponentActivity() {
         generatorRun()
         //play()
 
+
         //GlobalScope.launch(Dispatchers.IO) {
-            //player.playUri()
-            player = PlayerMP3(applicationContext)
+        //player.playUri()
+        player = PlayerMP3(applicationContext)
         //}
+
+
+        vis.createVisualizer()
+        vis.startVisualizer()
 
         setContent {
 
