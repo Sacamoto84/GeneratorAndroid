@@ -72,7 +72,8 @@ val API_key = "5ca5814f-74a8-46c1-ab17-da3101e88888"
 
 lateinit var player: PlayerMP3
 
-val vis = MyVisualizer()
+val resampleLib = NativeLib()
+
 
 @Singleton
 @AndroidEntryPoint
@@ -124,7 +125,7 @@ class MainActivity : ComponentActivity() {
 
 
 
-       NativeLib()
+
 
 
 
@@ -160,8 +161,6 @@ class MainActivity : ComponentActivity() {
         //}
 
 
-        vis.createVisualizer()
-        vis.startVisualizer()
 
         setContent {
 

@@ -1,5 +1,7 @@
 package com.example.resampler
 
+//https://audio-smarc.sourceforge.net/integratesmarc.html#resample-multiple-signals-concurrently
+
 class NativeLib {
 
     /**
@@ -7,6 +9,8 @@ class NativeLib {
      * which is packaged with this application.
      */
     external fun stringFromJNI(): String
+
+    external fun resampleOneImpl( frIn : Int, frOut : Int, buf : Double, len : Int) : DoubleArray
 
     companion object {
         // Used to load the 'resampler' library on application startup.
