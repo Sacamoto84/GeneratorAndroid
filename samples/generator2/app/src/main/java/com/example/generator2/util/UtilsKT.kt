@@ -2,8 +2,7 @@ package com.example.generator2.util
 
 import android.content.Context
 import c.ponom.audiuostreams.audiostreams.ArrayUtils.byteToShortArrayLittleEndian
-import com.example.generator2.generator.ch1
-import com.example.generator2.generator.ch2
+import com.example.generator2.generator.gen
 import java.io.File
 import java.io.IOException
 
@@ -106,16 +105,16 @@ class UtilsKT(private var context: Context) {
 
         if (CH == "CH0") {
             when (Mod) {
-                "AM" -> ch1.buffer_am = byteToShortArrayLittleEndian(buf)
-                "FM" -> ch1.buffer_fm = byteToShortArrayLittleEndian(buf)
-                else -> ch1.buffer_carrier = byteToShortArrayLittleEndian(buf)
+                "AM" -> gen.ch1.buffer_am = byteToShortArrayLittleEndian(buf)
+                "FM" -> gen.ch1.buffer_fm = byteToShortArrayLittleEndian(buf)
+                else -> gen.ch1.buffer_carrier = byteToShortArrayLittleEndian(buf)
             }
         }else
         {
             when (Mod) {
-                "AM" -> ch2.buffer_am = byteToShortArrayLittleEndian(buf)
-                "FM" -> ch2.buffer_fm = byteToShortArrayLittleEndian(buf)
-                else -> ch2.buffer_carrier = byteToShortArrayLittleEndian(buf)
+                "AM" -> gen.ch2.buffer_am = byteToShortArrayLittleEndian(buf)
+                "FM" -> gen.ch2.buffer_fm = byteToShortArrayLittleEndian(buf)
+                else -> gen.ch2.buffer_carrier = byteToShortArrayLittleEndian(buf)
             }
         }
 

@@ -1,14 +1,12 @@
 package com.example.generator2.mp3.stream
 
 import androidx.compose.runtime.mutableFloatStateOf
-import com.example.generator2.mp3.channelDataOutLissaguBitmap
+
 import com.example.generator2.mp3.channelDataOutRoll
 import com.example.generator2.mp3.channelDataStreamOutAudioProcessor
 import com.example.generator2.mp3.channelDataStreamOutCompressor
 import com.example.generator2.mp3.channelDataStreamOutGenerator
-import com.example.generator2.mp3.oscilloscopeLissaguH
-import com.example.generator2.mp3.oscilloscopeLissaguW
-import kotlinx.coroutines.CoroutineScope
+import com.example.generator2.scope.scope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -57,8 +55,8 @@ fun dataCompressor() {
 
                     GlobalScope.launch(Dispatchers.IO)
                     {
-                        val b = dataToLissaguBitmap( buf, oscilloscopeLissaguW.toInt(), oscilloscopeLissaguH.toInt() )
-                        channelDataOutLissaguBitmap.send(b)
+                        val b = dataToLissaguBitmap( buf, scope.scopeLissaguW.toInt(), scope.scopeLissaguH.toInt() )
+                        scope.chLissaguBitmap.send(b)
                     }
 
                     if (compressorCount.floatValue >= 64) {
@@ -102,8 +100,8 @@ fun dataCompressor() {
 
                 GlobalScope.launch(Dispatchers.IO)
                 {
-                    val b = dataToLissaguBitmap( buf, oscilloscopeLissaguW.toInt(), oscilloscopeLissaguH.toInt() )
-                    channelDataOutLissaguBitmap.send(b)
+                    val b = dataToLissaguBitmap( buf, scope.scopeLissaguW.toInt(), scope.scopeLissaguH.toInt() )
+                    scope.chLissaguBitmap.send(b)
                 }
 
                 val size = buf.size * compressorCount.floatValue

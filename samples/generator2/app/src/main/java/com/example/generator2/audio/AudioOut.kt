@@ -13,10 +13,10 @@ import timber.log.Timber
 
 val audioOut = AudioOut()
 
-val chAudioOut = Channel<ShortArray>(capacity = 1, BufferOverflow.SUSPEND)
-
 @OptIn(DelicateCoroutinesApi::class)
 class AudioOut(minBufferMs: Int = 500) {
+
+    val chOut = Channel<ShortArray>(capacity = 1, BufferOverflow.SUSPEND)
 
     val out: AudioTrack
 
@@ -43,7 +43,7 @@ class AudioOut(minBufferMs: Int = 500) {
 
         GlobalScope.launch(Dispatchers.IO) {
             while(true) {
-                val buf = chAudioOut.receive()
+                val buf = chOut.receive()
                 //Timber.i(buf.joinToString(","))
                 Timber.i("${buf.size}")
                 out.write(buf, 0, buf.size)

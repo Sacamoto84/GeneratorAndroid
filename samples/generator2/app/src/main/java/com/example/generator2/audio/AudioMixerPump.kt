@@ -1,6 +1,6 @@
 package com.example.generator2.audio
 
-import com.example.generator2.generator.generatorRenderAudio
+import com.example.generator2.generator.gen
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -28,14 +28,12 @@ class AudioMixerPump {
             while (true)
             {
 
-                
-
-               val bugGen = generatorRenderAudio(bufferSize)
+               val bugGen = gen.renderAudio(bufferSize)
 
 
 
 
-               chAudioOut.send(bugGen)
+                audioOut.chOut.send(bugGen)
             }
         }
     }

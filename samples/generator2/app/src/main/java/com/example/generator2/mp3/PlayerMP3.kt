@@ -1,7 +1,6 @@
 package com.example.generator2.mp3
 
 import android.content.Context
-import android.media.AudioManager
 import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -9,7 +8,6 @@ import androidx.media3.common.Tracks
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.transformer.EditedMediaItem
 import com.example.generator2.mp3.stream.dataCompressor
-import com.example.generator2.mp3.stream.dataStreamMixer
 import com.example.generator2.mp3.stream.renderDataToPoints
 
 @androidx.media3.common.util.UnstableApi
@@ -49,7 +47,6 @@ class PlayerMP3(val context: Context) {
 
         dataCompressor()
         renderDataToPoints()
-        dataStreamMixer()
 
         player = ExoPlayer.Builder(context, renderersFactory(context)).build()
         player.addListener(listener)

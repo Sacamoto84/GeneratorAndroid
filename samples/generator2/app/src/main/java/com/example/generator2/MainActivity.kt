@@ -25,11 +25,11 @@ import com.example.generator2.audio.audioMixerPump
 import com.example.generator2.audio.audioOut
 import com.example.generator2.di.Hub
 import com.example.generator2.generator.gen
-import com.example.generator2.generator.generatorRun
 import com.example.generator2.model.mmkv
 import com.example.generator2.mp3.PlayerMP3
 import com.example.generator2.presets.presetsInit
 import com.example.generator2.presets.presetsSaveFile
+import com.example.generator2.scope.scope
 import com.example.generator2.theme.Generator2Theme
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.update.Update
@@ -146,6 +146,7 @@ class MainActivity : ComponentActivity() {
 
         audioOut
         audioMixerPump
+        scope
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 //            customTypeface = resources.getFont(R.font.jetbrains)

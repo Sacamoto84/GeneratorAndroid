@@ -18,9 +18,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.generator.gen
-import com.example.generator2.mp3.wiget.Mp3Oscilloscope
 import com.example.generator2.presets.Presets
 import com.example.generator2.presets.ui.DialogPresetsNewFile
+import com.example.generator2.scope.scope
 import com.example.generator2.screens.mainscreen4.card.CardCard
 import com.example.generator2.screens.mainscreen4.card.CardCommander
 import com.example.generator2.screens.mainscreen4.ui.DrawerContentBottom
@@ -128,9 +128,7 @@ fun Mainsreen4(
                         .weight(1f)
                 )
 
-                Mp3Oscilloscope()
-
-
+                scope.Oscilloscope()
 
                 Column()
                 {
