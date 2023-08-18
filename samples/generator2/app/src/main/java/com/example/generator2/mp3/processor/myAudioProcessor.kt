@@ -3,7 +3,7 @@ package com.example.generator2.mp3.processor
 import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.audio.AudioProcessor
-import com.example.generator2.model.LiveData
+import com.example.generator2.generator.gen
 import com.example.generator2.mp3.channelDataStreamOutAudioProcessor
 import kotlinx.coroutines.DelicateCoroutinesApi
 import libs.structure.FIFO
@@ -84,8 +84,8 @@ class myAudioProcessor : AudioProcessor {
     @OptIn(DelicateCoroutinesApi::class)
     override fun queueInput(inputBuffer: ByteBuffer) {
 
-        val enl = LiveData.enL.value
-        val enr = LiveData.enR.value
+        val enl = gen.liveData.enL.value
+        val enr = gen.liveData.enR.value
 
         var position = inputBuffer.position()
         val limit = inputBuffer.limit()

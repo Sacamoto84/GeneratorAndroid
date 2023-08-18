@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.generator2.model.LiveData
+import com.example.generator2.generator.gen
 import com.example.generator2.screens.config.Config_header
 import com.example.generator2.screens.config.atom.editConfig
 import com.example.generator2.screens.config.vm.VMConfig
@@ -32,12 +32,12 @@ fun ConfigVolume(vm: VMConfig) {
             modifier = Modifier.weight(1f).padding(start = 8.dp)
         )
 
-        val value0 = LiveData.maxVolume0.collectAsState()
+        val value0 = gen.liveData.maxVolume0.collectAsState()
         editConfig(
             Modifier.width(120.dp), "", value = value0, min = 0f, max = 1f,
             onDone = {
-                LiveData.maxVolume0.value = it
-                LiveData.volume0.value = LiveData.currentVolume0.value * it
+                gen.liveData.maxVolume0.value = it
+                gen.liveData.volume0.value = gen.liveData.currentVolume0.value * it
                 vm.toastSaveVolume()
                 vm.saveVolume()
             })
@@ -53,12 +53,12 @@ fun ConfigVolume(vm: VMConfig) {
             modifier = Modifier.weight(1f).padding(start = 8.dp)
         )
 
-        val value1 = LiveData.maxVolume1.collectAsState()
+        val value1 = gen.liveData.maxVolume1.collectAsState()
         editConfig(
             Modifier.width(120.dp), "", value = value1, min = 0f, max = 1f,
             onDone = {
-                LiveData.maxVolume1.value = it
-                LiveData.volume1.value = LiveData.currentVolume1.value * it
+                gen.liveData.maxVolume1.value = it
+                gen.liveData.volume1.value = gen.liveData.currentVolume1.value * it
                 vm.toastSaveVolume()
                 vm.saveVolume()
             })

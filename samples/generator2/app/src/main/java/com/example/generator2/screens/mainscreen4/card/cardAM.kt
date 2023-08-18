@@ -4,44 +4,31 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.example.generator2.generator.gen
 import com.example.generator2.model.LiveConstrain
-import com.example.generator2.model.LiveData
 import com.example.generator2.screens.mainscreen4.modifierInfinitySlider
 import com.example.generator2.screens.mainscreen4.ms4SwitchWidth
 import com.example.generator2.screens.mainscreen4.textStyleButtonOnOff
-import com.example.generator2.screens.mainscreen4.textStyleEditFontFamily
-import com.example.generator2.screens.mainscreen4.textStyleEditFontSize
 import com.example.generator2.screens.mainscreen4.ui.InfinitySlider
-import com.example.generator2.screens.mainscreen4.ui.MainScreenTextBoxGuest
 import com.example.generator2.screens.mainscreen4.ui.MainscreenTextBoxAndDropdownMenu
 import com.example.generator2.screens.mainscreen4.ui.UIspinner
 import com.example.generator2.theme.colorDarkBackground
-import com.example.generator2.theme.colorLightBackground2
 import libs.modifier.noRippleClickable
 
 
@@ -49,9 +36,9 @@ import libs.modifier.noRippleClickable
 fun CardAM(str: String = "CH0") {
 
     val amEN: State<Boolean?> = if (str == "CH0") {
-        LiveData.ch1_AM_EN.collectAsState()
+        gen.liveData.ch1_AM_EN.collectAsState()
     } else {
-        LiveData.ch2_AM_EN.collectAsState()
+        gen.liveData.ch2_AM_EN.collectAsState()
     }
 
     Column {
@@ -68,9 +55,9 @@ fun CardAM(str: String = "CH0") {
         ) {
 
             val amFr: State<Float?> = if (str == "CH0") {
-                LiveData.ch1_AM_Fr.collectAsState()
+                gen.liveData.ch1_AM_Fr.collectAsState()
             } else {
-                LiveData.ch2_AM_Fr.collectAsState()
+                gen.liveData.ch2_AM_Fr.collectAsState()
             }
 
 
@@ -90,9 +77,9 @@ fun CardAM(str: String = "CH0") {
                                     color = if (amEN.value!!) Color(0xFF01AE0F) else colorDarkBackground
                             )
                             .noRippleClickable(onClick = {
-                                if (str == "CH0") LiveData.ch1_AM_EN.value =
-                                        !LiveData.ch1_AM_EN.value
-                                else LiveData.ch2_AM_EN.value = !LiveData.ch2_AM_EN.value
+                                if (str == "CH0") gen.liveData.ch1_AM_EN.value =
+                                        !gen.liveData.ch1_AM_EN.value
+                                else gen.liveData.ch2_AM_EN.value = !gen.liveData.ch2_AM_EN.value
                             }) //.shadow(1.dp, shape = RoundedCornerShape(8.dp), ambientColor = Color.Blue)
                     , contentAlignment = Alignment.Center
             ) {
@@ -115,7 +102,7 @@ fun CardAM(str: String = "CH0") {
                     modifier = Modifier.weight(1f),
                     items = listOf("0.1", "1.0", "5.5", "10.0", "40.0", "100.0"),
                     value = amFr.value!!,
-                    onChange = { if (str == "CH0") LiveData.ch1_AM_Fr.value = it else LiveData.ch2_AM_Fr.value = it },
+                    onChange = { if (str == "CH0") gen.liveData.ch1_AM_Fr.value = it else gen.liveData.ch2_AM_Fr.value = it },
                     sensing = sensing,
                     range = 0.1f..200f,
             )
@@ -186,9 +173,9 @@ fun CardAM(str: String = "CH0") {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
             val amDepth: State<Float?> = if (str == "CH0") {
-                LiveData.ch1AmDepth.collectAsState()
+                gen.liveData.ch1AmDepth.collectAsState()
             } else {
-                LiveData.ch2AmDepth.collectAsState()
+                gen.liveData.ch2AmDepth.collectAsState()
             }
 
             InfinitySlider(
@@ -196,8 +183,8 @@ fun CardAM(str: String = "CH0") {
                     sensing = 0.001f,
                     range = 0f..1f,
                     onValueChange = {
-                        if (str == "CH0") LiveData.ch1AmDepth.value =
-                                it else LiveData.ch2AmDepth.value = it
+                        if (str == "CH0") gen.liveData.ch1AmDepth.value =
+                                it else gen.liveData.ch2AmDepth.value = it
                     },
                     modifier = modifierInfinitySlider,
                     vertical = true,
@@ -214,8 +201,8 @@ fun CardAM(str: String = "CH0") {
                             .padding(top = 0.dp, start = 8.dp, end = 8.dp)
                             .wrapContentWidth()
                             .clip(shape = RoundedCornerShape(4.dp)),
-                    filename = if (str == "CH0") LiveData.ch1_AM_Filename.collectAsState()
-                    else LiveData.ch1_AM_Filename.collectAsState()
+                    filename = if (str == "CH0") gen.liveData.ch1_AM_Filename.collectAsState()
+                    else gen.liveData.ch1_AM_Filename.collectAsState()
 
             )
 

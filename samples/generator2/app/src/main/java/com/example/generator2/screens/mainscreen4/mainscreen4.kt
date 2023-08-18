@@ -17,7 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.generator2.model.LiveData
+import com.example.generator2.generator.gen
 import com.example.generator2.mp3.wiget.Mp3Oscilloscope
 import com.example.generator2.presets.Presets
 import com.example.generator2.presets.ui.DialogPresetsNewFile
@@ -66,7 +66,7 @@ fun Mainsreen4(
                 WigetUpdate()
 
                 Text(
-                    text = LiveData.presetsName.collectAsState().value,
+                    text = gen.liveData.presetsName.collectAsState().value,
                     color = Color.LightGray,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
@@ -101,7 +101,7 @@ fun Mainsreen4(
             }
         ) {
 
-            val mono by LiveData.mono.collectAsState()
+            val mono by gen.liveData.mono.collectAsState()
 
 //            val animateHeight by animateDpAsState(
 //                targetValue = if (!mono) 314.dp else 0.dp,

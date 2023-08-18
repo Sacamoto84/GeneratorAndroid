@@ -17,7 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.generator2.model.LiveData
+import com.example.generator2.generator.gen
 import com.example.generator2.screens.mainscreen4.ms4SwitchWidth
 import com.example.generator2.theme.colorDarkBackground
 import libs.modifier.noRippleClickable
@@ -26,9 +26,9 @@ import libs.modifier.noRippleClickable
 fun ButtonChEn(str: String = "CH0") {
 
     val chEN: State<Boolean> = if (str == "CH0") {
-        LiveData.ch1_EN.collectAsState()
+        gen.liveData.ch1_EN.collectAsState()
     } else {
-        LiveData.ch2_EN.collectAsState()
+        gen.liveData.ch2_EN.collectAsState()
     }
 
 // Кнопка включения канала
@@ -47,9 +47,9 @@ fun ButtonChEn(str: String = "CH0") {
                 color = if (chEN.value) Color(0xFF4DD0E1) else colorDarkBackground
             )
             .noRippleClickable(onClick = {
-                if (str == "CH0") LiveData.ch1_EN.value =
-                    !LiveData.ch1_EN.value
-                else LiveData.ch2_EN.value = !LiveData.ch2_EN.value
+                if (str == "CH0") gen.liveData.ch1_EN.value =
+                    !gen.liveData.ch1_EN.value
+                else gen.liveData.ch2_EN.value = !gen.liveData.ch2_EN.value
 
                 println("Кнопка")
 

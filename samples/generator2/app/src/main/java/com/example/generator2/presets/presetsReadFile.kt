@@ -6,8 +6,7 @@ import cafe.adriel.satchel.ktx.getOrDefault
 import cafe.adriel.satchel.serializer.raw.RawSatchelSerializer
 import cafe.adriel.satchel.storer.file.FileSatchelStorer
 import com.example.generator2.AppPath
-import com.example.generator2.model.DataLiveData
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.example.generator2.generator.DataLiveData
 import java.io.File
 
 fun presetsReadFile(name: String, path : String = AppPath().presets ): DataLiveData {

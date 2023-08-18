@@ -1,7 +1,7 @@
 package com.example.generator2.backup
 
+import com.example.generator2.generator.gen
 import com.example.generator2.model.LiveConstrain
-import com.example.generator2.model.LiveData
 import com.tencent.mmkv.MMKV
 
 //val rootDir = MMKV.initialize(this, AppPath().config)
@@ -14,19 +14,19 @@ class MMKv {
     fun readVolume() {
         print("readPufferVolume..")
 
-        LiveData.maxVolume0.value = m.getFloat("maxVolume0", 1.0F)
-        LiveData.maxVolume1.value = m.getFloat("maxVolume1", 1.0F)
+        gen.liveData.maxVolume0.value = m.getFloat("maxVolume0", 1.0F)
+        gen.liveData.maxVolume1.value = m.getFloat("maxVolume1", 1.0F)
 
-        LiveData.volume0.value = LiveData.currentVolume0.value * m.getFloat("maxVolume0", 1.0F)
-        LiveData.volume1.value = LiveData.currentVolume1.value * m.getFloat("maxVolume1", 1.0F)
+        gen.liveData.volume0.value = gen.liveData.currentVolume0.value * m.getFloat("maxVolume0", 1.0F)
+        gen.liveData.volume1.value = gen.liveData.currentVolume1.value * m.getFloat("maxVolume1", 1.0F)
 
         println("ok")
     }
 
     fun saveVolume() {
         print("saveJsonVolume..")
-        m.putFloat("maxVolume0", LiveData.maxVolume0.value)
-        m.putFloat("maxVolume1", LiveData.maxVolume1.value)
+        m.putFloat("maxVolume0", gen.liveData.maxVolume0.value)
+        m.putFloat("maxVolume1", gen.liveData.maxVolume1.value)
         println("ok")
     }
 

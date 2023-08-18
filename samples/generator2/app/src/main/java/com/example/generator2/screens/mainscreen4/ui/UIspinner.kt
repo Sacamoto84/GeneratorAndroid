@@ -5,7 +5,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -22,11 +26,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
-import com.example.generator2.model.LiveData
+import com.example.generator2.generator.gen
 import com.example.generator2.model.itemList
-import com.example.generator2.model.itemlistAM
-import com.example.generator2.model.itemlistCarrier
-import com.example.generator2.model.itemlistFM
 
 object UIspinner {
 
@@ -43,11 +44,11 @@ object UIspinner {
         val expanded = remember { mutableStateOf(false) }
 
         //Выбор с каким списком работать
-        var itemlist: ArrayList<itemList> = itemlistCarrier
+        var itemlist: ArrayList<itemList> = gen.itemlistCarrier
         when (Mod) {
-            "CR" -> itemlist = itemlistCarrier
-            "AM" -> itemlist = itemlistAM
-            "FM" -> itemlist = itemlistFM
+            "CR" -> itemlist = gen.itemlistCarrier
+            "AM" -> itemlist = gen.itemlistAM
+            "FM" -> itemlist = gen.itemlistFM
         }
 
         //Текущий текст
@@ -55,15 +56,15 @@ object UIspinner {
 
         if (CH == "CH0") {
             when (Mod) {
-                "CR" -> currentValue = LiveData.ch1_Carrier_Filename.value
-                "AM" -> currentValue = LiveData.ch1_AM_Filename.value
-                "FM" -> currentValue = LiveData.ch1_FM_Filename.value
+                "CR" -> currentValue = gen.liveData.ch1_Carrier_Filename.value
+                "AM" -> currentValue = gen.liveData.ch1_AM_Filename.value
+                "FM" -> currentValue = gen.liveData.ch1_FM_Filename.value
             }
         } else {
             when (Mod) {
-                "CR" -> currentValue = LiveData.ch2_Carrier_Filename.value
-                "AM" -> currentValue = LiveData.ch2_AM_Filename.value
-                "FM" -> currentValue = LiveData.ch2_FM_Filename.value
+                "CR" -> currentValue = gen.liveData.ch2_Carrier_Filename.value
+                "AM" -> currentValue = gen.liveData.ch2_AM_Filename.value
+                "FM" -> currentValue = gen.liveData.ch2_FM_Filename.value
             }
         }
 
@@ -137,15 +138,15 @@ object UIspinner {
                                 expanded.value = false
                                 if (CH == "CH0") {
                                     when (Mod) {
-                                        "CR" -> LiveData.ch1_Carrier_Filename.value = currentValue
-                                        "AM" -> LiveData.ch1_AM_Filename.value = currentValue
-                                        "FM" -> LiveData.ch1_FM_Filename.value = currentValue
+                                        "CR" -> gen.liveData.ch1_Carrier_Filename.value = currentValue
+                                        "AM" -> gen.liveData.ch1_AM_Filename.value = currentValue
+                                        "FM" -> gen.liveData.ch1_FM_Filename.value = currentValue
                                     }
                                 } else {
                                     when (Mod) {
-                                        "CR" -> LiveData.ch2_Carrier_Filename.value = currentValue
-                                        "AM" -> LiveData.ch2_AM_Filename.value = currentValue
-                                        "FM" -> LiveData.ch2_FM_Filename.value = currentValue
+                                        "CR" -> gen.liveData.ch2_Carrier_Filename.value = currentValue
+                                        "AM" -> gen.liveData.ch2_AM_Filename.value = currentValue
+                                        "FM" -> gen.liveData.ch2_FM_Filename.value = currentValue
 
                                     }
                                 }

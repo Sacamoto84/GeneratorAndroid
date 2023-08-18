@@ -2,10 +2,8 @@ package com.example.generator2
 
 import android.content.Context
 import com.example.generator2.di.Hub
+import com.example.generator2.generator.gen
 import com.example.generator2.model.itemList
-import com.example.generator2.model.itemlistAM
-import com.example.generator2.model.itemlistCarrier
-import com.example.generator2.model.itemlistFM
 import com.example.generator2.model.mmkv
 import com.example.generator2.presets.presetsReadFile
 import com.example.generator2.presets.presetsToLiveData
@@ -53,13 +51,13 @@ fun initialization(context: Context, hub: Hub) {
             Timber.i("arrFilesCarrier start")
             val arrFilesCarrier: Array<String> = Utils.listFileInCarrier() //Заполняем список
             for (i in arrFilesCarrier.indices) {
-                itemlistCarrier.add(itemList(patchCarrier, arrFilesCarrier[i], 0))
+                gen.itemlistCarrier.add(itemList(patchCarrier, arrFilesCarrier[i], 0))
             }
             val arrFilesMod: Array<String> =
                 Utils.listFileInMod() //Получение списка файлов в папке Mod
             for (i in arrFilesMod.indices) {
-                itemlistAM.add(itemList(patchMod, arrFilesMod[i], 1))
-                itemlistFM.add(itemList(patchMod, arrFilesMod[i], 0))
+                gen.itemlistAM.add(itemList(patchMod, arrFilesMod[i], 1))
+                gen.itemlistFM.add(itemList(patchMod, arrFilesMod[i], 0))
             }
             Timber.i("arrFilesCarrier end")
 

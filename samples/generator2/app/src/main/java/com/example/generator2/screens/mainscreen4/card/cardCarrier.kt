@@ -19,8 +19,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.generator2.generator.gen
 import com.example.generator2.model.LiveConstrain
-import com.example.generator2.model.LiveData
 import com.example.generator2.screens.mainscreen4.modifierInfinitySlider
 import com.example.generator2.screens.mainscreen4.ms4SwitchWidth
 import com.example.generator2.screens.mainscreen4.textStyleButtonOnOff
@@ -37,15 +37,15 @@ import libs.modifier.noRippleClickable
 fun CardCarrier(str: String = "CH0") {
 
     val chEN: State<Boolean> =
-        if (str == "CH0") LiveData.ch1_EN.collectAsState() else LiveData.ch2_EN.collectAsState()
+        if (str == "CH0") gen.liveData.ch1_EN.collectAsState() else gen.liveData.ch2_EN.collectAsState()
 
     val carrierFr: State<Float> =
-        if (str == "CH0") LiveData.ch1_Carrier_Fr.collectAsState() else LiveData.ch2_Carrier_Fr.collectAsState()
+        if (str == "CH0") gen.liveData.ch1_Carrier_Fr.collectAsState() else gen.liveData.ch2_Carrier_Fr.collectAsState()
 
     val fmSelectMode: State<Int?> = if (str == "CH0")
-        LiveData.parameterInt0.collectAsState() //CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс
+        gen.liveData.parameterInt0.collectAsState() //CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс
     else
-        LiveData.parameterInt1.collectAsState() //CH2 режим выбора частот FM модуляции 0-обычный 1-минимум макс
+        gen.liveData.parameterInt1.collectAsState() //CH2 режим выбора частот FM модуляции 0-обычный 1-минимум макс
 
     Column {
 
@@ -76,8 +76,8 @@ fun CardCarrier(str: String = "CH0") {
                     color = if (chEN.value) Color(0xFF4DD0E1) else colorDarkBackground
                 )
                 .noRippleClickable(onClick = {
-                    if (str == "CH0") LiveData.ch1_EN.value = !LiveData.ch1_EN.value
-                    else LiveData.ch2_EN.value = !LiveData.ch2_EN.value
+                    if (str == "CH0") gen.liveData.ch1_EN.value = !gen.liveData.ch1_EN.value
+                    else gen.liveData.ch2_EN.value = !gen.liveData.ch2_EN.value
                     println("Кнопка")
                 }), contentAlignment = Alignment.Center
             ) {
@@ -103,8 +103,8 @@ fun CardCarrier(str: String = "CH0") {
                 onChange = {
 
                     if (fmSelectMode.value == 0)
-                        if (str == "CH0") LiveData.ch1_Carrier_Fr.value =
-                            it else LiveData.ch2_Carrier_Fr.value = it
+                        if (str == "CH0") gen.liveData.ch1_Carrier_Fr.value =
+                            it else gen.liveData.ch2_Carrier_Fr.value = it
                 },
                 range = 50f..10000f
             )
@@ -116,8 +116,8 @@ fun CardCarrier(str: String = "CH0") {
                 sensing = LiveConstrain.sensetingSliderCr.floatValue / 4,
                 range = 50f..10000f,
                 onValueChange = {
-                    if (fmSelectMode.value == 0) if (str == "CH0") LiveData.ch1_Carrier_Fr.value =
-                        it else LiveData.ch2_Carrier_Fr.value = it
+                    if (fmSelectMode.value == 0) if (str == "CH0") gen.liveData.ch1_Carrier_Fr.value =
+                        it else gen.liveData.ch2_Carrier_Fr.value = it
                 },
                 modifier = modifierInfinitySlider,
                 vertical = true,
@@ -132,8 +132,8 @@ fun CardCarrier(str: String = "CH0") {
                     .padding(top = 0.dp, start = 8.dp, end = 8.dp)
                     .wrapContentWidth()
                     .clip(shape = RoundedCornerShape(4.dp)),
-                filename = if (str == "CH0") LiveData.ch1_Carrier_Filename.collectAsState()
-                else LiveData.ch2_Carrier_Filename.collectAsState()
+                filename = if (str == "CH0") gen.liveData.ch1_Carrier_Filename.collectAsState()
+                else gen.liveData.ch2_Carrier_Filename.collectAsState()
             )
 
         }

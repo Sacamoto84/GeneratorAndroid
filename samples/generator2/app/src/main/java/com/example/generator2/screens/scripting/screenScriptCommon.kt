@@ -9,10 +9,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.example.generator2.R
 import com.example.generator2.navController
-import com.example.generator2.vm.StateCommandScript
+import com.example.generator2.element.StateCommandScript
 import com.example.generator2.screens.scripting.ui.RegisterViewDraw
 import com.example.generator2.screens.scripting.ui.ScriptTable
 import com.example.generator2.screens.scripting.vm.VMScripting

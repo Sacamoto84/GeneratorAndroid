@@ -1,9 +1,17 @@
-package com.example.generator2.vm
+package com.example.generator2.element
 
-import androidx.compose.runtime.*
-import com.example.generator2.model.LiveData
-import kotlinx.coroutines.*
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.example.generator2.generator.gen
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 /*
@@ -100,11 +108,11 @@ class Script() {
     fun command(s: StateCommandScript) {
 
         when (s) {
-            StateCommandScript.STOP   -> {
+            StateCommandScript.STOP -> {
                 stop()
                 state = StateCommandScript.ISTOPPING
             }
-            StateCommandScript.PAUSE  -> {
+            StateCommandScript.PAUSE -> {
                 pause()
                 state = StateCommandScript.ISPAUSE
             }
@@ -113,12 +121,12 @@ class Script() {
                 state = StateCommandScript.ISRUNNING
             }
 
-            StateCommandScript.START  -> {
+            StateCommandScript.START -> {
                 start()
                 state = StateCommandScript.ISRUNNING
             }
 
-            StateCommandScript.EDIT   -> {
+            StateCommandScript.EDIT -> {
                 stop()
                 state = StateCommandScript.ISEDITTING
             }
@@ -131,15 +139,15 @@ class Script() {
 
     fun stateToString(): String {
         val s = when (state) {
-            StateCommandScript.START      -> "START"
-            StateCommandScript.PAUSE      -> "PAUSE"
-            StateCommandScript.RESUME     -> "RESUME"
-            StateCommandScript.STOP       -> "STOP"
-            StateCommandScript.EDIT       -> "EDIT"
-            StateCommandScript.ISRUNNING  -> "isRUNNING"
-            StateCommandScript.ISTOPPING  -> "isSTOPPING"
+            StateCommandScript.START -> "START"
+            StateCommandScript.PAUSE -> "PAUSE"
+            StateCommandScript.RESUME -> "RESUME"
+            StateCommandScript.STOP -> "STOP"
+            StateCommandScript.EDIT -> "EDIT"
+            StateCommandScript.ISRUNNING -> "isRUNNING"
+            StateCommandScript.ISTOPPING -> "isSTOPPING"
             StateCommandScript.ISEDITTING -> "isEDITTING"
-            StateCommandScript.ISPAUSE    -> "isPAUSE"
+            StateCommandScript.ISPAUSE -> "isPAUSE"
         }
         return s
     }
@@ -375,25 +383,25 @@ class Script() {
             if (listCMD[1] == "CR")                    //│  CH1 CR ON   CH2 CR OFF  //│
             {                                          //╰────────────────────────────┤
                 if (chanel == 1)                                                    //│
-                    LiveData.ch1_EN.update { onoff }                                //│
+                    gen.liveData.ch1_EN.update { onoff }                                //│
                 else                                                                //│
-                    LiveData.ch2_EN.update { onoff }                                //│
+                    gen.liveData.ch2_EN.update { onoff }                                //│
             }                                                                       //│
             //────────────────────────────────────────────┬───────────────────────────┤
             if (listCMD[1] == "AM")                     //│  CH1 AM ON   CH2 AM OFF //│
             {                                           //╰───────────────────────────┤
                 if (chanel == 1)                                                    //│
-                    LiveData.ch1_AM_EN.update { onoff }                                //│
+                    gen.liveData.ch1_AM_EN.update { onoff }                                //│
                 else                                                                //│
-                    LiveData.ch2_AM_EN.update { onoff }                                //│
+                    gen.liveData.ch2_AM_EN.update { onoff }                                //│
             }                                                                       //│
             //────────────────────────────────────────────────────────────────────────┤
             if (listCMD[1] == "FM")                                                 //│
             {                                                                       //│
                 if (chanel == 1)                                                    //│
-                    LiveData.ch1_FM_EN.update { onoff }                                //│
+                    gen.liveData.ch1_FM_EN.update { onoff }                                //│
                 else                                                                //│
-                    LiveData.ch2_FM_EN.update { onoff }                                //│
+                    gen.liveData.ch2_FM_EN.update { onoff }                                //│
             }                                                                       //│
             //────────────────────────────────────────────────────────────────────────┤
             return                                                                  //│
@@ -407,9 +415,9 @@ class Script() {
             if (listCMD[1] == "MOD")                                                //│
             {                                                                       //│
                 println(listCMD[2])                                                 //│
-                if (chanel == 1) LiveData.ch1_Carrier_Filename.update { listCMD[2] }    //│
+                if (chanel == 1) gen.liveData.ch1_Carrier_Filename.update { listCMD[2] }    //│
                 else                                                                //│
-                    LiveData.ch2_Carrier_Filename.update { listCMD[2] }             //│
+                    gen.liveData.ch2_Carrier_Filename.update { listCMD[2] }             //│
             }                                                                       //│
 
             //CR[1 2] FR 1000.3                                                     //│
@@ -423,10 +431,10 @@ class Script() {
                 }
 
                 if (chanel == 1) {
-                    LiveData.ch1_Carrier_Fr.update { value }
+                    gen.liveData.ch1_Carrier_Fr.update { value }
                     //channel.send(value)
                 } else {                                             //│
-                    LiveData.ch2_Carrier_Fr.update { value }
+                    gen.liveData.ch2_Carrier_Fr.update { value }
                 }                       //│
             }
 
@@ -449,19 +457,19 @@ class Script() {
                     listCMD[2].toFloat()                                            //│
 
                 if (chanel == 1)                                                    //│
-                    LiveData.ch1_AM_Fr.update { value }                             //│
+                    gen.liveData.ch1_AM_Fr.update { value }                             //│
                 else                                                                //│
-                    LiveData.ch2_AM_Fr.update { value }                             //│
+                    gen.liveData.ch2_AM_Fr.update { value }                             //│
             }                                                                       //│
 
             //AM[1 2] MOD 02_HWawe { 1.9ms }                                        //│
             if (listCMD[1] == "MOD")                                                //│
             {                                                                       //│
                 if (chanel == 1) {                                                  //│
-                    LiveData.ch1_AM_Filename.update { listCMD[2] }                  //│
+                    gen.liveData.ch1_AM_Filename.update { listCMD[2] }                  //│
                 }                                                                   //│
                 else                                                                //│
-                    LiveData.ch2_AM_Filename.update { listCMD[2] }                  //│
+                    gen.liveData.ch2_AM_Filename.update { listCMD[2] }                  //│
             }                                                                       //│
             return                                                                  //│
         }                                                                           //│
@@ -493,17 +501,17 @@ class Script() {
                 f[listCMD[2].drop(1).toInt()]
             } else listCMD[2].toFloat()
 
-            if (chanel == 1) LiveData.ch1_FM_Dev.update { value }
+            if (chanel == 1) gen.liveData.ch1_FM_Dev.update { value }
             else                                                                     //│
-                LiveData.ch2_FM_Dev.update { value }                                    //│
+                gen.liveData.ch2_FM_Dev.update { value }                                    //│
         }                                                                            //│
 
         //FM[1 2] MOD 02_HWawe                                                       //│
         if (listCMD[1] == "MOD")                                                     //│
         {                                                                            //│
-            if (chanel == 1) LiveData.ch1_FM_Filename.update { listCMD[2] }
+            if (chanel == 1) gen.liveData.ch1_FM_Filename.update { listCMD[2] }
             else                                                                     //│
-                LiveData.ch2_FM_Filename.update { listCMD[2] }                          //│
+                gen.liveData.ch2_FM_Filename.update { listCMD[2] }                          //│
         }                                                                            //│
 
         //FM[1 2] FR   3.5                                                           //│
@@ -513,9 +521,9 @@ class Script() {
                 f[listCMD[2].drop(1).toInt()]
             } else listCMD[2].toFloat()
 
-            if (chanel == 1) LiveData.ch1_FM_Fr.update { value }
+            if (chanel == 1) gen.liveData.ch1_FM_Fr.update { value }
             else                                                                      //│
-                LiveData.ch2_FM_Fr.update { value }                                      //│
+                gen.liveData.ch2_FM_Fr.update { value }                                      //│
         }                                                                             //│
         return                                                                        //│
     }                                                                                 //│ // ╰────────────────────────────────────────────────────────────────────────────────╯

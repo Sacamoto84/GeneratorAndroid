@@ -42,13 +42,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.generator2.model.LiveData
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.theme.colorLightBackground2
 import com.example.generator2.util.format
 import com.siddroid.holi.colors.MaterialColor
 import libs.modifier.noRippleClickable
-import timber.log.Timber
 
 lateinit var customTypeface: Typeface
 

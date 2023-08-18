@@ -1,9 +1,5 @@
 package com.example.generator2.generator
 
-import com.example.generator2.model.LiveData
-
-
-@OptIn(ExperimentalUnsignedTypes::class)
 fun renderChanel(CH: StructureCh, numFrames: Int): FloatArray {
 
     var o: Float
@@ -20,23 +16,23 @@ fun renderChanel(CH: StructureCh, numFrames: Int): FloatArray {
     val amDepth: Float
 
     if (CH.ch == 0) {
-        rC = convertHzToR(LiveData.ch1_Carrier_Fr.value).toUInt()
-        rAM = convertHzToR(LiveData.ch1_AM_Fr.value).toUInt()
-        rFM = convertHzToR(LiveData.ch1_FM_Fr.value).toUInt()
-        enCH = LiveData.ch1_EN.value
-        enAM = LiveData.ch1_AM_EN.value
-        enFM = LiveData.ch1_FM_EN.value
-        volume = LiveData.volume0.value
-        amDepth = LiveData.ch1AmDepth.value
+        rC = convertHzToR(gen.liveData.ch1_Carrier_Fr.value).toUInt()
+        rAM = convertHzToR(gen.liveData.ch1_AM_Fr.value).toUInt()
+        rFM = convertHzToR(gen.liveData.ch1_FM_Fr.value).toUInt()
+        enCH = gen.liveData.ch1_EN.value
+        enAM = gen.liveData.ch1_AM_EN.value
+        enFM = gen.liveData.ch1_FM_EN.value
+        volume = gen.liveData.volume0.value
+        amDepth = gen.liveData.ch1AmDepth.value
     } else {
-        rC = convertHzToR(LiveData.ch2_Carrier_Fr.value).toUInt()
-        rAM = convertHzToR(LiveData.ch2_AM_Fr.value).toUInt()
-        rFM = convertHzToR(LiveData.ch1_FM_Fr.value).toUInt()
-        enCH = LiveData.ch2_EN.value
-        enAM = LiveData.ch2_AM_EN.value
-        enFM = LiveData.ch2_FM_EN.value
-        volume = LiveData.volume1.value
-        amDepth = LiveData.ch2AmDepth.value
+        rC = convertHzToR(gen.liveData.ch2_Carrier_Fr.value).toUInt()
+        rAM = convertHzToR(gen.liveData.ch2_AM_Fr.value).toUInt()
+        rFM = convertHzToR(gen.liveData.ch1_FM_Fr.value).toUInt()
+        enCH = gen.liveData.ch2_EN.value
+        enAM = gen.liveData.ch2_AM_EN.value
+        enFM = gen.liveData.ch2_FM_EN.value
+        volume = gen.liveData.volume1.value
+        amDepth = gen.liveData.ch2AmDepth.value
     }
 
 

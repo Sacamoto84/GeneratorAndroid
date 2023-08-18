@@ -27,13 +27,10 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.generator2.vm.Script
+import com.example.generator2.element.Script
+import com.example.generator2.generator.gen
 import com.example.generator2.theme.NoRippleTheme
 import com.example.generator2.theme.colorDarkBackground
-import com.example.generator2.model.LiveData
-import com.example.generator2.model.itemlistAM
-import com.example.generator2.model.itemlistCarrier
-import com.example.generator2.model.itemlistFM
 import com.example.generator2.screens.scripting.atom.TemplateButtonBottomBar
 import timber.log.Timber
 import java.util.*
@@ -196,9 +193,9 @@ class ScriptKeyboard(private val s: Script) {
             ) {
                 itemsIndexed(
                     when (type) {
-                        "CR" -> itemlistCarrier.toList()
-                        "AM" -> itemlistAM.toList()
-                        else -> itemlistFM.toList()
+                        "CR" -> gen.itemlistCarrier.toList()
+                        "AM" -> gen.itemlistAM.toList()
+                        else -> gen.itemlistFM.toList()
                     }
                 ) { index, item ->
                     Row(

@@ -32,12 +32,11 @@ class GeneratorInputStream (sampleRate : Int = 48000): AudioInputStream() {
 
         val dataArray = ShortArray(length)
 
+        //val s = renderAudio(len)
 
-        val s = renderAudio(len)
-
-        s.forEachIndexed { i, v ->
-            dataArray[i] = (v * 32000F).toInt().toShort()
-        }
+//        s.forEachIndexed { i, v ->
+//            dataArray[i] = (v * 32000F).toInt().toShort()
+//        }
 
         dataArray.copyInto(b)
 

@@ -1,6 +1,5 @@
 package com.example.generator2.screens.mainscreen4.atom
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,9 +19,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.generator2.model.LiveData
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.R
+import com.example.generator2.generator.gen
 
 private val m : Modifier = Modifier.fillMaxHeight().aspectRatio(1.5f).clip(RoundedCornerShape(15.dp)).border(1.dp, Color.DarkGray, CircleShape)
     .background(colorDarkBackground).offset(1.dp, 0.dp)
@@ -33,16 +32,16 @@ val fontSize = 20.sp
 fun LR() {
     Row( modifier = Modifier.height(30.dp).clip(RoundedCornerShape(15.dp)) ,verticalAlignment = Alignment.CenterVertically )
     {
-        val mono = LiveData.mono.collectAsState()
-        val shuffle = LiveData.shuffle.collectAsState()
-        val enL = LiveData.enL.collectAsState()
-        val enR = LiveData.enR.collectAsState()
+        val mono = gen.liveData.mono.collectAsState()
+        val shuffle = gen.liveData.shuffle.collectAsState()
+        val enL = gen.liveData.enL.collectAsState()
+        val enR = gen.liveData.enR.collectAsState()
 
         val colorL = if (enL.value) { if (!shuffle.value) Color.White else { if (!mono.value) Color.Red else Color.White } } else Color.DarkGray
         val colorR = if (enR.value) { if (!shuffle.value) Color.White else { if (!mono.value) Color.Red else Color.White } } else Color.DarkGray
 
         Text(text = if (!mono.value) { if (!shuffle.value) "L" else "R" } else "L",
-            modifier = Modifier.then(m).clickable { LiveData.enL.value = !LiveData.enL.value },
+            modifier = Modifier.then(m).clickable { gen.liveData.enL.value = !gen.liveData.enL.value },
             fontSize = fontSize,
             textAlign = TextAlign.Center, fontWeight = FontWeight.Bold,
             color = colorL, fontFamily = FontFamily(Font(R.font.jetbrains))
@@ -51,7 +50,7 @@ fun LR() {
         Spacer(modifier = Modifier.width(4.dp))
 
         Text(text =  if (!mono.value) { if (!shuffle.value) "R" else "L" } else "R",
-            modifier = Modifier.then(m).clickable { LiveData.enR.value = !LiveData.enR.value },
+            modifier = Modifier.then(m).clickable { gen.liveData.enR.value = !gen.liveData.enR.value },
             fontSize = fontSize,
             textAlign = TextAlign.Center, fontWeight = FontWeight.Bold,
             color = colorR, fontFamily = FontFamily(Font(R.font.jetbrains))

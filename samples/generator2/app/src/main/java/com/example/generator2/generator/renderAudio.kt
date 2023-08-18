@@ -1,22 +1,21 @@
 package com.example.generator2.generator
 
-import com.example.generator2.model.LiveData
+fun generatorRenderAudio(numFrames: Int = 1024): ShortArray {
 
-fun renderAudio(numFrames: Int = 1024): FloatArray {
-
-    val enL = LiveData.enL.value
-    val enR = LiveData.enR.value
+    val enL = gen.liveData.enL.value
+    val enR = gen.liveData.enR.value
 
     val buf: FloatArray
+    val out = ShortArray(numFrames)
 
-    if (!LiveData.mono.value) {
+    if (!gen.liveData.mono.value) {
 
         //stereo
         val l = renderChanel(ch1, numFrames / 2)
         val r = renderChanel(ch2, numFrames / 2)
 
         //Нормальный режим
-        buf = if (!LiveData.shuffle.value)
+        buf = if (!gen.liveData.shuffle.value)
             mergeArrays(l, r, enL, enR)
         else
             mergeArrays(r, l, enL, enR)
@@ -25,14 +24,20 @@ fun renderAudio(numFrames: Int = 1024): FloatArray {
         //Mono
         val m = renderChanel(ch1, numFrames / 2)
 
-        buf = if (!LiveData.invert.value)
+        buf = if (!gen.liveData.invert.value)
             mergeArrays(m, m, enL, enR)
         else
             mergeArrays(m, m, enL, enR, true)
 
     }
 
-    return buf
+    val max = Short.MAX_VALUE - 1
+
+    buf.forEachIndexed { i, v ->
+        out[i] = (v * max).toInt().toShort()
+    }
+
+    return out
 
 }
 

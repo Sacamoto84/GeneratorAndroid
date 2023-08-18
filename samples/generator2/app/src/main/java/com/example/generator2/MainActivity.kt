@@ -21,12 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import cafe.adriel.pufferdb.android.AndroidPufferDB
-import com.example.generator2.audio_device.MyVisualizer
+import com.example.generator2.audio.audioMixerPump
+import com.example.generator2.audio.audioOut
 import com.example.generator2.di.Hub
+import com.example.generator2.generator.gen
 import com.example.generator2.generator.generatorRun
 import com.example.generator2.model.mmkv
 import com.example.generator2.mp3.PlayerMP3
-import com.example.generator2.mp3.play
 import com.example.generator2.presets.presetsInit
 import com.example.generator2.presets.presetsSaveFile
 import com.example.generator2.theme.Generator2Theme
@@ -124,10 +125,7 @@ class MainActivity : ComponentActivity() {
         }
 
 
-
-
-
-
+        gen
 
         kDownloader = KDownloader.create(applicationContext)
 
@@ -145,13 +143,16 @@ class MainActivity : ComponentActivity() {
 
         initialization(applicationContext, hub)
 
+
+        audioOut
+        audioMixerPump
+
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 //            customTypeface = resources.getFont(R.font.jetbrains)
 //        }
 
         Utils.ContextMainActivity = applicationContext
 
-        generatorRun()
         //play()
 
 

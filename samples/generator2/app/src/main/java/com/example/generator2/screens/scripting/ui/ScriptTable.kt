@@ -15,15 +15,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.generator2.*
 import com.example.generator2.R
 import com.example.generator2.screens.ConsoleLogDraw
 import com.example.generator2.screens.scripting.vm.VMScripting
 import com.example.generator2.screens.scripting.atom.OutlinedButtonTextAndIcon
 import com.example.generator2.screens.scripting.dialog.DialogDeleteRename
 import com.example.generator2.screens.scripting.dialog.DialogSaveAs
-import com.example.generator2.vm.StateCommandScript
-import java.util.*
+import com.example.generator2.element.StateCommandScript
 
 val refresh = mutableStateOf(0)
 
@@ -134,7 +132,8 @@ fun ScriptTable(vm: VMScripting) {
 
                         if (vm.hub.script.state == StateCommandScript.ISEDITTING) {
                             Spacer(modifier = Modifier.height(8.dp))
-                            OutlinedButtonTextAndIcon( str = "Back",    onClick = { vm.hub.script.command(StateCommandScript.STOP) }, resId = R.drawable.left)
+                            OutlinedButtonTextAndIcon( str = "Back",    onClick = { vm.hub.script.command(
+                                StateCommandScript.STOP) }, resId = R.drawable.left)
                             Spacer(modifier = Modifier.height(8.dp))
                             OutlinedButtonTextAndIcon( str = "Save",    onClick = { vm.bSaveClick() }, resId = R.drawable.save)
                             Spacer(modifier = Modifier.height(8.dp))

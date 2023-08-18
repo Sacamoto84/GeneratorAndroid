@@ -4,7 +4,7 @@ import android.content.Context
 import com.example.generator2.backup.Backup
 import com.example.generator2.screens.scripting.ui.ScriptKeyboard
 import com.example.generator2.util.UtilsKT
-import com.example.generator2.vm.Script
+import com.example.generator2.element.Script
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -22,7 +22,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.generator2.R
-import com.example.generator2.model.LiveData
+import com.example.generator2.generator.gen
 import com.example.generator2.navController
 import com.example.generator2.presets.Presets
 import com.example.generator2.presets.presetsSaveFile
@@ -142,10 +142,10 @@ fun M4BottomAppBarComponent(
                     .combinedClickable(
                         onClick = {
 
-                            if ((LiveData.presetsName.value == "") || (LiveData.presetsName.value == "default")) {
+                            if ((gen.liveData.presetsName.value == "") || (gen.liveData.presetsName.value == "default")) {
                                 Presets.isOpenDialogNewFile.value = true
                             } else {
-                                presetsSaveFile(LiveData.presetsName.value)
+                                presetsSaveFile(gen.liveData.presetsName.value)
                             }
 
 

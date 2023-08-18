@@ -1,12 +1,10 @@
 package com.example.generator2.generator
 
-import com.example.generator2.model.LiveData
-
 fun createFm(ch: String) {
 
 
-    val carrierFr = if (ch == "CH0") LiveData.ch1_Carrier_Fr.value else LiveData.ch2_Carrier_Fr.value
-    val fmDevFr = if (ch == "CH0") LiveData.ch1_FM_Dev.value else LiveData.ch2_FM_Dev.value
+    val carrierFr = if (ch == "CH0") gen.liveData.ch1_Carrier_Fr.value else gen.liveData.ch2_Carrier_Fr.value
+    val fmDevFr = if (ch == "CH0") gen.liveData.ch1_FM_Dev.value else gen.liveData.ch2_FM_Dev.value
 
     val x: Int = (carrierFr - fmDevFr).toInt()
     val y: Int = (fmDevFr * 2.0F).toInt()

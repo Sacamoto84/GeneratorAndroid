@@ -33,8 +33,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.generator2.generator.gen
 import com.example.generator2.model.LiveConstrain
-import com.example.generator2.model.LiveData
 import com.example.generator2.screens.mainscreen4.atom.VolumeControl
 import com.example.generator2.screens.mainscreen4.modifierInfinitySlider
 import com.example.generator2.screens.mainscreen4.ms4SwitchWidth
@@ -55,15 +55,15 @@ import libs.modifier.noRippleClickable
 fun CardFM(str: String = "CH0") {
 
     val fmEN: State<Boolean?> = if (str == "CH0") {
-        LiveData.ch1_FM_EN.collectAsState()
+        gen.liveData.ch1_FM_EN.collectAsState()
     } else {
-        LiveData.ch2_FM_EN.collectAsState()
+        gen.liveData.ch2_FM_EN.collectAsState()
     }
 
     val fmFr: State<Float?> = if (str == "CH0") {
-        LiveData.ch1_FM_Fr.collectAsState()
+        gen.liveData.ch1_FM_Fr.collectAsState()
     } else {
-        LiveData.ch2_FM_Fr.collectAsState()
+        gen.liveData.ch2_FM_Fr.collectAsState()
     }
 
     Column()
@@ -99,9 +99,9 @@ fun CardFM(str: String = "CH0") {
                         color = if (fmEN.value!!) Color(0xFF01AE0F) else colorDarkBackground
                     )
                     .noRippleClickable(onClick = {
-                        if (str == "CH0") LiveData.ch1_FM_EN.value =
-                            !LiveData.ch1_FM_EN.value
-                        else LiveData.ch2_FM_EN.value = !LiveData.ch2_FM_EN.value
+                        if (str == "CH0") gen.liveData.ch1_FM_EN.value =
+                            !gen.liveData.ch1_FM_EN.value
+                        else gen.liveData.ch2_FM_EN.value = !gen.liveData.ch2_FM_EN.value
                     }), contentAlignment = Alignment.Center
             )
             {
@@ -139,8 +139,8 @@ fun CardFM(str: String = "CH0") {
                     sensing = if (fmFr.value!! < 10.0F) LiveConstrain.sensetingSliderAmFm.floatValue else LiveConstrain.sensetingSliderAmFm.floatValue * 10f,
                     range = 0.1f..200f,
                     onValueChange = {
-                        if (str == "CH0") LiveData.ch1_FM_Fr.value =
-                            it else LiveData.ch2_FM_Fr.value = it
+                        if (str == "CH0") gen.liveData.ch1_FM_Fr.value =
+                            it else gen.liveData.ch2_FM_Fr.value = it
                     },
                     fontSize = textStyleEditFontSize,
                     fontFamily = textStyleEditFontFamily
@@ -166,9 +166,9 @@ fun CardFM(str: String = "CH0") {
                             expanded = false
 
                             if (str == "CH0") {
-                                LiveData.ch1_FM_Fr.value = s.toFloat()
+                                gen.liveData.ch1_FM_Fr.value = s.toFloat()
                             } else {
-                                LiveData.ch2_FM_Fr.value = s.toFloat()
+                                gen.liveData.ch2_FM_Fr.value = s.toFloat()
                             }
 
                         })
@@ -202,8 +202,8 @@ fun CardFM(str: String = "CH0") {
                     .clip(shape = RoundedCornerShape(4.dp))
                     .background(Color.Black),
 
-                filename = if (str == "CH0") LiveData.ch1_FM_Filename.collectAsState()
-                else LiveData.ch2_FM_Filename.collectAsState()
+                filename = if (str == "CH0") gen.liveData.ch1_FM_Filename.collectAsState()
+                else gen.liveData.ch2_FM_Filename.collectAsState()
             )
 
         }
@@ -240,9 +240,9 @@ fun CardFM(str: String = "CH0") {
 private fun SecondLine(str: String = "CH0") {
 
     val fmSelectMode: State<Int?> = if (str == "CH0") {
-        LiveData.parameterInt0.collectAsState() //CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс
+        gen.liveData.parameterInt0.collectAsState() //CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс
     } else {
-        LiveData.parameterInt1.collectAsState() //CH2 режим выбора частот FM модуляции 0-обычный 1-минимум макс
+        gen.liveData.parameterInt1.collectAsState() //CH2 режим выбора частот FM модуляции 0-обычный 1-минимум макс
     }
 
     Row {
@@ -255,15 +255,15 @@ private fun SecondLine(str: String = "CH0") {
             onClick = {
 
                 if (str == "CH0") {
-                    if (LiveData.parameterInt0.value == 0)
-                        LiveData.parameterInt0.value = 1
+                    if (gen.liveData.parameterInt0.value == 0)
+                        gen.liveData.parameterInt0.value = 1
                     else
-                        LiveData.parameterInt0.value = 0
+                        gen.liveData.parameterInt0.value = 0
                 } else {
-                    if (LiveData.parameterInt1.value == 0)
-                        LiveData.parameterInt1.value = 1
+                    if (gen.liveData.parameterInt1.value == 0)
+                        gen.liveData.parameterInt1.value = 1
                     else
-                        LiveData.parameterInt1.value = 0
+                        gen.liveData.parameterInt1.value = 0
                 }
 
             },
@@ -288,9 +288,9 @@ private fun SecondLine(str: String = "CH0") {
 private fun SecondLineMode1(str: String) {
 
     val fmMin: State<Float> =
-        if (str == "CH0") LiveData.parameterFloat0.collectAsState() else LiveData.parameterFloat2.collectAsState()
+        if (str == "CH0") gen.liveData.parameterFloat0.collectAsState() else gen.liveData.parameterFloat2.collectAsState()
     val fmMax: State<Float> =
-        if (str == "CH0") LiveData.parameterFloat1.collectAsState() else LiveData.parameterFloat3.collectAsState()
+        if (str == "CH0") gen.liveData.parameterFloat1.collectAsState() else gen.liveData.parameterFloat3.collectAsState()
 
     Row(
         Modifier
@@ -315,14 +315,14 @@ private fun SecondLineMode1(str: String) {
             onChange = {
                 if (it <= fmMax.value) {
                     if (str == "CH0")
-                        LiveData.parameterFloat0.value = it
+                        gen.liveData.parameterFloat0.value = it
                     else
-                        LiveData.parameterFloat2.value = it
+                        gen.liveData.parameterFloat2.value = it
                 } else {
                     if (str == "CH0")
-                        LiveData.parameterFloat0.value = fmMax.value
+                        gen.liveData.parameterFloat0.value = fmMax.value
                     else
-                        LiveData.parameterFloat2.value = fmMax.value
+                        gen.liveData.parameterFloat2.value = fmMax.value
                 }
             },
             range = 50f..10000f
@@ -350,8 +350,8 @@ private fun SecondLineMode1(str: String) {
             value = fmMax.value,
             onChange = {
                 if (it >= fmMin.value)
-                    if (str == "CH0") LiveData.parameterFloat1.value =
-                        it else LiveData.parameterFloat3.value = it
+                    if (str == "CH0") gen.liveData.parameterFloat1.value =
+                        it else gen.liveData.parameterFloat3.value = it
             },
             range = 50f..10000f
         )
@@ -364,15 +364,15 @@ private fun SecondLineMode1(str: String) {
 private fun SecondLineMode0(str: String) {
 
     val carrierFr: State<Float?> = if (str == "CH0") {
-        LiveData.ch1_Carrier_Fr.collectAsState()
+        gen.liveData.ch1_Carrier_Fr.collectAsState()
     } else {
-        LiveData.ch2_Carrier_Fr.collectAsState()
+        gen.liveData.ch2_Carrier_Fr.collectAsState()
     }
 
     val fmDev: State<Float?> = if (str == "CH0") {
-        LiveData.ch1_FM_Dev.collectAsState()
+        gen.liveData.ch1_FM_Dev.collectAsState()
     } else {
-        LiveData.ch2_FM_Dev.collectAsState()
+        gen.liveData.ch2_FM_Dev.collectAsState()
     }
 
     Row(
@@ -399,8 +399,8 @@ private fun SecondLineMode0(str: String) {
             sensing = LiveConstrain.sensetingSliderFmDev.floatValue * 8,
             range = 1f..10000f,
             onValueChange = {
-                if (str == "CH0") LiveData.ch1_FM_Dev.value =
-                    it else LiveData.ch2_FM_Dev.value = it
+                if (str == "CH0") gen.liveData.ch1_FM_Dev.value =
+                    it else gen.liveData.ch2_FM_Dev.value = it
             },
             modifier = modifierInfinitySlider,
             vertical = true,
@@ -413,8 +413,8 @@ private fun SecondLineMode0(str: String) {
             sensing = LiveConstrain.sensetingSliderFmDev.floatValue,
             range = 1f..10000f,
             onValueChange = {
-                if (str == "CH0") LiveData.ch1_FM_Dev.value =
-                    it else LiveData.ch2_FM_Dev.value = it
+                if (str == "CH0") gen.liveData.ch1_FM_Dev.value =
+                    it else gen.liveData.ch2_FM_Dev.value = it
             },
             modifier = modifierInfinitySlider,
             vertical = true,
@@ -431,20 +431,20 @@ private fun Volume(str: String = "CH0") {
     VolumeControl(
 
         value = if (str == "CH0")
-            LiveData.currentVolume0.collectAsState().value
+            gen.liveData.currentVolume0.collectAsState().value
         else
-            LiveData.currentVolume1.collectAsState().value,
+            gen.liveData.currentVolume1.collectAsState().value,
 
         onValueChange = { it1 ->
 
             println("onValueChange $it1")
 
             if (str == "CH0") {
-                LiveData.currentVolume0.update { it1 }
-                LiveData.volume0.update { it1 * LiveData.maxVolume0.value }
+                gen.liveData.currentVolume0.update { it1 }
+                gen.liveData.volume0.update { it1 * gen.liveData.maxVolume0.value }
             } else {
-                LiveData.currentVolume1.update { it1 }
-                LiveData.volume1.update { it1 * LiveData.maxVolume1.value }
+                gen.liveData.currentVolume1.update { it1 }
+                gen.liveData.volume1.update { it1 * gen.liveData.maxVolume1.value }
             }
 
         })
