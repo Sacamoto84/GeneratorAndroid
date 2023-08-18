@@ -27,6 +27,7 @@ import com.example.generator2.di.Hub
 import com.example.generator2.generator.gen
 import com.example.generator2.model.mmkv
 import com.example.generator2.mp3.PlayerMP3
+import com.example.generator2.mp3.exoplayer
 import com.example.generator2.presets.presetsInit
 import com.example.generator2.presets.presetsSaveFile
 import com.example.generator2.scope.scope
@@ -71,7 +72,7 @@ import javax.inject.Singleton
 
 val API_key = "5ca5814f-74a8-46c1-ab17-da3101e88888"
 
-lateinit var player: PlayerMP3
+
 
 val resampleLib = NativeLib()
 
@@ -159,7 +160,7 @@ class MainActivity : ComponentActivity() {
 
         //GlobalScope.launch(Dispatchers.IO) {
         //player.playUri()
-        player = PlayerMP3(applicationContext)
+        exoplayer = PlayerMP3(applicationContext)
         //}
 
 

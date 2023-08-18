@@ -1,11 +1,15 @@
 package com.example.generator2.audio
 
+import android.media.AudioTrack.WRITE_NON_BLOCKING
 import com.example.generator2.generator.gen
+import com.example.generator2.mp3.chDataStreamOutAudioProcessor
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.LinkedList
 
 
 val audioMixerPump = AudioMixerPump()
@@ -13,8 +17,9 @@ val audioMixerPump = AudioMixerPump()
 class AudioMixerPump {
 
 
-   val bufferSizeGenDefault = 8192 //размер буфера по умолчанию для генератора
-   var bufferSize : Int = bufferSizeGenDefault //Текущий размер буфера который берется от размера буфера от плеера
+    val bufferSizeGenDefault = 8192 //размер буфера по умолчанию для генератора
+    var bufferSize: Int =
+        bufferSizeGenDefault //Текущий размер буфера который берется от размера буфера от плеера
 
     init {
         Timber.i("Запуск AudioMixerPump ")
@@ -22,20 +27,61 @@ class AudioMixerPump {
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    fun run()
-    {
+    fun run() {
+
+
         GlobalScope.launch(Dispatchers.IO) {
-            while (true)
-            {
 
-               val bugGen = gen.renderAudio(bufferSize)
+            val bigList = LinkedList<ShortArray>()
+
+            while (true) {
+
+               val bigBufMp3 = chDataStreamOutAudioProcessor.receive()
+
+//                bufferSize = if (bigBufMp3.isEmpty()) {
+//                    Timber.e("bufMp3 size == 0")
+//                    bufferSizeGenDefault
+//                } else {
+//                    bigBufMp3.size
+//                }
+
+                val bufGen = gen.renderAudio(bufferSize)
+
+
+                if (bigBufMp3.isNotEmpty()) {
+                    Timber.w("bufferSize = ${bigBufMp3.size}")
+                    audioOut.out.write(bigBufMp3, 0, bigBufMp3.size, WRITE_NON_BLOCKING)
+                }
+
+                    //audioOut.chOut.send(bigBufMp3)
 
 
 
 
-                audioOut.chOut.send(bugGen)
             }
         }
     }
 
+}
+
+
+fun ListToShortArray(bigList: LinkedList<ShortArray>): ShortArray {
+    // Вычисляем общий размер результирующего массива
+    var totalSize = 0
+    for (shortArray in bigList) {
+        totalSize += shortArray.size
+    }
+
+    // Создаем результирующий массив
+    val resultArray = ShortArray(totalSize)
+
+    // Копируем элементы из каждого ShortArray в результирующий массив
+    var currentIndex = 0
+    for (shortArray in bigList) {
+        shortArray.copyInto(resultArray, currentIndex)
+        currentIndex += shortArray.size
+    }
+
+    // Теперь resultArray содержит объединенные элементы из всех ShortArray
+    return resultArray
 }

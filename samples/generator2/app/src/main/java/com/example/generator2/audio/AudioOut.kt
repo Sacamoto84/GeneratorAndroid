@@ -14,7 +14,7 @@ import timber.log.Timber
 val audioOut = AudioOut()
 
 @OptIn(DelicateCoroutinesApi::class)
-class AudioOut(minBufferMs: Int = 500) {
+class AudioOut(minBufferMs: Int = 1000) {
 
     val chOut = Channel<ShortArray>(capacity = 1, BufferOverflow.SUSPEND)
 
@@ -41,14 +41,15 @@ class AudioOut(minBufferMs: Int = 500) {
 
         Timber.i("Запуск AudioOut")
 
-        GlobalScope.launch(Dispatchers.IO) {
-            while(true) {
-                val buf = chOut.receive()
-                //Timber.i(buf.joinToString(","))
-                Timber.i("${buf.size}")
-                out.write(buf, 0, buf.size)
-            }
-        }
+//        GlobalScope.launch(Dispatchers.IO) {
+//            while(true) {
+//                val buf = chOut.receive()
+//                //Timber.i(buf.joinToString(","))
+//                Timber.i("${buf.size}")
+//                out.write(buf, 0, buf.size)
+//            }
+//        }
+
     }
 
 

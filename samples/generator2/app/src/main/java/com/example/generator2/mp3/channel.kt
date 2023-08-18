@@ -4,8 +4,8 @@ import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 
-val channelDataStreamOutAudioProcessor =
-    Channel<ShortArray>(capacity = 16, BufferOverflow.DROP_OLDEST)
+val chDataStreamOutAudioProcessor =
+    Channel<ShortArray>(capacity = 4, BufferOverflow.DROP_OLDEST)
 
 val channelDataStreamOutGenerator =
     Channel<ShortArray>(capacity = 16, BufferOverflow.DROP_OLDEST)
@@ -16,7 +16,6 @@ val channelDataStreamOutCompressor = Channel<ShortArray>(capacity = 16, BufferOv
 
 //Канал для Roll данных из компрессора
 val channelDataOutRoll = Channel<ShortArray>(1, BufferOverflow.DROP_OLDEST)
-
 
 
 

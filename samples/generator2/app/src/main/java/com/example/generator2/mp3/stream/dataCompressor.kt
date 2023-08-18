@@ -1,9 +1,9 @@
 package com.example.generator2.mp3.stream
 
 import androidx.compose.runtime.mutableFloatStateOf
+import com.example.generator2.mp3.chDataStreamOutAudioProcessor
 
 import com.example.generator2.mp3.channelDataOutRoll
-import com.example.generator2.mp3.channelDataStreamOutAudioProcessor
 import com.example.generator2.mp3.channelDataStreamOutCompressor
 import com.example.generator2.mp3.channelDataStreamOutGenerator
 import com.example.generator2.scope.scope
@@ -31,6 +31,9 @@ private var rollBuffer = ShortArray(1)
 
 @OptIn(DelicateCoroutinesApi::class)
 fun dataCompressor() {
+
+    return
+
     GlobalScope.launch(Dispatchers.IO) {
 
         val a = arrayOf<Short>(0, 0, 0, 0, 0, 0).toShortArray()
@@ -96,7 +99,7 @@ fun dataCompressor() {
 
             } else {
                 //compressorCount.floatValue < 1.0F
-                val buf = channelDataStreamOutAudioProcessor.receive()
+                val buf = chDataStreamOutAudioProcessor.receive()
 
                 GlobalScope.launch(Dispatchers.IO)
                 {

@@ -4,14 +4,12 @@ import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.audio.AudioProcessor
 import com.example.generator2.generator.gen
-import com.example.generator2.mp3.channelDataStreamOutAudioProcessor
+import com.example.generator2.mp3.chDataStreamOutAudioProcessor
 import kotlinx.coroutines.DelicateCoroutinesApi
-import libs.structure.FIFO
 import timber.log.Timber
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-val bufferQueueAudioProcessor: FIFO<ShortArray> = FIFO(4)
 
 @androidx.media3.common.util.UnstableApi
 class myAudioProcessor : AudioProcessor {
@@ -62,6 +60,10 @@ class myAudioProcessor : AudioProcessor {
 
         this.inputAudioFormat = inputAudioFormat
         isActive = true
+
+
+
+
 
         //        return if (inputAudioFormat.encoding != C.ENCODING_PCM_FLOAT) AudioProcessor.AudioFormat(
         //            inputAudioFormat.sampleRate, inputAudioFormat.channelCount, C.ENCODING_PCM_FLOAT
@@ -117,7 +119,9 @@ class myAudioProcessor : AudioProcessor {
                         if (channelIndex == 0) if (enr) inputBuffer.getShort(position) else 0
                         else if (enl) inputBuffer.getShort(position + 2) else 0
 
-                    processBuffer.putShort(current)
+                    //processBuffer.putShort(current)
+
+                    processBuffer.putShort(0)
 
                     buf[index] = current
                     index++
@@ -128,8 +132,10 @@ class myAudioProcessor : AudioProcessor {
             if (channelCount == 1) {
                 val currentR: Short = if (enr) inputBuffer.getShort(position) else 0
                 val currentL: Short = if (enl) inputBuffer.getShort(position) else 0
-                processBuffer.putShort(currentR)
-                processBuffer.putShort(currentL)
+                //processBuffer.putShort(currentR)
+                //processBuffer.putShort(currentL)
+                processBuffer.putShort(0)
+                processBuffer.putShort(0)
                 position += 2
                 buf[index] = currentR
                 index++
@@ -149,15 +155,11 @@ class myAudioProcessor : AudioProcessor {
 //
         if (buf.isNotEmpty())
         {
-            val s = channelDataStreamOutAudioProcessor.trySend(buf).isSuccess
+            val s = chDataStreamOutAudioProcessor.trySend(buf).isSuccess
             if (!s)
                 Timber.e("Места в канале из процессора нет")
 
         }
-            //GlobalScope.launch(Dispatchers.IO) {
-
-            //}
-            //bufferQueueAudioProcessor.enqueue(buf)
 
     }
 
