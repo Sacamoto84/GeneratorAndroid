@@ -7,23 +7,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.generator2.R
-import com.example.generator2.audio_device.audioOutBT
-import com.example.generator2.audio_device.audioOutSpeaker
-import com.example.generator2.audio_device.audioOutWired
+import com.example.generator2.audio.audioOutBT
+import com.example.generator2.audio.audioOutSpeaker
+import com.example.generator2.audio.audioOutWired
 import com.example.generator2.screens.mainscreen4.VMMain4
 import com.talhafaki.composablesweettoast.util.SweetToastUtil
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 
 /**
  * Заполняем Drawer Списка устройств

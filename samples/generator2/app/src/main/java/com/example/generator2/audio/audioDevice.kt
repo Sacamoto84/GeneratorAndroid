@@ -1,11 +1,8 @@
-package com.example.generator2.audio_device
+package com.example.generator2.audio
 
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.media.AudioManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 

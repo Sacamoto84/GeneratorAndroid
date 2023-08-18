@@ -1,6 +1,5 @@
 package com.example.generator2.screens.mainscreen4.ui
 
-import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Spacer
@@ -22,9 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import com.example.generator2.R
-import com.example.generator2.audio_device.getCurrentAudioDevices
 import com.example.generator2.model.LiveData
 import com.example.generator2.navController
 import com.example.generator2.presets.Presets

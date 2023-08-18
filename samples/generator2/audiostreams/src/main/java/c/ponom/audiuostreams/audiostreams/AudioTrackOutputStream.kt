@@ -65,6 +65,7 @@ class AudioTrackOutputStream private constructor() : AudioOutputStream(){
         bytesPerSample = 2
         frameSize =bytesPerSample*channelsCount
         val minBufferInBytes=frameSize*(sampleRate/1000)*(minBufferMs/1000.0).toInt()
+
         val audioFormat= Builder()
             .setEncoding(encoding)
             .setSampleRate(sampleRate)

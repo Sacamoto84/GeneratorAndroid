@@ -6,12 +6,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import com.example.generator2.audio_device.audioOutBT
-import com.example.generator2.audio_device.audioOutSpeaker
-import com.example.generator2.audio_device.audioOutWired
-import com.example.generator2.mp3.OSCILLSYNC
+import com.example.generator2.audio.audioOutBT
+import com.example.generator2.audio.audioOutSpeaker
+import com.example.generator2.audio.audioOutWired
 import com.example.generator2.mp3.stream.compressorCount
-import com.example.generator2.mp3.oscillSync
 
 
 @Composable
