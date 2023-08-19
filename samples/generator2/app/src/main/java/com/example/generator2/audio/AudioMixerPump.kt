@@ -7,6 +7,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.LinkedList
@@ -16,6 +17,12 @@ val audioMixerPump = AudioMixerPump()
 
 class AudioMixerPump {
 
+    enum class MASTERSTREAM {
+        GEN,
+        MP3
+    }
+
+    val master =  MutableStateFlow(MASTERSTREAM.GEN) //Выбор источника синхранизации
 
     val bufferSizeGenDefault = 8192 //размер буфера по умолчанию для генератора
     var bufferSize: Int =
@@ -26,17 +33,18 @@ class AudioMixerPump {
         run()
     }
 
+
     @OptIn(DelicateCoroutinesApi::class)
     fun run() {
 
+        //Имеется два источника синхронизации, это наличие пакетов в chDataStreamOutAudioProcessor и он является главным и запись иет в неблокирующем режиме,
+        //И когда только генератор, и запись в блокирующем режиме
 
         GlobalScope.launch(Dispatchers.IO) {
 
-            val bigList = LinkedList<ShortArray>()
-
             while (true) {
 
-               val bigBufMp3 = chDataStreamOutAudioProcessor.receive()
+                val bigBufMp3 = chDataStreamOutAudioProcessor.receive()
 
 //                bufferSize = if (bigBufMp3.isEmpty()) {
 //                    Timber.e("bufMp3 size == 0")
@@ -49,13 +57,11 @@ class AudioMixerPump {
 
 
                 if (bigBufMp3.isNotEmpty()) {
-                    Timber.w("bufferSize = ${bigBufMp3.size}")
+                    //Timber.w("bufferSize = ${bigBufMp3.size}")
                     audioOut.out.write(bigBufMp3, 0, bigBufMp3.size, WRITE_NON_BLOCKING)
                 }
 
-                    //audioOut.chOut.send(bigBufMp3)
-
-
+                //audioOut.chOut.send(bigBufMp3)
 
 
             }

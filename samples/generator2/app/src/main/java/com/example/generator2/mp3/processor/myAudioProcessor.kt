@@ -132,10 +132,13 @@ class myAudioProcessor : AudioProcessor {
             if (channelCount == 1) {
                 val currentR: Short = if (enr) inputBuffer.getShort(position) else 0
                 val currentL: Short = if (enl) inputBuffer.getShort(position) else 0
+
                 //processBuffer.putShort(currentR)
                 //processBuffer.putShort(currentL)
+
                 processBuffer.putShort(0)
                 processBuffer.putShort(0)
+
                 position += 2
                 buf[index] = currentR
                 index++
@@ -158,7 +161,6 @@ class myAudioProcessor : AudioProcessor {
             val s = chDataStreamOutAudioProcessor.trySend(buf).isSuccess
             if (!s)
                 Timber.e("Места в канале из процессора нет")
-
         }
 
     }
