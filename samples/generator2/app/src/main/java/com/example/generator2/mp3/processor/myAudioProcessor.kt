@@ -159,10 +159,10 @@ class myAudioProcessor : AudioProcessor {
 //        val buf = ShortArray()
 //
 
-
-        val s = chDataStreamOutAudioProcessor.trySend(buf).isSuccess
-        if (!s) Timber.e("Места в канале из процессора нет")
-
+        if (buf.isNotEmpty()) {
+            val s = chDataStreamOutAudioProcessor.trySend(buf).isSuccess
+            if (!s) Timber.e("Места в канале из процессора нет")
+        }
 
     }
 

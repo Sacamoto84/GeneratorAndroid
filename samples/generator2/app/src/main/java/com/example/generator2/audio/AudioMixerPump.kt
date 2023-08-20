@@ -5,12 +5,14 @@ import android.media.AudioTrack.WRITE_NON_BLOCKING
 import com.example.generator2.generator.gen
 import com.example.generator2.mp3.chDataStreamOutAudioProcessor
 import com.example.generator2.mp3.exoplayer
+import com.yandex.metrica.impl.ob.Sh
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import libs.maping
 import timber.log.Timber
 import java.util.LinkedList
 
@@ -70,81 +72,59 @@ class AudioMixerPump {
                 }
             }
 
-
             GlobalScope.launch(Dispatchers.IO) {
                 while (true) {
                     isPlaying = exoplayer.isPlayingD
-
                     if (isPlaying and !isPlayingLast) {
                         start = true
-                        delay = 100
-                        volume = 0.1f
+                        delay = 20
+                        //volume = 0.1f
                     } else
                         if (!isPlaying and isPlayingLast) {
                             stop = true
                         }
                     isPlayingLast = isPlaying
-
                     delay(1)
                 }
             }
 
             while (true) {
 
+                val bigBufMp3 = chDataStreamOutAudioProcessor.receive()
+
+                //println("bigBufMp3.size ${bigBufMp3.size}")
+
                 if (start) {
                     stop = false
-
                     Timber.e("1 start $volume $delay")
-
-                    if (delay > 0) {
-                        delay--
-                        volume = 0.01f
-                    } else {
-                        volume += 0.05f.coerceAtMost(1f)
-                    }
-
-
-
-                    if (volume >= 1f) {
-                        volume = 1f
-                        start = false
-                    }
+                    if (delay > 0) { delay--; volume = 0.01f } else { volume += 0.05f }
+                    if (volume >= 1f) { volume = 1f; start = false }
                 }
 
                 if (stop) {
                     Timber.e("1 stop $volume")
-                    volume = 0f
-                    if (volume <= 0f)
-                        stop = false
+                    stop = false
                 }
 
-                val bigBufMp3 = chDataStreamOutAudioProcessor.receive()
-
-                if (!isPlaying) {
+                if (isPlaying)
+                {
+                    println("isPlaying")
                     //audioOutMp3.destroy()
-
-//                    while (chDataStreamOutAudioProcessor.tryReceive().isSuccess) {
-//                        println("Очистка канала")
-//                    }
-
-                } else {
 
                     if (audioOutMp3.out == null)
                         audioOutMp3.create()
 
                     val v = ShortArray(bigBufMp3.size)
-
                     for (i in bigBufMp3.indices) {
                         v[i] = (bigBufMp3[i] * volume).toInt().toShort()
                     }
-
-
                     audioOutMp3.out?.write(v, 0, v.size, WRITE_BLOCKING)
                 }
-
-                //audioOutMp3.out.write(bigBufMp3, 0, bigBufMp3.size, WRITE_NON_BLOCKING)
-
-                //Блок управления громкостью
+                else {
+                    while (chDataStreamOutAudioProcessor.tryReceive().isSuccess) {
+                        println("Очистка канала")
+                    }
+                }
 
 
             }
