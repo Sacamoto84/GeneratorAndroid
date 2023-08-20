@@ -5,7 +5,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 
 val chDataStreamOutAudioProcessor =
-    Channel<ShortArray>(capacity = 64, BufferOverflow.DROP_OLDEST)
+    Channel<ShortArray>(capacity = 8, BufferOverflow.SUSPEND)
 
 val channelDataStreamOutGenerator =
     Channel<ShortArray>(capacity = 16, BufferOverflow.DROP_OLDEST)

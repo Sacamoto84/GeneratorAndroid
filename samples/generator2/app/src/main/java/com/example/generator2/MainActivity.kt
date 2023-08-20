@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import cafe.adriel.pufferdb.android.AndroidPufferDB
 import com.example.generator2.audio.audioMixerPump
 import com.example.generator2.audio.audioOut
+import com.example.generator2.audio.audioOutMp3
 import com.example.generator2.di.Hub
 import com.example.generator2.generator.gen
 import com.example.generator2.model.mmkv
@@ -146,6 +147,7 @@ class MainActivity : ComponentActivity() {
 
 
         audioOut
+        audioOutMp3
         audioMixerPump
         scope
 

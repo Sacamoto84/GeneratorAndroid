@@ -31,9 +31,10 @@ fun MP3Control()
             value = exoplayer.currentTime.collectAsState().value.toFloat(),
             onValueChange = { timeMs: Float ->
 
-                exoplayer.player.volume = 0f
+
+                //exoplayer.player.volume = 0f
                 exoplayer.player.seekTo(timeMs.toLong())
-                exoplayer.player.volume = 1f
+                //exoplayer.player.volume = 0.1f
 
             },
             valueRange = 0f..exoplayer.durationMs.collectAsState().value.toFloat(),
@@ -60,7 +61,7 @@ fun MP3Control()
                 )
             }
 
-            IconButton(modifier = Modifier.size(40.dp), onClick = {}) {
+            IconButton(modifier = Modifier.size(40.dp), onClick = { exoplayer.player.play()}) {
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(id = R.drawable.player_play),
@@ -69,7 +70,7 @@ fun MP3Control()
                 )
             }
 
-            IconButton(modifier = Modifier.size(40.dp), onClick = {}) {
+            IconButton(modifier = Modifier.size(40.dp), onClick = {exoplayer.player.pause()}) {
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(id = R.drawable.player_pause),
@@ -78,7 +79,7 @@ fun MP3Control()
                 )
             }
 
-            IconButton(modifier = Modifier.size(40.dp), onClick = {}) {
+            IconButton(modifier = Modifier.size(40.dp), onClick = {exoplayer.player.stop()}) {
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(id = R.drawable.player_stop),

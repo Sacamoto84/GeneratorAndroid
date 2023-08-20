@@ -104,6 +104,7 @@ class PlayerMP3(val context: Context) {
     }
 
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun listener() {
         listener = object : Player.Listener {
 
@@ -121,26 +122,38 @@ class PlayerMP3(val context: Context) {
             }
 
 
-            override fun onPositionDiscontinuity(
-                oldPosition: PositionInfo,
-                newPosition: PositionInfo,
-                reason: Int
-            ) {
-                Timber.w("onPositionDiscontinuity")
-                currentTime.value = newPosition.positionMs
-            }
+//            override fun onPositionDiscontinuity(
+//                oldPosition: PositionInfo,
+//                newPosition: PositionInfo,
+//                reason: Int
+//            ) {
+//                Timber.w("onPositionDiscontinuity")
+//                currentTime.value = newPosition.positionMs
+//            }
 
 
-//            //isPlaying — играет ли игрок.
+//            //            //isPlaying — играет ли игрок.
 //            override fun onIsPlayingChanged(isPlaying: Boolean) {
 //                Timber.w("onIsPlayingChanged")
+//
+//                //player.volume = 0f
+//
 //                if (isPlaying) {
 //                    // Active playback.
+//                    GlobalScope.launch(Dispatchers.Main) {
+//                        //player.volume = 0f
+//                        //delay(500)
+//                        //player.volume = 1f
+//                    }
+//
 //                } else {
 //                    // Not playing because playback is paused, ended, suppressed, or the player
 //                    // is buffering, stopped or failed. Check player.playWhenReady,
 //                    // player.playbackState, player.playbackSuppressionReason and
 //                    // player.playerError for details.
+//                    //GlobalScope.launch {
+//                       //player.volume = 0f
+//                    //}
 //                }
 //            }
 

@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 val audioOut = AudioOut()
+val audioOutMp3 = AudioOut(20)
 
 @OptIn(DelicateCoroutinesApi::class)
 class AudioOut(minBufferMs: Int = 1000) {

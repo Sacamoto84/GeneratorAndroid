@@ -1,5 +1,6 @@
 package com.example.generator2.audio
 
+import android.media.AudioTrack.WRITE_BLOCKING
 import android.media.AudioTrack.WRITE_NON_BLOCKING
 import com.example.generator2.generator.gen
 import com.example.generator2.mp3.chDataStreamOutAudioProcessor
@@ -28,6 +29,8 @@ class AudioMixerPump {
     var bufferSize: Int =
         bufferSizeGenDefault //Текущий размер буфера который берется от размера буфера от плеера
 
+    var bufferSizeMp3 = 0
+
     init {
         Timber.i("Запуск AudioMixerPump ")
         run()
@@ -41,10 +44,21 @@ class AudioMixerPump {
         //И когда только генератор, и запись в блокирующем режиме
 
         GlobalScope.launch(Dispatchers.IO) {
+            while (true) {
+                val bigBufMp3 = chDataStreamOutAudioProcessor.receive()
+                bufferSizeMp3 = bigBufMp3.size
+
+                //Блок управления громкостью
+
+                audioOutMp3.out.write(bigBufMp3, 0, bigBufMp3.size, WRITE_NON_BLOCKING)
+            }
+        }
+
+        GlobalScope.launch(Dispatchers.IO) {
 
             while (true) {
 
-                val bigBufMp3 = chDataStreamOutAudioProcessor.receive()
+                //val bigBufMp3 = chDataStreamOutAudioProcessor.receive()
 
 //                bufferSize = if (bigBufMp3.isEmpty()) {
 //                    Timber.e("bufMp3 size == 0")
@@ -56,9 +70,9 @@ class AudioMixerPump {
                 val bufGen = gen.renderAudio(bufferSize)
 
 
-                if (bigBufMp3.isNotEmpty()) {
+                if (bufGen.isNotEmpty()) {
                     //Timber.w("bufferSize = ${bigBufMp3.size}")
-                    audioOut.out.write(bigBufMp3, 0, bigBufMp3.size, WRITE_NON_BLOCKING)
+                    audioOut.out.write(bufGen, 0, bufGen.size, WRITE_BLOCKING)
                 }
 
                 //audioOut.chOut.send(bigBufMp3)

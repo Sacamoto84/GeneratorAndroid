@@ -86,6 +86,8 @@ class myAudioProcessor : AudioProcessor {
     @OptIn(DelicateCoroutinesApi::class)
     override fun queueInput(inputBuffer: ByteBuffer) {
 
+        //println("qI")
+
         val enl = gen.liveData.enL.value
         val enr = gen.liveData.enR.value
 
@@ -159,14 +161,14 @@ class myAudioProcessor : AudioProcessor {
         if (buf.isNotEmpty())
         {
             val s = chDataStreamOutAudioProcessor.trySend(buf).isSuccess
-            if (!s)
-                Timber.e("Места в канале из процессора нет")
+            if (!s) Timber.e("Места в канале из процессора нет")
         }
 
     }
 
 
     override fun queueEndOfStream() {
+        Timber.e("queueEndOfStream")
         inputEnded = true
         processBuffer = AudioProcessor.EMPTY_BUFFER
     }
