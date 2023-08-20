@@ -5,7 +5,11 @@ import androidx.media3.common.Format
 import androidx.media3.common.audio.AudioProcessor
 import com.example.generator2.generator.gen
 import com.example.generator2.mp3.chDataStreamOutAudioProcessor
+import com.example.generator2.mp3.exoplayer
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -47,7 +51,7 @@ class myAudioProcessor : AudioProcessor {
 
     //Настраиваем выходной формат на Float
     override fun configure(inputAudioFormat: AudioProcessor.AudioFormat): AudioProcessor.AudioFormat {
-
+        Timber.e("configure")
         println("Audio Processor: $inputAudioFormat")
 
 
@@ -60,9 +64,6 @@ class myAudioProcessor : AudioProcessor {
 
         this.inputAudioFormat = inputAudioFormat
         isActive = true
-
-
-
 
 
         //        return if (inputAudioFormat.encoding != C.ENCODING_PCM_FLOAT) AudioProcessor.AudioFormat(
@@ -108,7 +109,7 @@ class myAudioProcessor : AudioProcessor {
         }
 
         //if (buf.size < size/2)
-         buf = ShortArray(size / 2) {0}
+        buf = ShortArray(size / 2) { 0 }
 
         var index = 0
 
@@ -148,7 +149,6 @@ class myAudioProcessor : AudioProcessor {
                 index++
             }
 
-
         }
 
         inputBuffer.position(limit)
@@ -158,11 +158,11 @@ class myAudioProcessor : AudioProcessor {
 
 //        val buf = ShortArray()
 //
-        if (buf.isNotEmpty())
-        {
-            val s = chDataStreamOutAudioProcessor.trySend(buf).isSuccess
-            if (!s) Timber.e("Места в канале из процессора нет")
-        }
+
+
+        val s = chDataStreamOutAudioProcessor.trySend(buf).isSuccess
+        if (!s) Timber.e("Места в канале из процессора нет")
+
 
     }
 
@@ -173,6 +173,7 @@ class myAudioProcessor : AudioProcessor {
         processBuffer = AudioProcessor.EMPTY_BUFFER
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun getOutput(): ByteBuffer {
         val outputBuffer = this.outputBuffer
         this.outputBuffer = AudioProcessor.EMPTY_BUFFER
@@ -180,39 +181,23 @@ class myAudioProcessor : AudioProcessor {
     }
 
     override fun isEnded(): Boolean {
+        //Timber.e("isEnded")
         return inputEnded && processBuffer === AudioProcessor.EMPTY_BUFFER
     }
 
     override fun flush() {
+        Timber.e("flush")
         outputBuffer = AudioProcessor.EMPTY_BUFFER
         inputEnded = false // A new stream is incoming.
     }
 
     //Сбрасывает процессор в его ненастроенное состояние, освобождая все ресурсы.
     override fun reset() {
+        Timber.e("reset")
         flush()
         processBuffer = AudioProcessor.EMPTY_BUFFER
         inputAudioFormat =
             AudioProcessor.AudioFormat(Format.NO_VALUE, Format.NO_VALUE, Format.NO_VALUE)
-    }
-
-
-    private val FLOAT_NAN_AS_INT = java.lang.Float.floatToIntBits(Float.NaN)
-    private val PCM_32_BIT_INT_TO_PCM_32_BIT_FLOAT_FACTOR = 1.0 / 0x7FFFFFFF
-
-    /**
-     * Converts the provided 32-bit integer to a 32-bit float value and writes it to `buffer`.
-     *
-     * @param pcm32BitInt The 32-bit integer value to convert to 32-bit float in [-1.0, 1.0].
-     * @param buffer The output buffer.
-     */
-    private fun writePcm32BitFloat(pcm32BitInt: Int, buffer: ByteBuffer) {
-        val pcm32BitFloat = (PCM_32_BIT_INT_TO_PCM_32_BIT_FLOAT_FACTOR * pcm32BitInt).toFloat()
-        var floatBits = java.lang.Float.floatToIntBits(pcm32BitFloat)
-        if (floatBits == FLOAT_NAN_AS_INT) {
-            floatBits = java.lang.Float.floatToIntBits(0.0.toFloat())
-        }
-        buffer.putInt(floatBits)
     }
 
 }

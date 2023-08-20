@@ -47,13 +47,14 @@ class PlayerMP3(val context: Context) {
     var averageBitrate = 0
     var channelCount = 0
 
-    val currentPosition: Long = 0 //Текущая позиция
-
     var durationMs = MutableStateFlow(0L)          //Общая продолжительность в мс
     val currentTime = MutableStateFlow(0L)         //Текущее время воспроизведения
     val bufferedPercentage = MutableStateFlow(0)   //Процент воспроизведения 0..100
     val isPlaying = MutableStateFlow(false)
+    var isPlayingD = false
+
     val playbackState = MutableStateFlow(0)
+
 
     var uriCurrent: Uri = Uri.parse("asset:///1.mp3")
 
@@ -77,6 +78,7 @@ class PlayerMP3(val context: Context) {
         //val uri = Uri.parse("asset:///1.mp3")
         //val uri = Uri.parse("asset:///CH Blow Me_beats_in_phase Rc.mp3")
         //val uri = Uri.parse("asset:///Get Hard.mp3")
+
         val uri = Uri.parse("asset:///CH Teen Edition StL A.mp3")
 
         val a = EditedMediaItem.Builder(MediaItem.fromUri(uri)).build()
@@ -116,7 +118,7 @@ class PlayerMP3(val context: Context) {
                 currentTime.value = player.currentPosition.coerceAtLeast(0L)
                 bufferedPercentage.value = player.bufferedPercentage
                 isPlaying.value = player.isPlaying
-
+                isPlayingD = player.isPlaying
                 playbackState.value = player.playbackState
 
             }
@@ -132,30 +134,12 @@ class PlayerMP3(val context: Context) {
 //            }
 
 
-//            //            //isPlaying — играет ли игрок.
-//            override fun onIsPlayingChanged(isPlaying: Boolean) {
-//                Timber.w("onIsPlayingChanged")
-//
-//                //player.volume = 0f
-//
-//                if (isPlaying) {
-//                    // Active playback.
-//                    GlobalScope.launch(Dispatchers.Main) {
-//                        //player.volume = 0f
-//                        //delay(500)
-//                        //player.volume = 1f
-//                    }
-//
-//                } else {
-//                    // Not playing because playback is paused, ended, suppressed, or the player
-//                    // is buffering, stopped or failed. Check player.playWhenReady,
-//                    // player.playbackState, player.playbackSuppressionReason and
-//                    // player.playerError for details.
-//                    //GlobalScope.launch {
-//                       //player.volume = 0f
-//                    //}
-//                }
-//            }
+            //            //            //isPlaying — играет ли игрок.
+            override fun onIsPlayingChanged(isPlaying1: Boolean) {
+                Timber.w("onIsPlayingChanged")
+                isPlaying.value = isPlaying1
+                isPlayingD = isPlaying1
+            }
 
             override fun onTracksChanged(tracks: Tracks) {
                 Timber.w("onTracksChanged")

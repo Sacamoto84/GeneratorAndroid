@@ -12,14 +12,12 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 val audioOut = AudioOut()
-val audioOutMp3 = AudioOut(20)
+val audioOutMp3 = AudioOut(200)
 
-@OptIn(DelicateCoroutinesApi::class)
-class AudioOut(minBufferMs: Int = 1000) {
 
-    val chOut = Channel<ShortArray>(capacity = 1, BufferOverflow.SUSPEND)
+class AudioOut(val minBufferMs: Int = 1000) {
 
-    val out: AudioTrack
+    var out: AudioTrack?
 
     init {
 
@@ -32,27 +30,46 @@ class AudioOut(minBufferMs: Int = 1000) {
             .build()
         val minBuffer = AudioTrack.getMinBufferSize(48000, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT)
 
-        out= AudioTrack.Builder()
+        out = AudioTrack.Builder()
             .setAudioFormat(audioFormat)
             .setBufferSizeInBytes(minBuffer.coerceAtLeast(minBufferInBytes))
             .setTransferMode(MODE_STREAM)
             .build()
 
-        out.play()
+        out!!.play()
 
         Timber.i("Запуск AudioOut")
 
-//        GlobalScope.launch(Dispatchers.IO) {
-//            while(true) {
-//                val buf = chOut.receive()
-//                //Timber.i(buf.joinToString(","))
-//                Timber.i("${buf.size}")
-//                out.write(buf, 0, buf.size)
-//            }
-//        }
-
     }
 
+     fun create()
+     {
+         val minBufferInBytes=4*(48000/1000)*(minBufferMs/1000.0).toInt()
+
+         val audioFormat= AudioFormat.Builder()
+             .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+             .setSampleRate(48000)
+             .setChannelMask(AudioFormat.CHANNEL_OUT_STEREO)
+             .build()
+         val minBuffer = AudioTrack.getMinBufferSize(48000, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT)
+
+         out = AudioTrack.Builder()
+             .setAudioFormat(audioFormat)
+             .setBufferSizeInBytes(minBuffer.coerceAtLeast(minBufferInBytes))
+             .setTransferMode(MODE_STREAM)
+             .build()
+
+         out!!.play()
+
+         Timber.i("Запуск AudioOut")
+     }
+
+    fun destroy()
+    {
+        out?.stop()
+        out?.release()
+        out = null
+    }
 
 
 

@@ -5,6 +5,8 @@ import com.example.generator2.backup.Backup
 import com.example.generator2.screens.scripting.ui.ScriptKeyboard
 import com.example.generator2.util.UtilsKT
 import com.example.generator2.element.Script
+import com.example.generator2.mp3.PlayerMP3
+import com.example.generator2.mp3.exoplayer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +19,18 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object HomeActivityModule {
+
+    @androidx.media3.common.util.UnstableApi
+    @Provides
+    @Singleton
+    fun providePlayerMP3(
+        @ApplicationContext context: Context
+    ): PlayerMP3 {
+        Timber.i("..DI PlayerMP3()")
+        exoplayer = PlayerMP3(context)
+        return exoplayer
+    }
+
 
     @Provides
     @Singleton
@@ -55,7 +69,8 @@ object HomeActivityModule {
         utils: UtilsKT,
         script: Script,
         keyboard: ScriptKeyboard,
-        backup: Backup
+        backup: Backup,
+        mp3: PlayerMP3
     ): Hub {
 
         Timber.i("..DI Hub()")
@@ -64,7 +79,8 @@ object HomeActivityModule {
             utils = utils,
             script = script,
             keyboard = keyboard,
-            backup = backup
+            backup = backup,
+            mp3 = mp3
         )
     }
 

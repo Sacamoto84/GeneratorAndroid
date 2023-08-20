@@ -162,7 +162,7 @@ class MainActivity : ComponentActivity() {
 
         //GlobalScope.launch(Dispatchers.IO) {
         //player.playUri()
-        exoplayer = PlayerMP3(applicationContext)
+        //exoplayer = PlayerMP3(applicationContext)
         //}
 
 
