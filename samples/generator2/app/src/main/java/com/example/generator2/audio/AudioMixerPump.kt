@@ -135,8 +135,9 @@ class AudioMixerPump {
                         bigBufMp3[i] = (bigBufMp3[i] * volume).toInt().toShort()
                     }
 
-                    val (bufGenR, bufGenL) = bufSpit(bufGen)
-                    val (bufMp3R, bufMp3L) = bufSpit(bigBufMp3)
+                    val (bufGenL, bufGenR) = bufSpit(bufGen)
+
+                    val (bufMp3L, bufMp3R) = bufSpit(bigBufMp3)
 
                     val outR = if (routeR.value == ROUTESTREAM.MP3) bufMp3R else bufGenR
                     val outL = if (routeL.value == ROUTESTREAM.MP3) bufMp3L else bufGenL
@@ -144,8 +145,9 @@ class AudioMixerPump {
                     val enL = gen.liveData.enL.value
                     val enR = gen.liveData.enR.value
 
-                    val v = bufMerge(outR, outL, enR ,enL)
+                    val v = bufMerge(outL, outR, enL ,enR)
 
+                    //LRLRLR
                     audioOutMp3.out?.write(v, 0, v.size, WRITE_BLOCKING)
 
 

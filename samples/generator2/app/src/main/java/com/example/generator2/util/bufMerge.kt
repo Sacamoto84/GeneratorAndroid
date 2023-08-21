@@ -35,10 +35,10 @@ fun bufMerge(
 
 
 fun bufMerge(
-    arrayR: ShortArray,
     arrayL: ShortArray,
-    enR: Boolean =  true,
-    enL: Boolean = true,
+    arrayR: ShortArray,
+    enL: Boolean =  true,
+    enR: Boolean = true,
     invert: Boolean = false
 ): ShortArray {
     val combinedArray = ShortArray(arrayL.size + arrayR.size) { 0 }
@@ -46,14 +46,14 @@ fun bufMerge(
     var index2 = 0
     for (i in combinedArray.indices) {
         if (i % 2 == 0) {
-            if (enR)
-                combinedArray[i] = arrayR[index1]
+            if (enL)
+                combinedArray[i] = arrayL[index1]
             else
                 combinedArray[i] = 0
             index1++
         } else {
-            if (enL)
-                combinedArray[i] = (arrayL[index2] * if (invert) (-1) else 1).toShort()
+            if (enR)
+                combinedArray[i] = (arrayR[index2] * if (invert) (-1) else 1).toShort()
             else
                 combinedArray[i] = 0
             index2++

@@ -16,6 +16,10 @@ import com.example.generator2.audio.audioMixerPump
 fun Mp3Route(ch: String = "R", route: ROUTESTREAM) {
     Row {
         Text(
+            text = "$ch  ", color = Color.White
+        )
+
+        Text(
             text = "MP3",
             color = if (route == ROUTESTREAM.MP3) Color.Green else Color.Gray,
             modifier = Modifier.clickable(onClick = {
