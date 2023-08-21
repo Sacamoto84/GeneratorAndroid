@@ -67,11 +67,9 @@ class AudioMixerPump {
 
             while (!init) {
                 try {
-                    // Попытка обращения к переменной exoplayer
-                    exoplayer.player // Примерное действие, замените на соответствующий вызов
+                    exoplayer.player
                     init = true
                 } catch (e: UninitializedPropertyAccessException) {
-                    // Переменная exoplayer еще не инициализирована
                     init = false
                 }
             }
@@ -91,7 +89,6 @@ class AudioMixerPump {
                     delay(1)
                 }
             }
-
 
 
             while (true) {
@@ -121,12 +118,8 @@ class AudioMixerPump {
                         Timber.e("1 stop $volume"); stop = false
                     }
 
-
-                    //audioOutMp3.destroy()
-
 //                    if (audioOutMp3.out == null)
 //                        audioOutMp3.create()
-
 
                     val bufGen = gen.renderAudio(bufferSize)
 
@@ -190,32 +183,6 @@ class AudioMixerPump {
             }
         }
 
-        GlobalScope.launch(Dispatchers.IO) {
-
-            while (true) {
-
-                //val bigBufMp3 = chDataStreamOutAudioProcessor.receive()
-
-//                bufferSize = if (bigBufMp3.isEmpty()) {
-//                    Timber.e("bufMp3 size == 0")
-//                    bufferSizeGenDefault
-//                } else {
-//                    bigBufMp3.size
-//                }
-
-//                val bufGen = gen.renderAudio(bufferSize)
-//
-//
-//                if (bufGen.isNotEmpty()) {
-//                    //Timber.w("bufferSize = ${bigBufMp3.size}")
-//                    audioOut.out?.write(bufGen, 0, bufGen.size, WRITE_BLOCKING)
-//                }
-
-                //audioOut.chOut.send(bigBufMp3)
-
-
-            }
-        }
     }
 
 }

@@ -24,6 +24,7 @@ import cafe.adriel.pufferdb.android.AndroidPufferDB
 import com.example.generator2.audio.audioMixerPump
 import com.example.generator2.audio.audioOut
 import com.example.generator2.audio.audioOutMp3
+import com.example.generator2.audio.getCurrentAudioDevices
 import com.example.generator2.di.Hub
 import com.example.generator2.generator.gen
 import com.example.generator2.model.mmkv
@@ -74,7 +75,6 @@ import javax.inject.Singleton
 val API_key = "5ca5814f-74a8-46c1-ab17-da3101e88888"
 
 
-
 val resampleLib = NativeLib()
 
 
@@ -101,42 +101,22 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         Timber.plant(Timber.DebugTree())
+        Timber.i("..................................onCreate.................................")
 
         GlobalScope.launch(Dispatchers.IO) {
-            delay(5000)
-            Timber.e("Запуск Yandex Metrika")
-            // Creating an extended library configuration.
-            val config = YandexMetricaConfig.newConfigBuilder(API_key)
-                .withLogs()
-                .build() // Initializing the AppMetrica SDK.
-            // Initializing the AppMetrica SDK.
-            YandexMetrica.activate(
-                applicationContext,
-                config
-            ) // Automatic tracking of user activity.
+            delay(1)
+            Timber.w("Запуск Yandex Metrika")
+            val config = YandexMetricaConfig.newConfigBuilder(API_key).withLogs().build()
+            YandexMetrica.activate(applicationContext, config)
             YandexMetrica.enableActivityAutoTracking(application)
             YandexMetrica.reportEvent("Запуск")
         }
-
-
-        GlobalScope.launch(Dispatchers.IO) {
-            while (true) {
-                //getCurrentAudioDevices(applicationContext)
-                delay(1000)
-            }
-        }
-
 
         gen
 
         kDownloader = KDownloader.create(applicationContext)
 
         AndroidPufferDB.init(applicationContext)
-
-
-        Timber.i("...........................................................................")
-        Timber.i("..................................onCreate.................................")
-        Timber.i("...........................................................................")
 
         val rootDir = MMKV.initialize(this, AppPath().config)
         println("mmkv root: $rootDir")
@@ -164,7 +144,6 @@ class MainActivity : ComponentActivity() {
         //player.playUri()
         //exoplayer = PlayerMP3(applicationContext)
         //}
-
 
 
         setContent {
