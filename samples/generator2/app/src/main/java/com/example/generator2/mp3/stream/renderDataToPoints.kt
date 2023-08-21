@@ -10,32 +10,12 @@ import com.example.generator2.mp3.channelDataOutRoll
 import com.example.generator2.mp3.channelDataStreamOutCompressor
 import com.example.generator2.mp3.oscillSync
 import com.example.generator2.scope.scope
+import com.example.generator2.util.bufSpit
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import libs.maping
-
-
-fun bufSpit(buf: ShortArray): Pair<ShortArray, ShortArray> {
-    val bufR = ShortArray(buf.size / 2)
-    val bufL = ShortArray(buf.size / 2)
-
-    var index1 = 0
-    var index2 = 0
-
-    for (i in buf.indices) {
-        if (i % 2 == 0) {
-            bufR[index1] = buf[i]
-            index1++
-        } else {
-            bufL[index2] = buf[i]
-            index2++
-        }
-    }
-
-    return Pair(bufR, bufL)
-}
 
 val paintR = Paint().apply {
     color = 0xFFFF0000.toInt()

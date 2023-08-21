@@ -3,6 +3,7 @@ package com.example.generator2.mp3.stream
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import com.example.generator2.mp3.Pt
+import com.example.generator2.util.bufSpit
 import libs.maping
 
 fun dataToLissaguBitmap(buf: ShortArray, w: Int, h: Int): Bitmap {

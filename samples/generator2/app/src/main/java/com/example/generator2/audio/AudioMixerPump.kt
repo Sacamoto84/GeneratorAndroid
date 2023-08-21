@@ -1,32 +1,34 @@
 package com.example.generator2.audio
 
 import android.media.AudioTrack.WRITE_BLOCKING
-import android.media.AudioTrack.WRITE_NON_BLOCKING
 import com.example.generator2.generator.gen
 import com.example.generator2.mp3.chDataStreamOutAudioProcessor
 import com.example.generator2.mp3.exoplayer
-import com.yandex.metrica.impl.ob.Sh
+import com.example.generator2.util.bufMerge
+import com.example.generator2.util.bufSpit
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import libs.maping
 import timber.log.Timber
 import java.util.LinkedList
 
+enum class ROUTESTREAM {
+    GEN,
+    MP3
+}
 
 val audioMixerPump = AudioMixerPump()
 
+
 class AudioMixerPump {
 
-    enum class MASTERSTREAM {
-        GEN,
-        MP3
-    }
 
-    val master = MutableStateFlow(MASTERSTREAM.GEN) //Выбор источника синхранизации
+
+    val routeR = MutableStateFlow(ROUTESTREAM.GEN) //Выбор источника для вывода сигнала
+    val routeL = MutableStateFlow(ROUTESTREAM.GEN)
 
     val bufferSizeGenDefault = 8192 //размер буфера по умолчанию для генератора
     var bufferSize: Int =
@@ -56,6 +58,7 @@ class AudioMixerPump {
         var delay = 50
         //
 
+        var bufferSize = 8192
 
         GlobalScope.launch(Dispatchers.IO) {
 
@@ -88,42 +91,81 @@ class AudioMixerPump {
                 }
             }
 
+
+
             while (true) {
 
-                val bigBufMp3 = chDataStreamOutAudioProcessor.receive()
 
-                //println("bigBufMp3.size ${bigBufMp3.size}")
+                if (isPlaying) {
 
-                if (start) {
-                    stop = false
-                    Timber.e("1 start $volume $delay")
-                    if (delay > 0) { delay--; volume = 0.01f } else { volume += 0.05f }
-                    if (volume >= 1f) { volume = 1f; start = false }
-                }
+                    val bigBufMp3 = chDataStreamOutAudioProcessor.receive()
 
-                if (stop) {
-                    Timber.e("1 stop $volume")
-                    stop = false
-                }
+                    bufferSize = bigBufMp3.size
 
-                if (isPlaying)
-                {
-                    println("isPlaying")
+                    //println("bigBufMp3.size ${bigBufMp3.size}")
+                    if (start) {
+                        stop = false
+                        Timber.e("1 start $volume $delay")
+                        if (delay > 0) {
+                            delay--; volume = 0.01f
+                        } else {
+                            volume += 0.05f
+                        }
+                        if (volume >= 1f) {
+                            volume = 1f; start = false
+                        }
+                    }
+
+                    if (stop) {
+                        Timber.e("1 stop $volume"); stop = false
+                    }
+
+
                     //audioOutMp3.destroy()
 
                     if (audioOutMp3.out == null)
                         audioOutMp3.create()
 
-                    val v = ShortArray(bigBufMp3.size)
+
+                    val bufGen = gen.renderAudio(bufferSize)
+
+                    //val v = ShortArray(bigBufMp3.size)
+
                     for (i in bigBufMp3.indices) {
-                        v[i] = (bigBufMp3[i] * volume).toInt().toShort()
+                        bigBufMp3[i] = (bigBufMp3[i] * volume).toInt().toShort()
                     }
+
+                    val (bufGenR, bufGenL) = bufSpit(bufGen)
+                    val (bufMp3R, bufMp3L) = bufSpit(bigBufMp3)
+
+                    val outR = if (routeR.value == ROUTESTREAM.MP3) bufMp3R else bufGenR
+                    val outL = if (routeL.value == ROUTESTREAM.MP3) bufMp3L else bufGenL
+
+                    val enL = gen.liveData.enL.value
+                    val enR = gen.liveData.enR.value
+
+                    val v = bufMerge(outR, outL, enR ,enL)
+
                     audioOutMp3.out?.write(v, 0, v.size, WRITE_BLOCKING)
-                }
-                else {
+
+
+                } else {
+
                     while (chDataStreamOutAudioProcessor.tryReceive().isSuccess) {
                         println("Очистка канала")
                     }
+
+                    val bufGen = gen.renderAudio(bufferSize)
+                    val (bufGenR, bufGenL) = bufSpit(bufGen)
+
+                    val outR = if (routeR.value == ROUTESTREAM.MP3) ShortArray(bufGenR.size){0} else bufGenR
+                    val outL = if (routeL.value == ROUTESTREAM.MP3) ShortArray(bufGenR.size){0} else bufGenL
+
+                    val v = bufMerge(outR, outL)
+
+                    audioOut.out?.write(v, 0, v.size, WRITE_BLOCKING)
+
+
                 }
 
 

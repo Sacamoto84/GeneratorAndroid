@@ -1,4 +1,4 @@
-package com.example.generator2.mp3
+package com.example.generator2.mp3.compose
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,7 +17,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.generator2.R
+import com.example.generator2.audio.audioMixerPump
+import com.example.generator2.mp3.exoplayer
+import com.example.generator2.mp3.formatMinSec
 import com.example.generator2.theme.Purple200
+
+
+
 
 @Composable
 fun MP3Control()
@@ -50,6 +56,9 @@ fun MP3Control()
         Text(text = "isPlaying:${exoplayer.isPlaying.collectAsState().value}", color = Color.Yellow)
         Text(text = "bufferedPercentage:${exoplayer.bufferedPercentage.collectAsState().value}", color = Color.Yellow)
 
+        Mp3Route("R", audioMixerPump.routeR.collectAsState().value)
+        Mp3Route("L", audioMixerPump.routeL.collectAsState().value)
+
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
 
             IconButton(modifier = Modifier.size(40.dp), onClick = {}) {
@@ -70,7 +79,7 @@ fun MP3Control()
                 )
             }
 
-            IconButton(modifier = Modifier.size(40.dp), onClick = {exoplayer.player.pause()}) {
+            IconButton(modifier = Modifier.size(40.dp), onClick = { exoplayer.player.pause()}) {
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(id = R.drawable.player_pause),
@@ -79,7 +88,7 @@ fun MP3Control()
                 )
             }
 
-            IconButton(modifier = Modifier.size(40.dp), onClick = {exoplayer.player.stop()}) {
+            IconButton(modifier = Modifier.size(40.dp), onClick = { exoplayer.player.stop()}) {
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(id = R.drawable.player_stop),

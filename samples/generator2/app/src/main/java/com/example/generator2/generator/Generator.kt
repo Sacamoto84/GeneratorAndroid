@@ -1,6 +1,7 @@
 package com.example.generator2.generator
 
 import com.example.generator2.model.itemList
+import com.example.generator2.util.bufMerge
 import kotlinx.coroutines.flow.MutableStateFlow
 
 val gen = Generator()
@@ -32,18 +33,18 @@ class Generator {
 
             //Нормальный режим
             buf = if (!gen.liveData.shuffle.value)
-                mergeArrays(l, r, enL, enR)
+                bufMerge(r, l, enL, enR)
             else
-                mergeArrays(r, l, enL, enR)
+                bufMerge(l, r, enL, enR)
 
         } else {
             //Mono
             val m = renderChanel(ch1, numFrames / 2)
 
             buf = if (!gen.liveData.invert.value)
-                mergeArrays(m, m, enL, enR)
+                bufMerge(m, m, enL, enR)
             else
-                mergeArrays(m, m, enL, enR, true)
+                bufMerge(m, m, enL, enR, true)
 
         }
 
@@ -257,30 +258,3 @@ data class StructureCh(
 
 )
 
-private fun mergeArrays(
-    array1: FloatArray,
-    array2: FloatArray,
-    enL: Boolean,
-    enR: Boolean,
-    invert: Boolean = false
-): FloatArray {
-    val combinedArray = FloatArray(array1.size + array2.size) { 0F }
-    var index1 = 0
-    var index2 = 0
-    for (i in combinedArray.indices) {
-        if (i % 2 == 0) {
-            if (enL)
-                combinedArray[i] = array1[index1]
-            else
-                combinedArray[i] = 0F
-            index1++
-        } else {
-            if (enR)
-                combinedArray[i] = array2[index2] * if (invert) (-1.0f) else 1.0f
-            else
-                combinedArray[i] = 0F
-            index2++
-        }
-    }
-    return combinedArray
-}

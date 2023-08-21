@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.generator.gen
-import com.example.generator2.mp3.MP3Control
+import com.example.generator2.mp3.compose.MP3Control
 import com.example.generator2.presets.Presets
 import com.example.generator2.presets.ui.DialogPresetsNewFile
 import com.example.generator2.scope.scope
