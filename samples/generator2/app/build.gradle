@@ -374,6 +374,8 @@ dependencies {
     implementation "androidx.media3:media3-common:$media3_version"
 
 
+    //Чтение тегов https://github.com/mpatric/mp3agic
+    implementation 'com.mpatric:mp3agic:0.9.1'
 
 
 }

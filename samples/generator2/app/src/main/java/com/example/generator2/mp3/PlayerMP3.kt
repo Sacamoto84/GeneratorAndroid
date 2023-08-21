@@ -2,30 +2,15 @@ package com.example.generator2.mp3
 
 import android.content.Context
 import android.net.Uri
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.common.Player.PositionInfo
 import androidx.media3.common.Tracks
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.transformer.EditedMediaItem
-import com.example.generator2.R
+import com.example.generator2.AppPath
 import com.example.generator2.mp3.stream.dataCompressor
 import com.example.generator2.mp3.stream.renderDataToPoints
-import kotlinx.coroutines.CoroutineScope
+import com.mpatric.mp3agic.Mp3File
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -34,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
+
 
 lateinit var exoplayer: PlayerMP3
 
@@ -81,6 +67,8 @@ class PlayerMP3(val context: Context) {
 
         val uri = Uri.parse("asset:///CH Teen Edition StL A.mp3")
 
+        //val uri = Uri.parse(AppPath().music+"/CH Teen Edition StL A.mp3")
+
         val a = EditedMediaItem.Builder(MediaItem.fromUri(uri)).build()
         player.setMediaItem(a.mediaItem)
         player.prepare()
@@ -111,15 +99,87 @@ class PlayerMP3(val context: Context) {
         listener = object : Player.Listener {
 
 
-            override fun onEvents(player: Player, events: Player.Events) {
+            override fun onEvents(player1: Player, events: Player.Events) {
                 Timber.w("onEvents")
-                super.onEvents(player, events)
-                durationMs.value = player.duration.coerceAtLeast(0L)
-                currentTime.value = player.currentPosition.coerceAtLeast(0L)
-                bufferedPercentage.value = player.bufferedPercentage
-                isPlaying.value = player.isPlaying
-                isPlayingD = player.isPlaying
-                playbackState.value = player.playbackState
+                super.onEvents(player1, events)
+                durationMs.value = player1.duration.coerceAtLeast(0L)
+                currentTime.value = player1.currentPosition.coerceAtLeast(0L)
+                bufferedPercentage.value = player1.bufferedPercentage
+                isPlaying.value = player1.isPlaying
+                isPlayingD = player1.isPlaying
+                playbackState.value = player1.playbackState
+
+                val format = player.audioFormat
+
+                if (format != null) {
+
+                    sampleRate = format.sampleRate
+                    bitrate = format.bitrate
+                    averageBitrate = format.averageBitrate
+                    channelCount = format.channelCount
+                    //durationMs = player.duration
+                }
+
+//                val currentMediaItem = player.currentMediaItem
+//                val currentMediaUri = currentMediaItem!!.playbackProperties!!.uri
+//
+//                val p = currentMediaUri.toString()
+
+//                val mp3file = Mp3File(p)
+//                println("Length of this mp3 is: " + mp3file.lengthInSeconds + " seconds")
+//                println("Bitrate: " + mp3file.bitrate + " kbps " + if (mp3file.isVbr) "(VBR)" else "(CBR)")
+//                println("Sample rate: " + mp3file.sampleRate + " Hz")
+//                println("Has ID3v1 tag?: " + if (mp3file.hasId3v1Tag()) "YES" else "NO")
+//                println("Has ID3v2 tag?: " + if (mp3file.hasId3v2Tag()) "YES" else "NO")
+//                println("Has custom tag?: " + if (mp3file.hasCustomTag()) "YES" else "NO")
+//
+//
+//                if (mp3file.hasId3v1Tag()) {
+//                    val id3v1Tag = mp3file.id3v1Tag
+//                    println("Track: " + id3v1Tag.track)
+//                    println("Artist: " + id3v1Tag.artist)
+//                    println("Title: " + id3v1Tag.title)
+//                    println("Album: " + id3v1Tag.album)
+//                    println("Year: " + id3v1Tag.year)
+//                    println("Genre: " + id3v1Tag.genre + " (" + id3v1Tag.genreDescription + ")")
+//                    println("Comment: " + id3v1Tag.comment)
+//                }
+//
+//                if (mp3file.hasId3v2Tag()) {
+//                    val id3v2Tag = mp3file.id3v2Tag
+//                    println("Track: " + id3v2Tag.track)
+//                    println("Artist: " + id3v2Tag.artist)
+//                    println("Title: " + id3v2Tag.title)
+//                    println("Album: " + id3v2Tag.album)
+//                    println("Year: " + id3v2Tag.year)
+//                    println("Genre: " + id3v2Tag.genre + " (" + id3v2Tag.genreDescription + ")")
+//                    println("Comment: " + id3v2Tag.comment)
+//                    println("Lyrics: " + id3v2Tag.lyrics)
+//                    println("Composer: " + id3v2Tag.composer)
+//                    println("Publisher: " + id3v2Tag.publisher)
+//                    println("Original artist: " + id3v2Tag.originalArtist)
+//                    println("Album artist: " + id3v2Tag.albumArtist)
+//                    println("Copyright: " + id3v2Tag.copyright)
+//                    println("URL: " + id3v2Tag.url)
+//                    println("Encoder: " + id3v2Tag.encoder)
+//                    val albumImageData = id3v2Tag.albumImage
+//                    if (albumImageData != null) {
+//                        println("Have album image data, length: " + albumImageData.size + " bytes")
+//                        println("Album image mime type: " + id3v2Tag.albumImageMimeType)
+//                    }
+//                }
+
+
+                //val retriever = MediaMetadataRetriever()
+                //retriever.setDataSource( context, currentMediaUri ) // Замените на актуальный URI вашего медиафайла
+//                val title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
+//                val artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
+//                val album = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM)
+//                title
+//                artist
+//                album
+                //retriever.release() // Не забудьте освободить ресурсы
+
 
             }
 

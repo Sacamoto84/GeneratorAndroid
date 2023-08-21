@@ -17,7 +17,8 @@ import java.util.LinkedList
 
 enum class ROUTESTREAM {
     GEN,
-    MP3
+    MP3,
+    OFF
 }
 
 val audioMixerPump = AudioMixerPump()
@@ -27,8 +28,8 @@ class AudioMixerPump {
 
 
 
-    val routeR = MutableStateFlow(ROUTESTREAM.GEN) //Выбор источника для вывода сигнала
-    val routeL = MutableStateFlow(ROUTESTREAM.GEN)
+    val routeR = MutableStateFlow(ROUTESTREAM.MP3) //Выбор источника для вывода сигнала
+    val routeL = MutableStateFlow(ROUTESTREAM.MP3)
 
     val bufferSizeGenDefault = 8192 //размер буфера по умолчанию для генератора
     var bufferSize: Int =
@@ -123,8 +124,8 @@ class AudioMixerPump {
 
                     //audioOutMp3.destroy()
 
-                    if (audioOutMp3.out == null)
-                        audioOutMp3.create()
+//                    if (audioOutMp3.out == null)
+//                        audioOutMp3.create()
 
 
                     val bufGen = gen.renderAudio(bufferSize)
@@ -139,8 +140,17 @@ class AudioMixerPump {
 
                     val (bufMp3L, bufMp3R) = bufSpit(bigBufMp3)
 
-                    val outR = if (routeR.value == ROUTESTREAM.MP3) bufMp3R else bufGenR
-                    val outL = if (routeL.value == ROUTESTREAM.MP3) bufMp3L else bufGenL
+                    val outR = when(routeR.value) {
+                        ROUTESTREAM.MP3 -> bufMp3R
+                        ROUTESTREAM.GEN -> bufGenR
+                        ROUTESTREAM.OFF -> ShortArray(bufferSize/2){0}
+                    }
+
+                    val outL = when(routeL.value) {
+                        ROUTESTREAM.MP3 -> bufMp3L
+                        ROUTESTREAM.GEN -> bufGenL
+                        ROUTESTREAM.OFF -> ShortArray(bufferSize/2){0}
+                    }
 
                     val enL = gen.liveData.enL.value
                     val enR = gen.liveData.enR.value
@@ -148,8 +158,7 @@ class AudioMixerPump {
                     val v = bufMerge(outL, outR, enL ,enR)
 
                     //LRLRLR
-                    audioOutMp3.out?.write(v, 0, v.size, WRITE_BLOCKING)
-
+                    audioOut.out?.write(v, 0, v.size, WRITE_BLOCKING)
 
                 } else {
 
@@ -160,14 +169,21 @@ class AudioMixerPump {
                     val bufGen = gen.renderAudio(bufferSize)
                     val (bufGenR, bufGenL) = bufSpit(bufGen)
 
-                    val outR = if (routeR.value == ROUTESTREAM.MP3) ShortArray(bufGenR.size){0} else bufGenR
-                    val outL = if (routeL.value == ROUTESTREAM.MP3) ShortArray(bufGenR.size){0} else bufGenL
+                    val outR = when(routeR.value) {
+                        ROUTESTREAM.MP3 -> ShortArray(bufGenR.size){0}
+                        ROUTESTREAM.GEN -> bufGenR
+                        ROUTESTREAM.OFF -> ShortArray(bufferSize/2){0}
+                    }
 
-                    val v = bufMerge(outR, outL)
+                    val outL = when(routeL.value) {
+                        ROUTESTREAM.MP3 -> ShortArray(bufGenL.size){0}
+                        ROUTESTREAM.GEN -> bufGenL
+                        ROUTESTREAM.OFF -> ShortArray(bufferSize/2){0}
+                    }
+
+                    val v = bufMerge(outL, outR)  //? нужно проверить
 
                     audioOut.out?.write(v, 0, v.size, WRITE_BLOCKING)
-
-
                 }
 
 
