@@ -14,6 +14,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import com.example.generator2.presets.ui.DialogPresets
 import com.example.generator2.screens.config.ScreenConfig
 import com.example.generator2.screens.editor.ScreenEditor
@@ -25,17 +27,25 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
+enum class NavigationRoute(val value: String) {
+    HOME("home"),
+    SCRIPT("script"),
+    EDITOR("editor"),
+    SCRIPTINFO("scriptinfo"),
+    CONFIG("config"),
+    PRESETS("presets"),
+    HTML("html")
+}
 
 @SuppressLint("StaticFieldLeak")
-lateinit var navController : NavHostController
+lateinit var navController: NavHostController
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun Navigation()
-{
-    navController = rememberAnimatedNavController()
+fun Navigation() {
+    navController = rememberNavController()
 
-    AnimatedNavHost(
+    NavHost(
         navController = navController,
         startDestination = "home",
         modifier = Modifier
@@ -101,8 +111,6 @@ fun Navigation()
         }
 
     }
-
-
 
 
 }

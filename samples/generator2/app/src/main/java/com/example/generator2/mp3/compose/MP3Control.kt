@@ -23,45 +23,35 @@ import com.example.generator2.mp3.formatMinSec
 import com.example.generator2.theme.Purple200
 
 
-
-
 @Composable
-fun MP3Control()
-{
+fun MP3Control() {
     Column {
 
-
+        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = "P:${exoplayer.currentTime.collectAsState().value.formatMinSec()}",
+                color = Color.Yellow
+            )
+            Text(
+                text = "D:${exoplayer.durationMs.collectAsState().value.formatMinSec()}",
+                color = Color.Yellow
+            )
+        }
 
         Slider(
             modifier = Modifier.fillMaxWidth(),
             value = exoplayer.currentTime.collectAsState().value.toFloat(),
-            onValueChange = { timeMs: Float ->
-
-
-                //exoplayer.player.volume = 0f
-                exoplayer.player.seekTo(timeMs.toLong())
-                //exoplayer.player.volume = 0.1f
-
-            },
+            onValueChange = { timeMs: Float -> exoplayer.player.seekTo(timeMs.toLong()) },
             valueRange = 0f..exoplayer.durationMs.collectAsState().value.toFloat(),
-            colors =
-            SliderDefaults.colors(
-                thumbColor = Purple200,
-                activeTickColor = Purple200
-            )
+            colors = SliderDefaults.colors(thumbColor = Purple200, activeTickColor = Purple200)
         )
 
-        Text(text = "D:${exoplayer.durationMs.collectAsState().value.formatMinSec()}", color = Color.Yellow)
-        Text(text = "P:${exoplayer.currentTime.collectAsState().value.formatMinSec()}", color = Color.Yellow)
-        Text(text = "isPlaying:${exoplayer.isPlaying.collectAsState().value}", color = Color.Yellow)
-        //Text(text = "bufferedPercentage:${exoplayer.bufferedPercentage.collectAsState().value}", color = Color.Yellow)
-        Text(text = ":${exoplayer.bitrate}", color = Color.Yellow)
-        Text(text = ":${exoplayer.averageBitrate}", color = Color.Yellow)
 
-        Mp3Route("R", audioMixerPump.routeR.collectAsState().value)
-        Mp3Route("L", audioMixerPump.routeL.collectAsState().value)
+        /////////////////////кнопки/////////////////////
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
+
+
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
 
             IconButton(modifier = Modifier.size(40.dp), onClick = {}) {
                 Icon(
@@ -72,7 +62,7 @@ fun MP3Control()
                 )
             }
 
-            IconButton(modifier = Modifier.size(40.dp), onClick = { exoplayer.player.play()}) {
+            IconButton(modifier = Modifier.size(40.dp), onClick = { exoplayer.player.play() }) {
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(id = R.drawable.player_play),
@@ -81,7 +71,9 @@ fun MP3Control()
                 )
             }
 
-            IconButton(modifier = Modifier.size(40.dp), onClick = { exoplayer.player.pause()}) {
+            IconButton(
+                modifier = Modifier.size(40.dp),
+                onClick = { exoplayer.player.pause() }) {
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(id = R.drawable.player_pause),
@@ -90,7 +82,7 @@ fun MP3Control()
                 )
             }
 
-            IconButton(modifier = Modifier.size(40.dp), onClick = { exoplayer.player.stop()}) {
+            IconButton(modifier = Modifier.size(40.dp), onClick = { exoplayer.player.stop() }) {
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(id = R.drawable.player_stop),
@@ -109,6 +101,21 @@ fun MP3Control()
             }
 
         }
+        ////////////////////////////////////////////////
+
+
+        Text(text = "isPlaying:${exoplayer.isPlaying.collectAsState().value}", color = Color.Yellow)
+        //Text(text = "bufferedPercentage:${exoplayer.bufferedPercentage.collectAsState().value}", color = Color.Yellow)
+        Text(text = ":${exoplayer.bitrate}", color = Color.Yellow)
+        Text(text = ":${exoplayer.averageBitrate}", color = Color.Yellow)
+
+
+
+
+
+        Mp3Route("R", audioMixerPump.routeR.collectAsState().value)
+        Mp3Route("L", audioMixerPump.routeL.collectAsState().value)
+
 
     }
 
