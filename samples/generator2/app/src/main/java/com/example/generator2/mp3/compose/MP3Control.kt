@@ -16,10 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.generator2.NavigationRoute
 import com.example.generator2.R
 import com.example.generator2.audio.audioMixerPump
 import com.example.generator2.mp3.exoplayer
 import com.example.generator2.mp3.formatMinSec
+import com.example.generator2.navController
 import com.example.generator2.theme.Purple200
 
 
@@ -52,6 +54,18 @@ fun MP3Control() {
 
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
+
+
+
+
+            IconButton(modifier = Modifier.size(40.dp), onClick = {  navController.navigate(NavigationRoute.EXPLORER.value) }) {
+                Icon(
+                    modifier = Modifier.size(28.dp),
+                    painter = painterResource(id = R.drawable.info),
+                    contentDescription = "Forward 10 seconds",
+                    tint = Color.LightGray
+                )
+            }
 
             IconButton(modifier = Modifier.size(40.dp), onClick = {}) {
                 Icon(

@@ -318,7 +318,7 @@ dependencies {
 
 
 
-    def media3_version = "1.1.0"
+    def media3_version = "1.1.1"
 
     // For media playback using ExoPlayer
     implementation "androidx.media3:media3-exoplayer:$media3_version"

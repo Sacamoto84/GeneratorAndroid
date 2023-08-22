@@ -16,6 +16,8 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.example.generator2.explorer.Explorer
+import com.example.generator2.explorer.compose.ScreenExplorer
 import com.example.generator2.presets.ui.DialogPresets
 import com.example.generator2.screens.config.ScreenConfig
 import com.example.generator2.screens.editor.ScreenEditor
@@ -34,12 +36,14 @@ enum class NavigationRoute(val value: String) {
     SCRIPTINFO("scriptinfo"),
     CONFIG("config"),
     PRESETS("presets"),
-    HTML("html")
+    HTML("html"),
+    EXPLORER("explorer")
 }
 
 @SuppressLint("StaticFieldLeak")
 lateinit var navController: NavHostController
 
+@androidx.media3.common.util.UnstableApi
 @OptIn(ExperimentalAnimationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun Navigation() {
@@ -55,6 +59,8 @@ fun Navigation() {
                 testTagsAsResourceId = true
             }
     ) {
+
+
 
         composable("home",
             enterTransition = { fadeIn(animationSpec = tween(0)) },
@@ -109,6 +115,14 @@ fun Navigation() {
         ) {
             Html()
         }
+
+        composable(NavigationRoute.EXPLORER.value,
+            enterTransition = { fadeIn(animationSpec = tween(0)) },
+            exitTransition = { fadeOut(animationSpec = tween(0)) })
+        {
+            ScreenExplorer()
+        }
+
 
     }
 
