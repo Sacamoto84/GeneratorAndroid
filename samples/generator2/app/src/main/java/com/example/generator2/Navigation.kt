@@ -16,7 +16,6 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.example.generator2.explorer.Explorer
 import com.example.generator2.explorer.compose.ScreenExplorer
 import com.example.generator2.presets.ui.DialogPresets
 import com.example.generator2.screens.config.ScreenConfig
@@ -25,9 +24,7 @@ import com.example.generator2.screens.html.Html
 import com.example.generator2.screens.mainscreen4.Mainsreen4
 import com.example.generator2.screens.scripting.ScreenScriptCommon
 import com.example.generator2.screens.scripting.ScreenScriptInfo
-import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 enum class NavigationRoute(val value: String) {
     HOME("home"),
