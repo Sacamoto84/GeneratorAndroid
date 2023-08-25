@@ -1,11 +1,20 @@
 package com.example.generator2.explorer
 
+import android.health.connect.datatypes.units.Length
+
 data class ExplorerItem(
     val isDirectory : Boolean, //Признак того что файл является директорией
     val name : String = "",         //имя файла
     val fullPatch : String = "",     //Полный путь к файлу
 
-    val samplarate : Int = 0,
+    var isMedia : Boolean = false,
+    var isMp3 : Boolean = false,
+    var isFormat : String = "",    //Формат файла mp2 wav flac acc
+    var sampleRate : String = "",
+    var bitRate : String = "",
+
     val channel : Int = 0,
-    val title : String = ""
+    val title : String = "",
+    var lengthInSeconds: String = "",
+    var channelMode : String = ""
 )

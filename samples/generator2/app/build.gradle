@@ -376,7 +376,8 @@ dependencies {
 
     //Чтение тегов https://github.com/mpatric/mp3agic
     implementation 'com.mpatric:mp3agic:0.9.1'
-
+    //https://github.com/Kaned1as/jaudiotagger
+    implementation 'com.github.Adonai:jaudiotagger:2.3.14'
 
 }
 
