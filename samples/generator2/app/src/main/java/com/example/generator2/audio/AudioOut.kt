@@ -15,7 +15,7 @@ var audioOut : AudioOut = AudioOut(48000,200)
 val AudioSampleRate = MutableStateFlow(0) //Частота которая используется на аудиовыводе, для UI
 
 @OptIn(DelicateCoroutinesApi::class)
-class AudioOut(val sampleRate: Int = 48000, minBufferMs: Int = 1000) {
+class AudioOut(val sampleRate: Int = 48000, minBufferMs: Int = 1000, encoding: Int = AudioFormat.ENCODING_PCM_16BIT) {
 
     lateinit var out: AudioTrack
 
@@ -23,10 +23,11 @@ class AudioOut(val sampleRate: Int = 48000, minBufferMs: Int = 1000) {
 
         try {
 
+
             val minBufferInBytes = 4 * (sampleRate / 1000) * (minBufferMs / 1000.0).toInt()
 
             val audioFormat = AudioFormat.Builder()
-                .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                .setEncoding(encoding)
                 .setSampleRate(sampleRate)
                 .setChannelMask(AudioFormat.CHANNEL_OUT_STEREO)
                 .build()
@@ -34,7 +35,7 @@ class AudioOut(val sampleRate: Int = 48000, minBufferMs: Int = 1000) {
             val minBuffer = AudioTrack.getMinBufferSize(
                 sampleRate,
                 AudioFormat.CHANNEL_OUT_STEREO,
-                AudioFormat.ENCODING_PCM_16BIT
+                encoding
             )
 
             out = AudioTrack.Builder()
