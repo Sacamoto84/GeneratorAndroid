@@ -5,17 +5,20 @@ import androidx.media3.common.Format
 import androidx.media3.common.audio.AudioProcessor
 import com.example.generator2.generator.gen
 import com.example.generator2.mp3.chDataStreamOutAudioProcessor
-import com.example.generator2.mp3.exoplayer
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-
 @androidx.media3.common.util.UnstableApi
+val audioProcessorInputFormat = MutableStateFlow(AudioProcessor.AudioFormat(
+    /* sampleRate= */ Format.NO_VALUE,
+    /* channelCount= */ Format.NO_VALUE,
+    /* encoding= */ Format.NO_VALUE)
+)
+
+
 class myAudioProcessor : AudioProcessor {
 
 
@@ -61,10 +64,10 @@ class myAudioProcessor : AudioProcessor {
             )
         }
 
-
         this.inputAudioFormat = inputAudioFormat
         isActive = true
 
+        audioProcessorInputFormat.value = inputAudioFormat
 
         //        return if (inputAudioFormat.encoding != C.ENCODING_PCM_FLOAT) AudioProcessor.AudioFormat(
         //            inputAudioFormat.sampleRate, inputAudioFormat.channelCount, C.ENCODING_PCM_FLOAT
@@ -156,9 +159,6 @@ class myAudioProcessor : AudioProcessor {
         processBuffer.flip()
         outputBuffer = this.processBuffer
 
-//        val buf = ShortArray()
-//
-
         if (buf.isNotEmpty()) {
             val s = chDataStreamOutAudioProcessor.trySend(buf).isSuccess
             if (!s) Timber.e("Места в канале из процессора нет")
@@ -173,7 +173,6 @@ class myAudioProcessor : AudioProcessor {
         processBuffer = AudioProcessor.EMPTY_BUFFER
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun getOutput(): ByteBuffer {
         val outputBuffer = this.outputBuffer
         this.outputBuffer = AudioProcessor.EMPTY_BUFFER

@@ -68,7 +68,7 @@ fun ScreenExplorer(vm: ScreenExplorerViewModel = hiltViewModel()) {
 
     }
 }
-
+@androidx.media3.common.util.UnstableApi
 @Composable
 private fun DrawItem(item: ExplorerItem, vm: ScreenExplorerViewModel) {
 
@@ -77,13 +77,18 @@ private fun DrawItem(item: ExplorerItem, vm: ScreenExplorerViewModel) {
             .fillMaxWidth()
             .padding(top = 4.dp, start = 4.dp, end = 4.dp)
             //.border(1.dp, Color.Black, RoundedCornerShape(4.dp))
-            .background(if(item.isDirectory) Color(0xFF4B6F7D) else Color(0xFF33313B))
+            .background(if (item.isDirectory) Color(0xFF4B6F7D) else Color(0xFF33313B))
     ) {
 
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
 
             if (item.isDirectory)
                 vm.explorerCurrentDir.value += "/" + item.name
+else
+            {
+                val s = vm.explorerCurrentDir.value + "/" + item.name
+                vm.play(s)
+            }
 
         }
 
@@ -123,14 +128,19 @@ private fun DrawItem(item: ExplorerItem, vm: ScreenExplorerViewModel) {
 
             }
 
-            Column(modifier = Modifier.padding(8.dp).fillMaxWidth().weight(1f))
+            Column(modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth()
+                .weight(1f))
             {
                 Text(text = item.name.substringBeforeLast('.'), fontSize = 18.sp, color = Color.White)
 
                 if (item.isFormat.isNotEmpty()) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.padding(top = 4.dp).fillMaxWidth()
+                        modifier = Modifier
+                            .padding(top = 4.dp)
+                            .fillMaxWidth()
                     ) {
                         Text(
                             text = item.lengthInSeconds,

@@ -3,74 +3,57 @@ package com.example.generator2.audio
 import android.media.AudioFormat
 import android.media.AudioTrack
 import android.media.AudioTrack.MODE_STREAM
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
-val audioOut = AudioOut()
+var audioOut : AudioOut? = AudioOut(48000,0)
 val audioOutMp3 = AudioOut(200)
 
 
-class AudioOut(val minBufferMs: Int = 1000) {
+class AudioOut(val sampleRate: Int = 48000, minBufferMs: Int = 1000) {
 
-    var out: AudioTrack?
+    lateinit var out: AudioTrack
 
     init {
 
-        val minBufferInBytes=4*(48000/1000)*(minBufferMs/1000.0).toInt()
+        try {
 
-        val audioFormat= AudioFormat.Builder()
-            .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
-            .setSampleRate(48000)
-            .setChannelMask(AudioFormat.CHANNEL_OUT_STEREO)
-            .build()
-        val minBuffer = AudioTrack.getMinBufferSize(48000, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT)
 
-        out = AudioTrack.Builder()
-            .setAudioFormat(audioFormat)
-            .setBufferSizeInBytes(minBuffer.coerceAtLeast(minBufferInBytes))
-            .setTransferMode(MODE_STREAM)
-            .build()
+            val minBufferInBytes = 4 * (sampleRate / 1000) * (minBufferMs / 1000.0).toInt()
 
-        out!!.play()
+            val audioFormat = AudioFormat.Builder()
+                .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                .setSampleRate(sampleRate)
+                .setChannelMask(AudioFormat.CHANNEL_OUT_STEREO)
+                .build()
+            val minBuffer = AudioTrack.getMinBufferSize(
+                sampleRate,
+                AudioFormat.CHANNEL_OUT_STEREO,
+                AudioFormat.ENCODING_PCM_16BIT
+            )
 
-        Timber.i("Запуск AudioOut")
+            out = AudioTrack.Builder()
+                .setAudioFormat(audioFormat)
+                .setBufferSizeInBytes(minBuffer.coerceAtLeast(minBufferInBytes))
+                .setTransferMode(MODE_STREAM)
+                .build()
+
+            out.play()
+
+            Timber.i("Запуск AudioOut")
+
+        }
+        catch (e:Exception)
+        {
+            Timber.e(e.localizedMessage)
+        }
+
 
     }
 
-     fun create()
-     {
-         val minBufferInBytes=4*(48000/1000)*(minBufferMs/1000.0).toInt()
-
-         val audioFormat= AudioFormat.Builder()
-             .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
-             .setSampleRate(48000)
-             .setChannelMask(AudioFormat.CHANNEL_OUT_STEREO)
-             .build()
-         val minBuffer = AudioTrack.getMinBufferSize(48000, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT)
-
-         out = AudioTrack.Builder()
-             .setAudioFormat(audioFormat)
-             .setBufferSizeInBytes(minBuffer.coerceAtLeast(minBufferInBytes))
-             .setTransferMode(MODE_STREAM)
-             .build()
-
-         out!!.play()
-
-         Timber.i("Запуск AudioOut")
-     }
-
-    fun destroy()
-    {
-        out?.stop()
-        out?.release()
-        out = null
+    fun destroy() {
+        out.stop()
+        out.flush()
+        out.release()
     }
-
-
 
 }

@@ -158,8 +158,14 @@ void resample(int fsin, int fsout) {
 extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_example_resampler_NativeLib_resampleOneImpl(JNIEnv *env, jobject thiz, jint fr_in,
-                                                     jint fr_out, jdouble buf, jint len) {
-    resampleOne(fr_in, fr_out, &buf,  len);
+                                                     jint fr_out, jdoubleArray buf, jint len) {
+    jdouble *arr;
+    arr = (*env).GetDoubleArrayElements(buf, NULL);
+
+//    double *p;
+//    p = buf;
+//
+    resampleOne(fr_in, fr_out, arr,  len);
 
     // Создание jdoubleArray и копирование данных
     jdoubleArray doubleArray = env->NewDoubleArray(outBufSize);

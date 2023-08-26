@@ -2,13 +2,17 @@ package com.example.generator2.explorer
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.MediaItem
+import androidx.media3.transformer.EditedMediaItem
 import com.example.generator2.AppPath
 import com.example.generator2.di.Hub
+import com.example.generator2.mp3.exoplayer
 import com.example.generator2.mp3.formatMinSec
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -44,6 +48,16 @@ class ScreenExplorerViewModel @Inject constructor(
         explorerCurrentDir.value = s
     }
 
+    @androidx.media3.common.util.UnstableApi
+    fun play(s : String)
+    {
+        exoplayer.player.stop()
+        val uri = Uri.parse(s)
+        val a = EditedMediaItem.Builder(MediaItem.fromUri(uri)).build()
+        exoplayer.player.setMediaItem(a.mediaItem)
+        exoplayer.player.prepare()
+        exoplayer.player.playWhenReady = true
+    }
 
 
 

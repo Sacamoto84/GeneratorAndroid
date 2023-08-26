@@ -4,6 +4,7 @@ import android.media.AudioTrack.WRITE_BLOCKING
 import com.example.generator2.generator.gen
 import com.example.generator2.mp3.chDataStreamOutAudioProcessor
 import com.example.generator2.mp3.exoplayer
+import com.example.generator2.mp3.processor.audioProcessorInputFormat
 import com.example.generator2.util.bufMerge
 import com.example.generator2.util.bufSpit
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -60,6 +61,24 @@ class AudioMixerPump {
         //
 
         var bufferSize = 8192
+
+
+
+        GlobalScope.launch(Dispatchers.IO) {
+            audioProcessorInputFormat.collect{
+                Timber.e("Перенастройка AudioOut на it.sampleRate")
+                GlobalScope.launch(Dispatchers.Main) {
+
+
+
+                }
+
+            }
+        }
+
+
+
+
 
         GlobalScope.launch(Dispatchers.IO) {
 
@@ -118,9 +137,7 @@ class AudioMixerPump {
                         Timber.e("1 stop $volume"); stop = false
                     }
 
-//                    if (audioOutMp3.out == null)
-//                        audioOutMp3.create()
-
+                    gen.sampleRate = audioProcessorInputFormat.value.sampleRate
                     val bufGen = gen.renderAudio(bufferSize)
 
                     //val v = ShortArray(bigBufMp3.size)
@@ -150,8 +167,15 @@ class AudioMixerPump {
 
                     val v = bufMerge(outL, outR, enL ,enR)
 
+                    if ( audioProcessorInputFormat.value.sampleRate != (audioOut?.sampleRate ?: 48000) )
+                    {
+                        audioOut?.destroy()
+                        audioOut = null
+                        audioOut = AudioOut(audioProcessorInputFormat.value.sampleRate,200)
+                    }
+
                     //LRLRLR
-                    audioOut.out?.write(v, 0, v.size, WRITE_BLOCKING)
+                    audioOut?.out?.write(v, 0, v.size, WRITE_BLOCKING)
 
                 } else {
 
@@ -159,8 +183,10 @@ class AudioMixerPump {
                         println("Очистка канала")
                     }
 
+                    gen.sampleRate = audioOut?.sampleRate ?: 48000
+
                     val bufGen = gen.renderAudio(bufferSize)
-                    val (bufGenR, bufGenL) = bufSpit(bufGen)
+                    val (bufGenL, bufGenR) = bufSpit(bufGen)
 
                     val outR = when(routeR.value) {
                         ROUTESTREAM.MP3 -> ShortArray(bufGenR.size){0}
@@ -176,7 +202,7 @@ class AudioMixerPump {
 
                     val v = bufMerge(outL, outR)  //? нужно проверить
 
-                    audioOut.out?.write(v, 0, v.size, WRITE_BLOCKING)
+                    audioOut?.out?.write(v, 0, v.size, WRITE_BLOCKING)
                 }
 
 

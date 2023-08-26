@@ -17,6 +17,8 @@ class Generator {
     val ch1: StructureCh = StructureCh(ch = 0)
     val ch2: StructureCh = StructureCh(ch = 1)
 
+    var sampleRate : Int = 48000
+
     fun renderAudio(numFrames: Int = 1024): ShortArray {
 
         val enL = gen.liveData.enL.value
@@ -160,7 +162,7 @@ class Generator {
     }
 
     private fun convertHzToR(hz: Float): Float {
-        return (hz * 16384.0f / 3.798f * 2.0f * 1000.0 / 48.8 / 2.0 * 1000.0 / 988.0).toFloat()
+        return (48000.0F/sampleRate)*(hz * 16384.0f / 3.798f * 2.0f * 1000.0 / 48.8 / 2.0 * 1000.0 / 988.0).toFloat()
     }
 
     private fun map(x: Float, in_min: Float, in_max: Float, out_min: Float, out_max: Float): Float {
