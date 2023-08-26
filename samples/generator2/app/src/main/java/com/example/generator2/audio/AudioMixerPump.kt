@@ -14,7 +14,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.Duration
+import java.time.LocalDateTime
 import java.util.LinkedList
+import kotlin.system.measureNanoTime
+
 
 enum class ROUTESTREAM {
     GEN,
@@ -64,6 +68,11 @@ class AudioMixerPump {
 
         var bufferSize = 8192
 
+        val calculator = Calculator()
+
+//        val currentEventTime = LocalDateTime.now()
+//        var lastEventTime = LocalDateTime.now()
+
         GlobalScope.launch(Dispatchers.IO) {
 
             var init = false
@@ -92,6 +101,10 @@ class AudioMixerPump {
 
 
                 if (exoplayer.isPlayingD) {
+
+//                    val duration = Duration.between(lastEventTime, LocalDateTime.now()).toMillis()
+//                    lastEventTime = LocalDateTime.now()
+//                    println("Частота вызова mp3: "+duration+" ms")
 
                     val bigBufMp3 = chDataStreamOutAudioProcessor.receive()
 
@@ -157,6 +170,9 @@ class AudioMixerPump {
 
                 } else {
 
+//                    val duration = Duration.between(lastEventTime, LocalDateTime.now()).toMillis()
+//                    lastEventTime = LocalDateTime.now()
+//                    println("Частота вызова: "+duration+" ms")
 
                     while (chDataStreamOutAudioProcessor.tryReceive().isSuccess) { println("Очистка канала") }
 
@@ -166,12 +182,19 @@ class AudioMixerPump {
                         {
                             audioOut.destroy(); audioOut = AudioOut(192000,200)
                         }
-
                     }
 
                     gen.sampleRate = audioOut.sampleRate
+                    val bufGen: ShortArray
+                    val nanos = measureNanoTime{
+                        bufGen = gen.renderAudio(bufferSize)
+                    }
+                    calculator.update(nanos/1000.0)
+                    println("measure :${nanos/1000.0} us bufferSize: $bufferSize среднее ${calculator.getAvg()}")
 
-                    val bufGen = gen.renderAudio(bufferSize)
+
+
+
                     val (bufGenL, bufGenR) = bufSpit(bufGen)
 
                     val outR = when(routeR.value) {
@@ -189,7 +212,6 @@ class AudioMixerPump {
                     val v = bufMerge(outL, outR)  //? нужно проверить
 
                     audioOut.out.write(v, 0, v.size, WRITE_BLOCKING)
-
 
                 }
 
@@ -221,4 +243,39 @@ fun ListToShortArray(bigList: LinkedList<ShortArray>): ShortArray {
 
     // Теперь resultArray содержит объединенные элементы из всех ShortArray
     return resultArray
+}
+
+
+class Calculator {
+    private val data = mutableListOf<Double>()
+
+    fun update(value: Double) {
+        synchronized(data) {
+            data.add(value)
+
+            while ( data.size > 50)
+                data.removeAt(0)
+
+        }
+    }
+
+    fun getMin(): Double {
+        synchronized(data) {
+            return data.minOrNull() ?: 0.0
+        }
+    }
+
+    fun getMax(): Double {
+        synchronized(data) {
+            return data.maxOrNull() ?: 0.0
+        }
+    }
+
+    fun getAvg(): Double {
+        synchronized(data) {
+            if (data.isEmpty()) return 0.0
+            val sum = data.sum()
+            return sum / data.size
+        }
+    }
 }

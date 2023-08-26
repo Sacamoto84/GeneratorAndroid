@@ -9,7 +9,7 @@ fun bufMerge(
     enR: Boolean,
     invert: Boolean = false
 ): FloatArray {
-    val combinedArray = FloatArray(array1.size + array2.size) { 0F }
+    val combinedArray = FloatArray(array1.size + array2.size)
     var index1 = 0
     var index2 = 0
     for (i in combinedArray.indices) {

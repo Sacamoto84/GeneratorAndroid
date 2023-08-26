@@ -3,6 +3,7 @@ package com.example.generator2.generator
 import com.example.generator2.model.itemList
 import com.example.generator2.util.bufMerge
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlin.system.measureNanoTime
 
 val gen = Generator()
 
@@ -17,7 +18,8 @@ class Generator {
     val ch1: StructureCh = StructureCh(ch = 0)
     val ch2: StructureCh = StructureCh(ch = 1)
 
-    var sampleRate : Int = 48000
+    var sampleRate: Int = 48000
+
 
     fun renderAudio(numFrames: Int = 1024): ShortArray {
 
@@ -25,19 +27,44 @@ class Generator {
         val enR = gen.liveData.enR.value
 
         val buf: FloatArray
+
         val out = ShortArray(numFrames)
+
+        val l: FloatArray
+        val r: FloatArray
+
+        var nanos: Long = 0
 
         if (!gen.liveData.mono.value) {
 
             //stereo
-            val l = renderChanel(ch1, numFrames / 2)
-            val r = renderChanel(ch2, numFrames / 2)
+            //2000us 9060 release
+            nanos = measureNanoTime {
+                l = renderChanel(ch1, numFrames / 2)
+            }
+            println("nanos l = renderChanel(ch1, numFrames / 2) : ${nanos / 1000.0}}")
 
-            //Нормальный режим
-            buf = if (!gen.liveData.shuffle.value)
-                bufMerge(r, l, enL, enR)
-            else
-                bufMerge(l, r, enL, enR)
+            //2000us 9060 release
+            //560-1700 mi8 release
+            nanos = measureNanoTime {
+                r = renderChanel(ch2, numFrames / 2)
+            }
+            println("nanos r = renderChanel(ch2, numFrames / 2) : ${nanos / 1000.0}")
+
+
+            //560-676us 9060 release
+            //142-330us mi8 release
+            nanos = measureNanoTime {
+
+                //Нормальный режим
+                buf = if (!gen.liveData.shuffle.value)
+                    bufMerge(r, l, enL, enR)
+                else
+                    bufMerge(l, r, enL, enR)
+
+            }
+            println("nanos bufMerge : ${nanos / 1000.0}")
+
 
         } else {
             //Mono
@@ -52,9 +79,16 @@ class Generator {
 
         val max = Short.MAX_VALUE - 1
 
-        buf.forEachIndexed { i, v ->
-            out[i] = (v * max).toInt().toShort()
+        //327us 9060 release
+        //93-220us mi8 release
+        nanos = measureNanoTime {
+
+            buf.forEachIndexed { i, v ->
+                out[i] = (v * max).toInt().toShort()
+            }
+
         }
+        println("nanos buf.forEachIndexed : ${nanos / 1000.0}")
 
         return out
 
@@ -83,6 +117,9 @@ class Generator {
             buf[i] = (x + (y * source[i] / 4095.0F)).toInt().toShort()
         }
     }
+
+
+    var mBuffer = FloatArray(0)
 
     private fun renderChanel(CH: StructureCh, numFrames: Int): FloatArray {
 
@@ -121,7 +158,8 @@ class Generator {
 
         //std::fill_n(CH->mBuffer, numFrames, 0);
 
-        val mBuffer: FloatArray = FloatArray(numFrames)
+        if (mBuffer.size != numFrames)
+            mBuffer = FloatArray(numFrames)
 
         for (i in 0 until numFrames) {
 
@@ -162,7 +200,7 @@ class Generator {
     }
 
     private fun convertHzToR(hz: Float): Float {
-        return (48000.0F/sampleRate)*(hz * 16384.0f / 3.798f * 2.0f * 1000.0 / 48.8 / 2.0 * 1000.0 / 988.0).toFloat()
+        return (48000.0F / sampleRate) * (hz * 16384.0f / 3.798f * 2.0f * 1000.0 / 48.8 / 2.0 * 1000.0 / 988.0).toFloat()
     }
 
     private fun map(x: Float, in_min: Float, in_max: Float, out_min: Float, out_max: Float): Float {

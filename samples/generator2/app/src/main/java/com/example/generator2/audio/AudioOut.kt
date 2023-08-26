@@ -45,12 +45,11 @@ class AudioOut(val sampleRate: Int = 48000, minBufferMs: Int = 1000) {
 
             out.play()
 
-            val s = sampleRate
+            val s = out.sampleRate
 
-            GlobalScope.launch { AudioSampleRate.value = sampleRate }
+            GlobalScope.launch { AudioSampleRate.value = out.sampleRate }
 
-
-            Timber.w("Запуск AudioOut ${s}")
+            Timber.w("Запуск AudioOut ${out.sampleRate}")
 
         }
         catch (e:Exception)
