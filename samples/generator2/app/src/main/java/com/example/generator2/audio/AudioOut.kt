@@ -3,12 +3,18 @@ package com.example.generator2.audio
 import android.media.AudioFormat
 import android.media.AudioTrack
 import android.media.AudioTrack.MODE_STREAM
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
-var audioOut : AudioOut? = AudioOut(48000,0)
-val audioOutMp3 = AudioOut(200)
+var audioOut : AudioOut = AudioOut(48000,200)
 
+val AudioSampleRate = MutableStateFlow(0) //Частота которая используется на аудиовыводе, для UI
 
+@OptIn(DelicateCoroutinesApi::class)
 class AudioOut(val sampleRate: Int = 48000, minBufferMs: Int = 1000) {
 
     lateinit var out: AudioTrack
@@ -17,7 +23,6 @@ class AudioOut(val sampleRate: Int = 48000, minBufferMs: Int = 1000) {
 
         try {
 
-
             val minBufferInBytes = 4 * (sampleRate / 1000) * (minBufferMs / 1000.0).toInt()
 
             val audioFormat = AudioFormat.Builder()
@@ -25,6 +30,7 @@ class AudioOut(val sampleRate: Int = 48000, minBufferMs: Int = 1000) {
                 .setSampleRate(sampleRate)
                 .setChannelMask(AudioFormat.CHANNEL_OUT_STEREO)
                 .build()
+
             val minBuffer = AudioTrack.getMinBufferSize(
                 sampleRate,
                 AudioFormat.CHANNEL_OUT_STEREO,
@@ -39,7 +45,12 @@ class AudioOut(val sampleRate: Int = 48000, minBufferMs: Int = 1000) {
 
             out.play()
 
-            Timber.i("Запуск AudioOut")
+            val s = sampleRate
+
+            GlobalScope.launch { AudioSampleRate.value = sampleRate }
+
+
+            Timber.w("Запуск AudioOut ${s}")
 
         }
         catch (e:Exception)
@@ -51,6 +62,7 @@ class AudioOut(val sampleRate: Int = 48000, minBufferMs: Int = 1000) {
     }
 
     fun destroy() {
+        Timber.w("AudioOut destroy")
         out.stop()
         out.flush()
         out.release()

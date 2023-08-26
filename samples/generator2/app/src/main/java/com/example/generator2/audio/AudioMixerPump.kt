@@ -22,6 +22,9 @@ enum class ROUTESTREAM {
     OFF
 }
 
+
+
+
 val audioMixerPump = AudioMixerPump()
 
 
@@ -52,8 +55,7 @@ class AudioMixerPump {
         //И когда только генератор, и запись в блокирующем режиме
 
         var isPlaying = false
-        var isPlayingLast = false
-        var stop = false
+
         var start = false
         var volume = 0f
 
@@ -61,24 +63,6 @@ class AudioMixerPump {
         //
 
         var bufferSize = 8192
-
-
-
-        GlobalScope.launch(Dispatchers.IO) {
-            audioProcessorInputFormat.collect{
-                Timber.e("Перенастройка AudioOut на it.sampleRate")
-                GlobalScope.launch(Dispatchers.Main) {
-
-
-
-                }
-
-            }
-        }
-
-
-
-
 
         GlobalScope.launch(Dispatchers.IO) {
 
@@ -94,26 +78,20 @@ class AudioMixerPump {
             }
 
             GlobalScope.launch(Dispatchers.IO) {
+
+                var isPlayingLast = false
                 while (true) {
                     isPlaying = exoplayer.isPlayingD
-                    if (isPlaying and !isPlayingLast) {
-                        start = true
-                        delay = 20
-                        //volume = 0.1f
-                    } else
-                        if (!isPlaying and isPlayingLast) {
-                            stop = true
-                        }
+                    if (isPlaying and !isPlayingLast) { start = true; delay = 20 }
                     isPlayingLast = isPlaying
                     delay(1)
                 }
             }
 
-
             while (true) {
 
 
-                if (isPlaying) {
+                if (exoplayer.isPlayingD) {
 
                     val bigBufMp3 = chDataStreamOutAudioProcessor.receive()
 
@@ -121,7 +99,6 @@ class AudioMixerPump {
 
                     //println("bigBufMp3.size ${bigBufMp3.size}")
                     if (start) {
-                        stop = false
                         Timber.e("1 start $volume $delay")
                         if (delay > 0) {
                             delay--; volume = 0.01f
@@ -133,21 +110,27 @@ class AudioMixerPump {
                         }
                     }
 
-                    if (stop) {
-                        Timber.e("1 stop $volume"); stop = false
+                    if ( audioProcessorInputFormat.value.sampleRate != audioOut.sampleRate )
+                    {
+                        audioOut.destroy(); audioOut = AudioOut(audioProcessorInputFormat.value.sampleRate,200)
                     }
 
-                    gen.sampleRate = audioProcessorInputFormat.value.sampleRate
-                    val bufGen = gen.renderAudio(bufferSize)
 
-                    //val v = ShortArray(bigBufMp3.size)
+                    val bufGen: ShortArray
+                    if ((routeL.value == ROUTESTREAM.GEN) or (routeR.value == ROUTESTREAM.GEN ))
+                    {
+                        gen.sampleRate = audioProcessorInputFormat.value.sampleRate
+                        bufGen = gen.renderAudio(bufferSize)
+                    }
+                    else
+                        bufGen = ShortArray(bufferSize)
+
 
                     for (i in bigBufMp3.indices) {
                         bigBufMp3[i] = (bigBufMp3[i] * volume).toInt().toShort()
                     }
 
                     val (bufGenL, bufGenR) = bufSpit(bufGen)
-
                     val (bufMp3L, bufMp3R) = bufSpit(bigBufMp3)
 
                     val outR = when(routeR.value) {
@@ -167,23 +150,26 @@ class AudioMixerPump {
 
                     val v = bufMerge(outL, outR, enL ,enR)
 
-                    if ( audioProcessorInputFormat.value.sampleRate != (audioOut?.sampleRate ?: 48000) )
-                    {
-                        audioOut?.destroy()
-                        audioOut = null
-                        audioOut = AudioOut(audioProcessorInputFormat.value.sampleRate,200)
-                    }
+
 
                     //LRLRLR
-                    audioOut?.out?.write(v, 0, v.size, WRITE_BLOCKING)
+                    audioOut.out.write(v, 0, v.size, WRITE_BLOCKING)
 
                 } else {
 
-                    while (chDataStreamOutAudioProcessor.tryReceive().isSuccess) {
-                        println("Очистка канала")
+
+                    while (chDataStreamOutAudioProcessor.tryReceive().isSuccess) { println("Очистка канала") }
+
+                    if ((routeL.value != ROUTESTREAM.MP3) and (routeR.value != ROUTESTREAM.MP3 ))
+                    {
+                        if (audioOut.sampleRate != 192000)
+                        {
+                            audioOut.destroy(); audioOut = AudioOut(192000,200)
+                        }
+
                     }
 
-                    gen.sampleRate = audioOut?.sampleRate ?: 48000
+                    gen.sampleRate = audioOut.sampleRate
 
                     val bufGen = gen.renderAudio(bufferSize)
                     val (bufGenL, bufGenR) = bufSpit(bufGen)
@@ -202,7 +188,9 @@ class AudioMixerPump {
 
                     val v = bufMerge(outL, outR)  //? нужно проверить
 
-                    audioOut?.out?.write(v, 0, v.size, WRITE_BLOCKING)
+                    audioOut.out.write(v, 0, v.size, WRITE_BLOCKING)
+
+
                 }
 
 

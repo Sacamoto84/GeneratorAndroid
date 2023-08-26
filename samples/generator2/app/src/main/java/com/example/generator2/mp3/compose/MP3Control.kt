@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.generator2.NavigationRoute
 import com.example.generator2.R
+import com.example.generator2.audio.AudioSampleRate
 import com.example.generator2.audio.audioMixerPump
 import com.example.generator2.mp3.exoplayer
 import com.example.generator2.mp3.formatMinSec
@@ -123,12 +124,15 @@ fun MP3Control() {
         Text(text = ":${exoplayer.bitrate}", color = Color.Yellow)
         Text(text = ":${exoplayer.averageBitrate}", color = Color.Yellow)
 
-
+        Text(text = "AudioOut:${AudioSampleRate.collectAsState().value} Hz", color = Color.Yellow)
 
 
 
         Mp3Route("R", audioMixerPump.routeR.collectAsState().value)
         Mp3Route("L", audioMixerPump.routeL.collectAsState().value)
+
+
+
 
 
     }
