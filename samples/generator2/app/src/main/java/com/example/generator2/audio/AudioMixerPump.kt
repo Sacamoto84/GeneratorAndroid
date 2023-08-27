@@ -70,7 +70,7 @@ class AudioMixerPump {
         val calculator2 = Calculator()
 
 //        val currentEventTime = LocalDateTime.now()
-        var lastEventTime = LocalDateTime.now()
+//        var lastEventTime = LocalDateTime.now()
 
         GlobalScope.launch(Dispatchers.IO) {
 
@@ -184,7 +184,7 @@ class AudioMixerPump {
                     if ((routeL.value != ROUTESTREAM.MP3) and (routeR.value != ROUTESTREAM.MP3)) {
                         if ((audioOut.out.sampleRate != 192000) or (audioOut.out.format.encoding != AudioFormat.ENCODING_PCM_FLOAT)) {
                             audioOut.destroy(); audioOut =
-                                AudioOut(192000, 400, encoding = AudioFormat.ENCODING_PCM_FLOAT)
+                                AudioOut(192000, 800, encoding = AudioFormat.ENCODING_PCM_FLOAT)
                         }
                     }
 
@@ -197,7 +197,7 @@ class AudioMixerPump {
 
                     val buf: Pair<FloatArray, FloatArray>
 
-                    //mi8  1774us release 192k 8192
+                    //mi8  2220us release 192k 8192
                     //9060 3940us release 192k 8192
                     val nanos = measureNanoTime {
                         buf = gen.renderAudio(bufferSize)

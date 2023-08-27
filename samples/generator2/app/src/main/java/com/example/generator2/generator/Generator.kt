@@ -28,10 +28,10 @@ class Generator {
 
     var sampleRate: Int = 48000
 
+    private val renderChanelL = RenderChannel(liveData)
+    private val renderChanelR = RenderChannel(liveData)
 
-    //var out = ShortArray(0)
 
-    @OptIn(DelicateCoroutinesApi::class)
     suspend fun renderAudio(numFrames: Int = 1024): Pair<FloatArray, FloatArray> {
 
         //val enL = gen.liveData.enL.value
@@ -53,57 +53,30 @@ class Generator {
 
         if (!gen.liveData.mono.value) {
 
-//                val job1 = GlobalScope.async  {
-//                    return@async renderChanel(ch1, numFrames / 2)
-//                }
-////
-//                val job2 = GlobalScope.async  {
-//                  return@async renderChanel(ch2, numFrames / 2)
-//                }
+                val job1 = CoroutineScope(Dispatchers.IO).async  {
+                    //println("Запуск job1")
+                    renderChanelL.renderChanel(ch1, numFrames / 2, sampleRate)
+                }
 
-            GlobalScope.launch(Dispatchers.IO) {
-                l = renderChanel(ch1, numFrames / 2)
-                completeL = true
-            }
+                val job2 = CoroutineScope(Dispatchers.IO).async  {
+                    //println("Запуск job2")
+                    renderChanelR.renderChanel(ch2, numFrames / 2, sampleRate)
+                }
 
-            GlobalScope.launch(Dispatchers.IO) {
-                r = renderChanel(ch2, numFrames / 2)
-                completeR = true
-            }
+                //println("Ждем job1 и job2")
 
-            while (!completeL or !completeR) {
-                nanos++
-            }
+                val results = awaitAll(job1, job2)
+                //println("Дождались job1 и job2")
 
+                l = results[0]
+                r = results[1]
 
-//                val results = awaitAll(job1, job2)
-//                l = results[0]
-//                r = results[1]
-
-            // Дождаться завершения корутин
-            //l = job1.await()
-            //r = job2.await()
-
-
-//            l = renderChanel(ch1, numFrames / 2)
-//            r = renderChanel(ch2, numFrames / 2)
-
-
-            //stereo
-            //2000us 9060 release
-            //nanos = measureNanoTime {
-
-            //}
-            //println("nanos l = renderChanel(ch1, numFrames / 2) : ${nanos / 1000.0}}")
-
-            //2000us 9060 release
-            //560-1700 mi8 release
-            //r = renderChanel(ch2, numFrames / 2)
-
+//           l = renderChanelL.renderChanel(ch1, numFrames / 2, sampleRate)
+//           r = renderChanelR.renderChanel(ch2, numFrames / 2, sampleRate)
 
         } else {
             //Mono
-            val m = renderChanel(ch1, numFrames / 2)
+            val m = renderChanelL.renderChanel(ch1, numFrames / 2, sampleRate)
             l = m
             r = m
 
@@ -158,93 +131,12 @@ class Generator {
     }
 
 
-    var mBuffer = FloatArray(0)
 
-    private fun renderChanel(CH: StructureCh, numFrames: Int): FloatArray {
 
-        var o: Float
 
-        val rC: UInt
-        val rAM: UInt
-        val rFM: UInt
 
-        val enCH: Boolean
-        val enAM: Boolean
-        val enFM: Boolean
 
-        val volume: Float
-        val amDepth: Float
 
-        if (CH.ch == 0) {
-            rC = convertHzToR(liveData.ch1_Carrier_Fr.value).toUInt()
-            rAM = convertHzToR(liveData.ch1_AM_Fr.value).toUInt()
-            rFM = convertHzToR(liveData.ch1_FM_Fr.value).toUInt()
-            enCH = liveData.ch1_EN.value
-            enAM = liveData.ch1_AM_EN.value
-            enFM = liveData.ch1_FM_EN.value
-            volume = liveData.volume0.value
-            amDepth = liveData.ch1AmDepth.value
-        } else {
-            rC = convertHzToR(liveData.ch2_Carrier_Fr.value).toUInt()
-            rAM = convertHzToR(liveData.ch2_AM_Fr.value).toUInt()
-            rFM = convertHzToR(liveData.ch1_FM_Fr.value).toUInt()
-            enCH = liveData.ch2_EN.value
-            enAM = liveData.ch2_AM_EN.value
-            enFM = liveData.ch2_FM_EN.value
-            volume = liveData.volume1.value
-            amDepth = liveData.ch2AmDepth.value
-        }
-
-        //std::fill_n(CH->mBuffer, numFrames, 0);
-
-        if (mBuffer.size != numFrames)
-            mBuffer = FloatArray(numFrames)
-
-        for (i in 0 until numFrames) {
-
-            if (enCH) {
-
-                if (enFM) {
-                    CH.phase_accumulator_fm += rFM
-                    CH.phase_accumulator_carrier += convertHzToR(
-                        CH.buffer_fm[CH.phase_accumulator_fm.shr(
-                            22
-                        ).toInt()].toFloat()
-                    ).toUInt()
-                } else
-                    CH.phase_accumulator_carrier += rC
-
-                if (enAM) {
-                    CH.phase_accumulator_am += rAM
-                    //-1..1
-                    o = volume * (CH.buffer_carrier[CH.phase_accumulator_carrier.shr(22)
-                        .toInt()].toFloat() - 2048.0F) / 2048.0F *
-                            map(
-                                (CH.buffer_am[CH.phase_accumulator_am.shr(22)
-                                    .toInt()].toFloat() / 4095.0F),
-                                0.0F,
-                                1.0F,
-                                1.0F - amDepth,
-                                1.0F
-                            )
-                } else
-                    o = volume * (CH.buffer_carrier[CH.phase_accumulator_carrier.shr(22)
-                        .toInt()].toFloat() - 2048.0F) / 2048.0F
-
-            } else
-                o = 0F
-            mBuffer[i] = o
-        }
-        return mBuffer
-    }
-
-    private fun convertHzToR(hz: Float): Float {
-        return (48000.0F / sampleRate) * (hz * 16384.0f / 3.798f * 2.0f * 1000.0 / 48.8 / 2.0 * 1000.0 / 988.0).toFloat()
-    }
-
-    private fun map(x: Float, in_min: Float, in_max: Float, out_min: Float, out_max: Float): Float {
-        return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
-    }
 
 }
 
