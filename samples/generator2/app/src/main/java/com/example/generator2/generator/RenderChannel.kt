@@ -43,8 +43,6 @@ class RenderChannel(val liveData: DataLiveData){
             amDepth = liveData.ch2AmDepth.value
         }
 
-        //std::fill_n(CH->mBuffer, numFrames, 0);
-
         if (mBuffer.size != numFrames)
             mBuffer = FloatArray(numFrames)
 
@@ -81,6 +79,7 @@ class RenderChannel(val liveData: DataLiveData){
 
             } else
                 o = 0F
+
             mBuffer[i] = o
         }
 

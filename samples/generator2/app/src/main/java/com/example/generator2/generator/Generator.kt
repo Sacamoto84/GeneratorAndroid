@@ -1,17 +1,11 @@
 package com.example.generator2.generator
 
 import com.example.generator2.model.itemList
-import com.example.generator2.util.bufMerge
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlin.system.measureNanoTime
 
 val gen = Generator()
 
@@ -32,41 +26,23 @@ class Generator {
     private val renderChanelR = RenderChannel(liveData)
 
 
+
     suspend fun renderAudio(numFrames: Int = 1024): Pair<FloatArray, FloatArray> {
 
-        //val enL = gen.liveData.enL.value
-        //val enR = gen.liveData.enR.value
-
-        //val buf: FloatArray
-
-        //if (out.size != numFrames)
-        //    out = ShortArray(numFrames)
-
-        var l: FloatArray = FloatArray(2)
-        var r: FloatArray = FloatArray(2)
-
-        var nanos: Long = 0
-
-        var completeL: Boolean = false
-        var completeR: Boolean = false
-
+        val l: FloatArray
+        val r: FloatArray
 
         if (!gen.liveData.mono.value) {
 
                 val job1 = CoroutineScope(Dispatchers.IO).async  {
-                    //println("Запуск job1")
                     renderChanelL.renderChanel(ch1, numFrames / 2, sampleRate)
                 }
 
                 val job2 = CoroutineScope(Dispatchers.IO).async  {
-                    //println("Запуск job2")
                     renderChanelR.renderChanel(ch2, numFrames / 2, sampleRate)
                 }
 
-                //println("Ждем job1 и job2")
-
                 val results = awaitAll(job1, job2)
-                //println("Дождались job1 и job2")
 
                 l = results[0]
                 r = results[1]
@@ -79,28 +55,7 @@ class Generator {
             val m = renderChanelL.renderChanel(ch1, numFrames / 2, sampleRate)
             l = m
             r = m
-
-//            buf = if (!gen.liveData.invert.value)
-//                bufMerge(m, m, enL, enR)
-//            else
-//                bufMerge(m, m, enL, enR, true)
-
         }
-
-//        val max = Short.MAX_VALUE - 1
-
-//        //327us 9060 release
-//        //93-220us mi8 release
-//        nanos = measureNanoTime {
-//
-//            buf.forEachIndexed { i, v ->
-//                out[i] = (v * max).toInt().toShort()
-//            }
-//
-//
-//        }
-
-        //println("nanos buf.forEachIndexed : ${nanos / 1000.0}")
 
         return Pair(l, r)
 

@@ -124,40 +124,44 @@ class AudioMixerPump {
                         }
                     }
 
-                    if (audioProcessorInputFormat.value.sampleRate != audioOut.sampleRate) {
+                    if ((audioProcessorInputFormat.value.sampleRate != audioOut.sampleRate) or (audioOut.out.format.encoding != AudioFormat.ENCODING_PCM_FLOAT)) {
+
                         audioOut.destroy(); audioOut =
-                            AudioOut(audioProcessorInputFormat.value.sampleRate, 200)
+                            AudioOut(audioProcessorInputFormat.value.sampleRate, 800)
+
                     }
 
 
+
+
 //                    val bufGen: ShortArray
-//                    if ((routeL.value == ROUTESTREAM.GEN) or (routeR.value == ROUTESTREAM.GEN ))
-//                    {
-//                        gen.sampleRate = audioProcessorInputFormat.value.sampleRate
-//                        bufGen = gen.renderAudio(bufferSize)
-//                    }
-//                    else
-//                        bufGen = ShortArray(bufferSize)
+                    if ((routeL.value == ROUTESTREAM.GEN) or (routeR.value == ROUTESTREAM.GEN ))
+                    {
+                        gen.sampleRate = audioProcessorInputFormat.value.sampleRate
+                        bufGen = gen.renderAudio(bufferSize)
+                    }
+                    else
+                        bufGen = FloatArray(bufferSize)
 //
 //
 //                    for (i in bigBufMp3.indices) {
 //                        bigBufMp3[i] = (bigBufMp3[i] * volume).toInt().toShort()
 //                    }
 //
-//                    val (bufGenL, bufGenR) = bufSpit(bufGen)
-//                    val (bufMp3L, bufMp3R) = bufSpit(bigBufMp3)
+                    val (bufGenL, bufGenR) = bufSpit(bufGen)
+                    val (bufMp3L, bufMp3R) = bufSpit(bigBufMp3)
 //
-//                    val outR = when(routeR.value) {
-//                        ROUTESTREAM.MP3 -> bufMp3R
-//                        ROUTESTREAM.GEN -> bufGenR
-//                        ROUTESTREAM.OFF -> ShortArray(bufferSize/2){0}
-//                    }
-//
-//                    val outL = when(routeL.value) {
-//                        ROUTESTREAM.MP3 -> bufMp3L
-//                        ROUTESTREAM.GEN -> bufGenL
-//                        ROUTESTREAM.OFF -> ShortArray(bufferSize/2){0}
-//                    }
+                    val outR = when(routeR.value) {
+                        ROUTESTREAM.MP3 -> bufMp3R
+                        ROUTESTREAM.GEN -> bufGenR
+                        ROUTESTREAM.OFF -> FloatArray(bufferSize/2){0}
+                    }
+
+                    val outL = when(routeL.value) {
+                        ROUTESTREAM.MP3 -> bufMp3L
+                        ROUTESTREAM.GEN -> bufGenL
+                        ROUTESTREAM.OFF -> FloatArray(bufferSize/2){0}
+                    }
 //
 //                    val enL = gen.liveData.enL.value
 //                    val enR = gen.liveData.enR.value

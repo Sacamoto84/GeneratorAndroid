@@ -18,7 +18,7 @@ val audioProcessorInputFormat = MutableStateFlow(AudioProcessor.AudioFormat(
     /* encoding= */ Format.NO_VALUE)
 )
 
-
+@androidx.media3.common.util.UnstableApi
 class myAudioProcessor : AudioProcessor {
 
 
@@ -85,24 +85,17 @@ class myAudioProcessor : AudioProcessor {
     }
 
 
-    var buf = ShortArray(1)
+    var buf = FloatArray(1)
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun queueInput(inputBuffer: ByteBuffer) {
 
         //println("qI")
-
-        val enl = gen.liveData.enL.value
-        val enr = gen.liveData.enR.value
 
         var position = inputBuffer.position()
         val limit = inputBuffer.limit()
         var size = limit - position
 
         val channelCount = inputAudioFormat.channelCount
-
-        //val frameCount = (size) / (2 * inputAudioFormat.channelCount)
-
         if (channelCount == 1) size *= 2
 
         if (processBuffer.capacity() < size) {
@@ -112,7 +105,7 @@ class myAudioProcessor : AudioProcessor {
         }
 
         //if (buf.size < size/2)
-        buf = ShortArray(size / 2) { 0 }
+        buf = FloatArray(size / 2)
 
         var index = 0
 
@@ -120,35 +113,26 @@ class myAudioProcessor : AudioProcessor {
 
             if (channelCount == 2) {
                 for (channelIndex in 0 until channelCount) { //current = inputBuffer.getShort(position + 2 * channelIndex)
-
-                    val current: Short =
-                        if (channelIndex == 0) if (enr) inputBuffer.getShort(position) else 0
-                        else if (enl) inputBuffer.getShort(position + 2) else 0
-
+                    val current: Float = if (channelIndex == 0) inputBuffer.getShort(position).toFloat() else inputBuffer.getShort(position + 2).toFloat()
                     //processBuffer.putShort(current)
-
                     processBuffer.putShort(0)
-
-                    buf[index] = current
+                    buf[index] = current/Short.MAX_VALUE
                     index++
                 }
                 position += channelCount * 2
             }
 
             if (channelCount == 1) {
-                val currentR: Short = if (enr) inputBuffer.getShort(position) else 0
-                val currentL: Short = if (enl) inputBuffer.getShort(position) else 0
-
+                val currentL: Float =  inputBuffer.getShort(position).toFloat()
+                val currentR: Float =  inputBuffer.getShort(position).toFloat()
                 //processBuffer.putShort(currentR)
                 //processBuffer.putShort(currentL)
-
                 processBuffer.putShort(0)
                 processBuffer.putShort(0)
-
                 position += 2
-                buf[index] = currentR
+                buf[index] = currentR/Short.MAX_VALUE
                 index++
-                buf[index] = currentL
+                buf[index] = currentL/Short.MAX_VALUE
                 index++
             }
 
