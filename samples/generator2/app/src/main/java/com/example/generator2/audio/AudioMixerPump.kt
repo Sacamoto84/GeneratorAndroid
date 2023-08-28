@@ -129,7 +129,7 @@ class AudioMixerPump {
                     }
 
                     if ((audioProcessorInputFormat.value.sampleRate != audioOut.sampleRate) or (audioOut.out.format.encoding != AudioFormat.ENCODING_PCM_FLOAT)) {
-                        audioOut.destroy(); audioOut = AudioOut(audioProcessorInputFormat.value.sampleRate,800, AudioFormat.ENCODING_PCM_FLOAT)
+                        audioOut.destroy(); audioOut = AudioOut(audioProcessorInputFormat.value.sampleRate,400, AudioFormat.ENCODING_PCM_FLOAT)
                     }
 
                     val bufGenL: FloatArray
@@ -189,20 +189,16 @@ class AudioMixerPump {
                         println("Очистка канала")
                     }
 
+                    //8192 LR-4096    192k -> 21.3ms    48k->85.4ms
+
                     if ((routeL.value != ROUTESTREAM.MP3) and (routeR.value != ROUTESTREAM.MP3)) {
                         if ((audioOut.out.sampleRate != 192000) or (audioOut.out.format.encoding != AudioFormat.ENCODING_PCM_FLOAT)) {
                             audioOut.destroy(); audioOut =
-                                AudioOut(192000, 800, encoding = AudioFormat.ENCODING_PCM_FLOAT)
+                                AudioOut(192000, 400, encoding = AudioFormat.ENCODING_PCM_FLOAT)
                         }
                     }
 
                     gen.sampleRate = audioOut.sampleRate
-
-                    //val bufGen: ShortArray
-
-                    //val bufGenL : FloatArray
-                    //val bufGenR : FloatArray
-
                     val buf: Pair<FloatArray, FloatArray>
 
                     //mi8  2220us release 192k 8192
@@ -226,7 +222,17 @@ class AudioMixerPump {
                         ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
                     }
 
-                    val v = bufMerge(outR, outL)
+                    //invertL
+                    if (invertL.value) for (i in outL.indices) { outL[i] = -outL[i] }
+                    //invertR
+                    if (invertR.value) for (i in outR.indices) { outR[i] = -outR[i] }
+
+                    val v = if(shuffle.value){
+                        bufMerge(outL, outR)
+                    } else {
+                        //Нормальный режим
+                        bufMerge(outR, outL)
+                    }
 
                     audioOut.out.write(v, 0, v.size, WRITE_BLOCKING)
 

@@ -1,10 +1,17 @@
 package com.example.generator2.mp3.compose
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Slider
@@ -127,8 +134,32 @@ fun MP3Control() {
         Text(text = "AudioOut:${AudioSampleRate.collectAsState().value} Hz", color = Color.Yellow)
 
 
-        Mp3Route("L", audioMixerPump.routeL.collectAsState().value)
-        Mp3Route("R", audioMixerPump.routeR.collectAsState().value)
+        Row(modifier = Modifier.fillMaxWidth()) {
+
+            Column {
+                Mp3Route("L", audioMixerPump.routeL.collectAsState().value)
+                Mp3Route("R", audioMixerPump.routeR.collectAsState().value)
+            }
+
+            Icon(
+                modifier = Modifier
+                    .height(64.dp).width(32.dp).offset((-1).dp)
+                    .clickable(
+                        onClick = {
+                            audioMixerPump.shuffle.value = audioMixerPump.shuffle.value.not()
+                        }
+                    )
+                    .border(1.dp, Color.Gray)
+                    .padding(4.dp)
+                ,
+                painter = painterResource(id = R.drawable.shuffle74),
+                contentDescription = "",
+                tint = if (audioMixerPump.shuffle.collectAsState().value) Color.Green else Color.DarkGray
+            )
+
+
+        }
+
 
 
 

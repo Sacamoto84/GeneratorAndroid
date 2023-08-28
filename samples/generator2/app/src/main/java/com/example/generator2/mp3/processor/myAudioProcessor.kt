@@ -5,6 +5,7 @@ import androidx.media3.common.Format
 import androidx.media3.common.audio.AudioProcessor
 import com.example.generator2.generator.gen
 import com.example.generator2.mp3.chDataStreamOutAudioProcessor
+import com.example.generator2.mp3.exoplayer
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
@@ -152,6 +153,7 @@ class myAudioProcessor : AudioProcessor {
 
 
     override fun queueEndOfStream() {
+        exoplayer.isPlayingD = false
         Timber.e("queueEndOfStream")
         inputEnded = true
         processBuffer = AudioProcessor.EMPTY_BUFFER
