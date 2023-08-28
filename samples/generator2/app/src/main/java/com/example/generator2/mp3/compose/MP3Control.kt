@@ -127,9 +127,9 @@ fun MP3Control() {
         Text(text = "AudioOut:${AudioSampleRate.collectAsState().value} Hz", color = Color.Yellow)
 
 
-
-        Mp3Route("R", audioMixerPump.routeR.collectAsState().value)
         Mp3Route("L", audioMixerPump.routeL.collectAsState().value)
+        Mp3Route("R", audioMixerPump.routeR.collectAsState().value)
+
 
 
 

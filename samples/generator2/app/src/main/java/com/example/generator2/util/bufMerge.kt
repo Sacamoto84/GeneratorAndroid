@@ -5,9 +5,6 @@ var combinedArrayFloat = FloatArray(0)
 fun bufMerge(
     array1: FloatArray,
     array2: FloatArray,
-    enL: Boolean,
-    enR: Boolean,
-    invert: Boolean = false
 ): FloatArray {
 
     val len = array1.size + array2.size
@@ -19,16 +16,10 @@ fun bufMerge(
     var index2 = 0
     for (i in combinedArrayFloat.indices) {
         if (i % 2 == 0) {
-            if (enL)
-                combinedArrayFloat[i] = array1[index1]
-            else
-                combinedArrayFloat[i] = 0F
+            combinedArrayFloat[i] = array1[index1]
             index1++
         } else {
-            if (enR)
-                combinedArrayFloat[i] = array2[index2] * if (invert) (-1.0f) else 1.0f
-            else
-                combinedArrayFloat[i] = 0F
+            combinedArrayFloat[i] = array2[index2]
             index2++
         }
     }
