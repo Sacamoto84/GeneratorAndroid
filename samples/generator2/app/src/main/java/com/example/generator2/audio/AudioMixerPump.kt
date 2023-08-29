@@ -2,8 +2,10 @@ package com.example.generator2.audio
 
 import android.media.AudioFormat
 import android.media.AudioTrack.WRITE_BLOCKING
+import android.media.AudioTrack.WRITE_NON_BLOCKING
 import com.example.generator2.generator.gen
 import com.example.generator2.mp3.chDataStreamOutAudioProcessor
+import com.example.generator2.mp3.channelDataStreamOutCompressor
 import com.example.generator2.mp3.exoplayer
 import com.example.generator2.mp3.processor.audioProcessorInputFormat
 import com.example.generator2.util.bufMerge
@@ -129,7 +131,7 @@ class AudioMixerPump {
                     }
 
                     if ((audioProcessorInputFormat.value.sampleRate != audioOut.sampleRate) or (audioOut.out.format.encoding != AudioFormat.ENCODING_PCM_FLOAT)) {
-                        audioOut.destroy(); audioOut = AudioOut(audioProcessorInputFormat.value.sampleRate,400, AudioFormat.ENCODING_PCM_FLOAT)
+                        audioOut.destroy(); audioOut = AudioOut(audioProcessorInputFormat.value.sampleRate,1000, AudioFormat.ENCODING_PCM_FLOAT)
                     }
 
                     val bufGenL: FloatArray
@@ -174,8 +176,14 @@ class AudioMixerPump {
                         bufMerge(outR, outL)
                     }
 
+
+
                     //LRLRLR
                     audioOut.out.write(v, 0, v.size, WRITE_BLOCKING)
+
+                    channelDataStreamOutCompressor.trySend(v)
+
+
 
                 } else {
 
@@ -234,7 +242,10 @@ class AudioMixerPump {
                         bufMerge(outR, outL)
                     }
 
+
                     audioOut.out.write(v, 0, v.size, WRITE_BLOCKING)
+
+                    channelDataStreamOutCompressor.send(v)
 
                 }
 

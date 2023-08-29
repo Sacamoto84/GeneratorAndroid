@@ -11,12 +11,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import kotlin.system.measureNanoTime
 
 @androidx.media3.common.util.UnstableApi
-val audioProcessorInputFormat = MutableStateFlow(AudioProcessor.AudioFormat(
-    /* sampleRate= */ Format.NO_VALUE,
-    /* channelCount= */ Format.NO_VALUE,
-    /* encoding= */ Format.NO_VALUE)
+val audioProcessorInputFormat = MutableStateFlow(
+    AudioProcessor.AudioFormat(
+        /* sampleRate= */ Format.NO_VALUE,
+        /* channelCount= */ Format.NO_VALUE,
+        /* encoding= */ Format.NO_VALUE
+    )
 )
 
 @androidx.media3.common.util.UnstableApi
@@ -86,11 +89,7 @@ class myAudioProcessor : AudioProcessor {
     }
 
 
-    var buf = FloatArray(1)
-
     override fun queueInput(inputBuffer: ByteBuffer) {
-
-        //println("qI")
 
         var position = inputBuffer.position()
         val limit = inputBuffer.limit()
@@ -99,14 +98,12 @@ class myAudioProcessor : AudioProcessor {
         val channelCount = inputAudioFormat.channelCount
         if (channelCount == 1) size *= 2
 
-        if (processBuffer.capacity() < size) {
+        if (processBuffer.capacity() < size)
             processBuffer = ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder())
-        } else {
+        else
             processBuffer.clear()
-        }
 
-        //if (buf.size < size/2)
-        buf = FloatArray(size / 2)
+        val buf = FloatArray(size / 2)
 
         var index = 0
 
@@ -114,26 +111,27 @@ class myAudioProcessor : AudioProcessor {
 
             if (channelCount == 2) {
                 for (channelIndex in 0 until channelCount) { //current = inputBuffer.getShort(position + 2 * channelIndex)
-                    val current: Float = if (channelIndex == 0) inputBuffer.getShort(position).toFloat() else inputBuffer.getShort(position + 2).toFloat()
+                    val current: Float = if (channelIndex == 0) inputBuffer.getShort(position)
+                        .toFloat() else inputBuffer.getShort(position + 2).toFloat()
                     //processBuffer.putShort(current)
                     processBuffer.putShort(0)
-                    buf[index] = current/Short.MAX_VALUE
+                    buf[index] = current / Short.MAX_VALUE
                     index++
                 }
                 position += channelCount * 2
             }
 
             if (channelCount == 1) {
-                val currentL: Float =  inputBuffer.getShort(position).toFloat()
-                val currentR: Float =  inputBuffer.getShort(position).toFloat()
+                val currentL: Float = inputBuffer.getShort(position).toFloat()
+                val currentR: Float = inputBuffer.getShort(position).toFloat()
                 //processBuffer.putShort(currentR)
                 //processBuffer.putShort(currentL)
                 processBuffer.putShort(0)
                 processBuffer.putShort(0)
                 position += 2
-                buf[index] = currentR/Short.MAX_VALUE
+                buf[index] = currentR / Short.MAX_VALUE
                 index++
-                buf[index] = currentL/Short.MAX_VALUE
+                buf[index] = currentL / Short.MAX_VALUE
                 index++
             }
 
@@ -160,6 +158,7 @@ class myAudioProcessor : AudioProcessor {
     }
 
     override fun getOutput(): ByteBuffer {
+        //Timber.w("Процессор getOutput()")
         val outputBuffer = this.outputBuffer
         this.outputBuffer = AudioProcessor.EMPTY_BUFFER
         return outputBuffer

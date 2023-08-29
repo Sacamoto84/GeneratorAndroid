@@ -1,9 +1,7 @@
 package com.example.generator2.mp3.stream
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Path
+import androidx.compose.ui.graphics.Path
 import com.example.generator2.mp3.OSCILLSYNC
 import com.example.generator2.mp3.Pt
 import com.example.generator2.mp3.channelDataOutRoll
@@ -14,6 +12,8 @@ import com.example.generator2.util.bufSpit
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import libs.maping
 
@@ -32,174 +32,186 @@ val paintL = Paint().apply {
 }
 
 
+val renderCompleteBitmap = MutableStateFlow(true)
 
 @OptIn(DelicateCoroutinesApi::class)
 fun renderDataToPoints() {
-    GlobalScope.launch(Dispatchers.Default) {
-        while (true) {
-            //val out = mutableListOf<Short>()
 
-            //val outPointR = mutableListOf<Offset>()
-            //val outPointL = mutableListOf<Offset>()
+//    var bitmap1: Bitmap =
+//        Bitmap.createBitmap(scope.scopeW.toInt(), scope.scopeH.toInt(), Bitmap.Config.RGB_565)
+//    var bitmap2: Bitmap =
+//        Bitmap.createBitmap(scope.scopeW.toInt(), scope.scopeH.toInt(), Bitmap.Config.RGB_565)
+//    var bitmapBuffer = false
 
-            val w = scope.scopeW
-            val h = scope.scopeH
+    var ArrayPtR = Array(0) { Pt(0f, 0f) }
+    var ArrayPtL = Array(0) { Pt(0f, 0f) }
 
-            val bufRN: ShortArray
-            val bufLN: ShortArray
 
-            if ((w == 1f) or (h == 1f))
-                continue
+    Thread {
 
-            //if (bitmap_example == null)
+        GlobalScope.launch(Dispatchers.IO) {
 
-            //bitmap_example?.recycle() // Освободите память, затем пересоздайте Bitmap
-            //if (bitmap_example == null)
-            val  bitmap_example = Bitmap.createBitmap(w.toInt(), h.toInt(), Bitmap.Config.ARGB_8888)
-            //bitmap_example!!.eraseColor(Color.GRAY)
+            while (true) {
 
-            val canvas = Canvas(bitmap_example)
-            canvas.drawARGB(255,16,16,128)
+                val w = scope.scopeW
+                val h = scope.scopeH
 
-            var indexStartSignal = 0
+                val bufRN: FloatArray
+                val bufLN: FloatArray
 
-            if (compressorCount.floatValue <= 8f) {
+                if ((w == 1f) or (h == 1f)) continue
 
-                val buf = channelDataStreamOutCompressor.receive()
+                delay(16)
 
-                if (buf.isEmpty()) continue
-                val (bufR, bufL) = bufSpit(buf)
+                var indexStartSignal = 0
 
-                if (oscillSync.value == OSCILLSYNC.R) {
-                    var last: Short = 0
-                    for (i in 0 until bufR.size / 2) {
-                        val now = bufR[i]
-                        if ((last < 0) and (now >= 0)) {
-                            indexStartSignal = i
-                            break
-                        }
-                        last = now
-                    }
-                }
+                if (compressorCount.floatValue <= 8f) {
 
-                if (oscillSync.value == OSCILLSYNC.L) {
-                    var last: Short = 0
-                    for (i in 0 until bufL.size / 2) {
-                        val now = bufL[i]
-                        if ((last < 0) and (now >= 0)) {
-                            indexStartSignal = i
-                            break
-                        }
-                        last = now
-                    }
-                }
-
-                bufLN = bufL.copyOfRange(indexStartSignal, (bufL.size - 1) / 2 + indexStartSignal)
-                bufRN = bufR.copyOfRange(indexStartSignal, (bufR.size - 1) / 2 + indexStartSignal)
-
-            } else {
-
-                // Для compressorCount > 8 нет синхронизации
-                if (compressorCount.floatValue < 64) {
                     val buf = channelDataStreamOutCompressor.receive()
-                    if (buf.isEmpty()) continue
-                    val (bufR, bufL) = bufSpit(buf)
-                    bufLN = bufL
-                    bufRN = bufR
-                } else {
-                    //Режим Roll >= 64
-                    val buf = channelDataOutRoll.receive()
-                    if (buf.isEmpty()) continue
-                    val (bufR, bufL) = bufSpit(buf)
-                    bufLN = bufL
-                    bufRN = bufR
-                }
 
-            }
+                    if (buf.isEmpty()) continue
+                    val (bufR, bufL) = bufSpit(buf)
+
+                    if (oscillSync.value == OSCILLSYNC.R) {
+                        var last: Float = 0f
+                        for (i in 0 until bufR.size / 2) {
+                            val now = bufR[i]
+                            if ((last < 0) and (now >= 0)) {
+                                indexStartSignal = i
+                                break
+                            }
+                            last = now
+                        }
+                    }
+
+                    if (oscillSync.value == OSCILLSYNC.L) {
+                        var last: Float = 0f
+                        for (i in 0 until bufL.size / 2) {
+                            val now = bufL[i]
+                            if ((last < 0) and (now >= 0)) {
+                                indexStartSignal = i
+                                break
+                            }
+                            last = now
+                        }
+                    }
+
+                    bufLN = bufL.copyOfRange(indexStartSignal, (bufL.size - 1) / 2 + indexStartSignal)
+                    bufRN = bufR.copyOfRange(indexStartSignal, (bufR.size - 1) / 2 + indexStartSignal)
+
+                } else {
+
+                    // Для compressorCount > 8 нет синхронизации
+                    if (compressorCount.floatValue < 64) {
+                        val buf = channelDataStreamOutCompressor.receive()
+                        if (buf.isEmpty()) continue
+                        val (bufR, bufL) = bufSpit(buf)
+                        bufLN = bufL
+                        bufRN = bufR
+                    } else {
+                        //Режим Roll >= 64
+                        val buf = channelDataOutRoll.receive()
+                        if (buf.isEmpty()) continue
+                        val (bufR, bufL) = bufSpit(buf)
+                        bufLN = bufL
+                        bufRN = bufR
+                    }
+
+                }
 
 ////////////////////////////////////////////////////////////////
 
 
-            //val pathR = FloatArray(w.toInt()*4)
-            //val pathL = FloatArray(w.toInt())
+                //val pathR = FloatArray(w.toInt()*4)
+                //val pathL = FloatArray(w.toInt())
 
-            val ArrayPtR = Array(w.toInt()){Pt(0f,0f)}
-            val pathR =  Path()
+                if (ArrayPtR.size != w.toInt())
+                    ArrayPtR = Array(w.toInt()) { Pt(0f, 0f) }
 
-            val ArrayPtL = Array(w.toInt()){Pt(0f,0f)}
-            val pathL =  Path()
+                val pathR = Path()
+
+                if (ArrayPtL.size != w.toInt())
+                    ArrayPtL = Array(w.toInt()) { Pt(0f, 0f) }
+
+                val pathL = Path()
+
+                var ptTemp = Pt(0f, 0f)
 
 
-            var i = 0
+                var i = 0
 
-            if (compressorCount.floatValue < 64) {
+                if (compressorCount.floatValue < 64) {
 
-                for (x in 0 until w.toInt()) {
-                    val mapX: Int = maping(x.toFloat(), 0f, w - 1f, 0f, (bufRN.size - 1f)).toInt()
-                        .coerceIn(0, bufRN.size - 1)
+                    for (x in 0 until w.toInt()) {
+                        val mapX: Int =
+                            maping(x.toFloat(), 0f, w - 1f, 0f, (bufRN.size - 1f)).toInt()
+                                .coerceIn(0, bufRN.size - 1)
 
-                    val yR = maping(bufRN[mapX].toFloat(), Short.MIN_VALUE.toFloat(), Short.MAX_VALUE.toFloat(), 0f, h - 1f)
-                    val yL = maping(bufLN[mapX].toFloat(), Short.MIN_VALUE.toFloat(), Short.MAX_VALUE.toFloat(), 0f, h - 1f)
+                        val yR = maping(bufRN[mapX], -1f, 1f, 0f, h - 1f)
+                        val yL = maping(bufLN[mapX], -1f, 1f, 0f, h - 1f)
 
-                    ArrayPtR[x] = Pt(x.toFloat(), yR)
-                    ArrayPtL[x] = Pt(x.toFloat(), yL)
+
+                        ptTemp = Pt(x.toFloat(), yR)
+                        ArrayPtR[x] = ptTemp
+                        ptTemp = Pt(x.toFloat(), yL)
+                        ArrayPtL[x] = ptTemp
+
+                    }
+
+                    pathR.moveTo(ArrayPtR[0].x, ArrayPtR[0].y)
+                    pathL.moveTo(ArrayPtL[0].x, ArrayPtL[0].y)
+                    for (i1 in 1 until ArrayPtR.size) {
+                        pathR.lineTo(ArrayPtR[i1].x, ArrayPtR[i1].y)
+                        pathL.lineTo(ArrayPtL[i1].x, ArrayPtL[i1].y)
+                    }
+
+                    // выводим результат
+
+
+
+
+                } else {
+                    //Roll логика
+                    //Дано  bufRN bufLN
+                    val listIndex0 =
+                        mutableListOf<Int>() //Первый прогон, получение списка начальных индексов из основного буффера
+                    for (x in 0 until w.toInt()) {
+                        listIndex0.add(
+                            maping(x.toFloat(), 0f, w - 1f, 0f, (bufRN.size - 1f)).toInt()
+                                .coerceIn(0, bufRN.size - 1)
+                        )
+                    }
+
+                    for (i3 in 0 until (listIndex0.size - 1)) {
+
+
+                        val max =
+                            bufRN.slice(listIndex0[i3] until listIndex0[i3 + 1]).max().toFloat()
+                        val y = maping(max, -1f, 1f, 0f, h - 1f)
+                        val y1 = maping(-max, -1f, 1f, 0f, h - 1f)
+
+                        //outPointR.add(Offset(i.toFloat(), y))
+                        //outPointL.add(Offset(i.toFloat(), y1))
+
+                    }
+
 
                 }
 
-                pathR.moveTo(ArrayPtR[0].x, ArrayPtR[0].y)
-                pathL.moveTo(ArrayPtL[0].x, ArrayPtL[0].y)
-                for (i1 in 1 until ArrayPtR.size) {
-                    pathR.lineTo(ArrayPtR[i1].x, ArrayPtR[i1].y)
-                    pathL.lineTo(ArrayPtL[i1].x, ArrayPtL[i1].y)
-                }
-
-                // выводим результат
-                canvas.drawPath(pathR, paintR)
-                canvas.drawPath(pathL, paintL)
-
-            } else {
-                //Roll логика
-                //Дано  bufRN bufLN
-                val listIndex0 =
-                    mutableListOf<Int>() //Первый прогон, получение списка начальных индексов из основного буффера
-                for (x in 0 until w.toInt()) {
-                    listIndex0.add(
-                        maping(x.toFloat(), 0f, w - 1f, 0f, (bufRN.size - 1f)).toInt()
-                            .coerceIn(0, bufRN.size - 1)
-                    )
-                }
-
-                for (i3 in 0 until (listIndex0.size - 1)) {
 
 
-                    val max = bufRN.slice(listIndex0[i3] until listIndex0[i3 + 1]).max().toFloat()
-                    val y = maping(
-                        max,
-                        Short.MIN_VALUE.toFloat(),
-                        Short.MAX_VALUE.toFloat(),
-                        0f,
-                        h - 1f
-                    )
-                    val y1 = maping(
-                        -max,
-                        Short.MIN_VALUE.toFloat(),
-                        Short.MAX_VALUE.toFloat(),
-                        0f,
-                        h - 1f
-                    )
+                val v = Pair(pathR, pathL)
+                scope.chDataOutBitmap.send( v )
 
-                    //outPointR.add(Offset(i.toFloat(), y))
-                    //outPointL.add(Offset(i.toFloat(), y1))
+                    //scope.chDataOutBitmap.send(bitmap2)
 
 
-                }
 
 
             }
-
-            scope.chDataOutBitmap.send(bitmap_example)
-
         }
-    }
+
+
+    }.start()
 }
 

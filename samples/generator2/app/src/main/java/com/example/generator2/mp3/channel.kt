@@ -5,17 +5,17 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 
 val chDataStreamOutAudioProcessor =
-    Channel<FloatArray>(capacity = 16, BufferOverflow.DROP_LATEST)
+    Channel<FloatArray>(capacity = 48, BufferOverflow.DROP_LATEST)
 
 val channelDataStreamOutGenerator =
     Channel<ShortArray>(capacity = 16, BufferOverflow.DROP_OLDEST)
 
 
 
-val channelDataStreamOutCompressor = Channel<ShortArray>(capacity = 16, BufferOverflow.DROP_OLDEST)
+val channelDataStreamOutCompressor = Channel<FloatArray>(capacity = 16, BufferOverflow.DROP_LATEST)
 
 //Канал для Roll данных из компрессора
-val channelDataOutRoll = Channel<ShortArray>(1, BufferOverflow.DROP_OLDEST)
+val channelDataOutRoll = Channel<FloatArray>(1, BufferOverflow.DROP_OLDEST)
 
 
 

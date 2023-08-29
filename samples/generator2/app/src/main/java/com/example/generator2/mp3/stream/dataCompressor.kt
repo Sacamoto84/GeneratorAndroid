@@ -1,18 +1,8 @@
 package com.example.generator2.mp3.stream
 
 import androidx.compose.runtime.mutableFloatStateOf
-import com.example.generator2.mp3.chDataStreamOutAudioProcessor
-
-import com.example.generator2.mp3.channelDataOutRoll
-import com.example.generator2.mp3.channelDataStreamOutCompressor
-import com.example.generator2.mp3.channelDataStreamOutGenerator
-import com.example.generator2.scope.scope
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import libs.structure.FIFO
-import timber.log.Timber
 import java.util.LinkedList
 
 //Количество пакетов в которое будет упакован выходной канал
