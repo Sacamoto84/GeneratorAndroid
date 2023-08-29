@@ -51,7 +51,7 @@ fun CardAM(str: String = "CH0") {
         )
 
         Row(
-                Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically
+                Modifier.padding(top = 0.dp), verticalAlignment = Alignment.CenterVertically
         ) {
 
             val amFr: State<Float?> = if (str == "CH0") {
@@ -65,7 +65,7 @@ fun CardAM(str: String = "CH0") {
             Box(
                     modifier = Modifier
                             .padding(start = 8.dp)
-                            .height(48.dp)
+                            .height(32.dp)
                             .width(ms4SwitchWidth)
                             .border(
                                     2.dp,
@@ -107,71 +107,6 @@ fun CardAM(str: String = "CH0") {
                     range = 0.1f..200f,
             )
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//            var expanded by remember { mutableStateOf(false) }
-//            var selectedIndex by remember { mutableIntStateOf(0) }
-//
-//            Box(
-//                Modifier
-//                    .padding(start = 0.dp)
-//                    .height(48.dp)
-//                    .fillMaxWidth()
-//                    .weight(1f)
-//                    .noRippleClickable { expanded = true }) {
-//
-//                //Частота модуляции
-//                MainScreenTextBoxGuest(
-//                    String.format("%.1f", amFr.value),
-//                    modifier = Modifier
-//                        .padding(start = 8.dp)
-//                        .height(48.dp)
-//                        .fillMaxSize(),
-//                    value = amFr.value!!,
-//                    sensing = if (amFr.value!! < 10.0F) LiveConstrain.sensetingSliderAmFm.floatValue else LiveConstrain.sensetingSliderAmFm.floatValue * 10f,
-//                    range = LiveConstrain.rangeSliderAmFm,
-//                    onValueChange = {
-//                        if (str == "CH0") LiveData.ch1_AM_Fr.value =
-//                            it else LiveData.ch2_AM_Fr.value = it
-//                    },
-//                    fontSize = textStyleEditFontSize,
-//                    fontFamily = textStyleEditFontFamily
-//                )
-//
-//                val items = listOf("0.1", "1.0", "5.5", "10.0", "40.0", "100.0")
-//
-//                DropdownMenu(
-//                    offset = DpOffset(8.dp, 4.dp),
-//                    expanded = expanded,
-//                    onDismissRequest = { expanded = false },
-//                    modifier = Modifier
-//                        //.width(80.dp)
-//                        .background(
-//                            colorLightBackground2
-//                        )
-//                        .border(1.dp, color = Color.DarkGray, shape = RoundedCornerShape(16.dp))
-//                ) {
-//
-//                    items.forEachIndexed { index, s ->
-//                        DropdownMenuItem(onClick = {
-//                            selectedIndex = index
-//                            expanded = false
-//
-//                            if (str == "CH0") {
-//                                LiveData.ch1_AM_Fr.value = s.toFloat()
-//                            } else {
-//                                LiveData.ch2_AM_Fr.value = s.toFloat()
-//                            }
-//
-//                        })
-//                        {
-//                            Text(text = s, color = Color.White)
-//                        }
-//                    }
-//                }
-//            }
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
             val amDepth: State<Float?> = if (str == "CH0") {
                 gen.liveData.ch1AmDepth.collectAsState()
             } else {
@@ -208,7 +143,7 @@ fun CardAM(str: String = "CH0") {
 
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        //Spacer(modifier = Modifier.height(8.dp))
 
     } //}
 }

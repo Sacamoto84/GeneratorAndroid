@@ -58,13 +58,13 @@ fun CardCarrier(str: String = "CH0") {
 
 
         Row(
-            Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically
+            Modifier.padding(top = 0.dp), verticalAlignment = Alignment.CenterVertically
         ) {
 
             // Кнопка включения канала
             Box(modifier = Modifier
                 .padding(start = 8.dp)
-                .height(48.dp)
+                .height(32.dp)
                 .width(ms4SwitchWidth)
                 .border(
                     2.dp,
@@ -129,7 +129,7 @@ fun CardCarrier(str: String = "CH0") {
                 CH = str,
                 Mod = "CR",
                 modifier = Modifier
-                    .padding(top = 0.dp, start = 8.dp, end = 8.dp)
+                    .padding(start = 8.dp, end = 8.dp)
                     .wrapContentWidth()
                     .clip(shape = RoundedCornerShape(4.dp)),
                 filename = if (str == "CH0") gen.liveData.ch1_Carrier_Filename.collectAsState()
@@ -137,20 +137,6 @@ fun CardCarrier(str: String = "CH0") {
             )
 
         }
-
-        //            Slider(
-        //                valueRange = rangeSliderCr,
-        //                value = carrierFr.value!!,
-        //                onValueChange = {
-        //                    if (str == "CH0") Global.ch1_Carrier_Fr.value =
-        //                        it else Global.ch2_Carrier_Fr.value = it
-        //                },
-        //                modifier = Modifier
-        //                    .fillMaxWidth()
-        //                    .padding(start = 8.dp, end = 8.dp),
-        //                colors = SliderDefaults.colors(thumbColor = Color.LightGray),
-        //                steps = stepSliderCr
-        //            )
 
     }
 

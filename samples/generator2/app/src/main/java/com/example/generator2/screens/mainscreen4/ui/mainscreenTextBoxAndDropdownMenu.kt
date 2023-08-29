@@ -52,7 +52,7 @@ fun MainscreenTextBoxAndDropdownMenu(
     Box(
         Modifier
             .padding(start = 0.dp)
-            .height(48.dp)
+            .height(32.dp)
             .fillMaxWidth()
             //.weight(1f)
             .then(modifier)

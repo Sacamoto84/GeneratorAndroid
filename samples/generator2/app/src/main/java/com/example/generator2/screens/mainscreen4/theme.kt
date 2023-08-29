@@ -29,7 +29,7 @@ val modifierInfinitySlider =
         .padding(start = 8.dp)
         .border(2.dp, Color.DarkGray, RoundedCornerShape(8.dp))
         .clip(RoundedCornerShape(8.dp)).background(Color(0xFF141414))
-        .height(48.dp).width(36.dp)
+        .height(32.dp).width(36.dp)
 
 /**
  * Стиль для кнопок включения модуляций

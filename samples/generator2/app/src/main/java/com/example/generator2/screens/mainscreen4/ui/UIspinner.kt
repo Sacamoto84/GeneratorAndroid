@@ -102,9 +102,13 @@ object UIspinner {
                         bitmap = it.asImageBitmap(),
                         contentDescription = null,
                         modifier = Modifier
-                            .width(104.dp)
-                            .height(48.dp)
-                            .padding(start = 4.dp, end = 4.dp) //128 64
+
+                            .width(72.dp)
+                            .height(32.dp)
+
+                            //.width(104.dp)
+                            //.height(48.dp)
+                            //.padding(start = 4.dp, end = 4.dp) //128 64
                     )
                 }
 

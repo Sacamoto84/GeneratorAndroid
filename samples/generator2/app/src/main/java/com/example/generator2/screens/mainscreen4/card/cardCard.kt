@@ -22,15 +22,14 @@ fun CardCard(str: String = "CH0") {
     Box(
 
         modifier = Modifier
-            .height(258.dp)
+            //.height(200.dp)
             .fillMaxWidth()
-            .padding(start = 0.dp, end = 0.dp).background(colorLightBackground)
+            .background(colorLightBackground)
     )
     {
 
         Column {
             CardCarrier(str)
-            Spacer(modifier = Modifier.height(8.dp))
             CardAM(str)
             CardFM(str)
         }

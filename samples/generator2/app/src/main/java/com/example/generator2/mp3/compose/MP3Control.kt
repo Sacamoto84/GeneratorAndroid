@@ -126,10 +126,10 @@ fun MP3Control() {
         ////////////////////////////////////////////////
 
 
-        Text(text = "isPlaying:${exoplayer.isPlaying.collectAsState().value}", color = Color.Yellow)
+        //Text(text = "isPlaying:${exoplayer.isPlaying.collectAsState().value}", color = Color.Yellow)
         //Text(text = "bufferedPercentage:${exoplayer.bufferedPercentage.collectAsState().value}", color = Color.Yellow)
-        Text(text = ":${exoplayer.bitrate}", color = Color.Yellow)
-        Text(text = ":${exoplayer.averageBitrate}", color = Color.Yellow)
+        //Text(text = ":${exoplayer.bitrate}", color = Color.Yellow)
+        //Text(text = ":${exoplayer.averageBitrate}", color = Color.Yellow)
 
         Text(text = "AudioOut:${AudioSampleRate.collectAsState().value} Hz", color = Color.Yellow)
 

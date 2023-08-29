@@ -78,7 +78,6 @@ fun CardFM(str: String = "CH0") {
 
         Row(
             Modifier
-                .padding(top = 8.dp)
                 .height(48.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -87,7 +86,7 @@ fun CardFM(str: String = "CH0") {
             Box(
                 modifier = Modifier
                     .padding(start = 8.dp)
-                    .height(48.dp)
+                    .height(32.dp)
                     .width(ms4SwitchWidth)
                     .border(
                         2.dp,
@@ -122,7 +121,7 @@ fun CardFM(str: String = "CH0") {
             Box(
                 Modifier
                     .padding(start = 0.dp)
-                    .height(48.dp)
+                    .height(32.dp)
                     .fillMaxWidth()
                     .weight(1f)
                     .noRippleClickable { expanded = true })
@@ -179,25 +178,12 @@ fun CardFM(str: String = "CH0") {
                 }
             }
             //////////////////////////////////////////////////////////////////////////////////////////////////////
-//            InfinitySlider(
-//                value = fmFr.value,
-//                sensing = if (fmFr.value!! < 10.0F) LiveConstrain.sensetingSliderAmFm.value else LiveConstrain.sensetingSliderAmFm.value * 10f,
-//                range = LiveConstrain.rangeSliderAmFm,
-//                onValueChange = {
-//                    if (str == "CH0") LiveData.ch1_FM_Fr.value =
-//                        it else LiveData.ch2_FM_Fr.value = it
-//                },
-//                modifier = modifierInfinitySlider,
-//                vertical = true,
-//                invert = true,
-//                visibleText = false
-//            )
 
             UIspinner.Spinner(
                 str,
                 "FM",
                 modifier = Modifier
-                    .padding(top = 0.dp, start = 8.dp, end = 8.dp)
+                    .padding(start = 8.dp, end = 8.dp)
                     .wrapContentWidth()
                     .clip(shape = RoundedCornerShape(4.dp))
                     .background(Color.Black),
@@ -213,25 +199,6 @@ fun CardFM(str: String = "CH0") {
         //Вторая строка
 
         SecondLine(str)
-
-
-
-
-
-
-        Spacer(modifier = Modifier.height(8.dp))
-//        Slider(
-//            valueRange = rangeSliderFmDev,
-//            value = fmDev.value!!,
-//            onValueChange = {
-//                if (str == "CH0") Global.ch1_FM_Dev.value =
-//                    it else Global.ch2_FM_Dev.value = it
-//            },
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(start = 8.dp, end = 8.dp),
-//            colors = SliderDefaults.colors(thumbColor = Color.LightGray)
-//        )
 
     }
 }
@@ -269,7 +236,7 @@ private fun SecondLine(str: String = "CH0") {
             },
 
             modifier = Modifier
-                .padding(start = 8.dp, top = 8.dp)
+                .padding(start = 8.dp)
                 .height(48.dp)
                 .width(32.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.Gray)
