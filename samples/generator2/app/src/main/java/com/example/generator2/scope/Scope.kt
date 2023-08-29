@@ -50,7 +50,7 @@ class Scope {
         var update by remember { mutableIntStateOf(0) }
         var updateLissagu by remember { mutableIntStateOf(0) }
 
-        var pairPoints: Pair<Path, Path>  = Pair(Path(), Path())
+        var pairPoints: Pair<Path, Path> = Pair(Path(), Path())
 
         LaunchedEffect(key1 = true)
         {
@@ -99,20 +99,20 @@ class Scope {
                         color = Color.Green,
                         path = pairPoints.first,
                         style = Stroke(
-                            width = 3.dp.toPx(),
-                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f))
+                            width = 2.dp.toPx(),
+                            //pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 2f))
                         )
                     )
 
-                    if (bitmap != null)
-                        drawPath(
-                            color = Color.Red,
-                            path = pairPoints.first,
-                            style = Stroke(
-                                width = 3.dp.toPx(),
-                                pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f))
-                            )
+
+                    drawPath(
+                        color = Color.Red,
+                        path = pairPoints.second,
+                        style = Stroke(
+                            width = 2.dp.toPx(),
+                            //pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 2f))
                         )
+                    )
 
                     //bitmap?.let { drawImage(it.asImageBitmap()) }
                 }

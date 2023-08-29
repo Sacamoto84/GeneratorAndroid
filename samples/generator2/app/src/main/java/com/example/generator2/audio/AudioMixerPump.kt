@@ -2,14 +2,13 @@ package com.example.generator2.audio
 
 import android.media.AudioFormat
 import android.media.AudioTrack.WRITE_BLOCKING
-import android.media.AudioTrack.WRITE_NON_BLOCKING
 import com.example.generator2.generator.gen
 import com.example.generator2.mp3.chDataStreamOutAudioProcessor
 import com.example.generator2.mp3.channelDataStreamOutCompressor
 import com.example.generator2.mp3.exoplayer
 import com.example.generator2.mp3.processor.audioProcessorInputFormat
+import com.example.generator2.util.BufSplitFloat
 import com.example.generator2.util.bufMerge
-import com.example.generator2.util.bufSpit
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -17,8 +16,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.Duration
-import java.time.LocalDateTime
 import java.util.LinkedList
 import kotlin.system.measureNanoTime
 
@@ -150,7 +147,7 @@ class AudioMixerPump {
                         bigBufMp3[i] = bigBufMp3[i] * volume
                     }
 
-                    val (bufMp3L, bufMp3R) = bufSpit(bigBufMp3)
+                    val (bufMp3L, bufMp3R) =  BufSplitFloat().split(bigBufMp3)
 //
                     val outR = when (routeR.value) {
                         ROUTESTREAM.MP3 -> bufMp3R

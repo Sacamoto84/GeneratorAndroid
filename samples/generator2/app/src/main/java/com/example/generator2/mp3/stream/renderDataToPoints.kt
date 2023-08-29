@@ -8,7 +8,7 @@ import com.example.generator2.mp3.channelDataOutRoll
 import com.example.generator2.mp3.channelDataStreamOutCompressor
 import com.example.generator2.mp3.oscillSync
 import com.example.generator2.scope.scope
-import com.example.generator2.util.bufSpit
+import com.example.generator2.util.BufSplitFloat
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -70,7 +70,8 @@ fun renderDataToPoints() {
                     val buf = channelDataStreamOutCompressor.receive()
 
                     if (buf.isEmpty()) continue
-                    val (bufR, bufL) = bufSpit(buf)
+
+                    val (bufR, bufL) = BufSplitFloat().split(buf)
 
                     if (oscillSync.value == OSCILLSYNC.R) {
                         var last: Float = 0f
@@ -105,14 +106,14 @@ fun renderDataToPoints() {
                     if (compressorCount.floatValue < 64) {
                         val buf = channelDataStreamOutCompressor.receive()
                         if (buf.isEmpty()) continue
-                        val (bufR, bufL) = bufSpit(buf)
+                        val (bufR, bufL) =  BufSplitFloat().split(buf)
                         bufLN = bufL
                         bufRN = bufR
                     } else {
                         //Режим Roll >= 64
                         val buf = channelDataOutRoll.receive()
                         if (buf.isEmpty()) continue
-                        val (bufR, bufL) = bufSpit(buf)
+                        val (bufR, bufL) =  BufSplitFloat().split(buf)
                         bufLN = bufL
                         bufRN = bufR
                     }
