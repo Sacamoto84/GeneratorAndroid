@@ -16,8 +16,12 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PointMode
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import com.example.generator2.mp3.wiget.OscilloscopeControl
@@ -37,9 +41,12 @@ class Scope {
     private var bitmap: Path? = null
     private var bitmapLissagu: Bitmap? = null
 
+    val chPixel = Channel<Pair<List<Offset>, List<Offset>>>(1, BufferOverflow.DROP_OLDEST)
+
     val chDataOutBitmap = Channel<Pair<Path, Path>>(1, BufferOverflow.DROP_OLDEST)
     val chLissaguBitmap = Channel<Bitmap>(1, BufferOverflow.DROP_OLDEST)
 
+    var pairPoints: Pair<List<Offset>, List<Offset>>  = Pair(emptyList(), emptyList())
 
     @Composable
     fun Oscilloscope() {
@@ -47,23 +54,26 @@ class Scope {
         var update by remember { mutableIntStateOf(0) }
         var updateLissagu by remember { mutableIntStateOf(0) }
 
-        var pairPoints: Pair<Path, Path> = Pair(Path(), Path())
+        //var pairPoints: Pair<Path, Path> = Pair(Path(), Path())
+
 
         LaunchedEffect(key1 = true)
         {
             while (true) {
-                pairPoints = chDataOutBitmap.receive()
+                //pairPoints = chDataOutBitmap.receive()
+                pairPoints = chPixel.receive()
                 update++
+
             }
         }
 
-        LaunchedEffect(key1 = true)
-        {
-            while (true) {
-                bitmapLissagu = chLissaguBitmap.receive()
-                updateLissagu++
-            }
-        }
+//        LaunchedEffect(key1 = true)
+//        {
+//            while (true) {
+//                bitmapLissagu = chLissaguBitmap.receive()
+//                updateLissagu++
+//            }
+//        }
 
 
         Column(
@@ -86,26 +96,41 @@ class Scope {
                     scopeW = size.width
                     scopeH = size.height
 
+//                    val colorList: List<Color> = listOf(Color.Red, Color.Blue,
+//                        Color.Magenta, Color.Yellow, Color.Green, Color.Cyan)
+//
+//                    val brush = Brush.horizontalGradient(
+//                        colors = colorList,
+//                        startX = 0f,
+//                        endX = 300.dp.toPx(),
+//                        tileMode = TileMode.Repeated
+//                    )
 
-
-                    drawPath(
-                        color = Color.Green,
-                        path = pairPoints.first,
-                        style = Stroke(
-                            width = 2.dp.toPx(),
-                            //pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 2f))
-                        )
+                    drawPoints(
+                        points = pairPoints.first,
+                        strokeWidth = 3f,
+                        pointMode = PointMode.Points,
+                        color = Color(0x40FFFFFF)
                     )
 
+//                    drawPath(
+//                        color = Color.Green,
+//                        path = pairPoints.first,
+//                        style = Stroke(
+//                            width = 2.dp.toPx(),
+//                            //pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 2f))
+//                        )
+//                    )
 
-                    drawPath(
-                        color = Color.Red,
-                        path = pairPoints.second,
-                        style = Stroke(
-                            width = 2.dp.toPx(),
-                            //pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 2f))
-                        )
-                    )
+
+//                    drawPath(
+//                        color = Color.Red,
+//                        path = pairPoints.second,
+//                        style = Stroke(
+//                            width = 2.dp.toPx(),
+//                            //pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 2f))
+//                        )
+//                    )
 
                     //bitmap?.let { drawImage(it.asImageBitmap()) }
                 }

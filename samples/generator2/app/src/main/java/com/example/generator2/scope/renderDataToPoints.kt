@@ -1,6 +1,7 @@
 package com.example.generator2.scope
 
 import android.graphics.Paint
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
 import com.example.generator2.mp3.OSCILLSYNC
 import com.example.generator2.mp3.Pt
@@ -14,6 +15,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import libs.maping
+import timber.log.Timber
 
 val paintR = Paint().apply {
     color = 0xFFFF0000.toInt()
@@ -124,9 +126,51 @@ fun renderDataToPoints() {
                     val arrayPtR = Array(w.toInt()) { Pt(0f, 0f) }
                     val arrayPtL = Array(w.toInt()) { Pt(0f, 0f) }
 
+
+                    val points = Offset(0f,0f)
+
+                    val pointsListL = mutableListOf<Offset>()
+                    val pointsListR = mutableListOf<Offset>()
+
                     val pathL = Path(); val pathR = Path()
 
                     for (x in 0 until w.toInt()) {
+
+                        //32  45.8   48k
+                        //16  22.81
+                        //8   5.7
+                        //4   2.86
+                        //2   1.42
+                        //1   0.71
+                        //0.5 0.35
+                        val pixelBufSize = bufRN.size/w //Размер буфера для одного пикселя
+
+                        Timber.w("pixelBufSize: $pixelBufSize")
+
+
+                        val pixelBufL = FloatArray(pixelBufSize.toInt())
+                        val pixelBufR = FloatArray(pixelBufSize.toInt())
+
+                        for (pixelI in 0 until pixelBufSize.toInt())
+                        {
+                            val mapX: Int =
+                                maping(x.toFloat(), 0f, w - 1f, 0f, (bufRN.size - 1f)).toInt()
+                                    .coerceIn(0, bufRN.size - 1)
+
+                            val offset = (mapX + pixelI).coerceAtMost(bufRN.size - 1)
+                            pixelBufL[pixelI] = bufLN[offset]
+                            pixelBufR[pixelI] = bufRN[offset]
+
+                            var v = Offset(x.toFloat(), maping(pixelBufL[pixelI], -1f, 1f, 0f, h - 1f) )
+                            pointsListL.add(v)
+                            v = Offset(x.toFloat(),  maping(pixelBufR[pixelI], -1f, 1f, 0f, h - 1f))
+                            pointsListR.add(v)
+                        }
+
+
+
+
+
                         val mapX: Int =
                             maping(x.toFloat(), 0f, w - 1f, 0f, (bufRN.size - 1f)).toInt()
                                 .coerceIn(0, bufRN.size - 1)
@@ -149,6 +193,8 @@ fun renderDataToPoints() {
 
                     // выводим результат
                     scope.chDataOutBitmap.send(Pair(pathR, pathL))
+
+                    scope.chPixel.send(Pair(pointsListL, pointsListR))
 
                 } else {
                     //Roll логика
