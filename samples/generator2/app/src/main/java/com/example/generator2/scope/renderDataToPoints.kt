@@ -18,6 +18,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import libs.maping
 import timber.log.Timber
+import kotlin.math.absoluteValue
 import kotlin.system.measureNanoTime
 
 var hiRes: Boolean = false //Режим высокого разрешения
@@ -153,7 +154,7 @@ fun renderDataToPoints() {
 ////////////////////////////////////////////////////////////////
 
                 val pathL = Path()
-                pathL.moveTo(50f, 50f)
+
 
                 var pixelBufSize: Float
                 val pixelBufL = FloatArray(4096)
@@ -161,28 +162,24 @@ fun renderDataToPoints() {
 
                 paintL.style = Paint.Style.STROKE
 
-                if (hiRes){
+                if (hiRes) {
                     paintL.strokeWidth = 2f
                     paintR.strokeWidth = 2f
-                }
-                else{
+                } else {
                     paintL.strokeWidth = 1f
                     paintR.strokeWidth = 1f
                 }
 
-                if (compressorCount.floatValue > 8f) {
-                    paintL.alpha = 0x50
-                    paintR.alpha = 0x50
-                }
-                else
-                {
+                val drawLine: Boolean
+                if (compressorCount.floatValue >= 8f) {
+                    paintL.alpha = 0x60
+                    paintR.alpha = 0x60
+                    drawLine = false
+                } else {
                     paintL.alpha = 0xFF
                     paintR.alpha = 0xFF
+                    drawLine = true
                 }
-
-                //Режим линий от 0..4, остальное точки
-                val drawLine = if (compressorCount.floatValue > 4)
-                    false else true
 
 
                 var mapX: Int
@@ -223,9 +220,6 @@ fun renderDataToPoints() {
                             //pointsListL.
 
 
-
-
-
                             //pathL.lineTo(x.toFloat(), maping(pixelBufL[pixelI], -1f, 1f, 0f, h - 1f))
 
                         }
@@ -244,40 +238,28 @@ fun renderDataToPoints() {
                                     paintR
                                 )
                             }
-                        }
-                        else
-                        {
+                        } else {
                             //Рисуем линии
+                            if (x == 0) pathL.moveTo(0f, h / 2)
 
-                            for (pixelI in 0 until maxPixelBuffer) {
-
-
-
-
-
+                            //val average = calculateAverage(pixelBufL, maxPixelBuffer)
+                            val average = pixelBufL[0]
+                            pathL.lineTo(x.toFloat(), maping(average, -1f, 1f, 0f, h - 1f))
 
 
-
-                            }
                         }
-
-
-
-
-                        //canvas.drawPath(pathL, paintL)
 
 
                     }
 
+                    if (drawLine)
+                        canvas.drawPath(pathL, paintL)
 
                 }
                 calculator.update(nanos / 1000000.0)
                 //println("Calculate Pointer: " + nanos/1000 + "us")
 
                 //println("Calculate Pointer :${nanos / 1000000.0} ms ${calculator.getAvg()}")
-
-
-
 
 
                 scope.chPixel.send(bitmap)
@@ -290,3 +272,22 @@ fun renderDataToPoints() {
     }.start()
 }
 
+fun calculateAverage(array: FloatArray, endIndex: Int): Float {
+    require(endIndex >= 0 && endIndex < array.size) { "Invalid endIndex" }
+
+    var max: Float = 0f
+    var min: Float = 0f
+
+    var sum = 0.0f
+    for (i in 0..endIndex) {
+        sum += array[i]
+        if (array[i] > max) max = array[i]
+        if (array[i] < min) min = array[i]
+    }
+
+    val avg = sum / (endIndex + 1)
+
+    val out = if (max > min.absoluteValue) max else min
+
+    return out
+}
