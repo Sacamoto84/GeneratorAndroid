@@ -279,14 +279,14 @@ fun ListToShortArray(bigList: LinkedList<ShortArray>): ShortArray {
 }
 
 
-class Calculator {
+class Calculator(val count : Int = 1000) {
     private val data = mutableListOf<Double>()
 
     fun update(value: Double) {
         synchronized(data) {
             data.add(value)
 
-            while (data.size > 1000)
+            while (data.size > count)
                 data.removeAt(0)
 
         }

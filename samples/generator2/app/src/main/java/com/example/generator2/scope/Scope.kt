@@ -2,14 +2,19 @@ package com.example.generator2.scope
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -18,18 +23,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.DrawStyle
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.example.generator2.audio.Calculator
+import com.example.generator2.util.format
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
 
 val scope = Scope()
 
 
-
 class Scope {
 
-    var scopeW: Float = 1f
-    var scopeH: Float = 1f
+
+
+
+    private val fps = MutableStateFlow(0.0)
+
+    var scopeW: Float = 0f
+    var scopeH: Float = 0f
 
     var scopeLissaguW: Float = 1f
     var scopeLissaguH: Float = 1f
@@ -42,12 +57,15 @@ class Scope {
     val chDataOutBitmap = Channel<Pair<Path, Path>>(1, BufferOverflow.DROP_OLDEST)
     val chLissaguBitmap = Channel<Bitmap>(1, BufferOverflow.DROP_OLDEST)
 
-    var pairPoints : Bitmap = Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888)
+    var pairPoints: Bitmap = Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888)
 
+    var startTime: Long = 0L
+    var deltaTime: Long = 0L
+
+    val calculator = Calculator(20)
 
     @Composable
     fun Oscilloscope() {
-
 
 
         var update by remember { mutableIntStateOf(0) }
@@ -62,9 +80,15 @@ class Scope {
                 //pairPoints = chDataOutBitmap.receive()
                 pairPoints = chPixel.receive()
                 update++
-
+                deltaTime = System.currentTimeMillis() - startTime
+                //fps.value = 1f/(deltaTime.toFloat()/1000.0f)
+                val v = 1.0 / (deltaTime.toDouble() / 1000.0)
+                calculator.update(v)
+                fps.value = calculator.getAvg()
+                startTime = System.currentTimeMillis()
             }
         }
+
 
 //        LaunchedEffect(key1 = true)
 //        {
@@ -83,7 +107,11 @@ class Scope {
         )
         {
 
+            Text(text = fps.collectAsState().value.toFloat().format(1), color = Color.White)
+
             Row {
+
+
                 Canvas(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -104,7 +132,6 @@ class Scope {
 //                        endX = 300.dp.toPx(),
 //                        tileMode = TileMode.Repeated
 //                    )
-
 
 
 //                    drawPoints(
@@ -133,8 +160,39 @@ class Scope {
 //                        )
 //                    )
 
-                     drawImage(pairPoints.asImageBitmap())
+
+
+                    if (!hiRes) {
+
+                        val scaledWidth = pairPoints.width * 2
+                        val scaledHeight = pairPoints.height * 2
+                        val scaledBitmap: Bitmap =
+                            Bitmap.createScaledBitmap(pairPoints, scaledWidth, scaledHeight, false)
+                        drawImage(
+                            image = scaledBitmap.asImageBitmap()
+                        )
+                    }
+                    else
+                        drawImage(
+                            image = pairPoints.asImageBitmap()
+                        )
+
+
                 }
+
+
+//                    val b = pairPoints.asImageBitmap()
+//
+//                    Image(
+//                        bitmap = b,
+//                        contentDescription = "",
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .height(100.dp)
+//                            .border(3.dp, Color.Green),
+//                        contentScale = ContentScale.Crop
+//                    )
+
 
                 Canvas(
                     modifier = Modifier

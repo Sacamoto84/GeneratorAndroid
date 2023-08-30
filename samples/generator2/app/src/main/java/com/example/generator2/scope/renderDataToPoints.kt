@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
+import com.example.generator2.audio.Calculator
 import com.example.generator2.mp3.OSCILLSYNC
 import com.example.generator2.mp3.channelDataOutRoll
 import com.example.generator2.mp3.channelDataStreamOutCompressor
@@ -16,7 +18,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import libs.maping
 import timber.log.Timber
+import kotlin.system.measureNanoTime
 
+var hiRes: Boolean = false //Режим высокого разрешения
 
 @OptIn(DelicateCoroutinesApi::class)
 fun renderDataToPoints() {
@@ -43,39 +47,58 @@ fun renderDataToPoints() {
     var canvas: Canvas
 
     val paintL = Paint()
-    paintL.color = Color.GREEN
-    paintL.alpha = 0x60
+    paintL.color = Color.YELLOW
+    paintL.alpha = 0xFF
     paintL.strokeWidth = 2f
 
     val paintR = Paint()
-    paintR.color = Color.RED
-    paintR.alpha = 0x60
+    paintR.color = Color.MAGENTA
+    paintR.alpha = 0xFF
     paintL.strokeWidth = 2f
 
     Thread {
 
         GlobalScope.launch(Dispatchers.IO) {
 
+            val calculator = Calculator()
+
             while (true) {
 
-                val w = scope.scopeW
-                val h = scope.scopeH
+                hiRes = if (compressorCount.floatValue >= 32)
+                    false //Режим высокого разрешения
+                else
+                    true
+                //hiRes = true
+                var w: Float
+                var h: Float
+                if (hiRes) {
+                    w = scope.scopeW
+                    h = scope.scopeH
+                } else {
+                    w = scope.scopeW / 2
+                    h = scope.scopeH / 2
+                }
 
                 val bufRN: FloatArray
                 val bufLN: FloatArray
 
-                if ((w == 1f) or (h == 1f)) continue
+                if ((w == 0f) or (h == 0f)) continue
+
 
                 val bitmap: Bitmap = Bitmap.createBitmap(
-                    scope.scopeW.toInt(),
-                    scope.scopeH.toInt(),
+                    w.toInt(),
+                    h.toInt(),
                     Bitmap.Config.RGB_565
                 )
 
                 canvas = Canvas()
+
+
                 canvas.setBitmap(bitmap)
 
-                delay(16)
+                //canvas.drawARGB(128, 44, 22, 128)
+
+                //delay(16) /////////////////////////////////????????????????????????????
 
                 var indexStartSignal = 0
 
@@ -129,11 +152,43 @@ fun renderDataToPoints() {
 
 ////////////////////////////////////////////////////////////////
 
+                val pathL = Path()
+                pathL.moveTo(50f, 50f)
 
-                if (compressorCount.floatValue < 640) {
+                var pixelBufSize: Float
+                val pixelBufL = FloatArray(4096)
+                val pixelBufR = FloatArray(4096)
 
-                    //val pointsListL = mutableListOf<Offset>()
-                    //val pointsListR = mutableListOf<Offset>()
+                paintL.style = Paint.Style.STROKE
+
+                if (hiRes){
+                    paintL.strokeWidth = 2f
+                    paintR.strokeWidth = 2f
+                }
+                else{
+                    paintL.strokeWidth = 1f
+                    paintR.strokeWidth = 1f
+                }
+
+                if (compressorCount.floatValue > 8f) {
+                    paintL.alpha = 0x50
+                    paintR.alpha = 0x50
+                }
+                else
+                {
+                    paintL.alpha = 0xFF
+                    paintR.alpha = 0xFF
+                }
+
+                //Режим линий от 0..4, остальное точки
+                val drawLine = if (compressorCount.floatValue > 4)
+                    false else true
+
+
+                var mapX: Int
+                var offset: Int
+
+                val nanos = measureNanoTime {
 
                     for (x in 0 until w.toInt()) {
 
@@ -144,22 +199,19 @@ fun renderDataToPoints() {
                         //2   1.42
                         //1   0.71
                         //0.5 0.35
-                        var pixelBufSize = bufRN.size / w //Размер буфера для одного пикселя
+                        pixelBufSize =
+                            (bufRN.size / w).coerceIn(1f, 96f) //Размер буфера для одного пикселя
 
-                        Timber.w("pixelBufSize: $pixelBufSize")
+                        //Timber.w("pixelBufSize: ${bufRN.size / w}")
 
-                        if (pixelBufSize < 1f)
-                            pixelBufSize = 1f
 
-                        val pixelBufL = FloatArray(pixelBufSize.toInt())
-                        val pixelBufR = FloatArray(pixelBufSize.toInt())
+                        val maxPixelBuffer = pixelBufSize.toInt()
+                        for (pixelI in 0 until maxPixelBuffer) {
 
-                        for (pixelI in 0 until pixelBufSize.toInt()) {
-                            val mapX: Int =
-                                maping(x.toFloat(), 0f, w - 1f, 0f, (bufRN.size - 1f)).toInt()
-                                    .coerceIn(0, bufRN.size - 1)
+                            mapX = maping(x.toFloat(), 0f, w - 1f, 0f, (bufRN.size - 1f)).toInt()
+                                .coerceIn(0, bufRN.size - 1)
 
-                            val offset = (mapX + pixelI).coerceAtMost(bufRN.size - 1)
+                            offset = (mapX + pixelI).coerceAtMost(bufRN.size - 1)
                             pixelBufL[pixelI] = bufLN[offset]
                             pixelBufR[pixelI] = bufRN[offset]
 
@@ -170,34 +222,65 @@ fun renderDataToPoints() {
 
                             //pointsListL.
 
-                            //canvas.drawPoint( x.toFloat(), maping(pixelBufL[pixelI], -1f, 1f, 0f, h - 1f), paintL)
 
 
+
+
+                            //pathL.lineTo(x.toFloat(), maping(pixelBufL[pixelI], -1f, 1f, 0f, h - 1f))
 
                         }
 
 
+                        if (!drawLine) {
+                            for (pixelI in 0 until maxPixelBuffer) {
+                                canvas.drawPoint(
+                                    x.toFloat(),
+                                    maping(pixelBufL[pixelI], -1f, 1f, 0f, h - 1f),
+                                    paintL
+                                )
+                                canvas.drawPoint(
+                                    x.toFloat(),
+                                    maping(pixelBufR[pixelI], -1f, 1f, 0f, h - 1f),
+                                    paintR
+                                )
+                            }
+                        }
+                        else
+                        {
+                            //Рисуем линии
 
-                        for (pixelI in 0 until pixelBufSize.toInt()) {
-                            canvas.drawLine(
-                                x.toFloat(),
-                                maping(pixelBufL[pixelI], -1f, 1f, 0f, h - 1f),
-                                (x + 1).toFloat(),
-                                maping(pixelBufL[(pixelI + 1).coerceAtMost(pixelBufSize.toInt() - 1)], -1f, 1f, 0f, h - 1f),
-                                paintL
-                            )
+                            for (pixelI in 0 until maxPixelBuffer) {
+
+
+
+
+
+
+
+
+                            }
                         }
 
 
+
+
+                        //canvas.drawPath(pathL, paintL)
 
 
                     }
 
 
-
-                    scope.chPixel.send(bitmap)
-
                 }
+                calculator.update(nanos / 1000000.0)
+                //println("Calculate Pointer: " + nanos/1000 + "us")
+
+                //println("Calculate Pointer :${nanos / 1000000.0} ms ${calculator.getAvg()}")
+
+
+
+
+
+                scope.chPixel.send(bitmap)
 
 
             }

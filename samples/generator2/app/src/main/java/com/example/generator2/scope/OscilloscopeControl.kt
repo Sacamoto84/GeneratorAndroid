@@ -16,6 +16,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.generator2.mp3.OSCILLSYNC
 import com.example.generator2.mp3.oscillSync
+import com.example.generator2.util.format
+
+
+val m = Modifier.height(32.dp).width(32.dp).border(1.dp, Color.Gray).background(Color.Black)
+val m2 = Modifier.height(32.dp).width(64.dp).border(1.dp, Color.Gray).background(Color.Black)
+
 
 
 @Composable
@@ -27,28 +33,32 @@ fun OscilloscopeControl() {
 
     Row {
 
-        Box(modifier = Modifier
-            .height(32.dp)
-            .width(32.dp)
-            .border(1.dp, Color.Gray)
-            .background(Color.Black)
-            .clickable(onClick = { compressorCount.floatValue *= 2 }),
+        Box(modifier = m.clickable(onClick = { compressorCount.floatValue *= 2 }),
             contentAlignment = Alignment.Center
         ) {
             Text(text = "+", color = Color.Gray)
         }
 
-        Text(text = "${compressorCount.floatValue}", color = Color.White)
-        Button(onClick = { compressorCount.floatValue /= 2 }) {
+        Box(modifier = m2,
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "${compressorCount.floatValue}", color = Color.White)
+        }
 
+        Box(modifier = m.clickable(onClick = { compressorCount.floatValue /= 2 }),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "-", color = Color.Gray)
+        }
+
+        Box(modifier = m.clickable(onClick = { oscillSync.value = OSCILLSYNC.NONE  }),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "N", color = Color.Gray)
         }
 
 
 
-
-        Button(onClick = { oscillSync.value = OSCILLSYNC.NONE }) {
-            Text(text = "N")
-        }
         Button(onClick = { oscillSync.value = OSCILLSYNC.R }) {
             Text(text = "R")
         }

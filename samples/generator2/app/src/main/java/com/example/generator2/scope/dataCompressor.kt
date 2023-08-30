@@ -40,17 +40,32 @@ fun dataCompressor() {
 //            roll64.add(a)
 //        }
 
+        var lastCompressorCount = 0f
 
         while (true) {
             val out = mutableListOf<Float>()
 
+
+
             if (compressorCount.floatValue >= 1.0F) {
 
 
-                for (i in 0 until compressorCount.floatValue.toInt()) {
-                    val buf = channelAudioOut.receive()
+                //for (i in 0 until compressorCount.floatValue.toInt()) {
+
+                    //val buf = channelAudioOut.receive()
 
                     if (compressorCount.floatValue >= 32) {
+
+
+                        val buf = channelAudioOut.receive()
+
+                        if (lastCompressorCount != compressorCount.floatValue) {
+                            roll64.clear()
+                        }
+
+                        while (roll64.size < compressorCount.floatValue)
+                            roll64.add(FloatArray(buf.size))
+
 
                         while (roll64.size > compressorCount.floatValue)
                             roll64.removeAt(0)
@@ -66,17 +81,27 @@ fun dataCompressor() {
                             currentIndex += floatArray.size
                         }
 
+                        //println("Отсылка Roll64")
+
                         val s = channelDataStreamOutCompressor.trySend(resultArray).isSuccess
                         if (!s)
                             Timber.e("Нет места в channelDataOutRoll")
 
                     }
-                    else
-                        out.addAll(buf.toList())
+                    else {
+
+                        for (i in 0 until compressorCount.floatValue.toInt()) {
+                            val buf1 = channelAudioOut.receive()
+                            out.addAll(buf1.toList())
+                        }
+
+                        channelDataStreamOutCompressor.send(out.toFloatArray())
+
+                    }
+
+                //}
 
 
-                }
-                channelDataStreamOutCompressor.send(out.toFloatArray())
 
 
             } else {
@@ -86,6 +111,8 @@ fun dataCompressor() {
                 val buf2 = buf.copyOf(size.toInt())
                 channelDataStreamOutCompressor.send(buf2)
             }
+
+            lastCompressorCount = compressorCount.floatValue
         }
     }
 
