@@ -1,6 +1,6 @@
 package com.example.generator2.util
 
-var combinedArrayFloat = FloatArray(0)
+
 
 fun bufMerge(
     array1: FloatArray,
@@ -9,8 +9,7 @@ fun bufMerge(
 
     val len = array1.size + array2.size
 
-    if (combinedArrayFloat.size != len)
-        combinedArrayFloat = FloatArray(len)
+    val combinedArrayFloat = FloatArray(len)
 
     var index1 = 0
     var index2 = 0

@@ -16,13 +16,10 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
-import com.example.generator2.mp3.stream.renderCompleteBitmap
 import com.example.generator2.mp3.wiget.OscilloscopeControl
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
@@ -68,10 +65,6 @@ class Scope {
             }
         }
 
-        SideEffect {
-            //println("update $update")
-            renderCompleteBitmap.value = true
-        }
 
         Column(
             modifier = Modifier

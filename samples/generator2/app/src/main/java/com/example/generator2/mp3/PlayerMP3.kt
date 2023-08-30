@@ -9,9 +9,8 @@ import androidx.media3.common.Tracks
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.transformer.EditedMediaItem
 import com.example.generator2.AppPath
-import com.example.generator2.mp3.stream.dataCompressor
-import com.example.generator2.mp3.stream.renderDataToPoints
-import com.mpatric.mp3agic.Mp3File
+import com.example.generator2.scope.dataCompressor
+import com.example.generator2.scope.renderDataToPoints
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

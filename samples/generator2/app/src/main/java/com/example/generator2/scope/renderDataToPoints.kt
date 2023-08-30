@@ -1,4 +1,4 @@
-package com.example.generator2.mp3.stream
+package com.example.generator2.scope
 
 import android.graphics.Paint
 import androidx.compose.ui.graphics.Path
@@ -7,13 +7,11 @@ import com.example.generator2.mp3.Pt
 import com.example.generator2.mp3.channelDataOutRoll
 import com.example.generator2.mp3.channelDataStreamOutCompressor
 import com.example.generator2.mp3.oscillSync
-import com.example.generator2.scope.scope
 import com.example.generator2.util.BufSplitFloat
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import libs.maping
 
@@ -32,8 +30,6 @@ val paintL = Paint().apply {
 }
 
 
-val renderCompleteBitmap = MutableStateFlow(true)
-
 @OptIn(DelicateCoroutinesApi::class)
 fun renderDataToPoints() {
 
@@ -42,9 +38,6 @@ fun renderDataToPoints() {
 //    var bitmap2: Bitmap =
 //        Bitmap.createBitmap(scope.scopeW.toInt(), scope.scopeH.toInt(), Bitmap.Config.RGB_565)
 //    var bitmapBuffer = false
-
-    var ArrayPtR = Array(0) { Pt(0f, 0f) }
-    var ArrayPtL = Array(0) { Pt(0f, 0f) }
 
 
     Thread {
@@ -74,7 +67,7 @@ fun renderDataToPoints() {
                     val (bufR, bufL) = BufSplitFloat().split(buf)
 
                     if (oscillSync.value == OSCILLSYNC.R) {
-                        var last: Float = 0f
+                        var last = 0f
                         for (i in 0 until bufR.size / 2) {
                             val now = bufR[i]
                             if ((last < 0) and (now >= 0)) {
@@ -86,7 +79,7 @@ fun renderDataToPoints() {
                     }
 
                     if (oscillSync.value == OSCILLSYNC.L) {
-                        var last: Float = 0f
+                        var last = 0f
                         for (i in 0 until bufL.size / 2) {
                             val now = bufL[i]
                             if ((last < 0) and (now >= 0)) {
@@ -97,8 +90,10 @@ fun renderDataToPoints() {
                         }
                     }
 
-                    bufLN = bufL.copyOfRange(indexStartSignal, (bufL.size - 1) / 2 + indexStartSignal)
-                    bufRN = bufR.copyOfRange(indexStartSignal, (bufR.size - 1) / 2 + indexStartSignal)
+                    bufLN =
+                        bufL.copyOfRange(indexStartSignal, (bufL.size - 1) / 2 + indexStartSignal)
+                    bufRN =
+                        bufR.copyOfRange(indexStartSignal, (bufR.size - 1) / 2 + indexStartSignal)
 
                 } else {
 
@@ -106,14 +101,14 @@ fun renderDataToPoints() {
                     if (compressorCount.floatValue < 64) {
                         val buf = channelDataStreamOutCompressor.receive()
                         if (buf.isEmpty()) continue
-                        val (bufR, bufL) =  BufSplitFloat().split(buf)
+                        val (bufR, bufL) = BufSplitFloat().split(buf)
                         bufLN = bufL
                         bufRN = bufR
                     } else {
                         //Режим Roll >= 64
                         val buf = channelDataOutRoll.receive()
                         if (buf.isEmpty()) continue
-                        val (bufR, bufL) =  BufSplitFloat().split(buf)
+                        val (bufR, bufL) = BufSplitFloat().split(buf)
                         bufLN = bufL
                         bufRN = bufR
                     }
@@ -122,26 +117,14 @@ fun renderDataToPoints() {
 
 ////////////////////////////////////////////////////////////////
 
-
-                //val pathR = FloatArray(w.toInt()*4)
-                //val pathL = FloatArray(w.toInt())
-
-                if (ArrayPtR.size != w.toInt())
-                    ArrayPtR = Array(w.toInt()) { Pt(0f, 0f) }
-
-                val pathR = Path()
-
-                if (ArrayPtL.size != w.toInt())
-                    ArrayPtL = Array(w.toInt()) { Pt(0f, 0f) }
-
-                val pathL = Path()
-
-                var ptTemp = Pt(0f, 0f)
-
-
                 var i = 0
 
                 if (compressorCount.floatValue < 64) {
+
+                    val arrayPtR = Array(w.toInt()) { Pt(0f, 0f) }
+                    val arrayPtL = Array(w.toInt()) { Pt(0f, 0f) }
+
+                    val pathL = Path(); val pathR = Path()
 
                     for (x in 0 until w.toInt()) {
                         val mapX: Int =
@@ -152,24 +135,20 @@ fun renderDataToPoints() {
                         val yL = maping(bufLN[mapX], -1f, 1f, 0f, h - 1f)
 
 
-                        ptTemp = Pt(x.toFloat(), yR)
-                        ArrayPtR[x] = ptTemp
-                        ptTemp = Pt(x.toFloat(), yL)
-                        ArrayPtL[x] = ptTemp
+                        arrayPtR[x] = Pt(x.toFloat(), yR)
+                        arrayPtL[x] = Pt(x.toFloat(), yL)
 
                     }
 
-                    pathR.moveTo(ArrayPtR[0].x, ArrayPtR[0].y)
-                    pathL.moveTo(ArrayPtL[0].x, ArrayPtL[0].y)
-                    for (i1 in 1 until ArrayPtR.size) {
-                        pathR.lineTo(ArrayPtR[i1].x, ArrayPtR[i1].y)
-                        pathL.lineTo(ArrayPtL[i1].x, ArrayPtL[i1].y)
+
+                    pathL.moveTo(arrayPtL[0].x, arrayPtL[0].y); pathR.moveTo(arrayPtR[0].x, arrayPtR[0].y)
+                    for (i1 in 1 until arrayPtR.size) {
+                        pathR.lineTo(arrayPtR[i1].x, arrayPtR[i1].y)
+                        pathL.lineTo(arrayPtL[i1].x, arrayPtL[i1].y)
                     }
 
                     // выводим результат
-
-
-
+                    scope.chDataOutBitmap.send(Pair(pathR, pathL))
 
                 } else {
                     //Roll логика
@@ -200,13 +179,7 @@ fun renderDataToPoints() {
                 }
 
 
-
-                val v = Pair(pathR, pathL)
-                scope.chDataOutBitmap.send( v )
-
-                    //scope.chDataOutBitmap.send(bitmap2)
-
-
+                //scope.chDataOutBitmap.send(bitmap2)
 
 
             }

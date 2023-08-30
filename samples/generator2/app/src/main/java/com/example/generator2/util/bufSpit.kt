@@ -1,6 +1,6 @@
 package com.example.generator2.util
 
-class BufSplitShort()
+class BufSplitShort
 {
     private var bufR = ShortArray(0)
     private var bufL = ShortArray(0)
@@ -8,7 +8,7 @@ class BufSplitShort()
     /**
      * LR
      */
-    fun bufSpit(buf: ShortArray): Pair<ShortArray, ShortArray> {
+    fun split(buf: ShortArray): Pair<ShortArray, ShortArray> {
 
         if (bufR.size != buf.size / 2) {
             bufR = ShortArray(buf.size / 2)
@@ -35,7 +35,7 @@ class BufSplitShort()
 
 
 
-class BufSplitFloat()
+class BufSplitFloat
 {
     private var bufRf = FloatArray(0)
     private var bufLf = FloatArray(0)

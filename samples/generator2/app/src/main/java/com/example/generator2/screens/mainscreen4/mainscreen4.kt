@@ -171,7 +171,7 @@ fun Mainsreen4(
 
                 //CardCommander(vm)                                                     //<-- Commander
 
-                Spacer(modifier = Modifier.height(8.dp))
+                //Spacer(modifier = Modifier.height(8.dp))
             }
 
             AnimatedContent(
@@ -180,9 +180,7 @@ fun Mainsreen4(
                     val time = 400
                     //Появление
                     (fadeIn(animationSpec = tween(time / 2)) + expandVertically(
-                        animationSpec = tween(
-                            time
-                        )
+                        animationSpec = tween( time )
                     ))
                         .with(
                             (fadeOut(animationSpec = tween(time)) + shrinkVertically(

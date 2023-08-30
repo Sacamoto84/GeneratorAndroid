@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.example.generator2.audio.audioOutBT
 import com.example.generator2.audio.audioOutSpeaker
 import com.example.generator2.audio.audioOutWired
-import com.example.generator2.mp3.stream.compressorCount
+import com.example.generator2.scope.compressorCount
 
 
 @Composable

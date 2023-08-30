@@ -25,23 +25,6 @@ val audioProcessorInputFormat = MutableStateFlow(
 @androidx.media3.common.util.UnstableApi
 class myAudioProcessor : AudioProcessor {
 
-
-    companion object {
-        const val SAMPLE_SIZE = 4096
-
-        // From DefaultAudioSink.java:160 'MIN_BUFFER_DURATION_US'
-        private const val EXO_MIN_BUFFER_DURATION_US: Long = 250000
-
-        // From DefaultAudioSink.java:164 'MAX_BUFFER_DURATION_US'
-        private const val EXO_MAX_BUFFER_DURATION_US: Long = 750000
-
-        // From DefaultAudioSink.java:173 'BUFFER_MULTIPLICATION_FACTOR'
-        private const val EXO_BUFFER_MULTIPLICATION_FACTOR = 4
-
-        // Extra size next in addition to the AudioTrack buffer size
-        private const val BUFFER_EXTRA_SIZE = SAMPLE_SIZE * 8
-    }
-
     private lateinit var inputAudioFormat: AudioProcessor.AudioFormat
     private var isActive: Boolean = false
     private var inputEnded: Boolean = false
@@ -49,38 +32,17 @@ class myAudioProcessor : AudioProcessor {
     private var outputBuffer: ByteBuffer = AudioProcessor.EMPTY_BUFFER
     private var processBuffer = AudioProcessor.EMPTY_BUFFER
 
-
-    //inputAudioFormat.sampleRate, inputAudioFormat.channelCount, C.ENCODING_PCM_FLOAT)
-
-    // sampleRate= */ Format.NO_VALUE,
-    // channelCount= */ Format.NO_VALUE,
-    // encoding= */ Format.NO_VALUE);
-
     //Настраиваем выходной формат на Float
     override fun configure(inputAudioFormat: AudioProcessor.AudioFormat): AudioProcessor.AudioFormat {
         Timber.e("configure")
         println("Audio Processor: $inputAudioFormat")
-
-
         if (inputAudioFormat.encoding != C.ENCODING_PCM_16BIT) {
-            throw AudioProcessor.UnhandledAudioFormatException(
-                inputAudioFormat
-            )
+            throw AudioProcessor.UnhandledAudioFormatException(inputAudioFormat)
         }
-
         this.inputAudioFormat = inputAudioFormat
         isActive = true
-
         audioProcessorInputFormat.value = inputAudioFormat
-
-        //        return if (inputAudioFormat.encoding != C.ENCODING_PCM_FLOAT) AudioProcessor.AudioFormat(
-        //            inputAudioFormat.sampleRate, inputAudioFormat.channelCount, C.ENCODING_PCM_FLOAT
-        //        )
-        //        else inputAudioFormat
-
-        return AudioProcessor.AudioFormat(
-            inputAudioFormat.sampleRate, 2, C.ENCODING_PCM_16BIT
-        )
+        return AudioProcessor.AudioFormat(inputAudioFormat.sampleRate, 2, C.ENCODING_PCM_16BIT)
     }
 
     //Возвращает, настроен ли процессор и будет ли он обрабатывать входные буферы.
@@ -158,14 +120,12 @@ class myAudioProcessor : AudioProcessor {
     }
 
     override fun getOutput(): ByteBuffer {
-        //Timber.w("Процессор getOutput()")
         val outputBuffer = this.outputBuffer
         this.outputBuffer = AudioProcessor.EMPTY_BUFFER
         return outputBuffer
     }
 
     override fun isEnded(): Boolean {
-        //Timber.e("isEnded")
         return inputEnded && processBuffer === AudioProcessor.EMPTY_BUFFER
     }
 

@@ -7,10 +7,8 @@ import kotlinx.coroutines.channels.Channel
 val chDataStreamOutAudioProcessor =
     Channel<FloatArray>(capacity = 48, BufferOverflow.DROP_LATEST)
 
-val channelDataStreamOutGenerator =
-    Channel<ShortArray>(capacity = 16, BufferOverflow.DROP_OLDEST)
-
-
+//Выход аудиоданных -> compressor
+val channelAudioOut = Channel<FloatArray>(capacity = 16, BufferOverflow.DROP_OLDEST)
 
 val channelDataStreamOutCompressor = Channel<FloatArray>(capacity = 16, BufferOverflow.DROP_LATEST)
 

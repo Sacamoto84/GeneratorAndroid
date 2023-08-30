@@ -54,22 +54,16 @@ import libs.modifier.noRippleClickable
 @Composable
 fun CardFM(str: String = "CH0") {
 
-    val fmEN: State<Boolean?> = if (str == "CH0") {
-        gen.liveData.ch1_FM_EN.collectAsState()
-    } else {
-        gen.liveData.ch2_FM_EN.collectAsState()
-    }
-
-    val fmFr: State<Float?> = if (str == "CH0") {
-        gen.liveData.ch1_FM_Fr.collectAsState()
-    } else {
-        gen.liveData.ch2_FM_Fr.collectAsState()
-    }
+    val fmEN: State<Boolean?> = if (str == "CH0") gen.liveData.ch1_FM_EN.collectAsState() else gen.liveData.ch2_FM_EN.collectAsState()
+    val fmFr: State<Float?> = if (str == "CH0") gen.liveData.ch1_FM_Fr.collectAsState() else gen.liveData.ch2_FM_Fr.collectAsState()
 
     Column()
     {
 
-        Box(modifier = Modifier.background(Color.DarkGray).height(1.dp).fillMaxWidth())
+        Box(modifier = Modifier
+            .background(Color.DarkGray)
+            .height(1.dp)
+            .fillMaxWidth())
 
         Row(
             //Modifier.height(48.dp)
@@ -81,7 +75,8 @@ fun CardFM(str: String = "CH0") {
             Box(
                 modifier = Modifier
                     .padding(start = 8.dp)
-                    .height(32.dp).width(ms4SwitchWidth)
+                    .height(32.dp)
+                    .width(ms4SwitchWidth)
                     .border(
                         2.dp,
                         color = if (fmEN.value!!) Color(0xFF1B5E20) else Color.DarkGray,
@@ -191,7 +186,10 @@ fun CardFM(str: String = "CH0") {
 /////////////////////////
 
         //Вторая строка
-        Box(modifier = Modifier.background(Color.Transparent).height(1.dp).fillMaxWidth())
+        Box(modifier = Modifier
+            .background(Color.Transparent)
+            .height(1.dp)
+            .fillMaxWidth())
         SecondLine(str)
 
     }
