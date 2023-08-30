@@ -69,16 +69,11 @@ fun CardFM(str: String = "CH0") {
     Column()
     {
 
-        Box(
-            modifier = Modifier
-                .background(Color.DarkGray)
-                .height(1.dp)
-                .fillMaxWidth()
-        )
+        Box(modifier = Modifier.background(Color.DarkGray).height(1.dp).fillMaxWidth())
 
         Row(
-            Modifier
-                .height(48.dp),
+            //Modifier.height(48.dp)
+            //,
             verticalAlignment = Alignment.CenterVertically
         ) {
 
@@ -86,14 +81,13 @@ fun CardFM(str: String = "CH0") {
             Box(
                 modifier = Modifier
                     .padding(start = 8.dp)
-                    .height(32.dp)
-                    .width(ms4SwitchWidth)
+                    .height(32.dp).width(ms4SwitchWidth)
                     .border(
                         2.dp,
                         color = if (fmEN.value!!) Color(0xFF1B5E20) else Color.DarkGray,
-                        RoundedCornerShape(8.dp)
+                        //RoundedCornerShape(8.dp)
                     )
-                    .clip(RoundedCornerShape(8.dp))
+                    //.clip(RoundedCornerShape(8.dp))
                     .background(
                         color = if (fmEN.value!!) Color(0xFF01AE0F) else colorDarkBackground
                     )
@@ -131,7 +125,7 @@ fun CardFM(str: String = "CH0") {
                     String.format("%.1f", fmFr.value),
                     modifier = Modifier
                         .padding(start = 8.dp)
-                        .height(48.dp)
+                        .height(32.dp)
                         .fillMaxSize(),
 
                     value = fmFr.value!!,
@@ -197,7 +191,7 @@ fun CardFM(str: String = "CH0") {
 /////////////////////////
 
         //Вторая строка
-
+        Box(modifier = Modifier.background(Color.Transparent).height(1.dp).fillMaxWidth())
         SecondLine(str)
 
     }
@@ -237,7 +231,7 @@ private fun SecondLine(str: String = "CH0") {
 
             modifier = Modifier
                 .padding(start = 8.dp)
-                .height(48.dp)
+                .height(32.dp)
                 .width(32.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.Gray)
 
@@ -261,8 +255,8 @@ private fun SecondLineMode1(str: String) {
 
     Row(
         Modifier
-            .padding(top = 8.dp, start = 0.dp, end = 8.dp)
-            .height(48.dp),
+            .padding(start = 0.dp, end = 8.dp)
+            .height(32.dp),
         verticalAlignment = Alignment.CenterVertically
     )
     {
@@ -344,8 +338,8 @@ private fun SecondLineMode0(str: String) {
 
     Row(
         Modifier
-            .padding(top = 8.dp, start = 0.dp, end = 8.dp)
-            .height(48.dp),
+            .padding(start = 0.dp, end = 8.dp)
+            .height(32.dp),
         verticalAlignment = Alignment.CenterVertically
     )
     {

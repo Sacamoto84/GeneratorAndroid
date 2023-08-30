@@ -168,7 +168,9 @@ fun Mainsreen4(
                 //CardCarrier("CH0")
                 CardCard("CH0")
                 Spacer(modifier = Modifier.height(8.dp))
-                CardCommander(vm)                                                     //<-- Commander
+
+                //CardCommander(vm)                                                     //<-- Commander
+
                 Spacer(modifier = Modifier.height(8.dp))
             }
 

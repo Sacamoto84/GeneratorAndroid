@@ -54,8 +54,8 @@ lateinit var customTypeface: Typeface
 @Composable
 fun VolumeControl(value: Float, onValueChange: (Float) -> Unit) {
 
-    val H = 48.dp
-    val W = 72.dp
+    val H = 32.dp//48.dp
+    val W = 72.dp//72.dp
 
     val onValueChangeState = rememberUpdatedState(onValueChange)
 
@@ -91,7 +91,7 @@ fun VolumeControl(value: Float, onValueChange: (Float) -> Unit) {
 
     Box(
         modifier = Modifier
-            .padding(start = 8.dp, top = 8.dp)
+            .padding(start = 8.dp, top = 0.dp)
             .height(H)
             .width(W)
 

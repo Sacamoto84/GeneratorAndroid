@@ -27,6 +27,7 @@ import com.example.generator2.NavigationRoute
 import com.example.generator2.R
 import com.example.generator2.audio.AudioSampleRate
 import com.example.generator2.audio.audioMixerPump
+import com.example.generator2.generator.gen
 import com.example.generator2.mp3.exoplayer
 import com.example.generator2.mp3.formatMinSec
 import com.example.generator2.navController
@@ -60,13 +61,12 @@ fun MP3Control() {
         /////////////////////кнопки/////////////////////
 
 
-
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
 
 
-
-
-            IconButton(modifier = Modifier.size(40.dp), onClick = {  navController.navigate(NavigationRoute.EXPLORER.value) }) {
+            IconButton(
+                modifier = Modifier.size(40.dp),
+                onClick = { navController.navigate(NavigationRoute.EXPLORER.value) }) {
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(id = R.drawable.info),
@@ -143,27 +143,38 @@ fun MP3Control() {
 
             Icon(
                 modifier = Modifier
-                    .height(64.dp).width(32.dp).offset((-1).dp)
+                    .height(64.dp)
+                    .width(32.dp)
+                    .offset((-1).dp)
                     .clickable(
                         onClick = {
                             audioMixerPump.shuffle.value = audioMixerPump.shuffle.value.not()
                         }
                     )
                     .border(1.dp, Color.Gray)
-                    .padding(4.dp)
-                ,
+                    .padding(4.dp),
                 painter = painterResource(id = R.drawable.shuffle74),
                 contentDescription = "",
                 tint = if (audioMixerPump.shuffle.collectAsState().value) Color.Green else Color.DarkGray
             )
 
+            //Стерео Моно
+            Icon(
+                modifier = Modifier
+                    .height(64.dp)
+                    .width(32.dp)
+                    .offset((-1).dp)
+                    .clickable(
+                        onClick = { gen.liveData.mono.value = !gen.liveData.mono.value })
+                    .border(1.dp, Color.Gray)
+                    .padding(4.dp),
+                painter = if (gen.liveData.mono.collectAsState().value) painterResource(R.drawable.mono)
+                else painterResource(R.drawable.stereo),
+                contentDescription = null, tint = Color.LightGray
+            )
+
 
         }
-
-
-
-
-
 
 
     }
