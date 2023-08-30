@@ -1,4 +1,4 @@
-package com.example.generator2.mp3.stream
+package com.example.generator2.scope
 
 //fun dataToLissaguBitmap(buf: ShortArray, w: Int, h: Int): Bitmap {
 

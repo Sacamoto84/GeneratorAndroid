@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-var audioOut : AudioOut = AudioOut(48000,1000, AudioFormat.ENCODING_PCM_FLOAT)
+var audioOut : AudioOut = AudioOut(48000,200, AudioFormat.ENCODING_PCM_FLOAT)
 
 val AudioSampleRate = MutableStateFlow(0) //Частота которая используется на аудиовыводе, для UI
 
@@ -22,7 +22,6 @@ class AudioOut(val sampleRate: Int = 48000, minBufferMs: Int = 1000, encoding: I
     init {
 
         try {
-
 
             val minBufferInBytes = 4 * (sampleRate / 1000) * (minBufferMs / 1000.0).toInt()
 

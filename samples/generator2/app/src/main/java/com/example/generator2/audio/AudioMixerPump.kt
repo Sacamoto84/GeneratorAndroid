@@ -129,7 +129,7 @@ class AudioMixerPump {
                     }
 
                     if ((audioProcessorInputFormat.value.sampleRate != audioOut.sampleRate) or (audioOut.out.format.encoding != AudioFormat.ENCODING_PCM_FLOAT)) {
-                        audioOut.destroy(); audioOut = AudioOut(audioProcessorInputFormat.value.sampleRate,1000, AudioFormat.ENCODING_PCM_FLOAT)
+                        audioOut.destroy(); audioOut = AudioOut(audioProcessorInputFormat.value.sampleRate,200, AudioFormat.ENCODING_PCM_FLOAT)
                     }
 
                     val bufGenL: FloatArray
@@ -201,7 +201,7 @@ class AudioMixerPump {
                     if ((routeL.value != ROUTESTREAM.MP3) and (routeR.value != ROUTESTREAM.MP3)) {
                         if ((audioOut.out.sampleRate != 192000) or (audioOut.out.format.encoding != AudioFormat.ENCODING_PCM_FLOAT)) {
                             audioOut.destroy(); audioOut =
-                                AudioOut(192000, 400, encoding = AudioFormat.ENCODING_PCM_FLOAT)
+                                AudioOut(192000, 200, encoding = AudioFormat.ENCODING_PCM_FLOAT)
                         }
                     }
 
@@ -215,7 +215,8 @@ class AudioMixerPump {
                     }
 
                     calculator.update(nanos / 1000.0)
-                    println("measure :${nanos / 1000.0} us bufferSize: $bufferSize среднее ${calculator.getAvg()}")
+
+                    //println("measure :${nanos / 1000.0} us bufferSize: $bufferSize среднее ${calculator.getAvg()}")
 
                     val outR = when (routeR.value) {
                         ROUTESTREAM.MP3 -> FloatArray(buf.second.size)

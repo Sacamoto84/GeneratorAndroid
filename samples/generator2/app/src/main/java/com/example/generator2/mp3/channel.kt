@@ -8,9 +8,9 @@ val chDataStreamOutAudioProcessor =
     Channel<FloatArray>(capacity = 48, BufferOverflow.DROP_LATEST)
 
 //Выход аудиоданных -> compressor
-val channelAudioOut = Channel<FloatArray>(capacity = 16, BufferOverflow.DROP_OLDEST)
+val channelAudioOut = Channel<FloatArray>(capacity = 8, BufferOverflow.DROP_OLDEST)
 
-val channelDataStreamOutCompressor = Channel<FloatArray>(capacity = 16, BufferOverflow.DROP_LATEST)
+val channelDataStreamOutCompressor = Channel<FloatArray>(capacity = 1, BufferOverflow.DROP_LATEST)
 
 //Канал для Roll данных из компрессора
 val channelDataOutRoll = Channel<FloatArray>(1, BufferOverflow.DROP_OLDEST)

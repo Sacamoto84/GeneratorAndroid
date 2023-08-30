@@ -18,10 +18,6 @@ val compressorCount = mutableFloatStateOf(1f)
 //        field = value.coerceIn(1..32)
 //    }
 
-val roll512: FIFO<ShortArray> = FIFO(512)
-val roll256: FIFO<ShortArray> = FIFO(256)
-val roll128: FIFO<ShortArray> = FIFO(128)
-
 val roll64 = LinkedList<FloatArray>()
 
 
@@ -38,11 +34,11 @@ fun dataCompressor() {
 
     GlobalScope.launch(Dispatchers.IO) {
 
-        val a = arrayOf(0f, 0f).toFloatArray()
-        repeat(64)
-        {
-            roll64.add(a)
-        }
+//        val a = arrayOf(0f, 0f).toFloatArray()
+//        repeat(64)
+//        {
+//            roll64.add(a)
+//        }
 
 
         while (true) {
@@ -53,38 +49,30 @@ fun dataCompressor() {
 
                 for (i in 0 until compressorCount.floatValue.toInt()) {
                     val buf = channelAudioOut.receive()
-                    out.addAll(buf.toList())
 
-                    if (compressorCount.floatValue >= 64) {
+                    if (compressorCount.floatValue >= 32) {
 
-                        while (roll64.size > 64) roll64.removeAt(0)
+                        while (roll64.size > compressorCount.floatValue)
+                            roll64.removeAt(0)
 
                         roll64.add(buf)
 
-                        var fullSize = 0
-                        roll64.forEach {
-                            fullSize += it.size
-                        }
-                        //println("Общий размер $fullSize")
-                        if (fullSize > rollBuffer.size) {
-                            rollBuffer = FloatArray(fullSize)
-                        }
+                        val totalSize = roll64.sumOf { it.size }
+                        val resultArray = FloatArray(totalSize)
 
-                        var index = 0
-                        roll64.forEach {
-                            for (ii in it.indices) {
-                                rollBuffer[index] = it[ii]
-                                index++
-                            }
+                        var currentIndex = 0
+                        for (floatArray in roll64) {
+                            floatArray.copyInto(resultArray, currentIndex)
+                            currentIndex += floatArray.size
                         }
 
-                        //val rollBuf = roll64.flatMap { it.asIterable() }.toShortArray()
-
-                        val s = channelDataOutRoll.trySend(rollBuffer).isSuccess
+                        val s = channelDataStreamOutCompressor.trySend(resultArray).isSuccess
                         if (!s)
                             Timber.e("Нет места в channelDataOutRoll")
 
                     }
+                    else
+                        out.addAll(buf.toList())
 
 
                 }
