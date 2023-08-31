@@ -16,11 +16,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.generator2.mp3.OSCILLSYNC
 import com.example.generator2.mp3.oscillSync
-import com.example.generator2.util.format
 
 
-val m = Modifier.height(32.dp).width(32.dp).border(1.dp, Color.Gray).background(Color.Black)
-val m2 = Modifier.height(32.dp).width(64.dp).border(1.dp, Color.Gray).background(Color.Black)
+val m = Modifier.height(40.dp).width(40.dp).border(1.dp, Color.Gray).background(Color.Black)
+val m2 = Modifier.height(40.dp).width(40.dp).border(1.dp, Color.Gray).background(Color.Black)
 
 
 
@@ -33,39 +32,23 @@ fun OscilloscopeControl() {
 
     Row {
 
-        Box(modifier = m.clickable(onClick = { compressorCount.floatValue *= 2 }),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = "+", color = Color.Gray)
-        }
-
-        Box(modifier = m2,
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = "${compressorCount.floatValue}", color = Color.White)
-        }
-
-        Box(modifier = m.clickable(onClick = { compressorCount.floatValue /= 2 }),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = "-", color = Color.Gray)
-        }
-
         Box(modifier = m.clickable(onClick = { oscillSync.value = OSCILLSYNC.NONE  }),
             contentAlignment = Alignment.Center
         ) {
             Text(text = "N", color = Color.Gray)
         }
 
-
-
-        Button(onClick = { oscillSync.value = OSCILLSYNC.R }) {
-            Text(text = "R")
-        }
-        Button(onClick = { oscillSync.value = OSCILLSYNC.L }) {
-            Text(text = "L")
+        Box(modifier = m.clickable(onClick = { oscillSync.value = OSCILLSYNC.L  }),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "L", color = Color.Gray)
         }
 
+        Box(modifier = m.clickable(onClick = { oscillSync.value = OSCILLSYNC.R  }),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "R", color = Color.Gray)
+        }
 
     }
 }

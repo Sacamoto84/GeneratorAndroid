@@ -1,10 +1,10 @@
 package com.example.generator2.scope
 
 import android.graphics.Bitmap
+import android.graphics.Typeface
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,11 +21,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.drawscope.DrawStyle
-import androidx.compose.ui.graphics.drawscope.scale
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.example.generator2.audio.Calculator
 import com.example.generator2.util.format
@@ -37,8 +39,6 @@ val scope = Scope()
 
 
 class Scope {
-
-
 
 
     private val fps = MutableStateFlow(0.0)
@@ -64,9 +64,9 @@ class Scope {
 
     val calculator = Calculator(20)
 
+
     @Composable
     fun Oscilloscope() {
-
 
         var update by remember { mutableIntStateOf(0) }
         var updateLissagu by remember { mutableIntStateOf(0) }
@@ -111,100 +111,89 @@ class Scope {
 
             Row {
 
+                val textPaint = Paint().asFrameworkPaint().apply {
+                    isAntiAlias = true
+                    textSize = 20f
+                    color = Color.Gray.toArgb()
+                    typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+                }
+
+
 
                 Canvas(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
                         .height(100.dp)
+                        .pointerInput(Unit) {
+                            detectTapGestures { offset ->
+                                val x = offset.x
+
+                                if (x < scopeW/3)
+                                {
+                                    compressorCount.floatValue *= 2
+                                }else
+                                if (x > scopeW/3)
+                                {
+                                    compressorCount.floatValue /= 2
+                                }
+                                else
+                                {
+                                    println("Пауза")
+                                }
+
+
+                            }
+                        }
                 )
                 {
                     update
                     scopeW = size.width
                     scopeH = size.height
 
-//                    val colorList: List<Color> = listOf(Color.Red, Color.Blue,
-//                        Color.Magenta, Color.Yellow, Color.Green, Color.Cyan)
-//
-//                    val brush = Brush.horizontalGradient(
-//                        colors = colorList,
-//                        startX = 0f,
-//                        endX = 300.dp.toPx(),
-//                        tileMode = TileMode.Repeated
-//                    )
-
-
-//                    drawPoints(
-//                        points = pairPoints.first,
-//                        strokeWidth = 3f,
-//                        pointMode = PointMode.Points,
-//                        color = Color(0x40FFFFFF)
-//                    )
-
-//                    drawPath(
-//                        color = Color.Green,
-//                        path = pairPoints.first,
-//                        style = Stroke(
-//                            width = 2.dp.toPx(),
-//                            //pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 2f))
-//                        )
-//                    )
-
-
-//                    drawPath(
-//                        color = Color.Red,
-//                        path = pairPoints.second,
-//                        style = Stroke(
-//                            width = 2.dp.toPx(),
-//                            //pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 2f))
-//                        )
-//                    )
-
-
-
                     if (!hiRes) {
 
                         val scaledWidth = pairPoints.width * 2
                         val scaledHeight = pairPoints.height * 2
                         val scaledBitmap: Bitmap =
-                            Bitmap.createScaledBitmap(pairPoints, scaledWidth, scaledHeight, false)
-                        drawImage(
-                            image = scaledBitmap.asImageBitmap()
-                        )
-                    }
-                    else
+                            Bitmap.createScaledBitmap(
+                                pairPoints,
+                                scaledWidth,
+                                scaledHeight,
+                                false
+                            )
+                        drawImage(image = scaledBitmap.asImageBitmap())
+                    } else
                         drawImage(
                             image = pairPoints.asImageBitmap()
                         )
 
+                    //Индекс компресии
+                    drawIntoCanvas {
+                        it.nativeCanvas.drawText(
+                            compressorCount.floatValue.toString(),
+                            4f,
+                            24f,
+                            textPaint
+                        )
+                    }
 
                 }
 
 
-//                    val b = pairPoints.asImageBitmap()
-//
-//                    Image(
-//                        bitmap = b,
-//                        contentDescription = "",
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .height(100.dp)
-//                            .border(3.dp, Color.Green),
-//                        contentScale = ContentScale.Crop
-//                    )
+//                Canvas(
+//                    modifier = Modifier
+//                        .width(100.dp)
+//                        .height(100.dp)
+//                )
+//                {
+//                    updateLissagu
+//                    scopeLissaguW = size.width
+//                    scopeLissaguH = size.height
+//                    //bitmapLissagu?.let { drawImage(it.asImageBitmap()) }
+//                }
 
 
-                Canvas(
-                    modifier = Modifier
-                        .width(100.dp)
-                        .height(100.dp)
-                )
-                {
-                    updateLissagu
-                    scopeLissaguW = size.width
-                    scopeLissaguH = size.height
-                    //bitmapLissagu?.let { drawImage(it.asImageBitmap()) }
-                }
             }
             OscilloscopeControl()
 
