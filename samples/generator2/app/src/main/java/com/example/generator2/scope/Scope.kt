@@ -42,6 +42,7 @@ import com.example.generator2.mp3.oscillSync
 import com.example.generator2.util.format
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 
 val scope = Scope()
@@ -88,8 +89,17 @@ class Scope {
         LaunchedEffect(key1 = true)
         {
             while (true) {
-                //pairPoints = chDataOutBitmap.receive()
+
+                if (isPause.value) {
+                    delay(1);continue
+                }
+
                 pairPoints = chPixel.receive()
+
+                if (isPause.value) {
+                    delay(1);continue
+                }
+
                 update++
                 val deltaTime = System.currentTimeMillis() - startTime
                 val v = 1.0 / (deltaTime.toDouble() / 1000.0)
@@ -140,8 +150,20 @@ class Scope {
                                 val x = offset.x
                                 isPause.value = (x in scopeW / 3..scopeW * 2 / 3) xor isPause.value
                                 compressorCount.floatValue = when {
-                                    x < scopeW / 3     -> {isPause.value = false; (compressorCount.floatValue * 2).coerceAtMost(256f)}
-                                    x > scopeW * 2 / 3 -> {isPause.value = false; (compressorCount.floatValue / 2).coerceAtLeast(0.125f)}
+                                    x < scopeW / 3 -> {
+                                        isPause.value =
+                                            false; (compressorCount.floatValue * 2).coerceAtMost(
+                                            256f
+                                        )
+                                    }
+
+                                    x > scopeW * 2 / 3 -> {
+                                        isPause.value =
+                                            false; (compressorCount.floatValue / 2).coerceAtLeast(
+                                            0.125f
+                                        )
+                                    }
+
                                     else -> compressorCount.floatValue
                                 }
                             }
@@ -247,7 +269,7 @@ class Scope {
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = if (stateIsOneTwo) """••""".trimMargin() else "•",
+                                text = if (stateIsOneTwo) "•" else "••",
                                 color = Color.White,
                                 fontSize = 24.sp
                             )

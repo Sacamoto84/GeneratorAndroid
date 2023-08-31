@@ -2,13 +2,11 @@ package com.example.generator2.scope
 
 import androidx.compose.runtime.mutableFloatStateOf
 import com.example.generator2.mp3.channelAudioOut
-import com.example.generator2.mp3.channelDataOutRoll
 import com.example.generator2.mp3.channelDataStreamOutCompressor
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import libs.structure.FIFO
 import timber.log.Timber
 import java.util.LinkedList
 

@@ -7,43 +7,20 @@ import android.graphics.Paint
 import android.graphics.Path
 import com.example.generator2.audio.Calculator
 import com.example.generator2.mp3.OSCILLSYNC
-import com.example.generator2.mp3.channelDataOutRoll
 import com.example.generator2.mp3.channelDataStreamOutCompressor
 import com.example.generator2.mp3.oscillSync
 import com.example.generator2.util.BufSplitFloat
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import libs.maping
-import timber.log.Timber
-import kotlin.math.absoluteValue
 import kotlin.system.measureNanoTime
 
 var hiRes: Boolean = false //Режим высокого разрешения
 
 @OptIn(DelicateCoroutinesApi::class)
 fun renderDataToPoints() {
-
-    val paintRStroke = Paint().apply {
-        color = Color.GREEN
-        isAntiAlias = false
-        style = Paint.Style.STROKE
-        strokeWidth = 2f
-    }
-
-    val paintLStroke = Paint().apply {
-        color = Color.RED
-        isAntiAlias = false
-        style = Paint.Style.STROKE
-        strokeWidth = 2f
-    }
-
-
-//    var bitmap2: Bitmap =
-//        Bitmap.createBitmap(scope.scopeW.toInt(), scope.scopeH.toInt(), Bitmap.Config.RGB_565)
-//    var bitmapBuffer = false
 
     var canvas: Canvas
 
@@ -223,16 +200,32 @@ fun renderDataToPoints() {
                         }
 
 
+                        val maxL: Float
+                        val minL: Float
+                        val maxR: Float
+                        val minR: Float
+
+                        //Пиксели
+                        if (scope.isOneTwo.value) {
+                            maxL = h - 1f
+                            minL = 0f
+                            maxR = h - 1f
+                            minR = 0f
+                        } else {
+                            maxR = h - 1f
+                            minR = h / 2
+                            maxL = h / 2
+                            minL = 0f
+                        }
+
+
                         if (!drawLine) {
-
-                            //Пиксели
-
                             for (pixelI in 0 until maxPixelBuffer) {
 
                                 if (scope.isVisibleR.value) {
                                     canvas.drawPoint(
                                         x.toFloat(),
-                                        maping(pixelBufR[pixelI], -1f, 1f, 0f, h - 1f),
+                                        maping(pixelBufR[pixelI], -1f, 1f, minR, maxR),
                                         paintR
                                     )
                                 }
@@ -240,38 +233,40 @@ fun renderDataToPoints() {
                                 if (scope.isVisibleL.value) {
                                     canvas.drawPoint(
                                         x.toFloat(),
-                                        maping(pixelBufL[pixelI], -1f, 1f, 0f, h - 1f),
+                                        maping(pixelBufL[pixelI], -1f, 1f, minL, maxL),
                                         paintL
                                     )
                                 }
-
                             }
                         } else {
                             //Рисуем линии
                             if (x == 0) {
                                 pathL.moveTo(0f, h / 2)
                                 pathR.moveTo(0f, h / 2)
-                               }
-                            else {
+                            } else {
 
                                 if (scope.isVisibleL.value) {
                                     average = pixelBufL[0]
-                                    pathL.lineTo(x.toFloat(), maping(average, -1f, 1f, 0f, h - 1f))
+                                    pathL.lineTo(
+                                        x.toFloat(),
+                                        maping(average, -1f, 1f, minL, maxL)
+                                    )
                                 }
 
                                 if (scope.isVisibleR.value) {
                                     average = pixelBufR[0]
-                                    pathR.lineTo(x.toFloat(), maping(average, -1f, 1f, 0f, h - 1f))
+                                    pathR.lineTo(
+                                        x.toFloat(),
+                                        maping(average, -1f, 1f, minR, maxR)
+                                    )
                                 }
                             }
                         }
-
-
                     }
 
                     if (drawLine) {
-                        canvas.drawPath(pathL, paintL)
                         canvas.drawPath(pathR, paintR)
+                        canvas.drawPath(pathL, paintL)
                     }
                 }
                 calculator.update(nanos / 1000000.0)
@@ -279,7 +274,7 @@ fun renderDataToPoints() {
 
                 //println("Calculate Pointer :${nanos / 1000000.0} ms ${calculator.getAvg()}")
 
-                scope.chPixel.send(ChPixelData (bitmap, hiRes))
+                scope.chPixel.send(ChPixelData(bitmap, hiRes))
 
 
             }
