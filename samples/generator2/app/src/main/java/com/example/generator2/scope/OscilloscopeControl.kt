@@ -17,11 +17,11 @@ import com.example.generator2.mp3.OSCILLSYNC
 import com.example.generator2.mp3.oscillSync
 
 
-val m = Modifier.height(32.dp).width(32.dp).border(1.dp, Color.Gray).background(Color.Black)
+private val m = Modifier.height(32.dp).width(32.dp).border(1.dp, Color.Gray).background(Color.Black)
 
-val colorEnabled = Color(0xFF004000)
-val colorTextEnabled = Color.White
-val colorTextDisabled = Color.DarkGray
+private val colorEnabled = Color.Black
+private val colorTextEnabled = Color.Green
+private val colorTextDisabled = Color.Gray
 
 @Composable
 fun OscilloscopeControl() {

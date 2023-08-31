@@ -4,10 +4,14 @@ import android.graphics.Bitmap
 import android.graphics.Typeface
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -19,7 +23,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
@@ -29,7 +35,10 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.generator2.audio.Calculator
+import com.example.generator2.mp3.OSCILLSYNC
+import com.example.generator2.mp3.oscillSync
 import com.example.generator2.util.format
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
@@ -37,42 +46,44 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 val scope = Scope()
 
+private val colorEnabled = Color.Black
+private val colorTextEnabled = Color.Green
+private val colorTextDisabled = Color.Gray
+private val m = Modifier
+    .height(32.dp)
+    .width(32.dp)
+    .border(1.dp, Color.Gray)
+    .background(Color.Black)
+
+data class ChPixelData(val bitmap: Bitmap, val hiRes: Boolean)
 
 class Scope {
 
+    //Режимы отображения каналов на осцилографе
+    val isVisibleL = MutableStateFlow(true) //Отобразить Левый канал
+    val isVisibleR = MutableStateFlow(true) //Отобразить Правый канал
+    val isOneTwo = MutableStateFlow(true)   //Комбинация двух каналов или раздельно
+
+    var isPause = MutableStateFlow(false)
 
     private val fps = MutableStateFlow(0.0)
 
     var scopeW: Float = 0f
     var scopeH: Float = 0f
 
-    var scopeLissaguW: Float = 1f
-    var scopeLissaguH: Float = 1f
+    val chPixel = Channel<ChPixelData>(1, BufferOverflow.DROP_OLDEST)
 
-    private var bitmap: Path? = null
-    private var bitmapLissagu: Bitmap? = null
 
-    val chPixel = Channel<Bitmap>(1, BufferOverflow.DROP_OLDEST)
+    var pairPoints: ChPixelData =
+        ChPixelData(Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888), true)
 
-    val chDataOutBitmap = Channel<Pair<Path, Path>>(1, BufferOverflow.DROP_OLDEST)
-    val chLissaguBitmap = Channel<Bitmap>(1, BufferOverflow.DROP_OLDEST)
-
-    var pairPoints: Bitmap = Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888)
-
-    var startTime: Long = 0L
-    var deltaTime: Long = 0L
-
-    val calculator = Calculator(20)
+    private var startTime: Long = 0L
 
 
     @Composable
     fun Oscilloscope() {
 
         var update by remember { mutableIntStateOf(0) }
-        var updateLissagu by remember { mutableIntStateOf(0) }
-
-        //var pairPoints: Pair<Path, Path> = Pair(Path(), Path())
-
 
         LaunchedEffect(key1 = true)
         {
@@ -80,23 +91,16 @@ class Scope {
                 //pairPoints = chDataOutBitmap.receive()
                 pairPoints = chPixel.receive()
                 update++
-                deltaTime = System.currentTimeMillis() - startTime
-                //fps.value = 1f/(deltaTime.toFloat()/1000.0f)
+                val deltaTime = System.currentTimeMillis() - startTime
                 val v = 1.0 / (deltaTime.toDouble() / 1000.0)
-                calculator.update(v)
-                fps.value = calculator.getAvg()
+                //calculator.update(v)
+
+                fps.value = v
+
                 startTime = System.currentTimeMillis()
             }
         }
 
-
-//        LaunchedEffect(key1 = true)
-//        {
-//            while (true) {
-//                bitmapLissagu = chLissaguBitmap.receive()
-//                updateLissagu++
-//            }
-//        }
 
 
         Column(
@@ -118,6 +122,12 @@ class Scope {
                     typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
                 }
 
+                val textPaintPause = Paint().asFrameworkPaint().apply {
+                    isAntiAlias = true
+                    textSize = 40f
+                    color = Color.White.toArgb()
+                    typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+                }
 
 
                 Canvas(
@@ -128,21 +138,12 @@ class Scope {
                         .pointerInput(Unit) {
                             detectTapGestures { offset ->
                                 val x = offset.x
-
-                                if (x < scopeW/3)
-                                {
-                                    compressorCount.floatValue *= 2
-                                }else
-                                if (x > scopeW/3)
-                                {
-                                    compressorCount.floatValue /= 2
+                                isPause.value = (x in scopeW / 3..scopeW * 2 / 3) xor isPause.value
+                                compressorCount.floatValue = when {
+                                    x < scopeW / 3     -> {isPause.value = false; (compressorCount.floatValue * 2).coerceAtMost(256f)}
+                                    x > scopeW * 2 / 3 -> {isPause.value = false; (compressorCount.floatValue / 2).coerceAtLeast(0.125f)}
+                                    else -> compressorCount.floatValue
                                 }
-                                else
-                                {
-                                    println("Пауза")
-                                }
-
-
                             }
                         }
                 )
@@ -151,13 +152,13 @@ class Scope {
                     scopeW = size.width
                     scopeH = size.height
 
-                    if (!hiRes) {
+                    if (!pairPoints.hiRes) {
 
-                        val scaledWidth = pairPoints.width * 2
-                        val scaledHeight = pairPoints.height * 2
+                        val scaledWidth = pairPoints.bitmap.width * 2
+                        val scaledHeight = pairPoints.bitmap.height * 2
                         val scaledBitmap: Bitmap =
                             Bitmap.createScaledBitmap(
-                                pairPoints,
+                                pairPoints.bitmap,
                                 scaledWidth,
                                 scaledHeight,
                                 false
@@ -165,7 +166,7 @@ class Scope {
                         drawImage(image = scaledBitmap.asImageBitmap())
                     } else
                         drawImage(
-                            image = pairPoints.asImageBitmap()
+                            image = pairPoints.bitmap.asImageBitmap()
                         )
 
                     //Индекс компресии
@@ -178,6 +179,80 @@ class Scope {
                         )
                     }
 
+                    //fps
+//                    drawIntoCanvas {
+//                        it.nativeCanvas.drawText(
+//                            "fps:"+fps.value.toFloat().format(0),
+//                            size.width - 80f,
+//                            24f,
+//                            textPaint
+//                        )
+//                    }
+
+                    if (isPause.value)
+                        drawIntoCanvas {
+                            it.nativeCanvas.drawText(
+                                "Pause",
+                                size.width / 2 - 40f,
+                                40f,
+                                textPaintPause
+                            )
+                        }
+
+                }
+
+                Box(
+                    modifier = Modifier
+                        .width(32.dp)
+                        .height(100.dp)
+                )
+                {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.SpaceBetween
+                    ) {
+
+                        val stateIsVisibleL = isVisibleL.collectAsState().value
+                        val stateIsVisibleR = isVisibleR.collectAsState().value
+                        val stateIsOneTwo = isOneTwo.collectAsState().value
+
+
+                        Box(
+                            modifier = m
+                                .clickable(onClick = { isVisibleL.value = isVisibleL.value.not() })
+                                .background(if (stateIsVisibleL) colorEnabled else Color.Black),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "1",
+                                color = if (stateIsVisibleL) colorTextEnabled else colorTextDisabled
+                            )
+                        }
+                        Box(
+                            modifier = m
+                                .clickable(onClick = { isVisibleR.value = isVisibleR.value.not() })
+                                .background(if (stateIsVisibleR) colorEnabled else Color.Black),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "2",
+                                color = if (stateIsVisibleR) colorTextEnabled else colorTextDisabled
+                            )
+                        }
+                        Box(
+                            modifier = m
+                                .clickable(onClick = { isOneTwo.value = isOneTwo.value.not() })
+                                .background(if (stateIsOneTwo) colorEnabled else Color.Black)
+                                .rotate(90f),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = if (stateIsOneTwo) """••""".trimMargin() else "•",
+                                color = Color.White,
+                                fontSize = 24.sp
+                            )
+                        }
+                    }
                 }
 
 

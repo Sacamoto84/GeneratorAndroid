@@ -23,7 +23,10 @@ enum class OSCILLSYNC{
     L
 }
 
-val oscillSync = mutableStateOf(OSCILLSYNC.NONE)
+
+
+
+val oscillSync = mutableStateOf(OSCILLSYNC.L)
 
 
 // Класс для создания точки
