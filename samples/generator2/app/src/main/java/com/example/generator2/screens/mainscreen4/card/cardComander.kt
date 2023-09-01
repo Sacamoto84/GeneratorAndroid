@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.generator2.R
-import com.example.generator2.generator.gen
+import com.example.generator2.gen
 import com.example.generator2.screens.mainscreen4.VMMain4
 import com.example.generator2.screens.mainscreen4.atom.LR
 import com.example.generator2.theme.colorDarkBackground

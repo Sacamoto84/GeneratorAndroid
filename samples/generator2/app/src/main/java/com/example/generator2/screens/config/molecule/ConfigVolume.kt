@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.generator2.generator.gen
+import com.example.generator2.gen
 import com.example.generator2.screens.config.Config_header
 import com.example.generator2.screens.config.atom.editConfig
 import com.example.generator2.screens.config.vm.VMConfig

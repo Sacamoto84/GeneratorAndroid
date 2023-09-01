@@ -11,8 +11,7 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import com.example.generator2.R
 import com.example.generator2.backup.Backup
-import com.example.generator2.element.Firebas
-import com.example.generator2.model.mmkv
+import com.example.generator2.mmkv
 import com.yagmurerdogan.toasticlib.Toastic
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext

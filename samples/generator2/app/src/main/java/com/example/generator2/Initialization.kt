@@ -2,9 +2,7 @@ package com.example.generator2
 
 import android.content.Context
 import com.example.generator2.di.Hub
-import com.example.generator2.generator.gen
 import com.example.generator2.model.itemList
-import com.example.generator2.model.mmkv
 import com.example.generator2.presets.presetsReadFile
 import com.example.generator2.presets.presetsToLiveData
 import com.example.generator2.util.Utils

@@ -5,7 +5,7 @@ import cafe.adriel.satchel.encrypter.bypass.BypassSatchelEncrypter
 import cafe.adriel.satchel.serializer.raw.RawSatchelSerializer
 import cafe.adriel.satchel.storer.file.FileSatchelStorer
 import com.example.generator2.AppPath
-import com.example.generator2.generator.gen
+import com.example.generator2.gen
 import com.example.generator2.util.toast
 import java.io.File
 

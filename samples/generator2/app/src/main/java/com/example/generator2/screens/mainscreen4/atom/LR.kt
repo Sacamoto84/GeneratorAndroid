@@ -3,7 +3,13 @@ package com.example.generator2.screens.mainscreen4.atom
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -19,9 +25,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.R
-import com.example.generator2.generator.gen
+import com.example.generator2.gen
+import com.example.generator2.theme.colorDarkBackground
 
 private val m : Modifier = Modifier.fillMaxHeight().aspectRatio(1.5f).clip(RoundedCornerShape(15.dp)).border(1.dp, Color.DarkGray, CircleShape)
     .background(colorDarkBackground).offset(1.dp, 0.dp)

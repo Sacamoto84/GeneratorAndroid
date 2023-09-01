@@ -1,13 +1,12 @@
 package com.example.generator2.generator
 
+import com.example.generator2.gen
 import com.example.generator2.model.itemList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
-
-val gen = Generator()
 
 class Generator {
 

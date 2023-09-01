@@ -1,13 +1,23 @@
 package com.example.generator2.screens.config
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.BottomAppBar
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -18,12 +28,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.R
-import com.example.generator2.mp3.mp3Duration
-import com.example.generator2.mp3.mp3TimeStamp
 import com.example.generator2.navController
 import com.example.generator2.screens.config.molecule.ConfigConstrain
 import com.example.generator2.screens.config.molecule.ConfigVolume
-import com.example.generator2.screens.config.vm.*
+import com.example.generator2.screens.config.vm.VMConfig
 import com.example.generator2.theme.colorLightBackground
 import com.example.generator2.update.Update
 
@@ -54,10 +62,6 @@ fun ScreenConfig(
                 { detectTapGestures(onTap = { focusManager.clearFocus() }) }
         ) {
 
-            
-            Text(text =  "${mp3TimeStamp.collectAsState().value}", color = Color.White)
-            Text(text =  "${mp3Duration.collectAsState().value}", color = Color.White)
-            
             Divider()
             Config_header(Update.currentVersion)
             Divider()

@@ -11,9 +11,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -27,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.generator2.R
 import com.example.generator2.audio.ROUTESTREAM
-import com.example.generator2.audio.audioMixerPump
+import com.example.generator2.audioMixerPump
 import com.example.generator2.theme.colorGreen
 import com.example.generator2.theme.colorOrange
 

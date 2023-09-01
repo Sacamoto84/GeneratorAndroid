@@ -1,7 +1,7 @@
 package com.example.generator2.presets
 
+import com.example.generator2.gen
 import com.example.generator2.generator.DataLiveData
-import com.example.generator2.generator.gen
 
 fun presetsToLiveData(data: DataLiveData) {
 

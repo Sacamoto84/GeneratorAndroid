@@ -1,7 +1,6 @@
 package com.example.generator2
 
 import com.example.generator2.di.Hub
-import com.example.generator2.generator.gen
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

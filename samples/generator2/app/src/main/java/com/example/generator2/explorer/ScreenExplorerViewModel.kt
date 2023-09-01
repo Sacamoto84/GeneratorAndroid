@@ -7,25 +7,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.transformer.EditedMediaItem
 import com.example.generator2.AppPath
 import com.example.generator2.di.Hub
-import com.example.generator2.mp3.exoplayer
-import com.example.generator2.mp3.formatMinSec
+import com.example.generator2.exoplayer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import org.jaudiotagger.audio.AudioFileIO
-import org.jaudiotagger.audio.mp3.MP3AudioHeader
 import org.jaudiotagger.tag.FieldKey
 import timber.log.Timber
 import java.io.File
-import java.text.ParseException
-import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
@@ -58,10 +51,6 @@ class ScreenExplorerViewModel @Inject constructor(
         exoplayer.player.prepare()
         exoplayer.player.playWhenReady = true
     }
-
-
-
-
 
     fun scan() {
 

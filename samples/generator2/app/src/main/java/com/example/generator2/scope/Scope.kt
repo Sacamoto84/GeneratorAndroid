@@ -42,7 +42,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 
-val scope = Scope()
 
 private val colorEnabled = Color.Black
 private val colorTextEnabled = Color.Green
@@ -56,6 +55,11 @@ private val m = Modifier
 data class ChPixelData(val bitmap: Bitmap, val hiRes: Boolean)
 
 class Scope {
+
+    /**
+     * Используем компонент или нет
+     */
+    var isUse = MutableStateFlow(true)
 
     //Режимы отображения каналов на осцилографе
     val isVisibleL = MutableStateFlow(true) //Отобразить Левый канал
@@ -148,12 +152,8 @@ class Scope {
                 CanvasLissagu()
             }
             OscilloscopeControl()
-
         }
-
     }
-
-
 
     @Composable
     fun CanvasLissagu()
@@ -171,8 +171,6 @@ class Scope {
             )
         }
     }
-
-
 
     @Composable
     fun CanvasOscill(modifier : Modifier){
@@ -316,12 +314,5 @@ class Scope {
 
 
     }
-
-
-
-
-
-
-
 
 }

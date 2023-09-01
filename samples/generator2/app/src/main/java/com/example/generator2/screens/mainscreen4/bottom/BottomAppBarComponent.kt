@@ -10,7 +10,6 @@ import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,13 +21,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.generator2.R
-import com.example.generator2.generator.gen
+import com.example.generator2.gen
 import com.example.generator2.navController
 import com.example.generator2.presets.Presets
 import com.example.generator2.presets.presetsSaveFile
 import com.example.generator2.screens.mainscreen4.VMMain4
 import com.example.generator2.theme.colorLightBackground
-import kotlinx.coroutines.delay
 
 
 //Нижняя панель с кнопками
@@ -41,17 +39,6 @@ fun M4BottomAppBarComponent(
 
     val context = LocalContext.current
     var r : String by remember {  mutableStateOf("Auto select")  }
-
-    LaunchedEffect(key1 = true)
-    {
-        while (true)
-        {
-            delay(2000)
-            //r = getCurrentAudioDevices(context)
-            //println(r)
-        }
-    }
-
 
     BottomAppBar(
         backgroundColor = colorLightBackground,
@@ -66,61 +53,6 @@ fun M4BottomAppBarComponent(
             Icon(painter = painterResource(R.drawable.line3_2), contentDescription = null)
         }
 
-        //Иконка устройства
-//        IconButton(
-//            onClick = toggleDrawer
-//        ) {
-//
-//            val imageVector = nameToPainter(r)
-//            Icon(imageVector, contentDescription = null, modifier = Modifier.size(32.dp))
-//        }
-
-        //Управление скриптами
-//       if ((global.hub.script.state == StateCommandScript.ISRUNNING) || (global.hub.script.state == StateCommandScript.ISPAUSE)) {
-//            //Пауза
-//            IconButton(onClick = {
-//
-//                if (global.hub.script.state != StateCommandScript.ISPAUSE) global.hub.script.command(
-//                    StateCommandScript.PAUSE
-//                )
-//                else {
-//                    global.hub.script.state = StateCommandScript.ISRUNNING
-//                    global.hub.script.end = false
-//                }
-//
-//            }) {
-//
-//                if (global.hub.script.state != StateCommandScript.ISPAUSE)
-//                    Icon(
-//                        painter = painterResource(
-//                            R.drawable.pause
-//                        ), contentDescription = null
-//                    )
-//                else
-//                    Icon(
-//                        painter = painterResource(
-//                            R.drawable.play
-//                        ), contentDescription = null
-//                    )
-//
-//            }
-//        } else {
-//            //Старт
-//            IconButton(onClick = {
-//                global.hub.script.command(StateCommandScript.START)
-//            }) {
-//                Icon(painter = painterResource(R.drawable.play), contentDescription = null)
-//            }
-//        }
-//
-//        //Стоп
-//        IconButton(onClick = {
-//            global.hub.script.command(StateCommandScript.STOP)
-//        }) {
-//            Icon(painter = painterResource(R.drawable.stop), contentDescription = null)
-//        }
-
-
         IconButton(onClick = {
             navController.navigate("presets")
         }) {
@@ -129,7 +61,6 @@ fun M4BottomAppBarComponent(
                     .size(36.dp)
             )
         }
-
 
         //Сохранить
         IconButton(
@@ -142,20 +73,15 @@ fun M4BottomAppBarComponent(
                     .size(36.dp)
                     .combinedClickable(
                         onClick = {
-
                             if ((gen.liveData.presetsName.value == "") || (gen.liveData.presetsName.value == "default")) {
                                 Presets.isOpenDialogNewFile.value = true
                             } else {
                                 presetsSaveFile(gen.liveData.presetsName.value)
                             }
-
-
                         },
                         onLongClick = {
                             Presets.isOpenDialogNewFile.value = true
                         })
-
-
             )
         }
 

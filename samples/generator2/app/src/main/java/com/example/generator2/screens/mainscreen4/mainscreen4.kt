@@ -1,15 +1,34 @@
 package com.example.generator2.screens.mainscreen4
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.with
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.*
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -17,17 +36,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.generator2.generator.gen
+import com.example.generator2.gen
 import com.example.generator2.mp3.compose.MP3Control
 import com.example.generator2.presets.Presets
 import com.example.generator2.presets.ui.DialogPresetsNewFile
-import com.example.generator2.scope.scope
-import com.example.generator2.screens.mainscreen4.card.CardCard
-import com.example.generator2.screens.mainscreen4.card.CardCommander
+import com.example.generator2.scope
 import com.example.generator2.screens.mainscreen4.bottom.M4BottomAppBarComponent
+import com.example.generator2.screens.mainscreen4.card.CardCard
+import com.example.generator2.screens.mainscreen4.top.TopBarAudioSource
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.update.ui.WigetUpdate
-import kotlinx.coroutines.*
 import timber.log.Timber
 
 @androidx.media3.common.util.UnstableApi
@@ -59,13 +77,6 @@ fun Mainsreen4(
         DialogPresetsNewFile()
     }
 
-
-
-
-
-
-
-
     Scaffold(
 
         topBar = {
@@ -83,57 +94,14 @@ fun Mainsreen4(
         },
 
         bottomBar = {
-            M4BottomAppBarComponent(
-                //toggleDrawer,
-                vm
-            )
-        }          //<-- Нижняя панель
+            //Нижняя панель
+            M4BottomAppBarComponent(vm)
+        }
     )
     { it ->
 
-
-//        BottomDrawer(
-//            //gesturesEnabled = drawerState.isOpen,
-//            //drawerState = drawerState,
-//            drawerContent = {
-//
-////                Box(
-////                    modifier = Modifier
-////                        .padding(bottom = it.calculateBottomPadding())
-////                        .background(Color(0xFF242323))
-////                )
-////                {
-////                    DrawerContentBottom(vm) //Список устройств
-////                }
-//
-//            }
-//        )
-//        {
-//
-//
-//        }
-
-
-//        BottomDrawer(gesturesEnabled = drawerState.isOpen,
-//            drawerState = drawerState,
-//            drawerContent = {
-//
-//                Box(
-//                    modifier = Modifier
-//                        .padding(bottom = it.calculateBottomPadding())
-//                        .background(Color(0xFF242323))
-//                )
-//                {
-//                    DrawerContentBottom(vm) //Список устройств
-//                }
-//
-//            }
-//        )
-//
-//        {
-//
         val mono by gen.liveData.mono.collectAsState()
-//
+
         val animateHeight by animateDpAsState(
             targetValue = if (!mono) 314.dp else 0.dp,
             animationSpec = tween(durationMillis = 7050), label = ""
@@ -144,6 +112,7 @@ fun Mainsreen4(
             animationSpec = tween(durationMillis = 7050), label = ""
         )
 
+        //Основной экран
         Column(
             Modifier
                 .fillMaxSize()
@@ -152,14 +121,17 @@ fun Mainsreen4(
                 .verticalScroll(rememberScrollState()),
             //verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()
-                    .weight(1f)
-            )
 
+            //Заполнение сверху
+            Box(modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1f))
+
+            //Выбор Аудио Источников MP3 Gen Oscill
+            TopBarAudioSource(vm)
+
+            //Осциллограф
             scope.Oscilloscope()
+
+
 
             MP3Control()
 
@@ -180,7 +152,7 @@ fun Mainsreen4(
                     val time = 400
                     //Появление
                     (fadeIn(animationSpec = tween(time / 2)) + expandVertically(
-                        animationSpec = tween( time )
+                        animationSpec = tween(time)
                     ))
                         .with(
                             (fadeOut(animationSpec = tween(time)) + shrinkVertically(

@@ -2,7 +2,7 @@ package com.example.generator2.util
 
 import android.content.Context
 import c.ponom.audiuostreams.audiostreams.ArrayUtils.byteToShortArrayLittleEndian
-import com.example.generator2.generator.gen
+import com.example.generator2.gen
 import java.io.File
 import java.io.IOException
 

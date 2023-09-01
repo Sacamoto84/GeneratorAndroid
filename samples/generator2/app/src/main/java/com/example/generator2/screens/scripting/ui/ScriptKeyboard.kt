@@ -5,7 +5,15 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -28,12 +36,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.generator2.element.Script
-import com.example.generator2.generator.gen
+import com.example.generator2.gen
+import com.example.generator2.screens.scripting.atom.TemplateButtonBottomBar
 import com.example.generator2.theme.NoRippleTheme
 import com.example.generator2.theme.colorDarkBackground
-import com.example.generator2.screens.scripting.atom.TemplateButtonBottomBar
 import timber.log.Timber
-import java.util.*
+import java.util.Stack
 
 //Экраны для нижнего меню
 enum class RouteKeyboardEnum {

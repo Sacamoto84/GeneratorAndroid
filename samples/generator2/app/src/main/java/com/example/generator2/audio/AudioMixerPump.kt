@@ -2,12 +2,12 @@ package com.example.generator2.audio
 
 import android.media.AudioFormat
 import android.media.AudioTrack.WRITE_BLOCKING
-import com.example.generator2.generator.gen
+import com.example.generator2.audioOut
+import com.example.generator2.exoplayer
+import com.example.generator2.gen
 import com.example.generator2.mp3.chDataStreamOutAudioProcessor
 import com.example.generator2.mp3.channelAudioOut
 import com.example.generator2.mp3.channelAudioOutLissagu
-import com.example.generator2.mp3.channelDataStreamOutCompressor
-import com.example.generator2.mp3.exoplayer
 import com.example.generator2.mp3.processor.audioProcessorInputFormat
 import com.example.generator2.util.BufSplitFloat
 import com.example.generator2.util.bufMerge
@@ -21,15 +21,11 @@ import timber.log.Timber
 import java.util.LinkedList
 import kotlin.system.measureNanoTime
 
-
 enum class ROUTESTREAM {
     GEN,
     MP3,
     OFF,
 }
-
-
-val audioMixerPump = AudioMixerPump()
 
 @androidx.media3.common.util.UnstableApi
 class AudioMixerPump {
@@ -72,10 +68,6 @@ class AudioMixerPump {
         var bufferSize = 8192
 
         val calculator = Calculator()
-        val calculator2 = Calculator()
-
-//        val currentEventTime = LocalDateTime.now()
-//        var lastEventTime = LocalDateTime.now()
 
         GlobalScope.launch(Dispatchers.IO) {
 
@@ -182,17 +174,12 @@ class AudioMixerPump {
                     //LRLRLR
                     audioOut.out.write(v, 0, v.size, WRITE_BLOCKING)
 
-
-
-
-
                 } else {
 
 //                    val duration = Duration.between(lastEventTime, LocalDateTime.now()).toMillis()
 //                    lastEventTime = LocalDateTime.now()
 //                    calculator2.update(duration.toDouble())
 //                    println("Частота вызова: " + duration + " ms AVG: ${calculator2.getAvg()} ms")
-
 
                     while (chDataStreamOutAudioProcessor.tryReceive().isSuccess) {
                         println("Очистка канала")

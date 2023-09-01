@@ -5,8 +5,8 @@ import com.example.generator2.backup.Backup
 import com.example.generator2.screens.scripting.ui.ScriptKeyboard
 import com.example.generator2.util.UtilsKT
 import com.example.generator2.element.Script
+import com.example.generator2.exoplayer
 import com.example.generator2.mp3.PlayerMP3
-import com.example.generator2.mp3.exoplayer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

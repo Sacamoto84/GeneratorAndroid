@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Slider
@@ -26,9 +25,9 @@ import androidx.compose.ui.unit.dp
 import com.example.generator2.NavigationRoute
 import com.example.generator2.R
 import com.example.generator2.audio.AudioSampleRate
-import com.example.generator2.audio.audioMixerPump
-import com.example.generator2.generator.gen
-import com.example.generator2.mp3.exoplayer
+import com.example.generator2.audioMixerPump
+import com.example.generator2.exoplayer
+import com.example.generator2.gen
 import com.example.generator2.mp3.formatMinSec
 import com.example.generator2.navController
 import com.example.generator2.theme.Purple200

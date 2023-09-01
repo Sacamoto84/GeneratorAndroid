@@ -2,9 +2,7 @@ package com.example.generator2.scope
 
 import androidx.compose.runtime.mutableFloatStateOf
 import com.example.generator2.mp3.channelAudioOut
-import com.example.generator2.mp3.channelAudioOutLissagu
 import com.example.generator2.mp3.channelDataStreamOutCompressor
-import com.example.generator2.mp3.channelDataStreamOutCompressorLissagu
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -89,20 +87,12 @@ fun dataCompressor() {
 
                     }
                     else {
-
                         for (i in 0 until compressorCount.floatValue.toInt()) {
                             val buf1 = channelAudioOut.receive()
                             out.addAll(buf1.toList())
                         }
-
                         channelDataStreamOutCompressor.send(out.toFloatArray())
-
                     }
-
-                //}
-
-
-
 
             } else {
                 //compressorCount.floatValue < 1.0F
@@ -115,22 +105,5 @@ fun dataCompressor() {
             lastCompressorCount = compressorCount.floatValue
         }
     }
-
-}
-
-
-@OptIn(DelicateCoroutinesApi::class)
-fun dataCompressorLissagu() {
-
-//    GlobalScope.launch(Dispatchers.IO) {
-//        while (true) {
-//            val out = mutableListOf<Float>()
-//            for (i in 0 until 2) {
-//                val buf1 = channelAudioOutLissagu.receive()
-//                out.addAll(buf1.toList())
-//            }
-//            channelDataStreamOutCompressorLissagu.send(out.toFloatArray())
-//        }
-//    }
 
 }

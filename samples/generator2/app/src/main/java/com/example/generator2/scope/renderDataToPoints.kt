@@ -9,8 +9,8 @@ import com.example.generator2.audio.Calculator
 import com.example.generator2.mp3.OSCILLSYNC
 import com.example.generator2.mp3.channelAudioOutLissagu
 import com.example.generator2.mp3.channelDataStreamOutCompressor
-import com.example.generator2.mp3.channelDataStreamOutCompressorLissagu
 import com.example.generator2.mp3.oscillSync
+import com.example.generator2.scope
 import com.example.generator2.util.BufSplitFloat
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -287,8 +287,6 @@ fun renderDataToPoints() {
 
 @OptIn(DelicateCoroutinesApi::class)
 fun lissaguToBitmap() {
-    //Добавить паузу
-
     val paintLissagu = Paint()
     paintLissagu.color = Color.GREEN
     paintLissagu.alpha = 0xFF
@@ -325,7 +323,6 @@ fun lissaguToBitmap() {
 //                    paintLissagu
 //                )
 //            }
-
 
             val path = Path()
             path.moveTo(maping(bufLN[0], -1f, 1f, min, max), maping(bufRN[0], -1f, 1f, min, max))

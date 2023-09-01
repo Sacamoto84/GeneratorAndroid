@@ -1,6 +1,6 @@
 package com.example.generator2.backup
 
-import com.example.generator2.generator.gen
+import com.example.generator2.gen
 import com.example.generator2.model.LiveConstrain
 import com.tencent.mmkv.MMKV
 
