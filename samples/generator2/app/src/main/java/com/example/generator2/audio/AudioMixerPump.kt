@@ -5,6 +5,7 @@ import android.media.AudioTrack.WRITE_BLOCKING
 import com.example.generator2.generator.gen
 import com.example.generator2.mp3.chDataStreamOutAudioProcessor
 import com.example.generator2.mp3.channelAudioOut
+import com.example.generator2.mp3.channelAudioOutLissagu
 import com.example.generator2.mp3.channelDataStreamOutCompressor
 import com.example.generator2.mp3.exoplayer
 import com.example.generator2.mp3.processor.audioProcessorInputFormat
@@ -176,6 +177,7 @@ class AudioMixerPump {
 
 
                     channelAudioOut.send(v)
+                    channelAudioOutLissagu.send(v)
 
                     //LRLRLR
                     audioOut.out.write(v, 0, v.size, WRITE_BLOCKING)
@@ -243,6 +245,7 @@ class AudioMixerPump {
                     }
 
                     channelAudioOut.send(v)
+                    channelAudioOutLissagu.send(v)
 
                     audioOut.out.write(v, 0, v.size, WRITE_BLOCKING)
 

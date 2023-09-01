@@ -15,9 +15,11 @@ import androidx.compose.ui.res.painterResource
 import com.example.generator2.AppPath
 import com.example.generator2.R
 import com.example.generator2.explorer.ScreenExplorerViewModel
+import com.example.generator2.navController
 
 @Composable
 fun ScreenExplorerTopBar(vm: ScreenExplorerViewModel) {
+
 
 
     Column {
@@ -29,18 +31,22 @@ fun ScreenExplorerTopBar(vm: ScreenExplorerViewModel) {
         Row (
             Modifier
                 .fillMaxWidth()
-                .background(Color.Cyan)){
+                .background(Color.LightGray)){
 
-            IconButton(onClick = { vm.up() }) {
+            IconButton(onClick = { navController.popBackStack() }) {
                 Icon(painter = painterResource(R.drawable.back4), contentDescription = null)
             }
 
+            IconButton(onClick = { vm.up() }) {
+                Icon(painter = painterResource(R.drawable.player_up), contentDescription = null)
+            }
+
             IconButton(onClick = { vm.explorerCurrentDir.value = AppPath().music }) {
-                Icon(painter = painterResource(R.drawable.info), contentDescription = null)
+                Icon(painter = painterResource(R.drawable.player_home), contentDescription = null)
             }
 
             IconButton(onClick = { vm.explorerCurrentDir.value = AppPath().sdcard }) {
-                Icon(painter = painterResource(R.drawable.line3_2), contentDescription = null)
+                Icon(painter = painterResource(R.drawable.player_memory1), contentDescription = null)
             }
 
         }

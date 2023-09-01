@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -68,6 +69,7 @@ fun ScreenExplorer(vm: ScreenExplorerViewModel = hiltViewModel()) {
 
     }
 }
+
 @androidx.media3.common.util.UnstableApi
 @Composable
 private fun DrawItem(item: ExplorerItem, vm: ScreenExplorerViewModel) {
@@ -84,41 +86,36 @@ private fun DrawItem(item: ExplorerItem, vm: ScreenExplorerViewModel) {
 
             if (item.isDirectory)
                 vm.explorerCurrentDir.value += "/" + item.name
-else
-            {
+            else {
                 val s = vm.explorerCurrentDir.value + "/" + item.name
                 vm.play(s)
             }
 
         }
-
-
         )
         {
 
 
             if (item.isDirectory) {
-
                 Icon(
                     painter = painterResource(R.drawable.folder_open2),
                     contentDescription = null,
                     modifier = Modifier.size(32.dp)
                 )
-
             } else {
 
                 Box(
                     modifier = Modifier
-                        //.size(48.dp)
-                        //.background(Color(0xFF8BB7F0))
+                    //.size(48.dp)
+                    //.background(Color(0xFF8BB7F0))
                     ,
                     contentAlignment = Alignment.Center
                 ) {
 
                     Text(
                         text = item.isFormat,
-                        modifier = Modifier.padding(start=4.dp)
-                            //.border(1.dp, Color.Black, RoundedCornerShape(4.dp))
+                        modifier = Modifier.padding(start = 4.dp)
+                        //.border(1.dp, Color.Black, RoundedCornerShape(4.dp))
                         ,
                         fontFamily = FontFamily(Font(R.font.bayon_regular)),
                         fontSize = 20.sp, textAlign = TextAlign.Center, color = Color.White
@@ -128,27 +125,74 @@ else
 
             }
 
-            Column(modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth()
-                .weight(1f))
-            {
-                Text(text = item.name.substringBeforeLast('.'), fontSize = 18.sp, color = Color.White)
+            Column(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                Text(
+                    text = item.name.substringBeforeLast('.'),
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
 
                 if (item.isFormat.isNotEmpty()) {
+
                     Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
+                        horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier
                             .padding(top = 4.dp)
                             .fillMaxWidth()
                     ) {
-                        Text(
-                            text = item.lengthInSeconds,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.width(64.dp), color = Color.White
-                        )
-                        Text(text = item.channelMode, color = Color.White)
-                        Text(text = item.sampleRate, color = Color.White)
+
+                        //Время файла
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+
+                            Icon(
+                                painter = painterResource(R.drawable.player_clock),
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp),
+                                tint = Color.LightGray
+                            )
+
+                            Spacer(modifier = Modifier.width(4.dp))
+
+                            Text(
+                                text = item.lengthInSeconds,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.width(64.dp), color = Color(0xFFCDDC39)
+                            )
+                        }
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (item.channelMode == "Mono")
+                                Icon(
+                                    painter = painterResource(R.drawable.player_mono),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(28.dp),
+                                    tint = Color.LightGray
+                                )
+                            else
+                                Icon(
+                                    painter = painterResource(R.drawable.player_stereo),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(28.dp),
+                                    tint = Color.LightGray
+                                )
+
+                            Text(text = item.channelMode, color = Color.White)
+                        }
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                painter = painterResource(R.drawable.player_samplerate2),
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp),
+                                tint = Color.LightGray
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = item.sampleRate, color = Color.White)
+                        }
                     }
                 }
             }
@@ -172,7 +216,6 @@ else
 //
 //
 //            }
-
 
 
         }

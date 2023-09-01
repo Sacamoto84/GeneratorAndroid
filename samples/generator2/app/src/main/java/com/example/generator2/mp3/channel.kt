@@ -10,9 +10,12 @@ val chDataStreamOutAudioProcessor =
 //Выход аудиоданных -> compressor
 val channelAudioOut = Channel<FloatArray>(capacity = 8, BufferOverflow.DROP_OLDEST)
 
+val channelAudioOutLissagu = Channel<FloatArray>(capacity = 8, BufferOverflow.DROP_OLDEST)
+
+
 val channelDataStreamOutCompressor = Channel<FloatArray>(capacity = 1, BufferOverflow.DROP_LATEST)
 
-
+val channelDataStreamOutCompressorLissagu = Channel<FloatArray>(capacity = 1, BufferOverflow.DROP_LATEST)
 
 enum class OSCILLSYNC{
     NONE,

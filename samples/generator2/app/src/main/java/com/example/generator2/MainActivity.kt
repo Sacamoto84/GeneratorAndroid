@@ -155,7 +155,7 @@ class MainActivity : ComponentActivity() {
             //enterTransition - управляет тем, что EnterTransition выполняется, когда targetState  NavBackStackEntry на экране появляется значок .
             //exitTransition  - управляет тем, что ExitTransition  запускается, когда initialState NavBackStackEntry исчезает с экрана.
             Generator2Theme {
-
+                Timber.i("..................................Generator2Theme.................................")
                 var granded by remember {
                     mutableStateOf(false)
                 }

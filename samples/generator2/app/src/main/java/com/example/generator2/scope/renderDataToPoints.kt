@@ -7,7 +7,9 @@ import android.graphics.Paint
 import android.graphics.Path
 import com.example.generator2.audio.Calculator
 import com.example.generator2.mp3.OSCILLSYNC
+import com.example.generator2.mp3.channelAudioOutLissagu
 import com.example.generator2.mp3.channelDataStreamOutCompressor
+import com.example.generator2.mp3.channelDataStreamOutCompressorLissagu
 import com.example.generator2.mp3.oscillSync
 import com.example.generator2.util.BufSplitFloat
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -20,13 +22,10 @@ import kotlin.system.measureNanoTime
 var hiRes: Boolean = false //Режим высокого разрешения
 
 
-
-
 @OptIn(DelicateCoroutinesApi::class)
 fun renderDataToPoints() {
 
     var canvas: Canvas
-
 
 
     val paintL = Paint()
@@ -142,13 +141,6 @@ fun renderDataToPoints() {
                     bufRN = bufR
 
                 }
-
-
-                lissaguToBitmap(bufLN, bufRN)
-
-
-
-
 
 ////////////////////////////////////////////////////////////////
 
@@ -293,58 +285,56 @@ fun renderDataToPoints() {
 }
 
 
-
 @OptIn(DelicateCoroutinesApi::class)
-fun lissaguToBitmap(bufL : FloatArray, bufR: FloatArray)
-{
+fun lissaguToBitmap() {
     //Добавить паузу
 
     val paintLissagu = Paint()
-    paintLissagu.color = Color.WHITE
+    paintLissagu.color = Color.GREEN
     paintLissagu.alpha = 0xFF
-    paintLissagu.strokeWidth = 2f
+    paintLissagu.strokeWidth = 1f
     paintLissagu.style = Paint.Style.STROKE
 
     GlobalScope.launch(Dispatchers.IO) {
+        while (true) {
+            val w: Float = scope.scopeWLissagu
+            val h: Float = scope.scopeHLissagu
+            if ((w == 0f) or (h == 0f)) continue
+            //val buf = channelDataStreamOutCompressorLissagu.receive()
+            //channelAudioOutLissagu
 
-        val w: Float = scope.scopeWLissagu
-        val h: Float = scope.scopeHLissagu
-        if ((w == 0f) or (h == 0f)) return@launch
+            val buf = channelAudioOutLissagu.receive()
 
-        val bitmap: Bitmap = Bitmap.createBitmap(
-            w.toInt(),
-            h.toInt(),
-            Bitmap.Config.RGB_565
-        )
+            if (buf.isEmpty()) continue
+            val (bufR, bufL) = BufSplitFloat().split(buf)
+            val bitmap: Bitmap = Bitmap.createBitmap( w.toInt(), h.toInt(), Bitmap.Config.RGB_565)
+            val canvas = Canvas(); canvas.setBitmap(bitmap)
+            //val bufLN = if (bufL.size >= 200) bufL.copyOf(200) else bufL
+            //val bufRN = if (bufL.size >= 200) bufR.copyOf(200) else bufR
 
-        val canvas = Canvas()
-        canvas.setBitmap(bitmap)
+            val bufLN = bufL.copyOf(bufL.size/4)
+            val bufRN = bufR.copyOf(bufL.size/4)
 
-        val bufLN = if (bufL.size >= 1000)
-            bufL.copyOf(1000)
-        else
-            bufL
+            val len = bufLN.size
+            val max = h - 1f; val min = 0f
 
-        val bufRN = if (bufL.size >= 1000)
-            bufR.copyOf(1000)
-        else
-            bufR
+//            for (i in 0 until len) {
+//                canvas.drawPoint(
+//                    maping(bufLN[i], -1f, 1f, min, max),
+//                    maping(bufRN[i], -1f, 1f, min, max),
+//                    paintLissagu
+//                )
+//            }
 
-        val len = bufLN.size
 
-        val max = h - 1f
-        val min = 0f
+            val path = Path()
+            path.moveTo(maping(bufLN[0], -1f, 1f, min, max), maping(bufRN[0], -1f, 1f, min, max))
+            for (i in 1 until len) {
+                path.lineTo(maping(bufLN[i], -1f, 1f, min, max), maping(bufRN[i], -1f, 1f, min, max))
+            }
+            canvas.drawPath(path, paintLissagu)
 
-        for (i in 0 until len)
-        {
-            canvas.drawPoint(
-                maping(bufLN[i], -1f, 1f, min, max),
-                maping(bufRN[i], -1f, 1f, min, max),
-                paintLissagu
-            )
+            scope.chPixelLissagu.send(ChPixelData(bitmap, true))
         }
-
-        scope.chPixelLissagu.send(ChPixelData(bitmap, true))
-
     }
 }
