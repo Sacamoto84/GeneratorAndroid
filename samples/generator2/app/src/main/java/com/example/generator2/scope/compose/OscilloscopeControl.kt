@@ -1,4 +1,4 @@
-package com.example.generator2.scope
+package com.example.generator2.scope.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

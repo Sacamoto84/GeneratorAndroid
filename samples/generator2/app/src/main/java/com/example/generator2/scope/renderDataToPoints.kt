@@ -19,10 +19,15 @@ import kotlin.system.measureNanoTime
 
 var hiRes: Boolean = false //Режим высокого разрешения
 
+
+
+
 @OptIn(DelicateCoroutinesApi::class)
 fun renderDataToPoints() {
 
     var canvas: Canvas
+
+
 
     val paintL = Paint()
     paintL.color = Color.YELLOW
@@ -34,12 +39,17 @@ fun renderDataToPoints() {
     paintR.alpha = 0xFF
     paintL.strokeWidth = 2f
 
+    val paintLissagu = Paint()
+    paintLissagu.color = Color.WHITE
+    paintLissagu.alpha = 0xFF
+    paintLissagu.strokeWidth = 2f
+
 
     paintL.style = Paint.Style.STROKE
     paintR.style = Paint.Style.STROKE
+    paintLissagu.style = Paint.Style.STROKE
 
 
-    var average: Float
 
     Thread {
 
@@ -66,6 +76,7 @@ fun renderDataToPoints() {
                     h = scope.scopeH / 2
                 }
 
+
                 val bufRN: FloatArray
                 val bufLN: FloatArray
 
@@ -79,13 +90,8 @@ fun renderDataToPoints() {
                 )
 
                 canvas = Canvas()
-
-
                 canvas.setBitmap(bitmap)
 
-                //canvas.drawARGB(128, 44, 22, 128)
-
-                //delay(16) /////////////////////////////////????????????????????????????
 
                 var indexStartSignal = 0
 
@@ -137,6 +143,13 @@ fun renderDataToPoints() {
 
                 }
 
+
+                lissaguToBitmap(bufLN, bufRN)
+
+
+
+
+
 ////////////////////////////////////////////////////////////////
 
                 val pathL = Path()
@@ -184,9 +197,6 @@ fun renderDataToPoints() {
                         //0.5 0.35
                         pixelBufSize =
                             (bufRN.size / w).coerceIn(1f, 96f) //Размер буфера для одного пикселя
-
-                        //Timber.w("pixelBufSize: ${bufRN.size / w}")
-
 
                         val maxPixelBuffer = pixelBufSize.toInt()
                         for (pixelI in 0 until maxPixelBuffer) {
@@ -280,4 +290,61 @@ fun renderDataToPoints() {
 
 
     }.start()
+}
+
+
+
+@OptIn(DelicateCoroutinesApi::class)
+fun lissaguToBitmap(bufL : FloatArray, bufR: FloatArray)
+{
+    //Добавить паузу
+
+    val paintLissagu = Paint()
+    paintLissagu.color = Color.WHITE
+    paintLissagu.alpha = 0xFF
+    paintLissagu.strokeWidth = 2f
+    paintLissagu.style = Paint.Style.STROKE
+
+    GlobalScope.launch(Dispatchers.IO) {
+
+        val w: Float = scope.scopeWLissagu
+        val h: Float = scope.scopeHLissagu
+        if ((w == 0f) or (h == 0f)) return@launch
+
+        val bitmap: Bitmap = Bitmap.createBitmap(
+            w.toInt(),
+            h.toInt(),
+            Bitmap.Config.RGB_565
+        )
+
+        val canvas = Canvas()
+        canvas.setBitmap(bitmap)
+
+        val bufLN = if (bufL.size >= 1000)
+            bufL.copyOf(1000)
+        else
+            bufL
+
+        val bufRN = if (bufL.size >= 1000)
+            bufR.copyOf(1000)
+        else
+            bufR
+
+        val len = bufLN.size
+
+        val max = h - 1f
+        val min = 0f
+
+        for (i in 0 until len)
+        {
+            canvas.drawPoint(
+                maping(bufLN[i], -1f, 1f, min, max),
+                maping(bufRN[i], -1f, 1f, min, max),
+                paintLissagu
+            )
+        }
+
+        scope.chPixelLissagu.send(ChPixelData(bitmap, true))
+
+    }
 }
