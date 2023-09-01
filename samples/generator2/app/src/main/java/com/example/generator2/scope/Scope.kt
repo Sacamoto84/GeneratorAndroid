@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.generator2.audio.Calculator
@@ -49,7 +50,7 @@ val scope = Scope()
 
 private val colorEnabled = Color.Black
 private val colorTextEnabled = Color.Green
-private val colorTextDisabled = Color.Gray
+private val colorTextDisabled = Color.DarkGray
 private val m = Modifier
     .height(32.dp)
     .width(32.dp)
@@ -67,8 +68,6 @@ class Scope {
 
     var isPause = MutableStateFlow(false)
 
-    private val fps = MutableStateFlow(0.0)
-
     var scopeW: Float = 0f
     var scopeH: Float = 0f
 
@@ -77,8 +76,6 @@ class Scope {
 
     var pairPoints: ChPixelData =
         ChPixelData(Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888), true)
-
-    private var startTime: Long = 0L
 
 
     @Composable
@@ -101,13 +98,6 @@ class Scope {
                 }
 
                 update++
-                val deltaTime = System.currentTimeMillis() - startTime
-                val v = 1.0 / (deltaTime.toDouble() / 1000.0)
-                //calculator.update(v)
-
-                fps.value = v
-
-                startTime = System.currentTimeMillis()
             }
         }
 
@@ -116,8 +106,7 @@ class Scope {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                //.height(100.dp)
-                .background(Color(0xFF343633))
+                .background(Color(0xFF343633)).border(1.dp, Color.White)
         )
         {
 
@@ -201,16 +190,6 @@ class Scope {
                         )
                     }
 
-                    //fps
-//                    drawIntoCanvas {
-//                        it.nativeCanvas.drawText(
-//                            "fps:"+fps.value.toFloat().format(0),
-//                            size.width - 80f,
-//                            24f,
-//                            textPaint
-//                        )
-//                    }
-
                     if (isPause.value)
                         drawIntoCanvas {
                             it.nativeCanvas.drawText(
@@ -246,8 +225,10 @@ class Scope {
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "1",
-                                color = if (stateIsVisibleL) colorTextEnabled else colorTextDisabled
+                                text = "L",
+                                color = if (stateIsVisibleL) Color.Yellow else colorTextDisabled,
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold
                             )
                         }
                         Box(
@@ -257,8 +238,10 @@ class Scope {
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "2",
-                                color = if (stateIsVisibleR) colorTextEnabled else colorTextDisabled
+                                text = "R",
+                                color = if (stateIsVisibleR) Color.Magenta else colorTextDisabled,
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold
                             )
                         }
                         Box(
@@ -297,6 +280,14 @@ class Scope {
         }
 
     }
+
+
+
+
+
+
+
+
 
 
 }

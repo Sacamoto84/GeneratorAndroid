@@ -241,23 +241,21 @@ fun renderDataToPoints() {
                         } else {
                             //Рисуем линии
                             if (x == 0) {
-                                pathL.moveTo(0f, h / 2)
-                                pathR.moveTo(0f, h / 2)
+                                pathL.moveTo(pixelBufL[0], maping(0f, -1f, 1f, minL, maxL))
+                                pathR.moveTo(pixelBufR[0], maping(0f, -1f, 1f, minR, maxR))
                             } else {
 
                                 if (scope.isVisibleL.value) {
-                                    average = pixelBufL[0]
                                     pathL.lineTo(
                                         x.toFloat(),
-                                        maping(average, -1f, 1f, minL, maxL)
+                                        maping(pixelBufL[0], -1f, 1f, minL, maxL)
                                     )
                                 }
 
                                 if (scope.isVisibleR.value) {
-                                    average = pixelBufR[0]
                                     pathR.lineTo(
                                         x.toFloat(),
-                                        maping(average, -1f, 1f, minR, maxR)
+                                        maping(pixelBufR[0], -1f, 1f, minR, maxR)
                                     )
                                 }
                             }
