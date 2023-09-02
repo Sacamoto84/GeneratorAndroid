@@ -21,7 +21,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.generator2.R
-import com.example.generator2.gen
 import com.example.generator2.navController
 import com.example.generator2.presets.Presets
 import com.example.generator2.presets.presetsSaveFile
@@ -33,8 +32,7 @@ import com.example.generator2.theme.colorLightBackground
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun M4BottomAppBarComponent(
-    //toggleDrawer: () -> Unit,
-    global: VMMain4
+    vm: VMMain4
 ) {
 
     val context = LocalContext.current
@@ -73,10 +71,10 @@ fun M4BottomAppBarComponent(
                     .size(36.dp)
                     .combinedClickable(
                         onClick = {
-                            if ((gen.liveData.presetsName.value == "") || (gen.liveData.presetsName.value == "default")) {
+                            if ((vm.gen.liveData.presetsName.value == "") || (vm.gen.liveData.presetsName.value == "default")) {
                                 Presets.isOpenDialogNewFile.value = true
                             } else {
-                                presetsSaveFile(gen.liveData.presetsName.value)
+                                presetsSaveFile(vm.gen.liveData.presetsName.value, gen = vm.gen)
                             }
                         },
                         onLongClick = {

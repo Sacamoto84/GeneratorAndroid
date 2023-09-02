@@ -89,7 +89,7 @@ fun DialogSaveAs(vm: VMScripting) {
                     keyboardActions = KeyboardActions(onDone = { vm.bDialogSaveAsDone( value ) }),
                     textStyle = TextStyle( fontSize = 18.sp, fontFamily = FontFamily(Font(R.font.jetbrains))))
 
-                val files = vm.hub.utils.filesInDirToList("/Script")
+                val files = vm.utils.filesInDirToList("/Script")
 
                 Column(
                     Modifier

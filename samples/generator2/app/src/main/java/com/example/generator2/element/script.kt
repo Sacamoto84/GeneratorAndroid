@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.example.generator2.gen
+import com.example.generator2.generator.Generator
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -79,7 +79,7 @@ enum class StateCommandScript {
 }
 
 @Stable
-class Script() {
+class Script(val gen : Generator) {
 
     //╭─ Генератор ───────────────────────╮
     var end = true
@@ -474,25 +474,25 @@ class Script() {
             return                                                                  //│
         }                                                                           //│
         //╰───────────────────────────────────────────────────────────────────────────╯
-        //╭─ FM1 FM2 ─────────────────────────────────────────────────────────────────╮
-        if ((listCMD[0] == "FM1") || (listCMD[0] == "FM2"))                         //│
-        {                                                                           //│
-            //SEGGER_RTT_printf(0, "╭─ FM1 FM2 ─╮\n");                              //│
-
-            //FM[1 2] BASE 1234.6                                                   //│
-            if (listCMD[1] == "BASE")                                               //│
-            {                                                                       //│
-                val value = if (listCMD[2].first() == 'F') {                            //│
-                    f[listCMD[2].drop(1).toInt()]                                //│
-                } else                                                              //│
-                    listCMD[2].toFloat()                                            //│
-
+//        //╭─ FM1 FM2 ─────────────────────────────────────────────────────────────────╮
+//        if ((listCMD[0] == "FM1") || (listCMD[0] == "FM2"))                         //│
+//        {                                                                           //│
+//            //SEGGER_RTT_printf(0, "╭─ FM1 FM2 ─╮\n");                              //│
+//
+//            //FM[1 2] BASE 1234.6                                                   //│
+//            if (listCMD[1] == "BASE")                                               //│
+//            {                                                                       //│
+//                val value = if (listCMD[2].first() == 'F') {                            //│
+//                    f[listCMD[2].drop(1).toInt()]                                //│
+//                } else                                                              //│
+//                    listCMD[2].toFloat()                                            //│
+//
 //              if (chanel == 1)                                                    //│
 //                  LiveData.ch1_FM_Base.update { value }                           //│
 //              else                                                                //│
 //                  LiveData.ch2_FM_Base.update { value }                           //│
-            }                                                                       //│
-        }                                                                           //│
+//            }                                                                       //│
+//        }                                                                           //│
         //│
         //FM[1 2] DEV  123.8                                                        //│
         if (listCMD[1] == "DEV")                                                    //│

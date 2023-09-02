@@ -10,8 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.transformer.EditedMediaItem
 import com.example.generator2.AppPath
-import com.example.generator2.di.Hub
-import com.example.generator2.exoplayer
+import com.example.generator2.mp3.PlayerMP3
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ScreenExplorerViewModel @Inject constructor(
     @ApplicationContext val context: Context,
-    val hub: Hub
+    val exoplayer : PlayerMP3
 ) : ViewModel() {
 
     val explorerCurrentDir = MutableStateFlow(AppPath().music) //Текущая рабочая папка

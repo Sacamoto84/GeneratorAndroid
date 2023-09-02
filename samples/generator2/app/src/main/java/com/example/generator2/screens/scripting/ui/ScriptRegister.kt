@@ -29,11 +29,11 @@ fun RegisterViewDraw(global: VMScripting) {
 
                 horizontalArrangement = Arrangement.SpaceBetween) {
 
-                ComposeBoxForF(0, modifier = Modifier.weight(1f), text = {  global.hub.script.f[0].toString() })
-                ComposeBoxForF(1, modifier = Modifier.weight(1f), text = {  global.hub.script.f[1].toString() })
-                ComposeBoxForF(2, modifier = Modifier.weight(1f), text = {  global.hub.script.f[2].toString() })
-                ComposeBoxForF(3, modifier = Modifier.weight(1f), text = {  global.hub.script.f[3].toString() })
-                ComposeBoxForF(4, modifier = Modifier.weight(1f), text = {  global.hub.script.f[4].toString() })
+                ComposeBoxForF(0, modifier = Modifier.weight(1f), text = {  global.script.f[0].toString() })
+                ComposeBoxForF(1, modifier = Modifier.weight(1f), text = {  global.script.f[1].toString() })
+                ComposeBoxForF(2, modifier = Modifier.weight(1f), text = {  global.script.f[2].toString() })
+                ComposeBoxForF(3, modifier = Modifier.weight(1f), text = {  global.script.f[3].toString() })
+                ComposeBoxForF(4, modifier = Modifier.weight(1f), text = {  global.script.f[4].toString() })
 
 
             }
@@ -43,11 +43,11 @@ fun RegisterViewDraw(global: VMScripting) {
 
                 horizontalArrangement = Arrangement.SpaceBetween) {
 
-                ComposeBoxForF(5, modifier = Modifier.weight(1f), text = {  global.hub.script.f[5].toString() })
-                ComposeBoxForF(6, modifier = Modifier.weight(1f), text = {  global.hub.script.f[6].toString() })
-                ComposeBoxForF(7, modifier = Modifier.weight(1f), text = {  global.hub.script.f[7].toString() })
-                ComposeBoxForF(8, modifier = Modifier.weight(1f), text = {  global.hub.script.f[8].toString() })
-                ComposeBoxForF(9, modifier = Modifier.weight(1f), text = {  global.hub.script.f[9].toString() })
+                ComposeBoxForF(5, modifier = Modifier.weight(1f), text = {  global.script.f[5].toString() })
+                ComposeBoxForF(6, modifier = Modifier.weight(1f), text = {  global.script.f[6].toString() })
+                ComposeBoxForF(7, modifier = Modifier.weight(1f), text = {  global.script.f[7].toString() })
+                ComposeBoxForF(8, modifier = Modifier.weight(1f), text = {  global.script.f[8].toString() })
+                ComposeBoxForF(9, modifier = Modifier.weight(1f), text = {  global.script.f[9].toString() })
 
 
             }

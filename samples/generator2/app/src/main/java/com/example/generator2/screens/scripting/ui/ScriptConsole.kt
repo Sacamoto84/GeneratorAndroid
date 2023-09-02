@@ -38,7 +38,7 @@ fun ScriptConsole(
 
     if (indexSelect.value == 0) {
         indexSelect.value = 1
-        global.hub.script.pc_ex = 1 //////////////////////////////////////////////
+        global.script.pc_ex = 1 //////////////////////////////////////////////
     }
 
     val lazyListState: LazyListState = rememberLazyListState()
@@ -62,8 +62,8 @@ fun ScriptConsole(
                         modifier = Modifier.selectable(
                             selected = indexSelect.value == index,
                             onClick = {
-                                global.hub.script.pc = index
-                                global.hub.script.pc_ex = index
+                                global.script.pc = index
+                                global.script.pc_ex = index
                             })
                     ) {
                         val select = indexSelect.value == index

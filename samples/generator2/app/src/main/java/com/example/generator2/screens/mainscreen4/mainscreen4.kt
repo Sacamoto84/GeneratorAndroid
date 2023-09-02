@@ -36,7 +36,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.generator2.gen
 import com.example.generator2.mp3.compose.MP3Control
 import com.example.generator2.presets.Presets
 import com.example.generator2.presets.ui.DialogPresetsNewFile
@@ -74,7 +73,7 @@ fun Mainsreen4(
 //    }
 
     if (Presets.isOpenDialogNewFile.collectAsState().value) {
-        DialogPresetsNewFile()
+        DialogPresetsNewFile(vm.gen)
     }
 
     Scaffold(
@@ -83,7 +82,7 @@ fun Mainsreen4(
             Column {
                 WigetUpdate()
                 Text(
-                    text = gen.liveData.presetsName.collectAsState().value,
+                    text = vm.gen.liveData.presetsName.collectAsState().value,
                     color = Color.LightGray,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
@@ -100,7 +99,7 @@ fun Mainsreen4(
     )
     { it ->
 
-        val mono by gen.liveData.mono.collectAsState()
+        val mono by vm.gen.liveData.mono.collectAsState()
 
         val animateHeight by animateDpAsState(
             targetValue = if (!mono) 314.dp else 0.dp,
@@ -133,12 +132,12 @@ fun Mainsreen4(
 
 
 
-            MP3Control()
+            MP3Control(vm)
 
             Column()
             {
                 //CardCarrier("CH0")
-                CardCard("CH0")
+                CardCard("CH0", vm.gen)
                 Spacer(modifier = Modifier.height(8.dp))
 
                 //CardCommander(vm)                                                     //<-- Commander
@@ -166,7 +165,7 @@ fun Mainsreen4(
             {
                 if (!it)
                 //CardCarrier("CH1")
-                    CardCard("CH1")
+                    CardCard("CH1", vm.gen)
                 else Spacer(
                     modifier = Modifier
                         .height(1.dp)
@@ -174,12 +173,7 @@ fun Mainsreen4(
                 )
             }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()
-                    .weight(1f)
-            )
+            Box(modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1f))
 
         }
 

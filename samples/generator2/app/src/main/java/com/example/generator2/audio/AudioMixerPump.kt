@@ -3,8 +3,8 @@ package com.example.generator2.audio
 import android.media.AudioFormat
 import android.media.AudioTrack.WRITE_BLOCKING
 import com.example.generator2.audioOut
-import com.example.generator2.exoplayer
-import com.example.generator2.gen
+import com.example.generator2.generator.Generator
+import com.example.generator2.mp3.PlayerMP3
 import com.example.generator2.mp3.chDataStreamOutAudioProcessor
 import com.example.generator2.mp3.channelAudioOut
 import com.example.generator2.mp3.channelAudioOutLissagu
@@ -28,7 +28,7 @@ enum class ROUTESTREAM {
 }
 
 @androidx.media3.common.util.UnstableApi
-class AudioMixerPump {
+class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3) {
 
     //PUBLIC
     val routeR = MutableStateFlow(ROUTESTREAM.MP3) //Выбор источника для вывода сигнала
@@ -57,7 +57,7 @@ class AudioMixerPump {
         //Имеется два источника синхронизации, это наличие пакетов в chDataStreamOutAudioProcessor и он является главным и запись иет в неблокирующем режиме,
         //И когда только генератор, и запись в блокирующем режиме
 
-        var isPlaying = false
+        var isPlaying: Boolean
 
         var start = false
         var volume = 0f

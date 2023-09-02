@@ -3,7 +3,6 @@ package com.example.generator2.presets.ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.generator2.R
+import com.example.generator2.generator.Generator
 import com.example.generator2.presets.Presets
 import com.example.generator2.presets.presetsGetListName
 import com.example.generator2.presets.presetsSaveFile
@@ -42,17 +42,21 @@ import kotlinx.coroutines.delay
 private val Corner = 8.dp
 
 @Composable
-fun DialogPresetsNewFile() {
+fun DialogPresetsNewFile(gen: Generator) {
 
     val context = LocalContext.current
     var value by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
-        Dialog(onDismissRequest = { Presets.isOpenDialogNewFile.value = false }) {
+    Dialog(onDismissRequest = { Presets.isOpenDialogNewFile.value = false }) {
 
         Card(
             Modifier
-                .width(220.dp), elevation = 8.dp, border = BorderStroke( 1.dp, Color.Gray ), shape = RoundedCornerShape(Corner), backgroundColor = colorLightBackground2
+                .width(220.dp),
+            elevation = 8.dp,
+            border = BorderStroke(1.dp, Color.Gray),
+            shape = RoundedCornerShape(Corner),
+            backgroundColor = colorLightBackground2
         )
         {
 
@@ -70,21 +74,29 @@ fun DialogPresetsNewFile() {
                         .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
                     //.clip(RoundedCornerShape(Corner)).background(Color.DarkGray)
                     ,
-                    textAlign = TextAlign.Center, fontSize = 16.sp, fontFamily = FontFamily(Font(R.font.jetbrains)), color = Color.LightGray
+                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.jetbrains)),
+                    color = Color.LightGray
                 )
 
                 OutlinedTextField(
-                    value = value, onValueChange = { value = it },
+                    value = value,
+                    onValueChange = { value = it },
                     modifier = Modifier
                         .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
                         .focusRequester(focusRequester),
-                    colors = TextFieldDefaults.textFieldColors( textColor = Color.LightGray, leadingIconColor = Color.LightGray,
-                        backgroundColor = Color.Black, focusedIndicatorColor = Color.Transparent ),
-                    placeholder = { Text(text = "File Name", color = Color.Gray) }, singleLine = true, shape = RoundedCornerShape(Corner),
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = Color.LightGray, leadingIconColor = Color.LightGray,
+                        backgroundColor = Color.Black, focusedIndicatorColor = Color.Transparent
+                    ),
+                    placeholder = { Text(text = "File Name", color = Color.Gray) },
+                    singleLine = true,
+                    shape = RoundedCornerShape(Corner),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
 
-                        presetsSaveFile(value)
+                        presetsSaveFile(value, gen = gen)
 
                         Presets.isOpenDialogNewFile.value = false
 
@@ -95,7 +107,10 @@ fun DialogPresetsNewFile() {
 
 
                     }),
-                    textStyle = TextStyle( fontSize = 18.sp, fontFamily = FontFamily(Font(R.font.jetbrains)))
+                    textStyle = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily(Font(R.font.jetbrains))
+                    )
                 )
 
             }

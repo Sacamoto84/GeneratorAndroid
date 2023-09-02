@@ -43,19 +43,15 @@ fun ScriptTable(vm: VMScripting) {
                     .fillMaxSize()
                     .weight(1f), contentAlignment = Alignment.BottomEnd
                 ) {
-                    if (vm.hub.script.pc_ex > vm.hub.script.list.lastIndex) vm.hub.script.pc_ex =
-                        vm.hub.script.list.lastIndex
+                    if (vm.script.pc_ex > vm.script.list.lastIndex) vm.script.pc_ex =
+                        vm.script.list.lastIndex
 
-                    ScriptConsole(vm.hub.script.list, vm.hub.script.pc_ex, global = vm)
+                    ScriptConsole(vm.script.list, vm.script.pc_ex, global = vm)
 
-                    //Text(text = "PC:${vm.hub.script.pc_ex}", color = Color.Red)
                 }
 
                 Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(160.dp)
-                        .background(Color.LightGray), contentAlignment = Alignment.TopCenter )
+                    modifier = Modifier.fillMaxHeight().width(160.dp).background(Color.LightGray), contentAlignment = Alignment.TopCenter )
                 {
 
                     Column(
@@ -64,7 +60,7 @@ fun ScriptTable(vm: VMScripting) {
                             .background(Color.DarkGray), verticalArrangement = Arrangement.SpaceEvenly )
                     {
 
-                        if (vm.hub.script.state != StateCommandScript.ISEDITTING) {
+                        if (vm.script.state != StateCommandScript.ISEDITTING) {
 
                             Spacer(modifier = Modifier.height(8.dp))
                             //Кнопка New
@@ -76,10 +72,10 @@ fun ScriptTable(vm: VMScripting) {
 
                             Spacer(modifier = Modifier.height(4.dp))
                             // Создать список названий файлов из папки /Script
-                            if (vm.hub.script.state == StateCommandScript.ISTOPPING) {
+                            if (vm.script.state == StateCommandScript.ISTOPPING) {
                                 println("Читаем файлы")
                                 files.clear()
-                                files.addAll(vm.hub.utils.filesInDirToList( "/Script" ).map { it.dropLast(3) }) //
+                                files.addAll(vm.utils.filesInDirToList( "/Script" ).map { it.dropLast(3) }) //
                             }
 
                             //Отображение списка названия скриптов
@@ -105,11 +101,11 @@ fun ScriptTable(vm: VMScripting) {
                                             .combinedClickable(
                                                 onClick = {
 
-                                                    vm.hub.script.command(StateCommandScript.STOP)
+                                                    vm.script.command(StateCommandScript.STOP)
                                                     val l =
-                                                        vm.hub.utils.readScriptFileToList(files[index])
-                                                    vm.hub.script.list.clear()
-                                                    vm.hub.script.list.addAll(l)
+                                                        vm.utils.readScriptFileToList(files[index])
+                                                    vm.script.list.clear()
+                                                    vm.script.list.addAll(l)
 
                                                 }, onLongClick = {
 
@@ -123,16 +119,16 @@ fun ScriptTable(vm: VMScripting) {
                             } //
 
                             //Текущее состояние
-                            Text( text = vm.hub.script.stateToString(), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, fontSize = 14.sp, color = Color.LightGray )
+                            Text( text = vm.script.stateToString(), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, fontSize = 14.sp, color = Color.LightGray )
                             //Консоль Логов
                             ConsoleLogDraw(Modifier.weight(0.4f))
                         }
 
 
 
-                        if (vm.hub.script.state == StateCommandScript.ISEDITTING) {
+                        if (vm.script.state == StateCommandScript.ISEDITTING) {
                             Spacer(modifier = Modifier.height(8.dp))
-                            OutlinedButtonTextAndIcon( str = "Back",    onClick = { vm.hub.script.command(
+                            OutlinedButtonTextAndIcon( str = "Back",    onClick = { vm.script.command(
                                 StateCommandScript.STOP) }, resId = R.drawable.left)
                             Spacer(modifier = Modifier.height(8.dp))
                             OutlinedButtonTextAndIcon( str = "Save",    onClick = { vm.bSaveClick() }, resId = R.drawable.save)
@@ -160,8 +156,8 @@ fun ScriptTable(vm: VMScripting) {
             if (vm.openDialogSaveAs.value)       DialogSaveAs(vm)
             if (vm.openDialogDeleteRename.value) DialogDeleteRename( filename, vm)
 
-            if (vm.hub.script.state == StateCommandScript.ISEDITTING) {
-                vm.hub.keyboard.Core {  vm.hub.script.pc_ex }
+            if (vm.script.state == StateCommandScript.ISEDITTING) {
+                vm.keyboard.Core {  vm.script.pc_ex }
             }
         }
     }

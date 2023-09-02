@@ -31,7 +31,7 @@ fun ScreenScriptCommon(global: VMScripting = hiltViewModel()) {
         }
 
         //Блок регистров
-        if (global.hub.script.state != StateCommandScript.ISEDITTING) {
+        if (global.script.state != StateCommandScript.ISEDITTING) {
             Spacer(modifier = Modifier.height(8.dp))
 
             RegisterViewDraw(global = global)
@@ -52,19 +52,19 @@ fun ScreenScriptCommon(global: VMScripting = hiltViewModel()) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            if ((global.hub.script.state == StateCommandScript.ISRUNNING) || (global.hub.script.state == StateCommandScript.ISPAUSE)) {
+            if ((global.script.state == StateCommandScript.ISRUNNING) || (global.script.state == StateCommandScript.ISPAUSE)) {
 
                 //Пауза
                 IconButton(onClick = {
-                    if (global.hub.script.state != StateCommandScript.ISPAUSE) global.hub.script.command(
+                    if (global.script.state != StateCommandScript.ISPAUSE) global.script.command(
                         StateCommandScript.PAUSE
                     )
                     else {
-                        global.hub.script.state = StateCommandScript.ISRUNNING
-                        global.hub.script.end = false
+                        global.script.state = StateCommandScript.ISRUNNING
+                        global.script.end = false
                     }
                 }) {
-                    if (global.hub.script.state != StateCommandScript.ISPAUSE)
+                    if (global.script.state != StateCommandScript.ISPAUSE)
                         Icon(
                         painter = painterResource(
                             R.drawable.pause
@@ -80,7 +80,7 @@ fun ScreenScriptCommon(global: VMScripting = hiltViewModel()) {
             } else {
                 //Старт
                 IconButton(onClick = {
-                    global.hub.script.command(StateCommandScript.START)
+                    global.script.command(StateCommandScript.START)
                 }) {
                     Icon(painter = painterResource(R.drawable.play), contentDescription = null)
                 }
@@ -90,7 +90,7 @@ fun ScreenScriptCommon(global: VMScripting = hiltViewModel()) {
 
             //Стоп
             IconButton(onClick = {
-                global.hub.script.command(StateCommandScript.STOP)
+                global.script.command(StateCommandScript.STOP)
             }) {
                 Icon(painter = painterResource(R.drawable.stop), contentDescription = null)
             }

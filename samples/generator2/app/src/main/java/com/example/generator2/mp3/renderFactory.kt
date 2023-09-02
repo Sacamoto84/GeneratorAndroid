@@ -13,7 +13,7 @@ import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
 import com.example.generator2.mp3.processor.myAudioProcessor
 
 @androidx.media3.common.util.UnstableApi
-fun renderersFactory(context: Context) : DefaultRenderersFactory
+fun renderersFactory(context: Context, isPlayingD : Boolean ) : DefaultRenderersFactory
 {
     return  object : DefaultRenderersFactory(context) {
 
@@ -29,7 +29,7 @@ fun renderersFactory(context: Context) : DefaultRenderersFactory
         ) {
 
 
-            val sonicAudioProcessor = myAudioProcessor()//SonicAudioProcessor()
+            val sonicAudioProcessor = myAudioProcessor(isPlayingD)//SonicAudioProcessor()
 
             val myAudioSink : AudioSink =  DefaultAudioSink.Builder(context)
                 .setAudioCapabilities(AudioCapabilities.getCapabilities(context))

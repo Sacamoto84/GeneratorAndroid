@@ -10,26 +10,19 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import com.example.generator2.R
-import com.example.generator2.backup.Backup
+import com.example.generator2.generator.Generator
 import com.example.generator2.mmkv
 import com.yagmurerdogan.toasticlib.Toastic
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
-
-
-//Сообщения по поводу метаданных бекапа
-val strMetadataError      = MutableStateFlow("")     //Текст ошибок для мета данных
-val strMetadata           = MutableStateFlow("")     //Текст сообщения для мета данных
-val progressMetadata      = MutableStateFlow(false)  //Текст сообщения для мета данных
 
 @SuppressLint("StaticFieldLeak")
 @HiltViewModel
 class VMConfig @Inject constructor(
     @ApplicationContext
     private val context: Context,
-    var backup: Backup,
+    val gen :Generator
 ) : ViewModel(){
 
 
@@ -61,7 +54,7 @@ class VMConfig @Inject constructor(
 
     }
 
-    fun saveVolume()    = mmkv.saveVolume() //backup.json.saveJsonVolume()
+    fun saveVolume()    = mmkv.saveVolume(gen) //backup.json.saveJsonVolume()
     fun saveConstrain() = mmkv.saveConstrain() //backup.json.saveJsonConstrain()
 
     fun toastSaveVolume()

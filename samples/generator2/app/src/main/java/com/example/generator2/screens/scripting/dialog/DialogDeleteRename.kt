@@ -71,7 +71,7 @@ fun DialogDeleteRename(name: String,   vm: VMScripting) {
                     shape = RoundedCornerShape(Corner),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
-                        vm.hub.utils.renameScriptFile(name, value)
+                        vm.utils.renameScriptFile(name, value)
                         vm.openDialogDeleteRename.value = false
                         Toast.makeText(context, "Renamed", Toast.LENGTH_LONG).show()
                     }),
@@ -92,7 +92,7 @@ fun DialogDeleteRename(name: String,   vm: VMScripting) {
 
                 Button(
                     onClick = {
-                        vm.hub.utils.deleteScriptFile(name)
+                        vm.utils.deleteScriptFile(name)
                         vm.openDialogDeleteRename.value = false
                         refresh.value++
                     },

@@ -1,12 +1,12 @@
 package com.example.generator2.di
 
 import android.content.Context
-import com.example.generator2.backup.Backup
+import com.example.generator2.audio.AudioMixerPump
+import com.example.generator2.element.Script
+import com.example.generator2.generator.Generator
+import com.example.generator2.mp3.PlayerMP3
 import com.example.generator2.screens.scripting.ui.ScriptKeyboard
 import com.example.generator2.util.UtilsKT
-import com.example.generator2.element.Script
-import com.example.generator2.exoplayer
-import com.example.generator2.mp3.PlayerMP3
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,12 +22,31 @@ object HomeActivityModule {
     @androidx.media3.common.util.UnstableApi
     @Provides
     @Singleton
+    fun provideAudioMixerPump(
+        gen: Generator,
+        exoplayer : PlayerMP3
+    ): AudioMixerPump {
+        Timber.i("..DI AudioMixerPump()")
+        return AudioMixerPump(gen, exoplayer)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideGen(): Generator {
+        Timber.i("..DI Generator()")
+        return Generator()
+    }
+
+
+    @androidx.media3.common.util.UnstableApi
+    @Provides
+    @Singleton
     fun providePlayerMP3(
         @ApplicationContext context: Context
     ): PlayerMP3 {
         Timber.i("..DI PlayerMP3()")
-        exoplayer = PlayerMP3(context)
-        return exoplayer
+        return PlayerMP3(context)
     }
 
 
@@ -42,46 +61,21 @@ object HomeActivityModule {
 
     @Provides
     @Singleton
-    fun provideScript(): Script {
+    fun provideScript(
+        gen: Generator,
+    ): Script {
         Timber.i("..DI provideScript()")
-        return Script()
+        return Script(gen)
     }
 
     @Provides
     @Singleton
-    fun provideKeyboard(script: Script): ScriptKeyboard {
-        Timber.i("..DI provideKeyboard()")
-        return ScriptKeyboard(script)
-    }
-
-
-    @Provides
-    @Singleton
-    fun provideBackup(@ApplicationContext context: Context): Backup {
-        Timber.i("..DI provideBackup()")
-        return Backup(context)
-    }
-
-    @Provides
-    @Singleton
-    fun provideHub(
-        utils: UtilsKT,
+    fun provideKeyboard(
         script: Script,
-        keyboard: ScriptKeyboard,
-        backup: Backup,
-        mp3: PlayerMP3
-    ): Hub {
-
-        Timber.i("..DI Hub()")
-
-        return Hub(
-            utils = utils,
-            script = script,
-            keyboard = keyboard,
-            backup = backup,
-            mp3 = mp3
-        )
+        gen: Generator
+    ): ScriptKeyboard {
+        Timber.i("..DI provideKeyboard()")
+        return ScriptKeyboard(script, gen)
     }
-
 
 }

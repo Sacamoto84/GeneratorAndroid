@@ -19,7 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.generator2.gen
+import com.example.generator2.generator.Generator
 import com.example.generator2.model.LiveConstrain
 import com.example.generator2.screens.mainscreen4.modifierInfinitySlider
 import com.example.generator2.screens.mainscreen4.ms4SwitchWidth
@@ -32,7 +32,7 @@ import libs.modifier.noRippleClickable
 
 
 @Composable
-fun CardAM(str: String = "CH0") {
+fun CardAM(str: String = "CH0", gen: Generator) {
 
     val amEN: State<Boolean?> = if (str == "CH0") {
         gen.liveData.ch1_AM_EN.collectAsState()
@@ -136,7 +136,7 @@ fun CardAM(str: String = "CH0") {
                             .wrapContentWidth()
                             .clip(shape = RoundedCornerShape(4.dp)),
                     filename = if (str == "CH0") gen.liveData.ch1_AM_Filename.collectAsState()
-                    else gen.liveData.ch1_AM_Filename.collectAsState()
+                    else gen.liveData.ch1_AM_Filename.collectAsState(), gen = gen
 
             )
 

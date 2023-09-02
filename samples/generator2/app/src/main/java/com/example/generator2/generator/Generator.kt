@@ -1,6 +1,5 @@
 package com.example.generator2.generator
 
-import com.example.generator2.gen
 import com.example.generator2.model.itemList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +30,7 @@ class Generator {
         val l: FloatArray
         val r: FloatArray
 
-        if (!gen.liveData.mono.value) {
+        if (!liveData.mono.value) {
 
                 val job1 = CoroutineScope(Dispatchers.IO).async  {
                     renderChanelL.renderChanel(ch1, numFrames / 2, sampleRate)

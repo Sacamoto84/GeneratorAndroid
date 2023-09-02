@@ -1,13 +1,13 @@
 package com.example.generator2.screens.mainscreen4
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.generator2.di.Hub
+import com.example.generator2.audio.AudioMixerPump
 import com.example.generator2.element.Console2
+import com.example.generator2.generator.Generator
 import com.example.generator2.isInitialized
+import com.example.generator2.mp3.PlayerMP3
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -17,8 +17,10 @@ import javax.inject.Inject
 //@SuppressLint("StaticFieldLeak")
 @HiltViewModel
 class VMMain4 @Inject constructor(
-    @ApplicationContext contextActivity: Context,
-    val hub : Hub
+    //@ApplicationContext contextActivity: Context,
+    val gen : Generator,
+    val exoplayer : PlayerMP3,
+    val audioMixerPump: AudioMixerPump
 ) : ViewModel(){
 
     val consoleLog = Console2()
@@ -56,7 +58,7 @@ class VMMain4 @Inject constructor(
 
         viewModelScope.launch(Dispatchers.Default) {
             while (true) {
-                hub.script.run()
+                //hub.script.run()
                 delay(10)
             }
         }

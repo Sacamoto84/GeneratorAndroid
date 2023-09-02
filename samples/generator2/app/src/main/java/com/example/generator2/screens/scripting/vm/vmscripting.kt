@@ -2,12 +2,15 @@ package com.example.generator2.screens.scripting.vm
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.inputmethodservice.Keyboard
 import android.widget.Toast
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.generator2.di.Hub
+import com.example.generator2.element.Script
 import com.example.generator2.element.StateCommandScript
+import com.example.generator2.screens.scripting.ui.ScriptKeyboard
+import com.example.generator2.util.UtilsKT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.*
@@ -17,80 +20,116 @@ import javax.inject.Inject
 @SuppressLint("StaticFieldLeak")
 @HiltViewModel
 class VMScripting @Inject constructor(
-     @ApplicationContext val contextActivity: Context,
-     val hub: Hub
+    @ApplicationContext val contextActivity: Context,
+    val script: Script,
+    val utils : UtilsKT,
+    val keyboard : ScriptKeyboard
 ) : ViewModel() {
 
-    val openDialogSaveAs       = mutableStateOf(false)
+    val openDialogSaveAs = mutableStateOf(false)
     val openDialogDeleteRename = mutableStateOf(false)
 
     fun bNewClick() {
-        hub.script.command(StateCommandScript.STOP)
-        hub.script.list.clear()
-        hub.script.list.add("New")
-        hub.script.list.add("?")
-        hub.script.list.add("END")
-        hub.script.command(StateCommandScript.EDIT)
+        script.command(StateCommandScript.STOP)
+        script.list.clear()
+        script.list.add("New")
+        script.list.add("?")
+        script.list.add("END")
+        script.command(StateCommandScript.EDIT)
     }
 
     fun bEditClick() {
-        hub.script.command(StateCommandScript.EDIT)
+        script.command(StateCommandScript.EDIT)
     }
 
     fun bSaveClick() {
-        if (hub.script.list[0] == "New")
+        if (script.list[0] == "New")
             openDialogSaveAs.value = true
         else
-            hub.utils.saveListToScriptFile(hub.script.list, hub.script.list[0])
+            utils.saveListToScriptFile(script.list, script.list[0])
 
     }
 
     fun bAddEndClick() {
-        hub.script.list.add(hub.script.pc + 1, "END")
-        hub.script.pc_ex = hub.script.pc
+        script.list.add(
+            script.pc + 1, "END"
+        )
+        script.pc_ex = script.pc
     }
 
     fun bDeleteClick() {
-        if (hub.script.list.size > 1) {
+        if (script.list.size > 1) {
 
-            hub.script.list.removeAt(hub.script.pc)
 
-            if (hub.script.pc > hub.script.list.lastIndex) {
-                hub.script.pc = hub.script.list.lastIndex
+            script.list.removeAt(
+                script.pc
+            )
+
+            if (
+                script.pc >
+                script.list.lastIndex
+            ) {
+
+                script.pc =
+                    script.list.lastIndex
             }
 
-            hub.script.pc_ex = hub.script.pc
+
+            script.pc_ex =
+                script.pc
         }
     }
 
     fun bUpClick() {
-        if (hub.script.pc > 1) {
+        if (
+            script.pc > 1) {
             Collections.swap(
-                hub.script.list,
-                hub.script.pc - 1,
-                hub.script.pc
+
+                script.list,
+
+                script.pc - 1,
+
+                script.pc
             )
-            hub.script.pc--
+
+            script.pc--
         }
 
-        hub.script.pc_ex = hub.script.pc
+
+        script.pc_ex =
+            script.pc
     }
 
     fun bDownClick() {
-        if ((hub.script.pc > 0) && (hub.script.pc < hub.script.list.lastIndex)) {
+        if ((
+                    script.pc > 0) && (
+                    script.pc <
+                            script.list.lastIndex)
+        ) {
             Collections.swap(
-                hub.script.list,
-                hub.script.pc + 1,
-                hub.script.pc
+
+                script.list,
+
+                script.pc + 1,
+
+                script.pc
             )
-            hub.script.pc++
+
+            script.pc++
         }
-        hub.script.pc_ex = hub.script.pc
+
+        script.pc_ex =
+            script.pc
     }
 
     fun bAddClick() {
-        hub.script.list.add(hub.script.pc + 1, "?")
-        hub.script.pc_ex = hub.script.pc
+
+        script.list.add(
+            script.pc + 1, "?"
+        )
+
+        script.pc_ex =
+            script.pc
     }
 
     /**
@@ -98,18 +137,20 @@ class VMScripting @Inject constructor(
      */
     fun saveListToScript(name: String) {
         println("global saveListToScript()")
-        hub.utils.saveListToScriptFile( hub.script.list, name)
+
+        utils.saveListToScriptFile(
+            script.list, name
+        )
     }
 
     //DialogSaveAs
-    fun bDialogSaveAsDone( value : String ){
-        hub.script.list[0] = value
+    fun bDialogSaveAsDone(value: String) {
+
+        script.list[0] = value
         saveListToScript(value)
         openDialogSaveAs.value = false
         Toast.makeText(contextActivity, "Saved", Toast.LENGTH_LONG).show()
     }
-
-
 
 
 }

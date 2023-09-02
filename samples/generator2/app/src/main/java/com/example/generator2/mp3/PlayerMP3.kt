@@ -54,7 +54,7 @@ class PlayerMP3(val context: Context) {
         renderDataToPoints()
         lissaguToBitmap()
 
-        player = ExoPlayer.Builder(context, renderersFactory(context)).build()
+        player = ExoPlayer.Builder(context, renderersFactory(context, isPlayingD)).build()
         listener()
         player.addListener(listener)
         loop()

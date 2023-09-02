@@ -25,34 +25,32 @@ import androidx.compose.ui.unit.dp
 import com.example.generator2.NavigationRoute
 import com.example.generator2.R
 import com.example.generator2.audio.AudioSampleRate
-import com.example.generator2.audioMixerPump
-import com.example.generator2.exoplayer
-import com.example.generator2.gen
 import com.example.generator2.mp3.formatMinSec
 import com.example.generator2.navController
+import com.example.generator2.screens.mainscreen4.VMMain4
 import com.example.generator2.theme.Purple200
 
 
 @Composable
-fun MP3Control() {
+fun MP3Control(vm: VMMain4) {
     Column {
 
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "P:${exoplayer.currentTime.collectAsState().value.formatMinSec()}",
+                text = "P:${vm.exoplayer.currentTime.collectAsState().value.formatMinSec()}",
                 color = Color.Yellow
             )
             Text(
-                text = "D:${exoplayer.durationMs.collectAsState().value.formatMinSec()}",
+                text = "D:${vm.exoplayer.durationMs.collectAsState().value.formatMinSec()}",
                 color = Color.Yellow
             )
         }
 
         Slider(
             modifier = Modifier.fillMaxWidth(),
-            value = exoplayer.currentTime.collectAsState().value.toFloat(),
-            onValueChange = { timeMs: Float -> exoplayer.player.seekTo(timeMs.toLong()) },
-            valueRange = 0f..exoplayer.durationMs.collectAsState().value.toFloat(),
+            value = vm.exoplayer.currentTime.collectAsState().value.toFloat(),
+            onValueChange = { timeMs: Float -> vm.exoplayer.player.seekTo(timeMs.toLong()) },
+            valueRange = 0f..vm.exoplayer.durationMs.collectAsState().value.toFloat(),
             colors = SliderDefaults.colors(thumbColor = Purple200, activeTickColor = Purple200)
         )
 
@@ -83,7 +81,7 @@ fun MP3Control() {
                 )
             }
 
-            IconButton(modifier = Modifier.size(40.dp), onClick = { exoplayer.player.play() }) {
+            IconButton(modifier = Modifier.size(40.dp), onClick = { vm.exoplayer.player.play() }) {
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(id = R.drawable.player_play),
@@ -94,7 +92,7 @@ fun MP3Control() {
 
             IconButton(
                 modifier = Modifier.size(40.dp),
-                onClick = { exoplayer.player.pause() }) {
+                onClick = { vm.exoplayer.player.pause() }) {
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(id = R.drawable.player_pause),
@@ -103,7 +101,7 @@ fun MP3Control() {
                 )
             }
 
-            IconButton(modifier = Modifier.size(40.dp), onClick = { exoplayer.player.stop() }) {
+            IconButton(modifier = Modifier.size(40.dp), onClick = { vm.exoplayer.player.stop() }) {
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(id = R.drawable.player_stop),
@@ -136,8 +134,8 @@ fun MP3Control() {
         Row(modifier = Modifier.fillMaxWidth()) {
 
             Column {
-                Mp3Route("L", audioMixerPump.routeL.collectAsState().value)
-                Mp3Route("R", audioMixerPump.routeR.collectAsState().value)
+                Mp3Route("L", vm.audioMixerPump.routeL.collectAsState().value, vm.audioMixerPump)
+                Mp3Route("R", vm.audioMixerPump.routeR.collectAsState().value, vm.audioMixerPump)
             }
 
             Icon(
@@ -147,14 +145,14 @@ fun MP3Control() {
                     .offset((-1).dp)
                     .clickable(
                         onClick = {
-                            audioMixerPump.shuffle.value = audioMixerPump.shuffle.value.not()
+                            vm.audioMixerPump.shuffle.value = vm.audioMixerPump.shuffle.value.not()
                         }
                     )
                     .border(1.dp, Color.Gray)
                     .padding(4.dp),
                 painter = painterResource(id = R.drawable.shuffle74),
                 contentDescription = "",
-                tint = if (audioMixerPump.shuffle.collectAsState().value) Color.Green else Color.DarkGray
+                tint = if (vm.audioMixerPump.shuffle.collectAsState().value) Color.Green else Color.DarkGray
             )
 
             //Стерео Моно
@@ -164,15 +162,13 @@ fun MP3Control() {
                     .width(32.dp)
                     .offset((-1).dp)
                     .clickable(
-                        onClick = { gen.liveData.mono.value = !gen.liveData.mono.value })
+                        onClick = { vm.gen.liveData.mono.value = !vm.gen.liveData.mono.value })
                     .border(1.dp, Color.Gray)
                     .padding(4.dp),
-                painter = if (gen.liveData.mono.collectAsState().value) painterResource(R.drawable.mono)
+                painter = if (vm.gen.liveData.mono.collectAsState().value) painterResource(R.drawable.mono)
                 else painterResource(R.drawable.stereo),
                 contentDescription = null, tint = Color.LightGray
             )
-
-
         }
 
 

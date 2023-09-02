@@ -21,7 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import cafe.adriel.pufferdb.android.AndroidPufferDB
-import com.example.generator2.di.Hub
+import com.example.generator2.audio.AudioMixerPump
+import com.example.generator2.generator.Generator
 import com.example.generator2.presets.presetsInit
 import com.example.generator2.presets.presetsSaveFile
 import com.example.generator2.theme.Generator2Theme
@@ -29,10 +30,9 @@ import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.update.Update
 import com.example.generator2.update.kDownloader
 import com.example.generator2.util.Utils
-import com.example.resampler.NativeLib
+import com.example.generator2.util.UtilsKT
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kdownloader.KDownloader
-import com.tencent.mmkv.MMKV
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,24 +65,25 @@ import javax.inject.Singleton
 
 val API_key = "5ca5814f-74a8-46c1-ab17-da3101e88888"
 
-
-val resampleLib = NativeLib()
-
-
 @Singleton
 @AndroidEntryPoint
 @androidx.media3.common.util.UnstableApi
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var hub: Hub
+    lateinit var audioMixerPump: AudioMixerPump
+
+    @Inject
+    lateinit var gen: Generator
+
+    @Inject
+    lateinit var utils: UtilsKT
 
     override fun onPause() {
-        presetsSaveFile("default", AppPath().config)
+        presetsSaveFile("default", AppPath().config, gen)
         //R.drawable.add
-        val s = mmkv.m.actualSize()
         super.onPause()
-        println("...................onPause $s")
+        println("...................onPause")
         //exitProcess(0)
     }
 
@@ -95,7 +96,7 @@ class MainActivity : ComponentActivity() {
         Timber.i("..................................onCreate.................................")
 
         GlobalScope.launch(Dispatchers.IO) {
-            delay(1)
+            //delay(5000)
             Timber.w("Запуск Yandex Metrika")
             val config = YandexMetricaConfig.newConfigBuilder(API_key).withLogs().build()
             YandexMetrica.activate(applicationContext, config)
@@ -109,16 +110,16 @@ class MainActivity : ComponentActivity() {
 
         AndroidPufferDB.init(applicationContext)
 
-        val rootDir = MMKV.initialize(this, AppPath().config)
-        println("mmkv root: $rootDir")
-
         presetsInit()
 
-        initialization(applicationContext, hub)
+        initialization(applicationContext, gen, utils)
 
 
         audioOut
+
         audioMixerPump
+
+
         scope
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

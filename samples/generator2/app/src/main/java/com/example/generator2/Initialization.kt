@@ -1,11 +1,12 @@
 package com.example.generator2
 
 import android.content.Context
-import com.example.generator2.di.Hub
+import com.example.generator2.generator.Generator
 import com.example.generator2.model.itemList
 import com.example.generator2.presets.presetsReadFile
 import com.example.generator2.presets.presetsToLiveData
 import com.example.generator2.util.Utils
+import com.example.generator2.util.UtilsKT
 import com.example.generator2.util.toast
 import flipagram.assetcopylib.AssetCopier
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -19,7 +20,7 @@ import java.io.IOException
 var isInitialized = false  //Признак того что произошла инициализация
 
 @OptIn(DelicateCoroutinesApi::class)
-fun initialization(context: Context, hub: Hub) {
+fun initialization(context: Context, gen: Generator, utils: UtilsKT) {
 
 //Инициализация
     if ((!isInitialized) && (PermissionStorage.hasPermissions(context))) {
@@ -59,11 +60,11 @@ fun initialization(context: Context, hub: Hub) {
             }
             Timber.i("arrFilesCarrier end")
 
-            observe(hub)
+            observe(utils, gen)
 
             mmkv.readConstrain()
 
-            presetsToLiveData(presetsReadFile("default", path = AppPath().config))
+            presetsToLiveData(presetsReadFile("default", path = AppPath().config), gen)
 
             //mmkv.readVolume()
 

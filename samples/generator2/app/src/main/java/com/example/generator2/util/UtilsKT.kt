@@ -1,8 +1,8 @@
 package com.example.generator2.util
 
 import android.content.Context
-import c.ponom.audiuostreams.audiostreams.ArrayUtils.byteToShortArrayLittleEndian
-import com.example.generator2.gen
+import com.example.generator2.generator.Generator
+import com.example.generator2.util.ArrayUtils.byteToShortArrayLittleEndian
 import java.io.File
 import java.io.IOException
 
@@ -88,11 +88,11 @@ class UtilsKT(private var context: Context) {
 
 
     //Для спиннера, отсылка массива
-    @OptIn(ExperimentalUnsignedTypes::class)
     fun Spinner_Send_Buffer(
         CH: String,
         Mod: String,
-        name: String
+        name: String,
+        gen: Generator
     ) { //String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
         var path = ""
         path += if (Mod == "CR") Utils.patchCarrier + name + ".dat" else Utils.patchMod + name + ".dat"

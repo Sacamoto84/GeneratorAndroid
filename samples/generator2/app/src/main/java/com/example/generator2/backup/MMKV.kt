@@ -1,54 +1,55 @@
 package com.example.generator2.backup
 
-import com.example.generator2.gen
+import cafe.adriel.satchel.Satchel
+import cafe.adriel.satchel.encrypter.bypass.BypassSatchelEncrypter
+import cafe.adriel.satchel.ktx.getOrDefault
+import cafe.adriel.satchel.serializer.raw.RawSatchelSerializer
+import cafe.adriel.satchel.storer.file.FileSatchelStorer
+import com.example.generator2.AppPath
+import com.example.generator2.generator.Generator
 import com.example.generator2.model.LiveConstrain
-import com.tencent.mmkv.MMKV
-
-//val rootDir = MMKV.initialize(this, AppPath().config)
-//println("mmkv root: $rootDir")
+import java.io.File
 
 class MMKv {
 
-    val m: MMKV = MMKV.defaultMMKV()
+    fun readVolume(gen : Generator) {
 
-    fun readVolume() {
-        print("readPufferVolume..")
+        val satchel = Satchel.with(storer = FileSatchelStorer(File(AppPath().config, "volume.txt")),
+            encrypter = BypassSatchelEncrypter, serializer = RawSatchelSerializer)
 
-        gen.liveData.maxVolume0.value = m.getFloat("maxVolume0", 1.0F)
-        gen.liveData.maxVolume1.value = m.getFloat("maxVolume1", 1.0F)
+        gen.liveData.maxVolume0.value = satchel.getOrDefault("maxVolume0", 1.0F)
+        gen.liveData.maxVolume1.value = satchel.getOrDefault("maxVolume1", 1.0F)
 
-        gen.liveData.volume0.value = gen.liveData.currentVolume0.value * m.getFloat("maxVolume0", 1.0F)
-        gen.liveData.volume1.value = gen.liveData.currentVolume1.value * m.getFloat("maxVolume1", 1.0F)
+        gen.liveData.volume0.value = gen.liveData.currentVolume0.value * satchel.getOrDefault("maxVolume0", 1.0F)
+        gen.liveData.volume1.value = gen.liveData.currentVolume1.value * satchel.getOrDefault("maxVolume1", 1.0F)
 
         println("ok")
     }
 
-    fun saveVolume() {
-        print("saveJsonVolume..")
-        m.putFloat("maxVolume0", gen.liveData.maxVolume0.value)
-        m.putFloat("maxVolume1", gen.liveData.maxVolume1.value)
-        println("ok")
+    fun saveVolume(gen : Generator) {
+        val satchel = Satchel.with(storer = FileSatchelStorer(File(AppPath().config, "volume.txt")),
+            encrypter = BypassSatchelEncrypter, serializer = RawSatchelSerializer)
+
+        satchel["maxVolume0"] = gen.liveData.maxVolume0.value
+        satchel["maxVolume1"] = gen.liveData.maxVolume0.value
     }
 
     fun saveConstrain() {
+        val satchel = Satchel.with(storer = FileSatchelStorer(File(AppPath().config, "constrain.txt")),
+            encrypter = BypassSatchelEncrypter, serializer = RawSatchelSerializer)
 
-        print("saveJsonConstrain..")
-
-        m.putFloat("sensetingSliderCr", LiveConstrain.sensetingSliderCr.floatValue)
-        m.putFloat("sensetingSliderFmDev", LiveConstrain.sensetingSliderFmDev.floatValue)
-        m.putFloat("sensetingSliderAmFm", LiveConstrain.sensetingSliderAmFm.floatValue)
-
-        println("ok")
+        satchel["sensetingSliderCr"] = LiveConstrain.sensetingSliderCr.floatValue
+        satchel["sensetingSliderFmDev"] = LiveConstrain.sensetingSliderFmDev.floatValue
+        satchel["sensetingSliderAmFm"] = LiveConstrain.sensetingSliderAmFm.floatValue
     }
 
     fun readConstrain() {
-        print("readConstrain..")
+        val satchel = Satchel.with(storer = FileSatchelStorer(File(AppPath().config, "constrain.txt")),
+            encrypter = BypassSatchelEncrypter, serializer = RawSatchelSerializer)
 
-        LiveConstrain.sensetingSliderCr.floatValue = m.getFloat("sensetingSliderCr", 0.2F)
-        LiveConstrain.sensetingSliderFmDev.floatValue = m.getFloat("sensetingSliderFmDev", 0.2f)
-        LiveConstrain.sensetingSliderAmFm.floatValue = m.getFloat("sensetingSliderAmFm", 0.01f)
-
-        println("ok")
+        LiveConstrain.sensetingSliderCr.floatValue = satchel.getOrDefault("sensetingSliderCr", 0.2F)
+        LiveConstrain.sensetingSliderFmDev.floatValue = satchel.getOrDefault("sensetingSliderFmDev", 0.2f)
+        LiveConstrain.sensetingSliderAmFm.floatValue = satchel.getOrDefault("sensetingSliderAmFm", 0.01f)
     }
 
 }

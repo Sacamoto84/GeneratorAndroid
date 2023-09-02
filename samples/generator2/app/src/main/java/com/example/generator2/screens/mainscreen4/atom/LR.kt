@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.generator2.R
-import com.example.generator2.gen
+import com.example.generator2.generator.Generator
 import com.example.generator2.theme.colorDarkBackground
 
 private val m : Modifier = Modifier.fillMaxHeight().aspectRatio(1.5f).clip(RoundedCornerShape(15.dp)).border(1.dp, Color.DarkGray, CircleShape)
@@ -35,7 +35,7 @@ private val m : Modifier = Modifier.fillMaxHeight().aspectRatio(1.5f).clip(Round
 val fontSize = 20.sp
 
 @Composable
-fun LR() {
+fun LR(gen : Generator) {
     Row( modifier = Modifier.height(30.dp).clip(RoundedCornerShape(15.dp)) ,verticalAlignment = Alignment.CenterVertically )
     {
         val mono = gen.liveData.mono.collectAsState()
@@ -61,10 +61,5 @@ fun LR() {
             textAlign = TextAlign.Center, fontWeight = FontWeight.Bold,
             color = colorR, fontFamily = FontFamily(Font(R.font.jetbrains))
         )
-
-
-
-
-
     }
 }

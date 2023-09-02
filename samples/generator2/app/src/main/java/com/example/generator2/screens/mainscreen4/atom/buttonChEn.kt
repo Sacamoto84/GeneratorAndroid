@@ -17,13 +17,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.generator2.gen
+import com.example.generator2.generator.Generator
 import com.example.generator2.screens.mainscreen4.ms4SwitchWidth
 import com.example.generator2.theme.colorDarkBackground
 import libs.modifier.noRippleClickable
 
 @Composable
-fun ButtonChEn(str: String = "CH0") {
+fun ButtonChEn(str: String = "CH0", gen : Generator) {
 
     val chEN: State<Boolean> = if (str == "CH0") {
         gen.liveData.ch1_EN.collectAsState()

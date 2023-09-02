@@ -33,7 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.generator2.gen
+import com.example.generator2.generator.Generator
 import com.example.generator2.model.LiveConstrain
 import com.example.generator2.screens.mainscreen4.atom.VolumeControl
 import com.example.generator2.screens.mainscreen4.modifierInfinitySlider
@@ -52,7 +52,7 @@ import kotlinx.coroutines.flow.update
 import libs.modifier.noRippleClickable
 
 @Composable
-fun CardFM(str: String = "CH0") {
+fun CardFM(str: String = "CH0", gen: Generator) {
 
     val fmEN: State<Boolean?> = if (str == "CH0") gen.liveData.ch1_FM_EN.collectAsState() else gen.liveData.ch2_FM_EN.collectAsState()
     val fmFr: State<Float?> = if (str == "CH0") gen.liveData.ch1_FM_Fr.collectAsState() else gen.liveData.ch2_FM_Fr.collectAsState()
@@ -178,7 +178,7 @@ fun CardFM(str: String = "CH0") {
                     .background(Color.Black),
 
                 filename = if (str == "CH0") gen.liveData.ch1_FM_Filename.collectAsState()
-                else gen.liveData.ch2_FM_Filename.collectAsState()
+                else gen.liveData.ch2_FM_Filename.collectAsState(), gen = gen
             )
 
         }
@@ -190,13 +190,13 @@ fun CardFM(str: String = "CH0") {
             .background(Color.Transparent)
             .height(1.dp)
             .fillMaxWidth())
-        SecondLine(str)
+        SecondLine(str, gen = gen)
 
     }
 }
 
 @Composable
-private fun SecondLine(str: String = "CH0") {
+private fun SecondLine(str: String = "CH0", gen: Generator) {
 
     val fmSelectMode: State<Int?> = if (str == "CH0") {
         gen.liveData.parameterInt0.collectAsState() //CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс
@@ -206,7 +206,7 @@ private fun SecondLine(str: String = "CH0") {
 
     Row {
 
-        Volume(str)
+        Volume(str, gen = gen)
 
         //Переключение режима
 
@@ -238,13 +238,13 @@ private fun SecondLine(str: String = "CH0") {
 
         }
 
-        if (fmSelectMode.value == 0) SecondLineMode0(str) else SecondLineMode1(str)
+        if (fmSelectMode.value == 0) SecondLineMode0(str, gen = gen) else SecondLineMode1(str, gen = gen)
 
     }
 }
 
 @Composable
-private fun SecondLineMode1(str: String) {
+private fun SecondLineMode1(str: String, gen: Generator) {
 
     val fmMin: State<Float> =
         if (str == "CH0") gen.liveData.parameterFloat0.collectAsState() else gen.liveData.parameterFloat2.collectAsState()
@@ -320,7 +320,7 @@ private fun SecondLineMode1(str: String) {
 }
 
 @Composable
-private fun SecondLineMode0(str: String) {
+private fun SecondLineMode0(str: String, gen: Generator) {
 
     val carrierFr: State<Float?> = if (str == "CH0") {
         gen.liveData.ch1_Carrier_Fr.collectAsState()
@@ -386,7 +386,7 @@ private fun SecondLineMode0(str: String) {
 }
 
 @Composable
-private fun Volume(str: String = "CH0") {
+private fun Volume(str: String = "CH0", gen: Generator) {
     VolumeControl(
 
         value = if (str == "CH0")

@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.generator2.R
-import com.example.generator2.gen
 import com.example.generator2.screens.mainscreen4.VMMain4
 import com.example.generator2.screens.mainscreen4.atom.LR
 import com.example.generator2.theme.colorDarkBackground
@@ -42,7 +41,7 @@ fun CardCommander(vm: VMMain4) {
     {
 
         Row(Modifier.fillMaxSize(), Arrangement.Start, Alignment.CenterVertically) {
-            val mono = gen.liveData.mono.collectAsState()
+            val mono = vm.gen.liveData.mono.collectAsState()
             val color = if (mono.value) MaterialColor.GREEN_400 else colorDarkBackground
 
             Spacer(
@@ -52,7 +51,7 @@ fun CardCommander(vm: VMMain4) {
             )
 
             //Стерео Моно
-            IconButton(onClick = { gen.liveData.mono.value = !gen.liveData.mono.value }) {
+            IconButton(onClick = { vm.gen.liveData.mono.value = !vm.gen.liveData.mono.value }) {
                 Icon(
                     painter = if (mono.value) painterResource(R.drawable.mono) else painterResource(
                         R.drawable.stereo
@@ -61,18 +60,17 @@ fun CardCommander(vm: VMMain4) {
                 )
             }
 
-            LR()
+            LR(vm.gen)
 
-            val shuffle = gen.liveData.shuffle.collectAsState()
-            val invert = gen.liveData.invert.collectAsState()
+            val shuffle = vm.gen.liveData.shuffle.collectAsState()
+            val invert = vm.gen.liveData.invert.collectAsState()
             val time = 160
 
-            Crossfade(targetState = mono.value, animationSpec = tween(time))
+            Crossfade(targetState = mono.value, animationSpec = tween(time), label = "")
             {
                 if (!it) {
-                    IconButton(onClick = { gen.liveData.shuffle.value = !gen.liveData.shuffle.value }) {
-                        val color =
-                            if (shuffle.value) MaterialColor.GREEN_500 else colorDarkBackground
+                    IconButton(onClick = { vm.gen.liveData.shuffle.value = !vm.gen.liveData.shuffle.value }) {
+                        val color = if (shuffle.value) MaterialColor.GREEN_500 else colorDarkBackground
                         Icon(
                             painter = painterResource(R.drawable.shuffle74),
                             contentDescription = null,
@@ -80,7 +78,7 @@ fun CardCommander(vm: VMMain4) {
                         )
                     }
                 } else {
-                    IconButton(onClick = { gen.liveData.invert.value = !gen.liveData.invert.value }) {
+                    IconButton(onClick = { vm.gen.liveData.invert.value = !vm.gen.liveData.invert.value }) {
                         val color =
                             if (invert.value) MaterialColor.GREEN_500 else colorDarkBackground
                         Icon(

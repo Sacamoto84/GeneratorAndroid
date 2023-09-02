@@ -18,7 +18,6 @@ import com.example.generator2.screens.config.Config_header
 import com.example.generator2.screens.config.atom.editConfig
 import com.example.generator2.screens.config.vm.VMConfig
 
-
 @Composable
 private fun EditConfig(
     text: String,

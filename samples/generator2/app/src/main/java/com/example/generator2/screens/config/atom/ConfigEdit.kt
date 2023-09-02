@@ -44,7 +44,6 @@ fun editConfig(
     min: Float,
     max: Float,
     toInt: Boolean = false
-
 ) {
 
     var text by remember {

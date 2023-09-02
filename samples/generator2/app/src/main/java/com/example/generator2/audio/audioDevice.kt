@@ -10,18 +10,13 @@ fun audioOutSpeaker(context : Context) {
      val localAudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     audioOutWired(context)
     localAudioManager.setSpeakerphoneOn(true)
-
 }
 
 fun audioOutWired(context : Context) {
     val localAudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     //localAudioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
-
     //localAudioManager.setBluetoothScoOn(false)
-
     //localAudioManager.stopBluetoothSco()
-
-
     localAudioManager.setSpeakerphoneOn(false)
 }
 
@@ -30,12 +25,8 @@ fun audioOutBT( context : Context) {
     val localAudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     //localAudioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
 
-
-
     localAudioManager.setBluetoothScoOn(true)
-
     localAudioManager.startBluetoothSco()
-
     localAudioManager.setBluetoothA2dpOn(true)
 
     //localAudioManager.setMode(AudioManager.MODE_RINGTONE)

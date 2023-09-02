@@ -5,14 +5,14 @@ import cafe.adriel.satchel.encrypter.bypass.BypassSatchelEncrypter
 import cafe.adriel.satchel.serializer.raw.RawSatchelSerializer
 import cafe.adriel.satchel.storer.file.FileSatchelStorer
 import com.example.generator2.AppPath
-import com.example.generator2.gen
+import com.example.generator2.generator.Generator
 import com.example.generator2.util.toast
 import java.io.File
 
 /**
  * Создание пресета по имени
  */
-fun presetsSaveFile(name: String, path: String = AppPath().presets) {
+fun presetsSaveFile(name: String, path: String = AppPath().presets, gen : Generator) {
 
     val satchel =
         Satchel.with(

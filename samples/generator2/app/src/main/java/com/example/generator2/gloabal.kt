@@ -8,19 +8,14 @@ import com.example.generator2.generator.Generator
 import com.example.generator2.mp3.PlayerMP3
 import com.example.generator2.scope.Scope
 
+//lateinit var exoplayer: PlayerMP3
 
-val mmkv = MMKv()
-
-
-lateinit var exoplayer: PlayerMP3
-
-val gen = Generator()
-
-val audioMixerPump = AudioMixerPump()
+//val gen = Generator()
 
 var audioOut : AudioOut = AudioOut(48000,200, AudioFormat.ENCODING_PCM_FLOAT)
 
 val scope = Scope()
 
+//val audioMixerPump = AudioMixerPump(gen)
 
-
+val mmkv = MMKv()

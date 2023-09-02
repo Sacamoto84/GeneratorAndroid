@@ -3,7 +3,6 @@ package com.example.generator2.mp3.processor
 import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.audio.AudioProcessor
-import com.example.generator2.exoplayer
 import com.example.generator2.mp3.chDataStreamOutAudioProcessor
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
@@ -20,7 +19,7 @@ val audioProcessorInputFormat = MutableStateFlow(
 )
 
 @androidx.media3.common.util.UnstableApi
-class myAudioProcessor : AudioProcessor {
+class myAudioProcessor(var isPlayingD : Boolean ) : AudioProcessor {
 
     private lateinit var inputAudioFormat: AudioProcessor.AudioFormat
     private var isActive: Boolean = false
@@ -110,7 +109,7 @@ class myAudioProcessor : AudioProcessor {
 
 
     override fun queueEndOfStream() {
-        exoplayer.isPlayingD = false
+        isPlayingD = false
         Timber.e("queueEndOfStream")
         inputEnded = true
         processBuffer = AudioProcessor.EMPTY_BUFFER

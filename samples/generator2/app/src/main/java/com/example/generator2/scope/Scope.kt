@@ -146,7 +146,6 @@ class Scope {
         )
         {
             Row {
-
                 CanvasOscill(Modifier.weight(1f))
                 PanelButton()
                 CanvasLissagu()
