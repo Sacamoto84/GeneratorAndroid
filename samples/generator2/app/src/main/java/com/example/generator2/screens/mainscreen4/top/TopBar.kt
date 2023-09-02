@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.generator2.mp3.OSCILLSYNC
 import com.example.generator2.mp3.oscillSync
-import com.example.generator2.scope
 import com.example.generator2.screens.mainscreen4.VMMain4
 
 @Composable
@@ -55,12 +54,12 @@ fun TopBarAudioSource(vm: VMMain4) {
         }
 
         Box(
-            modifier = m.weight(1f).clickable(onClick = { scope.isUse.value = scope.isUse.value.not() }),
+            modifier = m.weight(1f).clickable(onClick = { vm.scope.isUse.value = vm.scope.isUse.value.not() }),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "OSCILL",
-                color = if (scope.isUse.collectAsState().value) Color.Green else Color.Gray
+                color = if (vm.scope.isUse.collectAsState().value) Color.Green else Color.Gray
             )
         }
 

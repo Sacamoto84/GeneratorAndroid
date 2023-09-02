@@ -9,6 +9,7 @@ import com.example.generator2.mp3.chDataStreamOutAudioProcessor
 import com.example.generator2.mp3.channelAudioOut
 import com.example.generator2.mp3.channelAudioOutLissagu
 import com.example.generator2.mp3.processor.audioProcessorInputFormat
+import com.example.generator2.scope.Scope
 import com.example.generator2.util.BufSplitFloat
 import com.example.generator2.util.bufMerge
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -28,7 +29,7 @@ enum class ROUTESTREAM {
 }
 
 @androidx.media3.common.util.UnstableApi
-class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3) {
+class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope : Scope) {
 
     //PUBLIC
     val routeR = MutableStateFlow(ROUTESTREAM.MP3) //Выбор источника для вывода сигнала
@@ -167,9 +168,10 @@ class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3) {
                         bufMerge(outR, outL)
                     }
 
-
-                    channelAudioOut.send(v)
-                    channelAudioOutLissagu.send(v)
+                    if (scope.isUse.value) {
+                        channelAudioOut.send(v)
+                        channelAudioOutLissagu.send(v)
+                    }
 
                     //LRLRLR
                     audioOut.out.write(v, 0, v.size, WRITE_BLOCKING)
@@ -231,8 +233,10 @@ class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3) {
                         bufMerge(outR, outL)
                     }
 
-                    channelAudioOut.send(v)
-                    channelAudioOutLissagu.send(v)
+                    if (scope.isUse.value) {
+                        channelAudioOut.send(v)
+                        channelAudioOutLissagu.send(v)
+                    }
 
                     audioOut.out.write(v, 0, v.size, WRITE_BLOCKING)
 

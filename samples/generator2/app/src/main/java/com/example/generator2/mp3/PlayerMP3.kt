@@ -9,6 +9,7 @@ import androidx.media3.common.Tracks
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.transformer.EditedMediaItem
 import com.example.generator2.AppPath
+import com.example.generator2.scope.Scope
 import com.example.generator2.scope.dataCompressor
 import com.example.generator2.scope.lissaguToBitmap
 import com.example.generator2.scope.renderDataToPoints
@@ -22,7 +23,7 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 @androidx.media3.common.util.UnstableApi
-class PlayerMP3(val context: Context) {
+class PlayerMP3(val context: Context, scope : Scope) {
 
     var player: ExoPlayer
 
@@ -51,8 +52,8 @@ class PlayerMP3(val context: Context) {
     init {
 
         dataCompressor()
-        renderDataToPoints()
-        lissaguToBitmap()
+        renderDataToPoints(scope)
+        lissaguToBitmap(scope)
 
         player = ExoPlayer.Builder(context, renderersFactory(context, isPlayingD)).build()
         listener()

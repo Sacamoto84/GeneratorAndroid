@@ -2,16 +2,22 @@ package com.example.generator2.screens.mainscreen4
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.with
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,7 +34,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -39,7 +45,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.mp3.compose.MP3Control
 import com.example.generator2.presets.Presets
 import com.example.generator2.presets.ui.DialogPresetsNewFile
-import com.example.generator2.scope
 import com.example.generator2.screens.mainscreen4.bottom.M4BottomAppBarComponent
 import com.example.generator2.screens.mainscreen4.card.CardCard
 import com.example.generator2.screens.mainscreen4.top.TopBarAudioSource
@@ -48,7 +53,6 @@ import com.example.generator2.update.ui.WigetUpdate
 import timber.log.Timber
 
 @androidx.media3.common.util.UnstableApi
-@OptIn(ExperimentalAnimationApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun Mainsreen4(
@@ -58,19 +62,6 @@ fun Mainsreen4(
     //val vm = hiltViewModel<VMMain4>()
 
     Timber.e("mainsreen4")
-
-    val coroutineScope = rememberCoroutineScope()
-    //val drawerState: BottomDrawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
-    //val openDrawer: () -> Unit = { coroutineScope.launch { drawerState.expand() } }
-    //val closeDrawer: () -> Unit = { coroutineScope.launch { drawerState.close() } }
-
-//    val toggleDrawer: () -> Unit = {
-//        if (drawerState.isOpen) {
-//            closeDrawer()
-//        } else {
-//            openDrawer()
-//        }
-//    }
 
     if (Presets.isOpenDialogNewFile.collectAsState().value) {
         DialogPresetsNewFile(vm.gen)
@@ -122,15 +113,25 @@ fun Mainsreen4(
         ) {
 
             //Заполнение сверху
-            Box(modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1f))
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
 
             //Выбор Аудио Источников MP3 Gen Oscill
             TopBarAudioSource(vm)
 
-            //Осциллограф
-            scope.Oscilloscope()
-
-
+            AnimatedVisibility(
+                visible = vm.scope.isUse.collectAsState().value,
+                enter = slideInVertically() + expandVertically(expandFrom = Alignment.Bottom) + fadeIn(),
+                exit = slideOutVertically(targetOffsetY = { fullHeight -> fullHeight }) + shrinkVertically() + fadeOut(),
+            )
+            {
+                //Осциллограф
+                vm.scope.Oscilloscope()
+            }
 
             MP3Control(vm)
 
@@ -153,7 +154,7 @@ fun Mainsreen4(
                     (fadeIn(animationSpec = tween(time / 2)) + expandVertically(
                         animationSpec = tween(time)
                     ))
-                        .with(
+                        .togetherWith(
                             (fadeOut(animationSpec = tween(time)) + shrinkVertically(
                                 animationSpec = tween(time)
                             ))
@@ -173,7 +174,12 @@ fun Mainsreen4(
                 )
             }
 
-            Box(modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1f))
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
 
         }
 

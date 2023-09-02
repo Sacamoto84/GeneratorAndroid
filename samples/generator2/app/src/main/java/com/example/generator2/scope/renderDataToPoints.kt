@@ -10,7 +10,6 @@ import com.example.generator2.mp3.OSCILLSYNC
 import com.example.generator2.mp3.channelAudioOutLissagu
 import com.example.generator2.mp3.channelDataStreamOutCompressor
 import com.example.generator2.mp3.oscillSync
-import com.example.generator2.scope
 import com.example.generator2.util.BufSplitFloat
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -21,12 +20,10 @@ import kotlin.system.measureNanoTime
 
 var hiRes: Boolean = false //Режим высокого разрешения
 
-
 @OptIn(DelicateCoroutinesApi::class)
-fun renderDataToPoints() {
+fun renderDataToPoints(scope : Scope) {
 
     var canvas: Canvas
-
 
     val paintL = Paint()
     paintL.color = Color.YELLOW
@@ -286,7 +283,7 @@ fun renderDataToPoints() {
 
 
 @OptIn(DelicateCoroutinesApi::class)
-fun lissaguToBitmap() {
+fun lissaguToBitmap(scope : Scope) {
     val paintLissagu = Paint()
     paintLissagu.color = Color.GREEN
     paintLissagu.alpha = 0xFF

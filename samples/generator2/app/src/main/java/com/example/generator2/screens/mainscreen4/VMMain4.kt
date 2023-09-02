@@ -7,6 +7,7 @@ import com.example.generator2.element.Console2
 import com.example.generator2.generator.Generator
 import com.example.generator2.isInitialized
 import com.example.generator2.mp3.PlayerMP3
+import com.example.generator2.scope.Scope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -20,7 +21,8 @@ class VMMain4 @Inject constructor(
     //@ApplicationContext contextActivity: Context,
     val gen : Generator,
     val exoplayer : PlayerMP3,
-    val audioMixerPump: AudioMixerPump
+    val audioMixerPump: AudioMixerPump,
+    val scope : Scope
 ) : ViewModel(){
 
     val consoleLog = Console2()

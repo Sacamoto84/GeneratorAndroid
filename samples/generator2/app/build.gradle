@@ -6,6 +6,7 @@ plugins {
     id 'com.google.dagger.hilt.android'
 
     id 'com.google.gms.google-services'
+    //id 'androidx.baselineprofile'
 
 }
 
@@ -192,6 +193,7 @@ dependencies {
     implementation "androidx.compose.material:material-android:$compose_version"
     implementation 'androidx.compose.material3:material3:1.2.0-alpha06'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    //baselineProfile project(':baselineprofile')
     //implementation project(':audiostreams')
 
     debugImplementation "androidx.compose.ui:ui-tooling-android:$compose_version"

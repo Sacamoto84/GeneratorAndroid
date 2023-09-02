@@ -42,9 +42,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 
-
 private val colorEnabled = Color.Black
-private val colorTextEnabled = Color.Green
 private val colorTextDisabled = Color.DarkGray
 private val m = Modifier
     .height(32.dp)
@@ -59,7 +57,7 @@ class Scope {
     /**
      * Используем компонент или нет
      */
-    var isUse = MutableStateFlow(true)
+    val isUse = MutableStateFlow(true)
 
     //Режимы отображения каналов на осцилографе
     val isVisibleL = MutableStateFlow(true) //Отобразить Левый канал
@@ -138,41 +136,43 @@ class Scope {
             }
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFF343633))
-                .border(1.dp, Color.White)
-        )
-        {
-            Row {
-                CanvasOscill(Modifier.weight(1f))
-                PanelButton()
-                CanvasLissagu()
-            }
-            OscilloscopeControl()
-        }
-    }
 
-    @Composable
-    fun CanvasLissagu()
-    {
-        if (isLissagu.collectAsState().value)
-        Canvas(
-            modifier = Modifier.size(100.dp)
-        )
-        {
-            updateLissagu
-            scopeWLissagu = size.width
-            scopeHLissagu = size.height
-            drawImage(
-                image = pairPointsLissagu.bitmap.asImageBitmap()
+        //if (isUse.collectAsState().value) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF343633))
+                    .border(1.dp, Color.White)
             )
-        }
+            {
+                Row {
+                    CanvasOscill(Modifier.weight(1f))
+                    PanelButton()
+                    CanvasLissagu()
+                }
+                OscilloscopeControl()
+            }
+        //}
     }
 
     @Composable
-    fun CanvasOscill(modifier : Modifier){
+    fun CanvasLissagu() {
+        if (isLissagu.collectAsState().value)
+            Canvas(
+                modifier = Modifier.size(100.dp)
+            )
+            {
+                updateLissagu
+                scopeWLissagu = size.width
+                scopeHLissagu = size.height
+                drawImage(
+                    image = pairPointsLissagu.bitmap.asImageBitmap()
+                )
+            }
+    }
+
+    @Composable
+    fun CanvasOscill(modifier: Modifier) {
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
@@ -249,7 +249,7 @@ class Scope {
     }
 
     @Composable
-    fun PanelButton(){
+    fun PanelButton() {
 
         val fontSize = 24.sp
 
@@ -309,7 +309,6 @@ class Scope {
                 }
             }
         }
-
 
 
     }

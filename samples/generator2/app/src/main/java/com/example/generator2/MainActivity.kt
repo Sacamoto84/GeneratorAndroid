@@ -25,6 +25,7 @@ import com.example.generator2.audio.AudioMixerPump
 import com.example.generator2.generator.Generator
 import com.example.generator2.presets.presetsInit
 import com.example.generator2.presets.presetsSaveFile
+import com.example.generator2.scope.Scope
 import com.example.generator2.theme.Generator2Theme
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.update.Update
@@ -79,6 +80,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var utils: UtilsKT
 
+    @Inject
+    lateinit var scope: Scope
+
     override fun onPause() {
         presetsSaveFile("default", AppPath().config, gen)
         //R.drawable.add
@@ -118,7 +122,6 @@ class MainActivity : ComponentActivity() {
         audioOut
 
         audioMixerPump
-
 
         scope
 

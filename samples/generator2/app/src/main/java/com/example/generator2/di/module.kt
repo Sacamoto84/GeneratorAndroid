@@ -5,6 +5,7 @@ import com.example.generator2.audio.AudioMixerPump
 import com.example.generator2.element.Script
 import com.example.generator2.generator.Generator
 import com.example.generator2.mp3.PlayerMP3
+import com.example.generator2.scope.Scope
 import com.example.generator2.screens.scripting.ui.ScriptKeyboard
 import com.example.generator2.util.UtilsKT
 import dagger.Module
@@ -24,18 +25,27 @@ object HomeActivityModule {
     @Singleton
     fun provideAudioMixerPump(
         gen: Generator,
-        exoplayer : PlayerMP3
+        exoplayer : PlayerMP3,
+        scope : Scope
     ): AudioMixerPump {
-        Timber.i("..DI AudioMixerPump()")
-        return AudioMixerPump(gen, exoplayer)
+        println("..DI AudioMixerPump()")
+        return AudioMixerPump(gen, exoplayer, scope)
     }
+
 
 
     @Provides
     @Singleton
     fun provideGen(): Generator {
-        Timber.i("..DI Generator()")
+        println("..DI Generator()")
         return Generator()
+    }
+
+    @Provides
+    @Singleton
+    fun provideScope(): Scope {
+        println("..DI Scope()")
+        return Scope()
     }
 
 
@@ -43,10 +53,11 @@ object HomeActivityModule {
     @Provides
     @Singleton
     fun providePlayerMP3(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        scope : Scope
     ): PlayerMP3 {
-        Timber.i("..DI PlayerMP3()")
-        return PlayerMP3(context)
+        println("..DI PlayerMP3()")
+        return PlayerMP3(context, scope)
     }
 
 
@@ -55,7 +66,7 @@ object HomeActivityModule {
     fun provideUtilsKT(
         @ApplicationContext context: Context
     ): UtilsKT {
-        Timber.i("..DI provideUtilsKT()")
+        println("..DI provideUtilsKT()")
         return UtilsKT(context)
     }
 
@@ -64,7 +75,7 @@ object HomeActivityModule {
     fun provideScript(
         gen: Generator,
     ): Script {
-        Timber.i("..DI provideScript()")
+        println("..DI provideScript()")
         return Script(gen)
     }
 
@@ -74,7 +85,7 @@ object HomeActivityModule {
         script: Script,
         gen: Generator
     ): ScriptKeyboard {
-        Timber.i("..DI provideKeyboard()")
+        println("..DI provideKeyboard()")
         return ScriptKeyboard(script, gen)
     }
 
