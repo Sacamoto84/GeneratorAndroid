@@ -113,20 +113,24 @@ fun Mainsreen4(
         ) {
 
             //Заполнение сверху
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()
-                    .weight(1f)
-            )
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxHeight()
+//                    .fillMaxWidth()
+//                    .weight(1f)
+//            )
 
             //Выбор Аудио Источников MP3 Gen Oscill
             TopBarAudioSource(vm)
 
             AnimatedVisibility(
                 visible = vm.scope.isUse.collectAsState().value,
-                enter = slideInVertically() + expandVertically(expandFrom = Alignment.Bottom) + fadeIn(),
-                exit = slideOutVertically(targetOffsetY = { fullHeight -> fullHeight }) + shrinkVertically() + fadeOut(),
+                enter =
+                //slideInVertically() +
+                expandVertically(expandFrom = Alignment.Bottom),// + fadeIn(),
+                exit = //slideOutVertically(targetOffsetY = { fullHeight -> fullHeight })// +
+                 shrinkVertically() //+ fadeOut()
+                ,
             )
             {
                 //Осциллограф
