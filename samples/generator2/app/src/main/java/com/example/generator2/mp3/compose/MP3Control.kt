@@ -122,7 +122,6 @@ fun MP3Control(vm: VMMain4) {
         }
         ////////////////////////////////////////////////
 
-
         //Text(text = "isPlaying:${exoplayer.isPlaying.collectAsState().value}", color = Color.Yellow)
         //Text(text = "bufferedPercentage:${exoplayer.bufferedPercentage.collectAsState().value}", color = Color.Yellow)
         //Text(text = ":${exoplayer.bitrate}", color = Color.Yellow)
@@ -142,7 +141,7 @@ fun MP3Control(vm: VMMain4) {
                 modifier = Modifier
                     .height(64.dp)
                     .width(32.dp)
-                    .offset((-1).dp)
+                    //.offset((-1).dp)
                     .clickable(
                         onClick = {
                             vm.audioMixerPump.shuffle.value = vm.audioMixerPump.shuffle.value.not()
