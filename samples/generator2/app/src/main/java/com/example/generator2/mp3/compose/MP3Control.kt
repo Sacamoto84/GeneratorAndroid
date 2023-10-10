@@ -1,5 +1,6 @@
 package com.example.generator2.mp3.compose
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,11 +30,12 @@ import com.example.generator2.mp3.formatMinSec
 import com.example.generator2.navController
 import com.example.generator2.screens.mainscreen4.VMMain4
 import com.example.generator2.theme.Purple200
+import com.example.generator2.theme.colorLightBackground
 
 
 @Composable
 fun MP3Control(vm: VMMain4) {
-    Column {
+    Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp ).background(colorLightBackground)) {
 
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             Text(

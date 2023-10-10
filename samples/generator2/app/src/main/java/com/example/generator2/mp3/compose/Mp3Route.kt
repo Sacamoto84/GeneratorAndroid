@@ -11,12 +11,14 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,7 +42,7 @@ fun Mp3Route(ch: String = "R", route: ROUTESTREAM, audioMixerPump : AudioMixerPu
 
         Box(
             contentAlignment = Alignment.Center, modifier = Modifier
-                .size(h)
+                .size(h).clip(RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp))
                 .background(if (ch == "L") colorGreen else colorOrange)
         ) {
             Text(
@@ -71,8 +73,7 @@ fun Mp3Route(ch: String = "R", route: ROUTESTREAM, audioMixerPump : AudioMixerPu
         Text(
             text = "GEN",
             color = if (route == ROUTESTREAM.GEN) Color.Green else Color.Gray,
-            modifier = Modifier.height(h)
-                .offset(x = (-1).dp)
+            modifier = Modifier.height(h).offset(x = (-1).dp)
                 .clickable(onClick = {
                     if (ch == "R")
                         audioMixerPump.routeR.value = ROUTESTREAM.GEN
@@ -98,7 +99,7 @@ fun Mp3Route(ch: String = "R", route: ROUTESTREAM, audioMixerPump : AudioMixerPu
                         audioMixerPump.routeL.value = ROUTESTREAM.OFF
                 }
                 )
-                .border(1.dp, Color.Gray)
+                .border(1.dp, Color.Gray, RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp))
                 .padding(8.dp)
 
         )

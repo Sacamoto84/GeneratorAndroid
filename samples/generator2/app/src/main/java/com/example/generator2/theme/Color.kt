@@ -12,6 +12,15 @@ val colorOrange = Color(0xFFD8BD12)
 
 val backgroundColor = Color(0xffECEFF1)
 
-val colorDarkBackground = Color(0xFF13161B)
-val colorLightBackground = Color(0xFF2A2D36)
+
+//val colorDarkBackground = Color(0xFF545861)
+//val colorDarkBackground = Color(0xFF13161B)
+//val colorDarkBackground = Color(0xFF151515)
+
+val colorDarkBackground = Color(0xFF14181B)
+
+//val colorLightBackground = Color(0xFF2A2D36)
+//val colorLightBackground = Color(0xFF373737)
+val colorLightBackground = Color(0xFF1D2428)
+
 val colorLightBackground2 = Color(0xFF32383D)
