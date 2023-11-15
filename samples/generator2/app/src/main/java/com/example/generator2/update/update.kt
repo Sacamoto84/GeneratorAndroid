@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import libs.lan.ping
+import lan.ping
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import timber.log.Timber

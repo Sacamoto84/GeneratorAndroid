@@ -116,7 +116,6 @@ private fun Content(vm: presetsVM) {
                 count = count,
                 state = state,
                 horizontal = false,
-                countCorrection = 0,
                 hiddenAlpha = 0f,
                 knobColor = Color.Black,
                 trackColor = Color.White

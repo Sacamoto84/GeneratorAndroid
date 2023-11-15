@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
+import timber.log.Timber
 
 class Generator {
 
@@ -26,6 +27,8 @@ class Generator {
 
 
     suspend fun renderAudio(numFrames: Int = 1024): Pair<FloatArray, FloatArray> {
+
+        if (numFrames == 0) Timber.e("numFrames == 0")
 
         val l: FloatArray
         val r: FloatArray

@@ -67,11 +67,10 @@ class PlayerMP3(val context: Context, scope : Scope) {
 
         //val uri = Uri.parse("asset:///CH Teen Edition StL A.mp3")
 
-        val uri = Uri.parse(AppPath().music + "/CH Teen Edition StL A.mp3")
-
-        val a = EditedMediaItem.Builder(MediaItem.fromUri(uri)).build()
-        player.setMediaItem(a.mediaItem)
-        player.prepare()
+        ////val uri = Uri.parse(AppPath().music + "/CH Teen Edition StL A.mp3")
+        ////val a = EditedMediaItem.Builder(MediaItem.fromUri(uri)).build()
+        ////player.setMediaItem(a.mediaItem)
+        ////player.prepare()
 
         //player.playWhenReady = true
 

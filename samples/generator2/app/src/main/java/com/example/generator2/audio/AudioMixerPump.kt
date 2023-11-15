@@ -29,7 +29,7 @@ enum class ROUTESTREAM {
 }
 
 @androidx.media3.common.util.UnstableApi
-class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope : Scope) {
+class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope: Scope) {
 
     //PUBLIC
     val routeR = MutableStateFlow(ROUTESTREAM.MP3) //Выбор источника для вывода сигнала
@@ -109,6 +109,9 @@ class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope : S
 
                     bufferSize = bigBufMp3.size
 
+                    if (bufferSize == 0)
+                        continue
+
                     //println("bigBufMp3.size ${bigBufMp3.size}")
                     if (start) {
                         Timber.e("1 start $volume $delay")
@@ -123,7 +126,11 @@ class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope : S
                     }
 
                     if ((audioProcessorInputFormat.value.sampleRate != audioOut.sampleRate) or (audioOut.out.format.encoding != AudioFormat.ENCODING_PCM_FLOAT)) {
-                        audioOut.destroy(); audioOut = AudioOut(audioProcessorInputFormat.value.sampleRate,200, AudioFormat.ENCODING_PCM_FLOAT)
+                        audioOut.destroy(); audioOut = AudioOut(
+                            audioProcessorInputFormat.value.sampleRate,
+                            200,
+                            AudioFormat.ENCODING_PCM_FLOAT
+                        )
                     }
 
                     val bufGenL: FloatArray
@@ -142,7 +149,7 @@ class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope : S
                         bigBufMp3[i] = bigBufMp3[i] * volume
                     }
 
-                    val (bufMp3L, bufMp3R) =  BufSplitFloat().split(bigBufMp3)
+                    val (bufMp3L, bufMp3R) = BufSplitFloat().split(bigBufMp3)
 //
                     val outR = when (routeR.value) {
                         ROUTESTREAM.MP3 -> bufMp3R
@@ -157,11 +164,15 @@ class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope : S
                     }
 //
                     //invertL
-                    if (invertL.value) for (i in outL.indices) { outL[i] = -outL[i] }
+                    if (invertL.value) for (i in outL.indices) {
+                        outL[i] = -outL[i]
+                    }
                     //invertR
-                    if (invertR.value) for (i in outR.indices) { outR[i] = -outR[i] }
+                    if (invertR.value) for (i in outR.indices) {
+                        outR[i] = -outR[i]
+                    }
 
-                    val v = if(shuffle.value){
+                    val v = if (shuffle.value) {
                         bufMerge(outL, outR)
                     } else {
                         //Нормальный режим
@@ -222,11 +233,15 @@ class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope : S
                     }
 
                     //invertL
-                    if (invertL.value) for (i in outL.indices) { outL[i] = -outL[i] }
+                    if (invertL.value) for (i in outL.indices) {
+                        outL[i] = -outL[i]
+                    }
                     //invertR
-                    if (invertR.value) for (i in outR.indices) { outR[i] = -outR[i] }
+                    if (invertR.value) for (i in outR.indices) {
+                        outR[i] = -outR[i]
+                    }
 
-                    val v = if(shuffle.value){
+                    val v = if (shuffle.value) {
                         bufMerge(outL, outR)
                     } else {
                         //Нормальный режим
@@ -273,7 +288,7 @@ fun ListToShortArray(bigList: LinkedList<ShortArray>): ShortArray {
 }
 
 
-class Calculator(val count : Int = 1000) {
+class Calculator(val count: Int = 1000) {
     private val data = mutableListOf<Double>()
 
     fun update(value: Double) {

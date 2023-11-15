@@ -26,7 +26,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 import com.example.generator2.R
 import kotlinx.coroutines.delay
-import libs.modifier.scrollbar
 
 //var manual_recomposeLazy = mutableStateOf(0)
 
@@ -34,7 +33,7 @@ import libs.modifier.scrollbar
 //println("Смещение прокрутки первого видимого элемента = " + lazyListState.firstVisibleItemScrollOffset.toString())
 //println("Количество строк выведенных на экран lastIndex = " + lazyListState.layoutInfo.visibleItemsInfo.lastIndex.toString())
 
-class Console(driver : Int = 0) {
+class Console(driver: Int = 0) {
 
     val messages = mutableListOf<LineTextAndColor>()
 
@@ -49,8 +48,7 @@ class Console(driver : Int = 0) {
 
     //Настройка шрифтов
     val fontSize by mutableStateOf(12.sp)                                     //Размер шрифта
-    val fontFamily = FontFamily( Font(R.font.jetbrains, FontWeight.Normal))
-
+    val fontFamily = FontFamily(Font(R.font.jetbrains, FontWeight.Normal))
 
 
     //Рекомпозиция списка
@@ -88,12 +86,21 @@ class Console(driver : Int = 0) {
             }
         }
 
-        Column( Modifier.fillMaxSize().background(Color(0xFF090909)).then(modifier)
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(Color(0xFF090909))
+                .then(modifier)
         ) {
-            Box( Modifier.fillMaxSize().weight(1f) )
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .weight(1f))
             {
 
-                LazyColumn( modifier = Modifier.fillMaxSize().scrollbar(count = messages.count { it.pairList.isNotEmpty() } ,lazyListState, horizontal = false, countCorrection = 0, hiddenAlpha = 0f ), state = lazyListState )
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                       , state = lazyListState)
                 {
 
                     recompose
@@ -102,7 +109,7 @@ class Console(driver : Int = 0) {
                     { index, item ->
 
                         if (driver == 1)
-                            ////////////////////ScriptItemDraw({ item }, { index }, { false })
+                        ////////////////////ScriptItemDraw({ item }, { index }, { false })
                         else
 
                             Row()
@@ -130,14 +137,20 @@ class Console(driver : Int = 0) {
                                         color = if (!item.pairList[i].flash)
                                             item.pairList[i].colorText
                                         else
-                                            if (update) item.pairList[i].colorText else Color(0xFF090909 ),
-                                        modifier = Modifier.background( if (!item.pairList[i].flash) item.pairList[i].colorBg else if (update) item.pairList[i].colorBg else Color(0xFF090909 )
+                                            if (update) item.pairList[i].colorText else Color(
+                                                0xFF090909
+                                            ),
+                                        modifier = Modifier.background(
+                                            if (!item.pairList[i].flash) item.pairList[i].colorBg else if (update) item.pairList[i].colorBg else Color(
+                                                0xFF090909
+                                            )
                                         ),
                                         textDecoration = if (item.pairList[i].underline) TextDecoration.Underline else null,
                                         fontWeight = if (item.pairList[i].bold) FontWeight.Bold else null,
                                         fontStyle = if (item.pairList[i].italic) FontStyle.Italic else null,
                                         fontSize = fontSize,
-                                        fontFamily = fontFamily )
+                                        fontFamily = fontFamily
+                                    )
 
                                 }
 

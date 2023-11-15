@@ -32,6 +32,7 @@ import com.example.generator2.update.Update
 import com.example.generator2.update.kDownloader
 import com.example.generator2.util.Utils
 import com.example.generator2.util.UtilsKT
+import com.example.libs.KeepScreenOn
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kdownloader.KDownloader
 import com.yandex.metrica.YandexMetrica
@@ -42,7 +43,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import libs.KeepScreenOn
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -117,7 +117,6 @@ class MainActivity : ComponentActivity() {
         presetsInit()
 
         initialization(applicationContext, gen, utils)
-
 
         audioOut
 

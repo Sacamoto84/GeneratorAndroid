@@ -150,7 +150,7 @@ public class Utils {
         }
         catch (IOException e)
         {
-            Timber.tag("readFileMod2048byte:").e("!IOException! : Error");
+            Timber.tag("readFileMod2048byte:").e("!IOException! : Error%s", e.getLocalizedMessage());
         }
 
         return fileData;

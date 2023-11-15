@@ -29,10 +29,10 @@ fun presetsReadFile(name: String, path : String = AppPath().presets ): DataLiveD
     data.ch1_Carrier_Filename.value = satchel.getOrDefault("ch1_Carrier_Filename", "Sine")
     data.ch1_Carrier_Fr.value = satchel.getOrDefault("ch1_Carrier_Fr", 400.0f)   //Частота несущей
     data.ch1_AM_EN.value = satchel.getOrDefault("ch1_AM_EN", false)
-    data.ch1_AM_Filename.value = satchel.getOrDefault("ch1_AM_Filename", "Sine")
+    data.ch1_AM_Filename.value = satchel.getOrDefault("ch1_AM_Filename", "01_SINE_12b")
     data.ch1_AM_Fr.value = satchel.getOrDefault("ch1_AM_Fr", 8.7f)
     data.ch1_FM_EN.value = satchel.getOrDefault("ch1_FM_EN", false)
-    data.ch1_FM_Filename.value = satchel.getOrDefault("ch1_FM_Filename", "Sine")
+    data.ch1_FM_Filename.value = satchel.getOrDefault("ch1_FM_Filename", "01_SINE_12b")
     data.ch1_FM_Dev.value = satchel.getOrDefault("ch1_FM_Dev", 1100f)       //Частота базы
     data.ch1_FM_Fr.value = satchel.getOrDefault("ch1_FM_Fr", 5.1f)
 
@@ -40,10 +40,10 @@ fun presetsReadFile(name: String, path : String = AppPath().presets ): DataLiveD
     data.ch2_Carrier_Filename.value = satchel.getOrDefault("ch2_Carrier_Filename", "Sine")
     data.ch2_Carrier_Fr.value = satchel.getOrDefault("ch2_Carrier_Fr", 2000.0f) //Частота несущей
     data.ch2_AM_EN.value = satchel.getOrDefault("ch2_AM_EN", false)
-    data.ch2_AM_Filename.value = satchel.getOrDefault("ch2_AM_Filename", "Sine")
+    data.ch2_AM_Filename.value = satchel.getOrDefault("ch2_AM_Filename", "01_SINE_12b")
     data.ch2_AM_Fr.value = satchel.getOrDefault("ch2_AM_Fr", 8.7f)
     data.ch2_FM_EN.value = satchel.getOrDefault("ch2_FM_EN", false)
-    data.ch2_FM_Filename.value = satchel.getOrDefault("ch2_FM_Filename", "Sine")
+    data.ch2_FM_Filename.value = satchel.getOrDefault("ch2_FM_Filename", "01_SINE_12b")
     data.ch2_FM_Dev.value = satchel.getOrDefault("ch2_FM_Dev", 1100f) //Частота базы
     data.ch2_FM_Fr.value = satchel.getOrDefault("ch2_FM_Fr", 5.1f)
 
