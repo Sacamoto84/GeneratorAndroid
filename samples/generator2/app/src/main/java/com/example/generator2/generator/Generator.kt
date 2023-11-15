@@ -151,19 +151,9 @@ data class DataLiveData(
     val parameterFloat1: MutableStateFlow<Float> = MutableStateFlow(2000.0f), //PR PS PC CH1 FM max
     val parameterFloat2: MutableStateFlow<Float> = MutableStateFlow(1500.0f), //PR PS PC CH2 FM min
     val parameterFloat3: MutableStateFlow<Float> = MutableStateFlow(2500.0f), //PR PS PC CH2 FM max
-    val parameterFloat4: MutableStateFlow<Float> = MutableStateFlow(0.0f),    //PR PS PC
-    val parameterFloat5: MutableStateFlow<Float> = MutableStateFlow(0.0f),    //PR PS PC
-    val parameterFloat6: MutableStateFlow<Float> = MutableStateFlow(0.0f),    //PR PS PC
-    val parameterFloat7: MutableStateFlow<Float> = MutableStateFlow(0.0f),    //PR PS PC
 
     val parameterInt0: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс
     val parameterInt1: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CH2 режим выбора частот FM модуляции 0-обычный 1-минимум макс
-    val parameterInt2: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
-    val parameterInt3: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
-    val parameterInt4: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
-    val parameterInt5: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
-    val parameterInt6: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
-    val parameterInt7: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC
 
 )
 

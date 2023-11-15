@@ -58,18 +58,18 @@ fun presetsToLiveData(data: DataLiveData, gen : Generator) {
     gen.liveData.parameterFloat1.value =data.parameterFloat1.value
     gen.liveData.parameterFloat2.value =data.parameterFloat2.value
     gen.liveData.parameterFloat3.value =data.parameterFloat3.value
-    gen.liveData.parameterFloat4.value =data.parameterFloat4.value
-    gen.liveData.parameterFloat5.value =data.parameterFloat5.value
-    gen.liveData.parameterFloat6.value =data.parameterFloat6.value
-    gen.liveData.parameterFloat7.value =data.parameterFloat7.value
+    //gen.liveData.parameterFloat4.value =data.parameterFloat4.value
+    //gen.liveData.parameterFloat5.value =data.parameterFloat5.value
+    //gen.liveData.parameterFloat6.value =data.parameterFloat6.value
+    //gen.liveData.parameterFloat7.value =data.parameterFloat7.value
 
     gen.liveData.parameterInt0.value = data.parameterInt0.value
     gen.liveData.parameterInt1.value = data.parameterInt1.value
-    gen.liveData.parameterInt2.value = data.parameterInt2.value
-    gen.liveData.parameterInt3.value = data.parameterInt3.value
-    gen.liveData.parameterInt4.value = data.parameterInt4.value
-    gen.liveData.parameterInt5.value = data.parameterInt5.value
-    gen.liveData.parameterInt6.value = data.parameterInt6.value
-    gen.liveData.parameterInt7.value = data.parameterInt7.value
+    //gen.liveData.parameterInt2.value = data.parameterInt2.value
+    //gen.liveData.parameterInt3.value = data.parameterInt3.value
+    //gen.liveData.parameterInt4.value = data.parameterInt4.value
+    //gen.liveData.parameterInt5.value = data.parameterInt5.value
+    //gen.liveData.parameterInt6.value = data.parameterInt6.value
+    //gen.liveData.parameterInt7.value = data.parameterInt7.value
 
 }

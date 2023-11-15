@@ -83,19 +83,19 @@ fun presetsReadFile(name: String, path : String = AppPath().presets ): DataLiveD
     if (data.parameterFloat2.value < 10f) data.parameterFloat2.value = 1000f
     if (data.parameterFloat3.value < 10f) data.parameterFloat3.value = 2000f
 
-    data.parameterFloat4.value = satchel.getOrDefault("parameterFloat4", 0.0F)
-    data.parameterFloat5.value = satchel.getOrDefault("parameterFloat5", 0.0F)
-    data.parameterFloat6.value = satchel.getOrDefault("parameterFloat6", 0.0F)
-    data.parameterFloat7.value = satchel.getOrDefault("parameterFloat7", 0.0F)
+    //data.parameterFloat4.value = satchel.getOrDefault("parameterFloat4", 0.0F)
+    //data.parameterFloat5.value = satchel.getOrDefault("parameterFloat5", 0.0F)
+    //data.parameterFloat6.value = satchel.getOrDefault("parameterFloat6", 0.0F)
+    //data.parameterFloat7.value = satchel.getOrDefault("parameterFloat7", 0.0F)
 
     data.parameterInt0.value = satchel.getOrDefault("parameterInt0", 0)
     data.parameterInt1.value = satchel.getOrDefault("parameterInt1", 0)
-    data.parameterInt2.value = satchel.getOrDefault("parameterInt2", 0)
-    data.parameterInt3.value = satchel.getOrDefault("parameterInt3", 0)
-    data.parameterInt4.value = satchel.getOrDefault("parameterInt4", 0)
-    data.parameterInt5.value = satchel.getOrDefault("parameterInt5", 0)
-    data.parameterInt6.value = satchel.getOrDefault("parameterInt6", 0)
-    data.parameterInt7.value = satchel.getOrDefault("parameterInt7", 0)
+    //data.parameterInt2.value = satchel.getOrDefault("parameterInt2", 0)
+    //data.parameterInt3.value = satchel.getOrDefault("parameterInt3", 0)
+    //data.parameterInt4.value = satchel.getOrDefault("parameterInt4", 0)
+    //data.parameterInt5.value = satchel.getOrDefault("parameterInt5", 0)
+    //data.parameterInt6.value = satchel.getOrDefault("parameterInt6", 0)
+    //data.parameterInt7.value = satchel.getOrDefault("parameterInt7", 0)
 
 
     return data

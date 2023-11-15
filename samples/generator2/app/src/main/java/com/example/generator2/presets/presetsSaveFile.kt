@@ -77,19 +77,19 @@ fun presetsSaveFile(name: String, path: String = AppPath().presets, gen : Genera
     satchel["parameterFloat1"] = gen.liveData.parameterFloat1.value
     satchel["parameterFloat2"] = gen.liveData.parameterFloat2.value
     satchel["parameterFloat3"] = gen.liveData.parameterFloat3.value
-    satchel["parameterFloat4"] = gen.liveData.parameterFloat4.value
-    satchel["parameterFloat5"] = gen.liveData.parameterFloat5.value
-    satchel["parameterFloat6"] = gen.liveData.parameterFloat6.value
-    satchel["parameterFloat7"] = gen.liveData.parameterFloat7.value
+    //satchel["parameterFloat4"] = gen.liveData.parameterFloat4.value
+    //satchel["parameterFloat5"] = gen.liveData.parameterFloat5.value
+    //satchel["parameterFloat6"] = gen.liveData.parameterFloat6.value
+    //satchel["parameterFloat7"] = gen.liveData.parameterFloat7.value
 
     satchel["parameterInt0"] = gen.liveData.parameterInt0.value
     satchel["parameterInt1"] = gen.liveData.parameterInt1.value
-    satchel["parameterInt2"] = gen.liveData.parameterInt2.value
-    satchel["parameterInt3"] = gen.liveData.parameterInt3.value
-    satchel["parameterInt4"] = gen.liveData.parameterInt4.value
-    satchel["parameterInt5"] = gen.liveData.parameterInt5.value
-    satchel["parameterInt6"] = gen.liveData.parameterInt6.value
-    satchel["parameterInt7"] = gen.liveData.parameterInt7.value
+    //satchel["parameterInt2"] = gen.liveData.parameterInt2.value
+    //satchel["parameterInt3"] = gen.liveData.parameterInt3.value
+    //satchel["parameterInt4"] = gen.liveData.parameterInt4.value
+    //satchel["parameterInt5"] = gen.liveData.parameterInt5.value
+    //satchel["parameterInt6"] = gen.liveData.parameterInt6.value
+    //satchel["parameterInt7"] = gen.liveData.parameterInt7.value
 
     if (name != "default")
         toast.show("Пресет $name сохранен")

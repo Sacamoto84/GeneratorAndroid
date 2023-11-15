@@ -17,7 +17,7 @@ class AppPath {
 
     private val appMain = "Gen3"
 
-    val sdcard    = Environment.getExternalStorageDirectory().absolutePath
+    val sdcard    = Environment.getExternalStorageDirectory().absolutePath.toString()
     val main      = Environment.getExternalStorageDirectory().absolutePath + "/" + appMain
     val carrier   = Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.CARRIER.value}"
     val mod       = Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.MOD.value}"
