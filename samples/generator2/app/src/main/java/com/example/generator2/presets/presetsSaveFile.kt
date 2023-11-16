@@ -73,10 +73,10 @@ fun presetsSaveFile(name: String, path: String = AppPath().presets, gen : Genera
     satchel["ch1AmDepth"] = gen.liveData.ch1AmDepth.value  //Глубина AM модуляции
     satchel["ch2AmDepth"] = gen.liveData.ch2AmDepth.value  //Глубина AM модуляции
 
-    satchel["parameterFloat0"] = gen.liveData.parameterFloat0.value
-    satchel["parameterFloat1"] = gen.liveData.parameterFloat1.value
-    satchel["parameterFloat2"] = gen.liveData.parameterFloat2.value
-    satchel["parameterFloat3"] = gen.liveData.parameterFloat3.value
+    satchel["ch1FmMin"] = gen.liveData.ch1FmMin.value
+    satchel["ch1FmMax"] = gen.liveData.ch1FmMax.value
+    satchel["ch2FmMin"] = gen.liveData.parameterFloat2.value
+    satchel["ch2FmMax"] = gen.liveData.ch2FmMax.value
     //satchel["parameterFloat4"] = gen.liveData.parameterFloat4.value
     //satchel["parameterFloat5"] = gen.liveData.parameterFloat5.value
     //satchel["parameterFloat6"] = gen.liveData.parameterFloat6.value

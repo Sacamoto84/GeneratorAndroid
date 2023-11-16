@@ -73,13 +73,13 @@ fun presetsReadFile(name: String, path : String = AppPath().presets ): DataLiveD
     data.ch1AmDepth.value = satchel.getOrDefault("ch1AmDepth", 1f)  //Глубина AM модуляции
     data.ch2AmDepth.value = satchel.getOrDefault("ch2AmDepth", 1f)  //Глубина AM модуляции
 
-    data.parameterFloat0.value = satchel.getOrDefault("parameterFloat0", 1000.0F) //CH1 FM min
-    data.parameterFloat1.value = satchel.getOrDefault("parameterFloat1", 2000.0F) //CH1 FM max
+    data.ch1FmMin.value = satchel.getOrDefault("ch1FmMin", 1000.0F) //CH1 FM min
+    data.ch1FmMax.value = satchel.getOrDefault("ch1FmMax", 2000.0F) //CH1 FM max
     data.parameterFloat2.value = satchel.getOrDefault("parameterFloat2", 1000.0F) //CH2 FM min
     data.parameterFloat3.value = satchel.getOrDefault("parameterFloat3", 2000.0F) //CH2 FM max
 
-    if (data.parameterFloat0.value < 10f) data.parameterFloat0.value = 1000f
-    if (data.parameterFloat1.value < 10f) data.parameterFloat1.value = 2000f
+    if (data.ch1FmMin.value < 10f) data.ch1FmMin.value = 1000f
+    if (data.ch1FmMax.value < 10f) data.ch1FmMax.value = 2000f
     if (data.parameterFloat2.value < 10f) data.parameterFloat2.value = 1000f
     if (data.parameterFloat3.value < 10f) data.parameterFloat3.value = 2000f
 

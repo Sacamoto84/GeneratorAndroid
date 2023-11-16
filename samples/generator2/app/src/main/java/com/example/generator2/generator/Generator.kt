@@ -147,10 +147,12 @@ data class DataLiveData(
     //Имя текущего пресета
     val presetsName: MutableStateFlow<String> = MutableStateFlow(""),         //PR PS(name) PC
 
-    val parameterFloat0: MutableStateFlow<Float> = MutableStateFlow(1000.0f), //PR PS PC CH1 FM min
-    val parameterFloat1: MutableStateFlow<Float> = MutableStateFlow(2000.0f), //PR PS PC CH1 FM max
+    val ch1FmMin: MutableStateFlow<Float> = MutableStateFlow(1000.0f), //PR PS PC CH1 FM min
+    val ch1FmMax: MutableStateFlow<Float> = MutableStateFlow(2000.0f), //PR PS PC CH1 FM max
     val parameterFloat2: MutableStateFlow<Float> = MutableStateFlow(1500.0f), //PR PS PC CH2 FM min
     val parameterFloat3: MutableStateFlow<Float> = MutableStateFlow(2500.0f), //PR PS PC CH2 FM max
+
+
 
     val parameterInt0: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс
     val parameterInt1: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CH2 режим выбора частот FM модуляции 0-обычный 1-минимум макс

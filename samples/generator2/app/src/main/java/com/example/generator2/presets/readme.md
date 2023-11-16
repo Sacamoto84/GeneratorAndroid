@@ -37,10 +37,10 @@
 | volume1              | 1f          | S |                                          |
 | ch1AmDepth           | 1f          | S |                                          |
 | ch2AmDepth           | 1f          | S |                                          |
-| parameterFloat0      | 1000.0F     | S |                                          |
-| parameterFloat1      | 2000.0F     | S |                                          |
-| parameterFloat2      | 1000.0F     | S |                                          |
-| parameterFloat3      | 2000.0F     | S |                                          |
+| ch1FmMin             | 1000.0F     | S |                                          |
+| ch1FmMax             | 2000.0F     | S |                                          |
+| ch2FmMin             | 1000.0F     | S |                                          |
+| ch2FmMax             | 2000.0F     | S |                                          |
 | parameterInt0        | 0           | S | Режим выбора частот 0-обычный, 1-min max |
 | parameterInt1        | 0           | S | Режим выбора частот 0-обычный, 1-min max |
 | star                 |             | S |                                          |
