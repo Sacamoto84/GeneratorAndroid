@@ -75,7 +75,7 @@ fun presetsSaveFile(name: String, path: String = AppPath().presets, gen : Genera
 
     satchel["ch1FmMin"] = gen.liveData.ch1FmMin.value
     satchel["ch1FmMax"] = gen.liveData.ch1FmMax.value
-    satchel["ch2FmMin"] = gen.liveData.parameterFloat2.value
+    satchel["ch2FmMin"] = gen.liveData.ch2FmMin.value
     satchel["ch2FmMax"] = gen.liveData.ch2FmMax.value
     //satchel["parameterFloat4"] = gen.liveData.parameterFloat4.value
     //satchel["parameterFloat5"] = gen.liveData.parameterFloat5.value

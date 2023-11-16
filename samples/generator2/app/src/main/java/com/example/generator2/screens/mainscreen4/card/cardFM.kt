@@ -247,9 +247,9 @@ private fun SecondLine(str: String = "CH0", gen: Generator) {
 private fun SecondLineMode1(str: String, gen: Generator) {
 
     val fmMin: State<Float> =
-        if (str == "CH0") gen.liveData.parameterFloat0.collectAsState() else gen.liveData.parameterFloat2.collectAsState()
+        if (str == "CH0") gen.liveData.ch1FmMin.collectAsState() else gen.liveData.ch2FmMin.collectAsState()
     val fmMax: State<Float> =
-        if (str == "CH0") gen.liveData.parameterFloat1.collectAsState() else gen.liveData.parameterFloat3.collectAsState()
+        if (str == "CH0") gen.liveData.ch1FmMax.collectAsState() else gen.liveData.ch2FmMax.collectAsState()
 
     Row(
         Modifier
@@ -274,14 +274,14 @@ private fun SecondLineMode1(str: String, gen: Generator) {
             onChange = {
                 if (it <= fmMax.value) {
                     if (str == "CH0")
-                        gen.liveData.parameterFloat0.value = it
+                        gen.liveData.ch1FmMin.value = it
                     else
-                        gen.liveData.parameterFloat2.value = it
+                        gen.liveData.ch2FmMin.value = it
                 } else {
                     if (str == "CH0")
-                        gen.liveData.parameterFloat0.value = fmMax.value
+                        gen.liveData.ch1FmMin.value = fmMax.value
                     else
-                        gen.liveData.parameterFloat2.value = fmMax.value
+                        gen.liveData.ch2FmMin.value = fmMax.value
                 }
             },
             range = 50f..10000f
@@ -309,8 +309,8 @@ private fun SecondLineMode1(str: String, gen: Generator) {
             value = fmMax.value,
             onChange = {
                 if (it >= fmMin.value)
-                    if (str == "CH0") gen.liveData.parameterFloat1.value =
-                        it else gen.liveData.parameterFloat3.value = it
+                    if (str == "CH0") gen.liveData.ch1FmMax.value =
+                        it else gen.liveData.ch2FmMax.value = it
             },
             range = 50f..10000f
         )

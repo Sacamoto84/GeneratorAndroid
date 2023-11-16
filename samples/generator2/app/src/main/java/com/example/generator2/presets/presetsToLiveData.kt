@@ -54,10 +54,10 @@ fun presetsToLiveData(data: DataLiveData, gen : Generator) {
     //Количество звезд
     gen.liveData.star.value = data.star.value
 
-    gen.liveData.parameterFloat0.value =data.parameterFloat0.value
-    gen.liveData.parameterFloat1.value =data.parameterFloat1.value
-    gen.liveData.parameterFloat2.value =data.parameterFloat2.value
-    gen.liveData.parameterFloat3.value =data.parameterFloat3.value
+    gen.liveData.ch1FmMin.value =data.ch1FmMin.value
+    gen.liveData.ch1FmMax.value =data.ch1FmMax.value
+    gen.liveData.ch2FmMin.value =data.ch2FmMin.value
+    gen.liveData.ch2FmMax.value =data.ch2FmMax.value
     //gen.liveData.parameterFloat4.value =data.parameterFloat4.value
     //gen.liveData.parameterFloat5.value =data.parameterFloat5.value
     //gen.liveData.parameterFloat6.value =data.parameterFloat6.value
