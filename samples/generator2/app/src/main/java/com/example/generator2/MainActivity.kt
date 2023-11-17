@@ -154,44 +154,9 @@ class MainActivity : ComponentActivity() {
             //exitTransition  - управляет тем, что ExitTransition  запускается, когда initialState NavBackStackEntry исчезает с экрана.
             Generator2Theme {
                 Timber.i("..................................Generator2Theme.................................")
-                var granded by remember {
-                    mutableStateOf(false)
-                }
 
-                if (!PermissionStorage.hasPermissions(this)) {
-
-                    LaunchedEffect(key1 = true, block = {
-                        while (!granded) {
-                            delay(100)
-                            granded = PermissionStorage.hasPermissions(applicationContext)
-                        }
-                    })
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(if (!granded) Color.Magenta else Color.Magenta),
-                        Arrangement.Center
-                    )
-                    {
-                        Text(
-                            text = "Отсуствуют Файловые разрешения",
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )
-                        Button(onClick = { PermissionStorage.requestPermissions(applicationContext) }) {
-                            Text(
-                                text = "Запрос",
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
-
-                } else {
-                    Update.run(applicationContext)
-                    Navigation()
-                }
+                   Update.run(applicationContext)
+                   Navigation()
             }
         }
     }

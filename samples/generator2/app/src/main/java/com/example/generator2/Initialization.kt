@@ -30,35 +30,36 @@ fun initialization(context: Context, gen: Generator, utils: UtilsKT) {
         GlobalScope.launch(Dispatchers.IO) {
             Timber.i("Типа инициализация Start")
 
-            val path = AppPath()
-            path.mkDir()
+           // val path = AppPath()
+           // path.mkDir()
 
-            val patchCarrier = path.carrier
-            val patchMod = path.mod
+//            val patchCarrier = path.carrier
+//            val patchMod = path.mod
+//
+//            Utils.patchDocument = path.main
+//            Utils.patchCarrier = "$patchCarrier/"
+//            Utils.patchMod = "$patchMod/"
 
-            Utils.patchDocument = path.main
-            Utils.patchCarrier = "$patchCarrier/"
-            Utils.patchMod = "$patchMod/"
+//            try {
+//                AssetCopier(context).copy("Carrier", File(patchCarrier))
+//                AssetCopier(context).copy("Mod", File(patchMod))
+//            } catch (e: IOException) {
+//                Timber.e(e.printStackTrace().toString())
+//            }
 
-            try {
-                AssetCopier(context).copy("Carrier", File(patchCarrier))
-                AssetCopier(context).copy("Mod", File(patchMod))
-            } catch (e: IOException) {
-                Timber.e(e.printStackTrace().toString())
-            }
+//            Timber.i("arrFilesCarrier start")
+//            val arrFilesCarrier: Array<String> = Utils.listFileInCarrier() //Заполняем список
+//            for (i in arrFilesCarrier.indices) {
+//                gen.itemlistCarrier.add(itemList(patchCarrier, arrFilesCarrier[i], 0))
+//            }
 
-            Timber.i("arrFilesCarrier start")
-            val arrFilesCarrier: Array<String> = Utils.listFileInCarrier() //Заполняем список
-            for (i in arrFilesCarrier.indices) {
-                gen.itemlistCarrier.add(itemList(patchCarrier, arrFilesCarrier[i], 0))
-            }
-            val arrFilesMod: Array<String> =
-                Utils.listFileInMod() //Получение списка файлов в папке Mod
-            for (i in arrFilesMod.indices) {
-                gen.itemlistAM.add(itemList(patchMod, arrFilesMod[i], 1))
-                gen.itemlistFM.add(itemList(patchMod, arrFilesMod[i], 0))
-            }
-            Timber.i("arrFilesCarrier end")
+//            val arrFilesMod: Array<String> =
+//                Utils.listFileInMod() //Получение списка файлов в папке Mod
+//            for (i in arrFilesMod.indices) {
+//                gen.itemlistAM.add(itemList(patchMod, arrFilesMod[i], 1))
+//                gen.itemlistFM.add(itemList(patchMod, arrFilesMod[i], 0))
+//            }
+//            Timber.i("arrFilesCarrier end")
 
             observe(utils, gen)
 
