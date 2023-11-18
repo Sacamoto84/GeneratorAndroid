@@ -1,6 +1,7 @@
 package com.example.generator2
 
 import android.content.Context
+import com.example.generator2.audio.checkSupport192k
 import com.example.generator2.generator.Generator
 import com.example.generator2.model.itemList
 import com.example.generator2.presets.presetsReadFile
@@ -68,6 +69,9 @@ fun initialization(context: Context, gen: Generator, utils: UtilsKT) {
             presetsToLiveData(presetsReadFile("default", path = AppPath().config), gen)
 
             //mmkv.readVolume()
+
+            //Проверка поддержки 192k
+            checkSupport192k()
 
             isInitialized = true
 

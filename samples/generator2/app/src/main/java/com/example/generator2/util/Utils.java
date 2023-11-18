@@ -112,7 +112,7 @@ public class Utils {
      */
     public static String[] listFileInCarrier()
     {
-        Log.d("Utils", "listFileInCarrier()");
+        Timber.tag("Utils").d("listFileInCarrier()");
         String path = patchCarrier ;
         return listFileInDir(path);
     }
@@ -124,7 +124,7 @@ public class Utils {
      */
     public static String[] listFileInMod()
     {
-        Log.d("Utils", "listFileInMod()");
+        Timber.tag("Utils").d("listFileInMod()");
         String path = patchMod ;
         return listFileInDir(path);
     }
@@ -163,7 +163,7 @@ public class Utils {
         byte [] array8 = readFileMod2048byte (path); //Получим массив 8 бит
 
         if (array8.length != 2048) {
-            Log.i("!ERROR!", "CreateBitmapModulation:readFileMod2048byte len:" + Integer.toString(array8.length));
+            Timber.tag("!ERROR!").i("CreateBitmapModulation:readFileMod2048byte len:" + Integer.toString(array8.length));
             bitmap.eraseColor(Color.RED); // Закрашиваем синим цветом
             return bitmap;
         }
@@ -199,11 +199,11 @@ public class Utils {
 
 
         for(i=0;i<512;i++) {
-            c.drawLine(i,               32 +  (4095-arrayInt[i*2])/18 , i,           (arrayInt[i*2]) / 18 + 256, mPaint);
+            c.drawLine(i,               32 +  (float) (4095 - arrayInt[i * 2]) /18 , i,           (float) (arrayInt[i * 2]) / 18 + 256, mPaint);
         }
 
         for(i=0;i<512;i++) {
-            c.drawLine(i +512,    32 + (4095-arrayInt[i*2])/18 , i+512,   (arrayInt[i*2]) / 18 + 256, mPaint);
+            c.drawLine(i +512,    32 + (float) (4095 - arrayInt[i * 2]) /18 , i+512,   (float) (arrayInt[i * 2]) / 18 + 256, mPaint);
         }
 
         mPaint.setStrokeWidth(2);
@@ -295,6 +295,7 @@ public class Utils {
         Bitmap bmHalf = Bitmap.createScaledBitmap(bitmap, 512,
                 256, false);
 
+        bitmap.recycle();
 
 
         return bmHalf;

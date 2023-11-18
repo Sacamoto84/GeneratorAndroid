@@ -1,20 +1,47 @@
 package com.example.generator2.audio
 
 import android.media.AudioFormat
+import android.media.AudioManager
 import android.media.AudioTrack
 import android.media.AudioTrack.MODE_STREAM
+import android.os.Build
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
 val AudioSampleRate = MutableStateFlow(0) //Частота которая используется на аудиовыводе, для UI
 
+/**
+ * Признак того что устройство поддерживает 192k
+ */
+var isDeviceSupport192k = false
+
+fun checkSupport192k() {
+    try {
+        val minBuffer = AudioTrack.getMinBufferSize(
+            192000,
+            AudioFormat.CHANNEL_OUT_STEREO,
+            AudioFormat.ENCODING_PCM_FLOAT
+        )
+
+        if (minBuffer >= 0)
+            isDeviceSupport192k = true
+
+    } catch (e: Exception) {
+        Timber.e(e.localizedMessage)
+    }
+}
+
+
 @OptIn(DelicateCoroutinesApi::class)
-class AudioOut(val sampleRate: Int = 48000, minBufferMs: Int = 1000, encoding: Int = AudioFormat.ENCODING_PCM_16BIT) {
+class AudioOut(
+    val sampleRate: Int = 48000,
+    minBufferMs: Int = 1000,
+    encoding: Int = AudioFormat.ENCODING_PCM_FLOAT
+) {
 
     lateinit var out: AudioTrack
 
@@ -36,11 +63,18 @@ class AudioOut(val sampleRate: Int = 48000, minBufferMs: Int = 1000, encoding: I
                 encoding
             )
 
-            out = AudioTrack.Builder()
-                .setAudioFormat(audioFormat)
-                .setBufferSizeInBytes(minBuffer.coerceAtLeast(minBufferInBytes))
-                .setTransferMode(MODE_STREAM)
-                .build()
+            out = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                AudioTrack.Builder()
+                    .setAudioFormat(audioFormat)
+                    .setBufferSizeInBytes(minBuffer.coerceAtLeast(minBufferInBytes))
+                    .setTransferMode(MODE_STREAM)
+                    .build()
+            } else {
+                AudioTrack(
+                    AudioManager.STREAM_MUSIC, sampleRate, AudioFormat.CHANNEL_OUT_STEREO,
+                    encoding, minBuffer.coerceAtLeast(minBufferInBytes), MODE_STREAM
+                )
+            }
 
             out.play()
 
@@ -50,9 +84,7 @@ class AudioOut(val sampleRate: Int = 48000, minBufferMs: Int = 1000, encoding: I
 
             Timber.w("Запуск AudioOut ${out.sampleRate}")
 
-        }
-        catch (e:Exception)
-        {
+        } catch (e: Exception) {
             Timber.e(e.localizedMessage)
         }
 

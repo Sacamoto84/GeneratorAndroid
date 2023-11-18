@@ -1,7 +1,9 @@
 package com.example.generator2.audio
 
 import android.media.AudioFormat
+import android.media.AudioTrack
 import android.media.AudioTrack.WRITE_BLOCKING
+import android.os.Build
 import com.example.generator2.audioOut
 import com.example.generator2.generator.Generator
 import com.example.generator2.mp3.PlayerMP3
@@ -125,13 +127,16 @@ class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope: Sc
                         }
                     }
 
-                    if ((audioProcessorInputFormat.value.sampleRate != audioOut.sampleRate) or (audioOut.out.format.encoding != AudioFormat.ENCODING_PCM_FLOAT)) {
+
+
+                    if ((audioProcessorInputFormat.value.sampleRate != audioOut.sampleRate)) {
                         audioOut.destroy(); audioOut = AudioOut(
                             audioProcessorInputFormat.value.sampleRate,
                             200,
                             AudioFormat.ENCODING_PCM_FLOAT
                         )
                     }
+
 
                     val bufGenL: FloatArray
                     val bufGenR: FloatArray
@@ -200,12 +205,15 @@ class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope: Sc
 
                     //8192 LR-4096    192k -> 21.3ms    48k->85.4ms
 
-                    if ((routeL.value != ROUTESTREAM.MP3) and (routeR.value != ROUTESTREAM.MP3)) {
-                        if ((audioOut.out.sampleRate != 192000) or (audioOut.out.format.encoding != AudioFormat.ENCODING_PCM_FLOAT)) {
-                            audioOut.destroy(); audioOut =
-                                AudioOut(192000, 200, encoding = AudioFormat.ENCODING_PCM_FLOAT)
+                    //Перевод на 192k только если есть поддержка устройтвом
+                    if ((routeL.value == ROUTESTREAM.GEN) and (routeR.value == ROUTESTREAM.GEN)) {
+                        if ((audioOut.out.sampleRate != 192000) and isDeviceSupport192k) {
+                            Timber.w("Меняем частоту на 192k")
+                            audioOut.destroy()
+                            audioOut = AudioOut(192000, 200, encoding = AudioFormat.ENCODING_PCM_FLOAT)
                         }
                     }
+
 
                     gen.sampleRate = audioOut.sampleRate
                     val buf: Pair<FloatArray, FloatArray>

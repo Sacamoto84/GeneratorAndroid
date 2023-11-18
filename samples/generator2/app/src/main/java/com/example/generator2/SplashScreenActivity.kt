@@ -1,25 +1,24 @@
 package com.example.generator2
 
 
-
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.media.MediaPlayer
-import android.net.Uri
 import android.os.Bundle
-import android.view.TextureView
-import android.widget.ImageView
-import android.widget.VideoView
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.util.UnstableApi
-import com.bumptech.glide.Glide
-import com.caverock.androidsvg.SVG
-import com.caverock.androidsvg.SVGImageView
-import com.caverock.androidsvg.SVGParseException
+import cafe.adriel.pufferdb.android.AndroidPufferDB
+import com.example.generator2.audio.AudioMixerPump
 import com.example.generator2.generator.Generator
 import com.example.generator2.model.itemList
+import com.example.generator2.presets.presetsInit
+import com.example.generator2.scope.Scope
+import com.example.generator2.update.kDownloader
 import com.example.generator2.util.Utils
+import com.example.generator2.util.UtilsKT
+import com.kdownloader.KDownloader
+import com.yandex.metrica.YandexMetrica
+import com.yandex.metrica.YandexMetricaConfig
 import dagger.hilt.android.AndroidEntryPoint
 import flipagram.assetcopylib.AssetCopier
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -41,30 +40,35 @@ class SplashScreenActivity : AppCompatActivity() {
     @Inject
     lateinit var gen: Generator
 
-    private lateinit var videoView: VideoView
+    @Inject
+    lateinit var scope: Scope
+
+    @Inject
+    lateinit var audioMixerPump: AudioMixerPump
+
+    @Inject
+    lateinit var utils: UtilsKT
 
     @kotlin.OptIn(DelicateCoroutinesApi::class)
-    @OptIn(UnstableApi::class) override fun onCreate(savedInstanceState: Bundle?) {
-
-
-        lateinit var textureView: TextureView
-        lateinit var mediaPlayer: MediaPlayer
-
+    @OptIn(UnstableApi::class)
+    override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
 
         //val window = this.findActivity()?.window
         //window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
+        Timber.plant(Timber.DebugTree())
 
         if (!PermissionStorage.hasPermissions(this)) {
             val intent = Intent(this@SplashScreenActivity, PermissionScreenActivity::class.java)
             startActivity(intent)
             finish()
-        }
-        else {
+        } else {
 
             setContentView(R.layout.activity_splash_screen)
+
+
 
             //val videoPath = "android.resource://" + packageName + "/" + R.raw.sticker // путь к вашему видео
             //val uri = Uri.parse(videoPath)
@@ -84,14 +88,18 @@ class SplashScreenActivity : AppCompatActivity() {
 //                e.printStackTrace()
 //            }
 //
-            val imageView = findViewById<ImageView>(R.id.imageView)
+//            val imageView = findViewById<ImageView>(R.id.imageView)
+//
+//            val videoPath =
+//                "android.resource://" + packageName + "/" + R.raw.q293// путь к вашему видео
 
-            val videoPath = "android.resource://" + packageName + "/" + R.raw.q2 // путь к вашему видео
+//            GlobalScope.launch(Dispatchers.Main) {
+//                Glide.with(this@SplashScreenActivity)
+//                    //.asGif()
+//                    .load(videoPath)
+//                    .into(imageView).onStop()
+//            }
 
-            Glide.with(this)
-                .asGif()
-                .load(videoPath)
-                .into(imageView)
 
 //            mediaPlayer.setOnPreparedListener {
 //                // Когда mediaPlayer готов к воспроизведению
@@ -135,9 +143,19 @@ class SplashScreenActivity : AppCompatActivity() {
 //                videoView.start()
 //            }
 
-            val contex = this
 
-            GlobalScope.launch(Dispatchers.Main) {
+
+
+            GlobalScope.launch(Dispatchers.IO) {
+                println("Запуск Yandex Metrika")
+                val config = YandexMetricaConfig.newConfigBuilder(API_key).withLogs().build()
+                YandexMetrica.activate(this@SplashScreenActivity, config)
+                YandexMetrica.enableActivityAutoTracking(application)
+                YandexMetrica.reportEvent("Запуск")
+            }
+
+
+            GlobalScope.launch(Dispatchers.IO) {
 
                 println("Типа инициализация Splash")
                 val path = AppPath()
@@ -151,13 +169,13 @@ class SplashScreenActivity : AppCompatActivity() {
                 Utils.patchMod = "$patchMod/"
 
                 try {
-                    AssetCopier(contex).copy("Carrier", File("$patchCarrier/"))
-                    AssetCopier(contex).copy("Mod", File(patchMod))
+                    AssetCopier(this@SplashScreenActivity).copy("Carrier", File("$patchCarrier/"))
+                    AssetCopier(this@SplashScreenActivity).copy("Mod", File(patchMod))
                 } catch (e: IOException) {
                     Timber.e(e.printStackTrace().toString())
                 }
 
-                Timber.i("arrFilesCarrier start")
+                println("arrFilesCarrier start")
                 val arrFilesCarrier: Array<String> = Utils.listFileInCarrier() //Заполняем список
                 for (i in arrFilesCarrier.indices) {
                     gen.itemlistCarrier.add(itemList(patchCarrier, arrFilesCarrier[i], 0))
@@ -171,10 +189,31 @@ class SplashScreenActivity : AppCompatActivity() {
                 }
                 println("Запуск MainActivity")
 
-                val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
-                //startActivity(intent)
-                //overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-                //finish()
+
+
+                gen
+                kDownloader = KDownloader.create(applicationContext)
+
+                AndroidPufferDB.init(applicationContext)
+                presetsInit()
+
+                initialization(applicationContext, gen, utils)
+                audioOut
+                audioMixerPump
+                scope
+
+                GlobalScope.launch(Dispatchers.Main) {
+                    val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
+                    startActivity(intent)
+                    // overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                    finish()
+                }
+
+
+
+
+
+
             }
 
         }

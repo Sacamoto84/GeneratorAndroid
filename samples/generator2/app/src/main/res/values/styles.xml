@@ -8,7 +8,7 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">false</item>
-<!--        <item name="android:backgroundDimEnabled">true</item>-->
+        <item name="android:backgroundDimEnabled">true</item>
 
         <!-- Установка прозрачности для статус-бара -->
         <item name="android:statusBarColor">@android:color/transparent</item>
