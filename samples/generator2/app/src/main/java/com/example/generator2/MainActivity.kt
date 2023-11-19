@@ -11,10 +11,9 @@ import com.example.generator2.presets.presetsSaveFile
 import com.example.generator2.scope.Scope
 import com.example.generator2.theme.Generator2Theme
 import com.example.generator2.theme.colorDarkBackground
-import com.example.generator2.update.Update
 import com.example.generator2.util.Utils
 import com.example.generator2.util.UtilsKT
-import com.example.libs.KeepScreenOn
+import com.example.generator2.util.KeepScreenOn
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -74,31 +73,6 @@ class MainActivity : ComponentActivity() {
         Timber.plant(Timber.DebugTree())
         Timber.i("..................................onCreate.................................")
 
-//        GlobalScope.launch(Dispatchers.IO) {
-//            delay(5000)
-//            Timber.w("Запуск Yandex Metrika")
-//            val config = YandexMetricaConfig.newConfigBuilder(API_key).withLogs().build()
-//            YandexMetrica.activate(this@MainActivity, config)
-//            YandexMetrica.enableActivityAutoTracking(application)
-//            YandexMetrica.reportEvent("Запуск")
-//        }
-
-        //gen
-        //kDownloader = KDownloader.create(applicationContext)
-
-//        AndroidPufferDB.init(applicationContext)
-//
-//        presetsInit()
-
-//        initialization(applicationContext, gen, utils)
-//        audioOut
-//        audioMixerPump
-//        scope
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            customTypeface = resources.getFont(R.font.jetbrains)
-//        }
-
         Utils.ContextMainActivity = applicationContext
 
         //play()
@@ -117,7 +91,7 @@ class MainActivity : ComponentActivity() {
                 systemUiController.setSystemBarsColor(colorDarkBackground, darkIcons = false)
             }
 
-            KeepScreenOn()
+            //KeepScreenOn()
 
             //initialState - С какого экрана переход
             //targetState   -переходит на
@@ -125,8 +99,6 @@ class MainActivity : ComponentActivity() {
             //exitTransition  - управляет тем, что ExitTransition  запускается, когда initialState NavBackStackEntry исчезает с экрана.
             Generator2Theme {
                 Timber.i("..................................Generator2Theme.................................")
-
-                   Update.run(applicationContext)
                    Navigation()
             }
         }

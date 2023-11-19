@@ -4,6 +4,7 @@ package com.example.generator2
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.util.UnstableApi
@@ -13,9 +14,11 @@ import com.example.generator2.generator.Generator
 import com.example.generator2.model.itemList
 import com.example.generator2.presets.presetsInit
 import com.example.generator2.scope.Scope
+import com.example.generator2.update.Update
 import com.example.generator2.update.kDownloader
 import com.example.generator2.util.Utils
 import com.example.generator2.util.UtilsKT
+import com.example.generator2.util.findActivity
 import com.kdownloader.KDownloader
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
@@ -55,8 +58,16 @@ class SplashScreenActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
 
-        //val window = this.findActivity()?.window
-        //window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//        if (LeakCanary.isInAnalyzerProcess(this)) {
+//            // This process is dedicated to LeakCanary for heap analysis.
+//            // You should not init your app in this process.
+//            return
+//        }
+        //LeakCanary.install(this)
+//        // Normal app init code...
+
+        val window = this.findActivity()?.window
+        window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         Timber.plant(Timber.DebugTree())
 
@@ -67,84 +78,6 @@ class SplashScreenActivity : AppCompatActivity() {
         } else {
 
             setContentView(R.layout.activity_splash_screen)
-
-
-
-            //val videoPath = "android.resource://" + packageName + "/" + R.raw.sticker // путь к вашему видео
-            //val uri = Uri.parse(videoPath)
-
-            //videoView.setVideoURI(uri)
-
-
-            // Загрузка SVG из файла
-//            try {
-//                val inputStream = assets.open("806.svg")
-//                val svg = SVG.getFromInputStream(inputStream)
-//                val svgImageView = findViewById<SVGImageView>(R.id.svgImageView)
-//                svgImageView.setSVG(svg)
-//            } catch (e: IOException) {
-//                e.printStackTrace()
-//            } catch (e: SVGParseException) {
-//                e.printStackTrace()
-//            }
-//
-//            val imageView = findViewById<ImageView>(R.id.imageView)
-//
-//            val videoPath =
-//                "android.resource://" + packageName + "/" + R.raw.q293// путь к вашему видео
-
-//            GlobalScope.launch(Dispatchers.Main) {
-//                Glide.with(this@SplashScreenActivity)
-//                    //.asGif()
-//                    .load(videoPath)
-//                    .into(imageView).onStop()
-//            }
-
-
-//            mediaPlayer.setOnPreparedListener {
-//                // Когда mediaPlayer готов к воспроизведению
-//                mediaPlayer.start()
-//            }
-
-
-//            videoView.setOnPreparedListener { mediaPlayer ->
-//                val videoWidth = mediaPlayer.videoWidth
-//                val videoHeight = mediaPlayer.videoHeight
-//
-//                // Здесь вы можете использовать полученные размеры
-//                val params = videoView.layoutParams
-//                params.width = videoWidth / 4 // Устанавливаем ширину в 50% от исходной
-//                params.height = (videoHeight.toFloat() / videoWidth.toFloat() * (videoWidth / 2)).toInt() // Подстраиваем высоту для сохранения соотношения сторон
-//                videoView.layoutParams = params
-//
-//                val matrix = Matrix()
-//                val scaleX = videoView.width.toFloat() / videoWidth.toFloat()
-//                val scaleY = videoView.height.toFloat() / videoHeight.toFloat()
-//                matrix.setScale(scaleX, scaleY)
-//
-//                videoView.transformMatrixToLocal(matrix)
-//
-//                videoView.start()
-//
-//            }
-
-
-            //videoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN)
-
-//            videoView.setOnCompletionListener {
-////            // После окончания воспроизведения видео, перейдите на следующий экран или активность
-////            val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
-////            startActivity(intent)
-////            finish()
-//                videoView.start()
-//            }
-
-//            GlobalScope.launch(Dispatchers.Main) {
-//                videoView.start()
-//            }
-
-
-
 
             GlobalScope.launch(Dispatchers.IO) {
                 println("Запуск Yandex Metrika")
@@ -189,8 +122,6 @@ class SplashScreenActivity : AppCompatActivity() {
                 }
                 println("Запуск MainActivity")
 
-
-
                 gen
                 kDownloader = KDownloader.create(applicationContext)
 
@@ -202,17 +133,14 @@ class SplashScreenActivity : AppCompatActivity() {
                 audioMixerPump
                 scope
 
+                Update.run(applicationContext)
+
                 GlobalScope.launch(Dispatchers.Main) {
                     val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
                     startActivity(intent)
-                    // overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
                     finish()
                 }
-
-
-
-
-
 
             }
 

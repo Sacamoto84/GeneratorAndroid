@@ -1,4 +1,4 @@
-package com.example.libs
+package com.example.generator2.util
 
 import android.app.Activity
 import android.content.Context
