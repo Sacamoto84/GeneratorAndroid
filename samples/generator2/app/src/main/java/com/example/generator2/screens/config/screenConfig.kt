@@ -16,7 +16,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,13 +27,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.generator2.MainRes
 import com.example.generator2.R
 import com.example.generator2.navController
 import com.example.generator2.screens.config.molecule.ConfigConstrain
 import com.example.generator2.screens.config.molecule.ConfigVolume
 import com.example.generator2.screens.config.vm.VMConfig
+import com.example.generator2.strings.MainResStrings
 import com.example.generator2.theme.colorLightBackground
 import com.example.generator2.update.Update
+import io.github.skeptick.libres.LibresSettings
+import io.github.skeptick.libres.strings.getCurrentLanguageCode
 
 val modifierGreenButton = Modifier
     .padding(8.dp)
@@ -46,7 +50,7 @@ fun ScreenConfig(
     vm: VMConfig = hiltViewModel()
 ) {
 
-    //Выводится информация по бекап файлу
+    LibresSettings.languageCode = "en"
 
     val focusManager = LocalFocusManager.current
 

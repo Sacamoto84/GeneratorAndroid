@@ -7,4 +7,9 @@
         <item quantity="one">чсчсчс</item>
         <item quantity="other">счсчс</item>
     </plurals>
+
+
+
+    <string name="splashLoading">ЗАГРУЗКА</string>
+
 </resources>

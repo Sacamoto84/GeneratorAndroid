@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.generator2.MainRes
 import com.example.generator2.model.LiveConstrain
 import com.example.generator2.screens.config.Config_header
 import com.example.generator2.screens.config.atom.editConfig
@@ -53,7 +54,7 @@ private fun EditConfig(
 fun ConfigConstrain(vm: VMConfig) {
 
     Divider()
-    Config_header("Чувствительность слайдера")
+    Config_header(MainRes.string.screenConfigSliderSensitivity)
 
     //Чувствительность слайдера
     //var sensetingSliderCr =  mutableStateOf( 0.2f)
@@ -62,7 +63,7 @@ fun ConfigConstrain(vm: VMConfig) {
     //  var sensetingSliderAmFm =  mutableStateOf( 0.01f)
 
     EditConfig(
-        "Чувствительность слайдера несущая (0.2)",
+        MainRes.string.screenConfigSliderCarrierSensitivity,
         LiveConstrain.sensetingSliderCr,
         vm,
         toInt = false

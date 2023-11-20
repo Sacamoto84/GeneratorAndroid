@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
+import android.widget.TextView
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.util.UnstableApi
@@ -12,6 +13,8 @@ import cafe.adriel.pufferdb.android.AndroidPufferDB
 import com.example.generator2.audio.AudioMixerPump
 import com.example.generator2.generator.Generator
 import com.example.generator2.model.itemList
+import com.example.generator2.noSQL.KEY_NOSQL_CONFIG2
+import com.example.generator2.noSQL.noSQLConfig2
 import com.example.generator2.presets.presetsInit
 import com.example.generator2.scope.Scope
 import com.example.generator2.update.Update
@@ -24,10 +27,12 @@ import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
 import dagger.hilt.android.AndroidEntryPoint
 import flipagram.assetcopylib.AssetCopier
+import io.github.skeptick.libres.LibresSettings
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import leakcanary.LeakCanary
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -63,7 +68,7 @@ class SplashScreenActivity : AppCompatActivity() {
 //            // You should not init your app in this process.
 //            return
 //        }
-        //LeakCanary.install(this)
+//        LeakCanary.install(this)
 //        // Normal app init code...
 
         val window = this.findActivity()?.window
@@ -78,6 +83,15 @@ class SplashScreenActivity : AppCompatActivity() {
         } else {
 
             setContentView(R.layout.activity_splash_screen)
+
+            //noSQLConfig2.write(KEY_NOSQL_CONFIG2.LANGUAGE.value, "ru")
+
+            //Читаем язык
+            LibresSettings.languageCode = noSQLConfig2.read(KEY_NOSQL_CONFIG2.LANGUAGE.value, "ru" )
+
+            val myTextView: TextView = findViewById(R.id.myTextView)
+            myTextView.text = MainRes.string.splashLoading
+
 
             GlobalScope.launch(Dispatchers.IO) {
                 println("Запуск Yandex Metrika")
@@ -137,9 +151,9 @@ class SplashScreenActivity : AppCompatActivity() {
 
                 GlobalScope.launch(Dispatchers.Main) {
                     val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
-                    startActivity(intent)
-                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-                    finish()
+                    //startActivity(intent)
+                    //overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                    //finish()
                 }
 
             }

@@ -6,4 +6,7 @@
         <item quantity="one">resource</item>
         <item quantity="other">resources</item>
     </plurals>
+
+    <string name="splashLoading">LOADING</string>
+
 </resources>

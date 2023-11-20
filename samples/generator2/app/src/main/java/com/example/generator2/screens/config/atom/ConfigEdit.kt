@@ -2,13 +2,17 @@ package com.example.generator2.screens.config.atom
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -71,9 +75,7 @@ fun editConfig(
                 width = 1.dp,
                 color = Color(0xFF696B6B),
                 shape = RoundedCornerShape(size = 16.dp)
-            )
-
-        ,
+            ),
 
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Done,
