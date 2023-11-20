@@ -11,11 +11,13 @@ plugins {
     id 'com.google.gms.google-services'
     //id 'androidx.baselineprofile'
 
+    id 'io.github.skeptick.libres'
+
 }
 
 
 android {
-    
+
     kotlinOptions {
         freeCompilerArgs += [
                 "-P",
@@ -280,7 +282,6 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:5.0.1'
 
 
-
     implementation "com.github.adrielcafe.pufferdb:core:1.1.1"
     implementation "com.github.adrielcafe.pufferdb:android:1.1.1"
     //implementation "com.github.adrielcafe.pufferdb:coroutines:1.1.1"
@@ -297,7 +298,6 @@ dependencies {
     //implementation "io.karn:notify:1.4.0"
 
     //implementation 'com.github.jojoyel:head-up-banner:1.0.0'
-
 
 
     // Core (required)
@@ -320,9 +320,6 @@ dependencies {
     implementation 'com.yandex.android:mobmetricalib-ndk-crashes:2.0.0'
 
     //implementation 'com.github.varungulatii:Kdownloader:1.0.4'
-
-
-
 
 
     def media3_version = "1.2.0" //"1.1.1"
@@ -366,7 +363,6 @@ dependencies {
     implementation 'com.github.Adonai:jaudiotagger:2.3.14'
 
 
-
     //https://youtu.be/eFZmMSm1G1c
     implementation "androidx.core:core-splashscreen:1.0.1"
 
@@ -376,13 +372,21 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:5.0.0-rc01'
 
-
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
+
 
 }
 
+//https://github.com/Skeptick/libres
+libres {
+    generatedClassName = "MainRes" // "Res" by default
+    generateNamedArguments = true // false by default
+    baseLocaleLanguageCode = "ru" // "en" by default
+    camelCaseNamesForAppleFramework = false // false by default
+}
 
-// Allow references to generated code
-//kapt {
-//    correctErrorTypes true
-//}
+kotlin {
+    dependencies {
+        implementation("io.github.skeptick.libres:libres-compose:1.2.0")
+    }
+}
