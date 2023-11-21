@@ -14,7 +14,7 @@ inline fun <reified T : Any> noSQLread(nameDB : String, key : String, default : 
 {
     val satchel =
         Satchel.with(
-            storer = FileSatchelStorer(File(path, "${nameDB}.txt")),
+            storer = FileSatchelStorer(File(path, "${nameDB}.db")),
             encrypter = BypassSatchelEncrypter,
             serializer = RawSatchelSerializer
         )
@@ -28,7 +28,7 @@ inline fun <reified T : Any> noSQLwrite(nameDB : String, key : String, value : T
 {
     val satchel =
         Satchel.with(
-            storer = FileSatchelStorer(File(path, "${nameDB}.txt")),
+            storer = FileSatchelStorer(File(path, "${nameDB}.db")),
             encrypter = BypassSatchelEncrypter,
             serializer = RawSatchelSerializer
         )
@@ -39,16 +39,11 @@ inline fun <reified T : Any> noSQLwrite(nameDB : String, key : String, value : T
 
 class NoSQL(val path : String = AppPath().config, val nameDB : String){
 
-    val satchel: SatchelStorage
-
-    init{
-        satchel =
-            Satchel.with(
-                storer = FileSatchelStorer(File(path, "${nameDB}.txt")),
-                encrypter = BypassSatchelEncrypter,
-                serializer = RawSatchelSerializer
-            )
-    }
+    val satchel: SatchelStorage = Satchel.with(
+        storer = FileSatchelStorer(File(path, "${nameDB}.db")),
+        encrypter = BypassSatchelEncrypter,
+        serializer = RawSatchelSerializer
+    )
 
     inline fun <reified T : Any> read(key : String, default : T) : T
     {
@@ -57,12 +52,8 @@ class NoSQL(val path : String = AppPath().config, val nameDB : String){
         return res
     }
 
+    inline fun <reified T : Any> write(key : String, value : T) = run { satchel[key] = value }
 
-    inline fun <reified T : Any> write(key : String, value : T)
-    {
-        satchel[key] = value
-    }
-
-
+    fun remove(key : String) = satchel.remove(key)
 
 }

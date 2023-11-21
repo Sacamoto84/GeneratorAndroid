@@ -87,7 +87,7 @@ class SplashScreenActivity : AppCompatActivity() {
             //noSQLConfig2.write(KEY_NOSQL_CONFIG2.LANGUAGE.value, "ru")
 
             //Читаем язык
-            LibresSettings.languageCode = noSQLConfig2.read(KEY_NOSQL_CONFIG2.LANGUAGE.value, "ru" )
+            LibresSettings.languageCode = noSQLConfig2.read(KEY_NOSQL_CONFIG2.LANGUAGE.value, "ru")
 
             val myTextView: TextView = findViewById(R.id.myTextView)
             myTextView.text = MainRes.string.splashLoading

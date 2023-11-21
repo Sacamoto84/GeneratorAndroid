@@ -10,7 +10,8 @@ enum class Folder(val value: String) {
     CONFIG("Config"),
     DOWNLOAD("Download"),
     PRESETS("Presets"),
-    MUSIC("Music")
+    MUSIC("Music"),
+    PLAYLIST("Playlist"),
 }
 
 class AppPath {
@@ -26,6 +27,7 @@ class AppPath {
     val download  = Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.DOWNLOAD.value}"
     val presets   = Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.PRESETS.value}"
     val music     = Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.MUSIC.value}"
+    val playlist  = Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.PLAYLIST.value}"
 
     fun mkDir() {
         File(main).mkdirs()
@@ -36,6 +38,7 @@ class AppPath {
         File(download).mkdirs()
         File(presets).mkdirs()
         File(music).mkdirs()
+        File(playlist).mkdirs()
     }
 
 }

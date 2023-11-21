@@ -105,18 +105,18 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = "17"
-        //jvmTarget = "1.9"
     }
+
     buildFeatures {
         compose true
         prefab true
     }
 
     composeOptions {
-        //kotlinCompilerExtensionVersion compose_version
-        kotlinCompilerExtensionVersion = "1.5.3"
+        kotlinCompilerExtensionVersion = "1.5.4"
     }
     packagingOptions {
         resources {
@@ -373,6 +373,9 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:5.0.0-rc01'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
+
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0'
 
 
 }
