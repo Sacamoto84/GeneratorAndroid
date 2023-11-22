@@ -15,6 +15,7 @@ import com.example.generator2.generator.Generator
 import com.example.generator2.model.itemList
 import com.example.generator2.noSQL.KEY_NOSQL_CONFIG2
 import com.example.generator2.noSQL.noSQLConfig2
+import com.example.generator2.playlist.Playlist
 import com.example.generator2.presets.presetsInit
 import com.example.generator2.scope.Scope
 import com.example.generator2.update.Update
@@ -32,7 +33,6 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import leakcanary.LeakCanary
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -63,6 +63,45 @@ class SplashScreenActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
 
+        Timber.plant(Timber.DebugTree())
+
+//        val item1 =
+//            PlaylistItem(name = "Один", path = AppPath().music + "/one.mp3", isPresent = true)
+//        val item2 =
+//            PlaylistItem(name = "Два", path = AppPath().music + "/two.mp3", isPresent = true)
+//        val item3 =
+//            PlaylistItem(name = "три", path = AppPath().music + "/one3.mp3", isPresent = true)
+//        val item4 =
+//            PlaylistItem(name = "четыре", path = AppPath().music + "/two4.mp3", isPresent = true)
+//        val pl1 = listOf(item1, item2).toMutableList()
+//        val pl2 = listOf(item3, item4).toMutableList()
+//
+//        val list1 = Playlist(playlistName = "1111", data = pl1)
+//        val list2 = Playlist(playlistName = "2222", data = pl2)
+//
+//        playlist.addAll(mutableListOf(list1, list2))
+
+
+
+//        val item1 = PlaylistItemJson( path = AppPath().music + "/one.mp3", additionalData = mapOf("q" to 5, "qqq" to 10))
+//        val item2 = PlaylistItemJson( path = AppPath().music + "/2.mp3")
+//        val item3 = PlaylistItemJson( path = AppPath().music + "/3.mp3")
+//        val item4 = PlaylistItemJson( path = AppPath().music + "/4.mp3")
+//        val list1 = PlaylistJson(playlistName = "1111", data = listOf(item1, item2).toMutableList())
+//        val list2 = PlaylistJson(playlistName = "2222", data =  listOf(item3, item4).toMutableList())
+//        playlistJson.addAll(listOf(list1, list2))
+
+
+        //PlaylistJSON().write(playlistJson)
+
+        //playlistJson.addAll(PlaylistSQL.read())
+        //playlistJson
+
+        Playlist
+
+
+
+
 //        if (LeakCanary.isInAnalyzerProcess(this)) {
 //            // This process is dedicated to LeakCanary for heap analysis.
 //            // You should not init your app in this process.
@@ -74,7 +113,7 @@ class SplashScreenActivity : AppCompatActivity() {
         val window = this.findActivity()?.window
         window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        Timber.plant(Timber.DebugTree())
+
 
         if (!PermissionStorage.hasPermissions(this)) {
             val intent = Intent(this@SplashScreenActivity, PermissionScreenActivity::class.java)

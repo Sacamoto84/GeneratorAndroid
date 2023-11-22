@@ -56,4 +56,13 @@ class NoSQL(val path : String = AppPath().config, val nameDB : String){
 
     fun remove(key : String) = satchel.remove(key)
 
+    fun clear() = satchel.clear()
+
+    /**
+     * Получить список всех ключей
+     */
+    fun keys(): Set<String> = satchel.keys
+
+
+
 }
