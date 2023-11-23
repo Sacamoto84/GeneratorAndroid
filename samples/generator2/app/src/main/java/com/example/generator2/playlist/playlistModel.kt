@@ -12,7 +12,7 @@ data class PlaylistJson(val playlistName: String = ".", val data: MutableList<Pl
 //Структура которая используется для отображения в UI
 data class PlaylistItem(
     val name: String = ".", // Отображаемое имя файла
-    val icon: Bitmap? = null,
+    //val icon: Bitmap? = null,
     val path: String = "", //путь до файла
     val isExist: Boolean = false, //Признак того что файл существует
 
@@ -32,6 +32,5 @@ data class PlaylistItemJson(
     val path: String = AppPath().music, //путь до файла
     val balance: Int = 0,     //Баланс
     val volume: Float = 1.0f, //Громкость
-
     val additionalData: Map<String, Any> = mapOf()
 )

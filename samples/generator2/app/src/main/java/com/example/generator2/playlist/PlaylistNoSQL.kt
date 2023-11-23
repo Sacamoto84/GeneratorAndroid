@@ -27,7 +27,7 @@ object PlaylistSQL {
             noSQLplaylistJson.keys().forEach {
                 Timber.i("Ключ: $it")
                 val json = noSQLplaylistJson.read(it, "")
-                Timber.i("value: $json")
+                //Timber.i("value: $json")
                 val playlistType = object : TypeToken<PlaylistJson>() {}.type
                 val res: PlaylistJson = Gson().fromJson(json, playlistType)
                 list.add(res)

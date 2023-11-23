@@ -48,7 +48,7 @@ class NoSQL(val path : String = AppPath().config, val nameDB : String){
     inline fun <reified T : Any> read(key : String, default : T) : T
     {
         val res : T  = satchel.getOrDefault(key, default)
-        Timber.i("NoSQL read key:$key value:$res name:$nameDB path:$path")
+        //Timber.i("NoSQL read key:$key value:$res name:$nameDB path:$path")
         return res
     }
 

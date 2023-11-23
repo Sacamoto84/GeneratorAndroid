@@ -1,21 +1,26 @@
 package com.example.generator2.playlist
 
+import timber.log.Timber
 import java.io.File
 
 object Playlist {
-
-    init {
-        readFromSQL()
-    }
-
     //Список из списков для UI
     val list = mutableListOf<PlaylistList>()
 
+    init {
+        try {
+            readFromSQL()
+        } catch (e: Exception) {
+            Timber.e(e.localizedMessage)
+        }
+    }
 
-    fun readFromSQL() {
+
+
+
+    private fun readFromSQL() {
         val playlistJson = mutableListOf<PlaylistJson>()
         playlistJson.addAll(PlaylistSQL.read()) //Читаем списки того что есть в SQL
-        playlistJson
 
         //Заполняем list по данным из playlistJson
         playlistJson.forEach {
@@ -27,7 +32,13 @@ object Playlist {
                 val balance = it1.balance
                 val volume = it1.volume
                 val isExist = File(path).exists()
-                val item = PlaylistItem(name = name, path = path, isExist = isExist, balance = balance, volume = volume)
+                val item = PlaylistItem(
+                    name = name,
+                    path = path,
+                    isExist = isExist,
+                    balance = balance,
+                    volume = volume
+                )
                 data.add(item)
             }
 

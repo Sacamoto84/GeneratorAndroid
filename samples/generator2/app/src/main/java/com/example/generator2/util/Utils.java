@@ -158,7 +158,7 @@ public class Utils {
 
     public static Bitmap CreateBitmapModulation(String path )
     {
-        Bitmap bitmap = Bitmap.createBitmap(1024, 512,  Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(1024, 512,  Bitmap.Config.RGB_565);
 
         byte [] array8 = readFileMod2048byte (path); //Получим массив 8 бит
 
@@ -221,7 +221,7 @@ public class Utils {
 
     public static Bitmap CreateBitmapCarrier2( String path )
     {
-        Bitmap bitmap = Bitmap.createBitmap(1024, 512,  Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(1024, 512,  Bitmap.Config.RGB_565);
 
         byte [] array8 = readFileMod2048byte (path); //Получим массив 8 бит
 
