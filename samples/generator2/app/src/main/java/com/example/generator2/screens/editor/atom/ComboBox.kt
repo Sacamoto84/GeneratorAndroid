@@ -32,7 +32,10 @@ class ComboBox(val items: List<String>, private val width: Dp = 100.dp) {
 
             Text(
                 items[selectedIndex],
-                modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).clickable(onClick = { expanded = true })
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(16.dp))
+                    .clickable(onClick = { expanded = true })
                     .background(Color.White),
                 color = Color.Black, fontSize = 24.sp, textAlign = TextAlign.Center
             )
@@ -40,9 +43,11 @@ class ComboBox(val items: List<String>, private val width: Dp = 100.dp) {
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier.width(80.dp).background(
-                    Color.DarkGray
-                )
+                modifier = Modifier
+                    .width(80.dp)
+                    .background(
+                        Color.DarkGray
+                    )
             ) {
 
                 items.forEachIndexed { index, s ->

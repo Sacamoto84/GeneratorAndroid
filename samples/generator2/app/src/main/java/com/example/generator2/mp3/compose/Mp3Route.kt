@@ -33,7 +33,7 @@ import com.example.generator2.theme.colorOrange
 
 
 @Composable
-fun Mp3Route(ch: String = "R", route: ROUTESTREAM, audioMixerPump : AudioMixerPump ) {
+fun Mp3Route(ch: String = "R", route: ROUTESTREAM, audioMixerPump: AudioMixerPump) {
 
     val h = 32.dp
 
@@ -42,7 +42,8 @@ fun Mp3Route(ch: String = "R", route: ROUTESTREAM, audioMixerPump : AudioMixerPu
 
         Box(
             contentAlignment = Alignment.Center, modifier = Modifier
-                .size(h).clip(RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp))
+                .size(h)
+                .clip(RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp))
                 .background(if (ch == "L") colorGreen else colorOrange)
         ) {
             Text(
@@ -73,7 +74,9 @@ fun Mp3Route(ch: String = "R", route: ROUTESTREAM, audioMixerPump : AudioMixerPu
         Text(
             text = "GEN",
             color = if (route == ROUTESTREAM.GEN) Color.Green else Color.Gray,
-            modifier = Modifier.height(h).offset(x = (-1).dp)
+            modifier = Modifier
+                .height(h)
+                .offset(x = (-1).dp)
                 .clickable(onClick = {
                     if (ch == "R")
                         audioMixerPump.routeR.value = ROUTESTREAM.GEN
@@ -90,7 +93,8 @@ fun Mp3Route(ch: String = "R", route: ROUTESTREAM, audioMixerPump : AudioMixerPu
         Text(
             text = "OFF",
             color = if (route == ROUTESTREAM.OFF) Color.Green else Color.Gray,
-            modifier = Modifier.height(h)
+            modifier = Modifier
+                .height(h)
                 .offset(x = (-2).dp)
                 .clickable(onClick = {
                     if (ch == "R")
@@ -120,8 +124,7 @@ fun Mp3Route(ch: String = "R", route: ROUTESTREAM, audioMixerPump : AudioMixerPu
                     }
                 )
                 .border(1.dp, Color.Gray)
-            .padding(4.dp)
-            ,
+                .padding(4.dp),
             painter = painterResource(id = R.drawable.arrow_up_arrow_down51),
             contentDescription = "",
             tint = if (colorInvert) Color.Green else Color.DarkGray

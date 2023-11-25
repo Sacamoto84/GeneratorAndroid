@@ -19,7 +19,6 @@ val compressorCount = mutableFloatStateOf(1f)
 val roll64 = LinkedList<FloatArray>()
 
 
-
 //            compressorCount
 //                  |
 // channelAudioOut  *     -> channelDataStreamOutCompressor
@@ -50,49 +49,48 @@ fun dataCompressor() {
 
                 //for (i in 0 until compressorCount.floatValue.toInt()) {
 
-                    //val buf = channelAudioOut.receive()
+                //val buf = channelAudioOut.receive()
 
-                    if (compressorCount.floatValue >= 32) {
-
-
-                        val buf = channelAudioOut.receive()
-
-                        if (lastCompressorCount != compressorCount.floatValue) {
-                            roll64.clear()
-                        }
-
-                        while (roll64.size < compressorCount.floatValue)
-                            roll64.add(FloatArray(buf.size))
+                if (compressorCount.floatValue >= 32) {
 
 
-                        while (roll64.size > compressorCount.floatValue)
-                            roll64.removeAt(0)
+                    val buf = channelAudioOut.receive()
 
-                        roll64.add(buf)
-
-                        val totalSize = roll64.sumOf { it.size }
-                        val resultArray = FloatArray(totalSize)
-
-                        var currentIndex = 0
-                        for (floatArray in roll64) {
-                            floatArray.copyInto(resultArray, currentIndex)
-                            currentIndex += floatArray.size
-                        }
-
-                        //println("Отсылка Roll64")
-
-                        val s = channelDataStreamOutCompressor.trySend(resultArray).isSuccess
-                        if (!s)
-                            Timber.e("Нет места в channelDataOutRoll")
-
+                    if (lastCompressorCount != compressorCount.floatValue) {
+                        roll64.clear()
                     }
-                    else {
-                        for (i in 0 until compressorCount.floatValue.toInt()) {
-                            val buf1 = channelAudioOut.receive()
-                            out.addAll(buf1.toList())
-                        }
-                        channelDataStreamOutCompressor.send(out.toFloatArray())
+
+                    while (roll64.size < compressorCount.floatValue)
+                        roll64.add(FloatArray(buf.size))
+
+
+                    while (roll64.size > compressorCount.floatValue)
+                        roll64.removeAt(0)
+
+                    roll64.add(buf)
+
+                    val totalSize = roll64.sumOf { it.size }
+                    val resultArray = FloatArray(totalSize)
+
+                    var currentIndex = 0
+                    for (floatArray in roll64) {
+                        floatArray.copyInto(resultArray, currentIndex)
+                        currentIndex += floatArray.size
                     }
+
+                    //println("Отсылка Roll64")
+
+                    val s = channelDataStreamOutCompressor.trySend(resultArray).isSuccess
+                    if (!s)
+                        Timber.e("Нет места в channelDataOutRoll")
+
+                } else {
+                    for (i in 0 until compressorCount.floatValue.toInt()) {
+                        val buf1 = channelAudioOut.receive()
+                        out.addAll(buf1.toList())
+                    }
+                    channelDataStreamOutCompressor.send(out.toFloatArray())
+                }
 
             } else {
                 //compressorCount.floatValue < 1.0F

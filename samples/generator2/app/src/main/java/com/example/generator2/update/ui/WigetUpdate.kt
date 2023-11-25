@@ -26,7 +26,12 @@ fun WigetUpdate() {
 
         Column {
 
-            Text(text = "Обновление ${Update.currentVersion} -> ${Update.externalVersion}", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, color = Color.White)
+            Text(
+                text = "Обновление ${Update.currentVersion} -> ${Update.externalVersion}",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                color = Color.White
+            )
 
             Row(
                 modifier = Modifier

@@ -25,8 +25,12 @@ fun ButtonPoint() {
     var gestureColor by remember { mutableStateOf(colorLightBackground) }
     val context = LocalContext.current
 
-    Box(modifier = Modifier.fillMaxHeight().width(60.dp).clip(shape = RoundedCornerShape(8.dp))
-        .background(gestureColor).pointerInput(Unit) {
+    Box(modifier = Modifier
+        .fillMaxHeight()
+        .width(60.dp)
+        .clip(shape = RoundedCornerShape(8.dp))
+        .background(gestureColor)
+        .pointerInput(Unit) {
             detectTapGestures(onPress = { //gestureText = "onPress"
                 gestureColor = Color.DarkGray
                 model.state = PaintingState.PaintPoint
@@ -65,8 +69,12 @@ fun ButtonLine() {
     var gestureColor by remember { mutableStateOf(colorLightBackground) }
     val context = LocalContext.current
 
-    Box(modifier = Modifier.fillMaxHeight().width(60.dp).clip(shape = RoundedCornerShape(8.dp))
-        .background(gestureColor).pointerInput(Unit) {
+    Box(modifier = Modifier
+        .fillMaxHeight()
+        .width(60.dp)
+        .clip(shape = RoundedCornerShape(8.dp))
+        .background(gestureColor)
+        .pointerInput(Unit) {
             detectTapGestures(onPress = { //gestureText = "onPress"
                 gestureColor = Color.DarkGray
                 model.state = PaintingState.PaintLine
@@ -107,8 +115,12 @@ fun ButtonNew() {
     var gestureColor by remember { mutableStateOf(colorLightBackground) }
     val context = LocalContext.current
 
-    Box(modifier = Modifier.fillMaxHeight().width(80.dp).clip(shape = RoundedCornerShape(16.dp))
-        .background(gestureColor).pointerInput(Unit) {
+    Box(modifier = Modifier
+        .fillMaxHeight()
+        .width(80.dp)
+        .clip(shape = RoundedCornerShape(16.dp))
+        .background(gestureColor)
+        .pointerInput(Unit) {
             detectTapGestures(onPress = { //gestureText = "onPress"
                 gestureColor = Color.DarkGray
                 model.state = PaintingState.PaintLine
@@ -136,8 +148,8 @@ fun ButtonNew() {
                         Color(0xFF13C030), Color(0xFF03A9F4)
                     )
                 ),
-                start = Offset(size.width/2,  10.dp.toPx()),
-                end = Offset(size.width/2, size.height - 10.dp.toPx()),
+                start = Offset(size.width / 2, 10.dp.toPx()),
+                end = Offset(size.width / 2, size.height - 10.dp.toPx()),
                 strokeWidth = 5.dp.toPx(),
                 cap = StrokeCap.Round,
             )
@@ -148,8 +160,8 @@ fun ButtonNew() {
                         Color(0xFF13C030), Color(0xFF03A9F4)
                     )
                 ),
-                start = Offset( 10.dp.toPx(),  size.height/2),
-                end = Offset(size.width - 10.dp.toPx(), size.height/2),
+                start = Offset(10.dp.toPx(), size.height / 2),
+                end = Offset(size.width - 10.dp.toPx(), size.height / 2),
                 strokeWidth = 5.dp.toPx(),
                 cap = StrokeCap.Round,
             )

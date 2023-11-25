@@ -75,39 +75,42 @@ fun ScreenEditor(global: VMMain4 = hiltViewModel()) {
                     verticalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.background(Color.Transparent)
                 ) {
-                    Box(modifier = Modifier
-                        .padding(start = 8.dp, bottom = 8.dp)
-                        .weight(0.5f)) {
+                    Box(
+                        modifier = Modifier
+                            .padding(start = 8.dp, bottom = 8.dp)
+                            .weight(0.5f)
+                    ) {
                         ButtonPoint()
                     }
-                    Box(modifier = Modifier
-                        .padding(start = 8.dp, top = 8.dp)
-                        .weight(0.5f)) {
+                    Box(
+                        modifier = Modifier
+                            .padding(start = 8.dp, top = 8.dp)
+                            .weight(0.5f)
+                    ) {
                         ButtonLine()
                     }
                 }
 
-                    Row(
-                        Modifier
-                            .padding(start = 8.dp, end = 8.dp)
-                            .fillMaxWidth()
-                            .background(Color.Red)) {
+                Row(
+                    Modifier
+                        .padding(start = 8.dp, end = 8.dp)
+                        .fillMaxWidth()
+                        .background(Color.Red)
+                ) {
 
-                        Column(Modifier.weight(0.5f)) {
+                    Column(Modifier.weight(0.5f)) {
 
-                            EditorCanvasLoop()
+                        EditorCanvasLoop()
 
-                            //Горизонтальное усиление
-                            HorizontalScaleButton()
-
-                        }
-
-                        //Вертикальные кнопки масштаба
-                        VerticalScaleButton()
+                        //Горизонтальное усиление
+                        HorizontalScaleButton()
 
                     }
 
+                    //Вертикальные кнопки масштаба
+                    VerticalScaleButton()
 
+                }
 
 
             }
@@ -130,9 +133,6 @@ fun ScreenEditor(global: VMMain4 = hiltViewModel()) {
             }
 
 
-
-
-
             //Блок кнопок для линкования
             EditorLinkButtons(Modifier.weight(1f))
 
@@ -153,8 +153,6 @@ private fun BottomBar(global: VMMain4) {
     ) {
 
 
-
-
         //Кнопка назад
         IconButton(onClick = { navController.popBackStack() }) {
             Icon(painter = painterResource(R.drawable.back4), contentDescription = null)
@@ -163,21 +161,32 @@ private fun BottomBar(global: VMMain4) {
         Column() {
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(painter = painterResource(R.drawable.row_triple), contentDescription = null, modifier = Modifier.size(20.dp))
+                Icon(
+                    painter = painterResource(R.drawable.row_triple),
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
                 Text(" " + model.stateEditMax.value.toString())
             }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(painter = painterResource(R.drawable.column_triple), contentDescription = null, modifier = Modifier.size(20.dp))
+                Icon(
+                    painter = painterResource(R.drawable.column_triple),
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
                 Text(text = " " + model.stateEditWight.value.toString())
             }
-            
+
         }
 
         Spacer(modifier = Modifier.weight(0.1f))
 
         IconButton(onClick = { openDialogNew.value = true }) {
-            Icon(painter = painterResource(R.drawable.set_square_geometry), contentDescription = null)
+            Icon(
+                painter = painterResource(R.drawable.set_square_geometry),
+                contentDescription = null
+            )
         }
 
         IconButton(onClick = { }) {
@@ -189,12 +198,6 @@ private fun BottomBar(global: VMMain4) {
         }
 
 
-
-
-
-
-
-
     }
 
 }
@@ -203,6 +206,7 @@ private val colorLine = Color.Gray
 private val colorButtonBaground = colorLightBackground
 private val colorTextBackround = Color.Gray
 private val colorText = Color.Black
+
 //Вертикальные кнопки масштаба
 @Composable
 fun VerticalScaleButton() {

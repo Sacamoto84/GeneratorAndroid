@@ -79,7 +79,7 @@ enum class StateCommandScript {
 }
 
 @Stable
-class Script(val gen : Generator) {
+class Script(val gen: Generator) {
 
     //╭─ Генератор ───────────────────────╮
     var end = true
@@ -112,10 +112,12 @@ class Script(val gen : Generator) {
                 stop()
                 state = StateCommandScript.ISTOPPING
             }
+
             StateCommandScript.PAUSE -> {
                 pause()
                 state = StateCommandScript.ISPAUSE
             }
+
             StateCommandScript.RESUME -> {
                 resume()
                 state = StateCommandScript.ISRUNNING
@@ -131,7 +133,7 @@ class Script(val gen : Generator) {
                 state = StateCommandScript.ISEDITTING
             }
 
-            else                      -> {}
+            else -> {}
         }
     }
 
@@ -158,7 +160,7 @@ class Script(val gen : Generator) {
     ) { //
 
         GlobalScope.launch(Dispatchers.Main) {
-          //consoleLog.println(str)
+            //consoleLog.println(str)
         }
 
     }
@@ -234,7 +236,7 @@ class Script(val gen : Generator) {
 
         when (listCMD[0]) {
 
-            "ELSE"                                                 -> { //Ищем первое ENDIF
+            "ELSE" -> { //Ищем первое ENDIF
                 var currentPC = pc
                 while (true) {
                     if (list[currentPC] == "ENDIF") {
@@ -247,12 +249,12 @@ class Script(val gen : Generator) {
                 }
             }
 
-            "ENDIF"                                                -> {
+            "ENDIF" -> {
                 pc++
                 pc_ex = pc
             }
 
-            "END"                                                  -> {
+            "END" -> {
                 println("Скрипт окончен")
                 end = true
 
@@ -260,7 +262,7 @@ class Script(val gen : Generator) {
 
             }
 
-            "IF"                                                   -> ifCommand(comand)
+            "IF" -> ifCommand(comand)
 
             "CH1", "CH2", "CR1", "CR2", "AM1", "AM2", "FM1", "FM2" -> {
                 generatorComand(comand)
@@ -268,31 +270,31 @@ class Script(val gen : Generator) {
                 pc_ex = pc
             }
 
-            "MINUS", "PLUS"                                        -> {
+            "MINUS", "PLUS" -> {
                 comandPlusMinus(comand)
                 pc++
                 pc_ex = pc
             }
 
-            "GOTO"                                                 -> {
+            "GOTO" -> {
                 pc = listCMD[1].toInt()
                 pc_ex = pc
             }
 
-            "DELAY"                                                -> {
+            "DELAY" -> {
                 val d = listCMD[1].toLong()
                 endTime = System.currentTimeMillis() + d
                 pc++
                 pc_ex = pc
             }
 
-            "LOAD"                                                 -> { //LOAD F1 2344.0  │ 2344.0 -> F1
+            "LOAD" -> { //LOAD F1 2344.0  │ 2344.0 -> F1
                 load(comand)
                 pc++
                 pc_ex = pc
             }
 
-            else                                                   -> {
+            else -> {
                 println("Script:? pc:$pc :$comand")
                 pc++
                 pc_ex = pc

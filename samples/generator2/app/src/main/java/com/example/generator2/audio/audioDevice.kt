@@ -6,13 +6,13 @@ import android.media.AudioManager
 import timber.log.Timber
 
 
-fun audioOutSpeaker(context : Context) {
-     val localAudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+fun audioOutSpeaker(context: Context) {
+    val localAudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     audioOutWired(context)
     localAudioManager.setSpeakerphoneOn(true)
 }
 
-fun audioOutWired(context : Context) {
+fun audioOutWired(context: Context) {
     val localAudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     //localAudioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
     //localAudioManager.setBluetoothScoOn(false)
@@ -20,7 +20,7 @@ fun audioOutWired(context : Context) {
     localAudioManager.setSpeakerphoneOn(false)
 }
 
-fun audioOutBT( context : Context) {
+fun audioOutBT(context: Context) {
 
     val localAudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     //localAudioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
@@ -37,15 +37,14 @@ fun audioOutBT( context : Context) {
     Timber.e("A2DP: " + localAudioManager.isBluetoothA2dpOn() + ". SCO: " + localAudioManager.isBluetoothScoAvailableOffCall());
 
     //GlobalScope.launch (Dispatchers.IO){
-     //   btOff()
-     //   btOn()
+    //   btOff()
+    //   btOn()
     //}
 
     localAudioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
 }
 
-fun getCurrentAudioDevices(context : Context): String
-{
+fun getCurrentAudioDevices(context: Context): String {
     val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     val a = audioManager.isSpeakerphoneOn()
@@ -66,7 +65,7 @@ fun getCurrentAudioDevices(context : Context): String
 }
 
 
-fun btOn(){
+fun btOn() {
     val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
 
@@ -83,7 +82,7 @@ fun btOn(){
 
 }
 
-fun btOff(){
+fun btOff() {
     val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
 

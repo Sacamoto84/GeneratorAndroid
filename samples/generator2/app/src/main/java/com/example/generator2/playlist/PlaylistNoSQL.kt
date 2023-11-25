@@ -8,7 +8,6 @@ import com.google.gson.reflect.TypeToken
 import timber.log.Timber
 
 
-
 object PlaylistSQL {
 
     //Файл playlist.db содержит список названий списков плейлистов

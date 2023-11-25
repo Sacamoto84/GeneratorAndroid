@@ -12,7 +12,7 @@ import java.io.File
 /**
  * Создание пресета по имени
  */
-fun presetsSaveFile(name: String, path: String = AppPath().presets, gen : Generator) {
+fun presetsSaveFile(name: String, path: String = AppPath().presets, gen: Generator) {
 
     val satchel =
         Satchel.with(
@@ -52,7 +52,8 @@ fun presetsSaveFile(name: String, path: String = AppPath().presets, gen : Genera
     satchel["ch2_FM_Fr"] = gen.liveData.ch2_FM_Fr.value
 
     satchel["mono"] = gen.liveData.mono.value //Режим повторения настроек второго канала с первым
-    satchel["invert"] = gen.liveData.invert.value //Инверсия сигнала во втором канале, только при моно
+    satchel["invert"] =
+        gen.liveData.invert.value //Инверсия сигнала во втором канале, только при моно
     satchel["shuffle"] = gen.liveData.shuffle.value //меняем левый и правый канал в стерео режиме
 
     satchel["enL"] = gen.liveData.enL.value

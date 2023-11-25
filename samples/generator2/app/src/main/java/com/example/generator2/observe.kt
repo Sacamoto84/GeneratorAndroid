@@ -15,14 +15,68 @@ fun observe(utils: UtilsKT, gen: Generator) {
     val dispatchers = Dispatchers.IO
 
     //
-    GlobalScope.launch(dispatchers) { gen.liveData.ch1_Carrier_Filename.collect { utils.Spinner_Send_Buffer("CH0", "CR", it, gen) } }
-    GlobalScope.launch(dispatchers) { gen.liveData.ch2_Carrier_Filename.collect { utils.Spinner_Send_Buffer("CH1","CR", it, gen ) } }
+    GlobalScope.launch(dispatchers) {
+        gen.liveData.ch1_Carrier_Filename.collect {
+            utils.Spinner_Send_Buffer(
+                "CH0",
+                "CR",
+                it,
+                gen
+            )
+        }
+    }
+    GlobalScope.launch(dispatchers) {
+        gen.liveData.ch2_Carrier_Filename.collect {
+            utils.Spinner_Send_Buffer(
+                "CH1",
+                "CR",
+                it,
+                gen
+            )
+        }
+    }
     //
-    GlobalScope.launch(dispatchers) { gen.liveData.ch1_AM_Filename.collect {utils.Spinner_Send_Buffer("CH0", "AM", it, gen) } }
-    GlobalScope.launch(dispatchers) { gen.liveData.ch2_AM_Filename.collect {utils.Spinner_Send_Buffer("CH1","AM", it , gen) } }
+    GlobalScope.launch(dispatchers) {
+        gen.liveData.ch1_AM_Filename.collect {
+            utils.Spinner_Send_Buffer(
+                "CH0",
+                "AM",
+                it,
+                gen
+            )
+        }
+    }
+    GlobalScope.launch(dispatchers) {
+        gen.liveData.ch2_AM_Filename.collect {
+            utils.Spinner_Send_Buffer(
+                "CH1",
+                "AM",
+                it,
+                gen
+            )
+        }
+    }
     //
-    GlobalScope.launch(dispatchers) { gen.liveData.ch1_FM_Filename.collect {utils.Spinner_Send_Buffer("CH0", "FM", it, gen) } }
-    GlobalScope.launch(dispatchers) { gen.liveData.ch2_FM_Filename.collect {utils.Spinner_Send_Buffer("CH1","FM", it , gen) } }
+    GlobalScope.launch(dispatchers) {
+        gen.liveData.ch1_FM_Filename.collect {
+            utils.Spinner_Send_Buffer(
+                "CH0",
+                "FM",
+                it,
+                gen
+            )
+        }
+    }
+    GlobalScope.launch(dispatchers) {
+        gen.liveData.ch2_FM_Filename.collect {
+            utils.Spinner_Send_Buffer(
+                "CH1",
+                "FM",
+                it,
+                gen
+            )
+        }
+    }
     //
 
     Timber.i("observe()-------------------------------------------------------------- End")

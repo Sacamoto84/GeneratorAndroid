@@ -4,14 +4,18 @@ import android.content.Context
 import timber.log.Timber
 
 
-data class LoadingState constructor(var status: Status, var msg: String? = null, var msginfo: String = " ") {
+data class LoadingState constructor(
+    var status: Status,
+    var msg: String? = null,
+    var msginfo: String = " "
+) {
 
     companion object {
-        val LOADED  = LoadingState(Status.SUCCESS)
-        val IDLE    = LoadingState(Status.IDLE)
+        val LOADED = LoadingState(Status.SUCCESS)
+        val IDLE = LoadingState(Status.IDLE)
         val LOADING = LoadingState(Status.RUNNING)
         fun error(msg: String?) = LoadingState(Status.FAILED, msg)
-        fun info(msg: String) = LoadingState(Status.INFO, null , msg)
+        fun info(msg: String) = LoadingState(Status.INFO, null, msg)
     }
 
     enum class Status {

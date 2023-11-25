@@ -82,7 +82,6 @@ class SplashScreenActivity : AppCompatActivity() {
 //        playlist.addAll(mutableListOf(list1, list2))
 
 
-
 //        val item1 = PlaylistItemJson( path = AppPath().music + "/one.mp3", additionalData = mapOf("q" to 5, "qqq" to 10))
 //        val item2 = PlaylistItemJson( path = AppPath().music + "/2.mp3")
 //        val item3 = PlaylistItemJson( path = AppPath().music + "/3.mp3")
@@ -99,9 +98,6 @@ class SplashScreenActivity : AppCompatActivity() {
 
         Playlist
 
-
-
-
 //        if (LeakCanary.isInAnalyzerProcess(this)) {
 //            // This process is dedicated to LeakCanary for heap analysis.
 //            // You should not init your app in this process.
@@ -113,8 +109,6 @@ class SplashScreenActivity : AppCompatActivity() {
         val window = this.findActivity()?.window
         window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-
-
         if (!PermissionStorage.hasPermissions(this)) {
             val intent = Intent(this@SplashScreenActivity, PermissionScreenActivity::class.java)
             startActivity(intent)
@@ -122,6 +116,15 @@ class SplashScreenActivity : AppCompatActivity() {
         } else {
 
             setContentView(R.layout.activity_splash_screen)
+
+            if (isInitialized) {
+                GlobalScope.launch(Dispatchers.Main) {
+                    val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
+                    startActivity(intent)
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                    finish()
+                }
+            }
 
             //noSQLConfig2.write(KEY_NOSQL_CONFIG2.LANGUAGE.value, "ru")
 

@@ -9,13 +9,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class presetsVM @Inject constructor(
-    val gen : Generator
+    val gen: Generator
 ) : ViewModel() {
 
     /**
      * Чтение пресета по клику
      */
-    fun onClickPresetsRead(name : String) {
+    fun onClickPresetsRead(name: String) {
         presetsToLiveData(presetsReadFile(name), gen)
         navController.popBackStack()
     }

@@ -10,8 +10,12 @@ import com.example.generator2.AppPath
 import timber.log.Timber
 import java.io.File
 
-inline fun <reified T : Any> noSQLread(nameDB : String, key : String, default : T,  path : String = AppPath().config) : T
-{
+inline fun <reified T : Any> noSQLread(
+    nameDB: String,
+    key: String,
+    default: T,
+    path: String = AppPath().config
+): T {
     val satchel =
         Satchel.with(
             storer = FileSatchelStorer(File(path, "${nameDB}.db")),
@@ -19,13 +23,17 @@ inline fun <reified T : Any> noSQLread(nameDB : String, key : String, default : 
             serializer = RawSatchelSerializer
         )
 
-    val res : T  = satchel.getOrDefault(key, default)
+    val res: T = satchel.getOrDefault(key, default)
     return res
 }
 
 
-inline fun <reified T : Any> noSQLwrite(nameDB : String, key : String, value : T,  path : String = AppPath().config)
-{
+inline fun <reified T : Any> noSQLwrite(
+    nameDB: String,
+    key: String,
+    value: T,
+    path: String = AppPath().config
+) {
     val satchel =
         Satchel.with(
             storer = FileSatchelStorer(File(path, "${nameDB}.db")),
@@ -37,7 +45,7 @@ inline fun <reified T : Any> noSQLwrite(nameDB : String, key : String, value : T
 
 }
 
-class NoSQL(val path : String = AppPath().config, val nameDB : String){
+class NoSQL(val path: String = AppPath().config, val nameDB: String) {
 
     val satchel: SatchelStorage = Satchel.with(
         storer = FileSatchelStorer(File(path, "${nameDB}.db")),
@@ -45,16 +53,15 @@ class NoSQL(val path : String = AppPath().config, val nameDB : String){
         serializer = RawSatchelSerializer
     )
 
-    inline fun <reified T : Any> read(key : String, default : T) : T
-    {
-        val res : T  = satchel.getOrDefault(key, default)
+    inline fun <reified T : Any> read(key: String, default: T): T {
+        val res: T = satchel.getOrDefault(key, default)
         //Timber.i("NoSQL read key:$key value:$res name:$nameDB path:$path")
         return res
     }
 
-    inline fun <reified T : Any> write(key : String, value : T) = run { satchel[key] = value }
+    inline fun <reified T : Any> write(key: String, value: T) = run { satchel[key] = value }
 
-    fun remove(key : String) = satchel.remove(key)
+    fun remove(key: String) = satchel.remove(key)
 
     fun clear() = satchel.clear()
 
@@ -62,7 +69,6 @@ class NoSQL(val path : String = AppPath().config, val nameDB : String){
      * Получить список всех ключей
      */
     fun keys(): Set<String> = satchel.keys
-
 
 
 }

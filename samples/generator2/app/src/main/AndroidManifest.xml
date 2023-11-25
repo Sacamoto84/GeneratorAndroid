@@ -35,10 +35,10 @@
         android:largeHeap="true"
         android:name=".App"
         android:allowBackup="true"
-        android:icon="@drawable/j20"
+        android:icon="@drawable/j7"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
-        android:roundIcon="@drawable/j20"
+        android:roundIcon="@drawable/j7"
         android:supportsRtl="true"
         android:theme="@style/Theme.Generator2"
         android:usesCleartextTraffic="true"
@@ -46,9 +46,6 @@
         <profileable
             android:shell="true"
             tools:targetApi="29" />
-
-
-
 
 
         <activity

@@ -35,8 +35,8 @@ fun InfinitySlider(
     range: ClosedFloatingPointRange<Float> = 0f..1000f,
     invert: Boolean = false,
     visibleText: Boolean = true,
-    text : String = "",
-    fontSize : TextUnit = 14.sp
+    text: String = "",
+    fontSize: TextUnit = 14.sp
 ) {
 
     val onValueChangeState = rememberUpdatedState(onValueChange)
@@ -95,7 +95,8 @@ fun InfinitySlider(
 
         if (text.isNotEmpty())
             Text(
-                text = text, color = Color.White, fontSize = fontSize)
+                text = text, color = Color.White, fontSize = fontSize
+            )
     }
 
 

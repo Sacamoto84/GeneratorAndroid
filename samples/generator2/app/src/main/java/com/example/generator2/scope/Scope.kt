@@ -138,20 +138,20 @@ class Scope {
 
 
         //if (isUse.collectAsState().value) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFF343633))
-                    .border(1.dp, Color.White)
-            )
-            {
-                Row {
-                    CanvasOscill(Modifier.weight(1f))
-                    PanelButton()
-                    CanvasLissagu()
-                }
-                OscilloscopeControl()
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0xFF343633))
+                .border(1.dp, Color.White)
+        )
+        {
+            Row {
+                CanvasOscill(Modifier.weight(1f))
+                PanelButton()
+                CanvasLissagu()
             }
+            OscilloscopeControl()
+        }
         //}
     }
 

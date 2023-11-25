@@ -109,8 +109,7 @@ class UtilsKT(private var context: Context) {
                 "FM" -> gen.ch1.buffer_fm = byteToShortArrayLittleEndian(buf)
                 else -> gen.ch1.buffer_carrier = byteToShortArrayLittleEndian(buf)
             }
-        }else
-        {
+        } else {
             when (Mod) {
                 "AM" -> gen.ch2.buffer_am = byteToShortArrayLittleEndian(buf)
                 "FM" -> gen.ch2.buffer_fm = byteToShortArrayLittleEndian(buf)

@@ -19,11 +19,11 @@ import javax.inject.Inject
 @HiltViewModel
 class VMMain4 @Inject constructor(
     //@ApplicationContext contextActivity: Context,
-    val gen : Generator,
-    val exoplayer : PlayerMP3,
+    val gen: Generator,
+    val exoplayer: PlayerMP3,
     val audioMixerPump: AudioMixerPump,
-    val scope : Scope
-) : ViewModel(){
+    val scope: Scope
+) : ViewModel() {
 
     val consoleLog = Console2()
 
@@ -43,14 +43,12 @@ class VMMain4 @Inject constructor(
         //launchScriptScope() //Запуск скриптового потока
         println("OK")
 
-        while(!isInitialized)
-        {
+        while (!isInitialized) {
             Timber.i("Ждем окончания инициализации")
         }
 
         Timber.i("VMMain4 init{} end")
     }
-
 
 
     ////////////////////////////////////////////////////////

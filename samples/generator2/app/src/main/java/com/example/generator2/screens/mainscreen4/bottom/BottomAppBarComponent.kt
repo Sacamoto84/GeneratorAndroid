@@ -36,7 +36,7 @@ fun M4BottomAppBarComponent(
 ) {
 
     val context = LocalContext.current
-    var r : String by remember {  mutableStateOf("Auto select")  }
+    var r: String by remember { mutableStateOf("Auto select") }
 
     BottomAppBar(
         backgroundColor = colorLightBackground,
@@ -54,7 +54,8 @@ fun M4BottomAppBarComponent(
         IconButton(onClick = {
             navController.navigate("presets")
         }) {
-            Icon(painter = painterResource(R.drawable.folder_open2), contentDescription = null,
+            Icon(
+                painter = painterResource(R.drawable.folder_open2), contentDescription = null,
                 modifier = Modifier
                     .size(36.dp)
             )

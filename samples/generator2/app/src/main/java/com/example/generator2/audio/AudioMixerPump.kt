@@ -210,7 +210,8 @@ class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope: Sc
                         if ((audioOut.out.sampleRate != 192000) and isDeviceSupport192k) {
                             Timber.w("Меняем частоту на 192k")
                             audioOut.destroy()
-                            audioOut = AudioOut(192000, 200, encoding = AudioFormat.ENCODING_PCM_FLOAT)
+                            audioOut =
+                                AudioOut(192000, 200, encoding = AudioFormat.ENCODING_PCM_FLOAT)
                         }
                     }
 

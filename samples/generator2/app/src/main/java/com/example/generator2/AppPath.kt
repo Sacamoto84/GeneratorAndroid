@@ -18,16 +18,24 @@ class AppPath {
 
     private val appMain = "Gen3"
 
-    val sdcard    = Environment.getExternalStorageDirectory().absolutePath.toString()
-    val main      = Environment.getExternalStorageDirectory().absolutePath + "/" + appMain
-    val carrier   = Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.CARRIER.value}"
-    val mod       = Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.MOD.value}"
-    val script    = Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.SCRIPT.value}"
-    val config    = Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.CONFIG.value}"
-    val download  = Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.DOWNLOAD.value}"
-    val presets   = Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.PRESETS.value}"
-    val music     = Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.MUSIC.value}"
-    val playlist  = Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.PLAYLIST.value}"
+    val sdcard = Environment.getExternalStorageDirectory().absolutePath.toString()
+    val main = Environment.getExternalStorageDirectory().absolutePath + "/" + appMain
+    val carrier =
+        Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.CARRIER.value}"
+    val mod =
+        Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.MOD.value}"
+    val script =
+        Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.SCRIPT.value}"
+    val config =
+        Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.CONFIG.value}"
+    val download =
+        Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.DOWNLOAD.value}"
+    val presets =
+        Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.PRESETS.value}"
+    val music =
+        Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.MUSIC.value}"
+    val playlist =
+        Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.PLAYLIST.value}"
 
     fun mkDir() {
         File(main).mkdirs()

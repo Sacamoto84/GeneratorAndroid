@@ -21,7 +21,7 @@ import kotlin.system.measureNanoTime
 var hiRes: Boolean = false //Режим высокого разрешения
 
 @OptIn(DelicateCoroutinesApi::class)
-fun renderDataToPoints(scope : Scope) {
+fun renderDataToPoints(scope: Scope) {
 
     var canvas: Canvas
 
@@ -283,7 +283,7 @@ fun renderDataToPoints(scope : Scope) {
 
 
 @OptIn(DelicateCoroutinesApi::class)
-fun lissaguToBitmap(scope : Scope) {
+fun lissaguToBitmap(scope: Scope) {
     val paintLissagu = Paint()
     paintLissagu.color = Color.GREEN
     paintLissagu.alpha = 0xFF
@@ -302,16 +302,17 @@ fun lissaguToBitmap(scope : Scope) {
 
             if (buf.isEmpty()) continue
             val (bufR, bufL) = BufSplitFloat().split(buf)
-            val bitmap: Bitmap = Bitmap.createBitmap( w.toInt(), h.toInt(), Bitmap.Config.RGB_565)
+            val bitmap: Bitmap = Bitmap.createBitmap(w.toInt(), h.toInt(), Bitmap.Config.RGB_565)
             val canvas = Canvas(); canvas.setBitmap(bitmap)
             //val bufLN = if (bufL.size >= 200) bufL.copyOf(200) else bufL
             //val bufRN = if (bufL.size >= 200) bufR.copyOf(200) else bufR
 
-            val bufLN = bufL.copyOf(bufL.size/4)
-            val bufRN = bufR.copyOf(bufL.size/4)
+            val bufLN = bufL.copyOf(bufL.size / 4)
+            val bufRN = bufR.copyOf(bufL.size / 4)
 
             val len = bufLN.size
-            val max = h - 1f; val min = 0f
+            val max = h - 1f;
+            val min = 0f
 
 //            for (i in 0 until len) {
 //                canvas.drawPoint(
@@ -324,7 +325,10 @@ fun lissaguToBitmap(scope : Scope) {
             val path = Path()
             path.moveTo(maping(bufLN[0], -1f, 1f, min, max), maping(bufRN[0], -1f, 1f, min, max))
             for (i in 1 until len) {
-                path.lineTo(maping(bufLN[i], -1f, 1f, min, max), maping(bufRN[i], -1f, 1f, min, max))
+                path.lineTo(
+                    maping(bufLN[i], -1f, 1f, min, max),
+                    maping(bufRN[i], -1f, 1f, min, max)
+                )
             }
             canvas.drawPath(path, paintLissagu)
 

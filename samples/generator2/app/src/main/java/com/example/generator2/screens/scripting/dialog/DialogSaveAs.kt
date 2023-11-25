@@ -48,15 +48,21 @@ private val Corner = 8.dp
 @Composable
 fun DialogSaveAs(vm: VMScripting) {
 
-    var value by remember { mutableStateOf("")}
+    var value by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
-    if (vm.openDialogSaveAs.value) Dialog(onDismissRequest = { vm.openDialogSaveAs.value = false }) {
+    if (vm.openDialogSaveAs.value) Dialog(onDismissRequest = {
+        vm.openDialogSaveAs.value = false
+    }) {
 
         Card(
             Modifier
                 .height(400.dp)
-                .width(220.dp), elevation = 8.dp, border = BorderStroke( 1.dp, Color.Gray ), shape = RoundedCornerShape(Corner), backgroundColor = colorLightBackground2
+                .width(220.dp),
+            elevation = 8.dp,
+            border = BorderStroke(1.dp, Color.Gray),
+            shape = RoundedCornerShape(Corner),
+            backgroundColor = colorLightBackground2
         )
         {
 
@@ -72,22 +78,34 @@ fun DialogSaveAs(vm: VMScripting) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
-                        //.clip(RoundedCornerShape(Corner)).background(Color.DarkGray)
+                    //.clip(RoundedCornerShape(Corner)).background(Color.DarkGray)
                     ,
-                    textAlign = TextAlign.Center, fontSize = 16.sp, fontFamily = FontFamily(Font(R.font.jetbrains)), color = Color.LightGray
+                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.jetbrains)),
+                    color = Color.LightGray
                 )
 
                 OutlinedTextField(
-                    value = value, onValueChange = { value = it },
+                    value = value,
+                    onValueChange = { value = it },
                     modifier = Modifier
                         .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
                         .focusRequester(focusRequester),
-                    colors = TextFieldDefaults.textFieldColors( textColor = Color.LightGray, leadingIconColor = Color.LightGray,
-                        backgroundColor = Color.Black, focusedIndicatorColor = Color.Transparent ),
-                    placeholder = { Text(text = "File Name", color = Color.Gray) }, singleLine = true, shape = RoundedCornerShape(Corner),
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = Color.LightGray, leadingIconColor = Color.LightGray,
+                        backgroundColor = Color.Black, focusedIndicatorColor = Color.Transparent
+                    ),
+                    placeholder = { Text(text = "File Name", color = Color.Gray) },
+                    singleLine = true,
+                    shape = RoundedCornerShape(Corner),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = { vm.bDialogSaveAsDone( value ) }),
-                    textStyle = TextStyle( fontSize = 18.sp, fontFamily = FontFamily(Font(R.font.jetbrains))))
+                    keyboardActions = KeyboardActions(onDone = { vm.bDialogSaveAsDone(value) }),
+                    textStyle = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily(Font(R.font.jetbrains))
+                    )
+                )
 
                 val files = vm.utils.filesInDirToList("/Script")
 
@@ -98,18 +116,23 @@ fun DialogSaveAs(vm: VMScripting) {
                         //.padding(4.dp)
                         .background(Color(0x8B1D1C1C))
                         //.clip(RoundedCornerShape(8.dp))
-                        .verticalScroll(rememberScrollState()))
+                        .verticalScroll(rememberScrollState())
+                )
                 {
                     Spacer(modifier = Modifier.height(4.dp))
                     for (index in files.indices) {
                         Text(
-                            text = " " + files[index].dropLast(3), color = Color.DarkGray,
+                            text = " " + files[index].dropLast(3),
+                            color = Color.DarkGray,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(start = 8.dp, top = 2.dp, end = 8.dp)
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(Color.LightGray),
-                            fontFamily = FontFamily(Font(R.font.jetbrains)), fontWeight = FontWeight.Bold, textAlign = TextAlign.Center )
+                            fontFamily = FontFamily(Font(R.font.jetbrains)),
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
 

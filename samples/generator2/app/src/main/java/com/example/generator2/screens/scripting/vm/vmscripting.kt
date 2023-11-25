@@ -22,8 +22,8 @@ import javax.inject.Inject
 class VMScripting @Inject constructor(
     @ApplicationContext val contextActivity: Context,
     val script: Script,
-    val utils : UtilsKT,
-    val keyboard : ScriptKeyboard
+    val utils: UtilsKT,
+    val keyboard: ScriptKeyboard
 ) : ViewModel() {
 
     val openDialogSaveAs = mutableStateOf(false)

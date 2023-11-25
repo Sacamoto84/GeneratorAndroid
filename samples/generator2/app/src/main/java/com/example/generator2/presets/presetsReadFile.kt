@@ -9,7 +9,7 @@ import com.example.generator2.AppPath
 import com.example.generator2.generator.DataLiveData
 import java.io.File
 
-fun presetsReadFile(name: String, path : String = AppPath().presets ): DataLiveData {
+fun presetsReadFile(name: String, path: String = AppPath().presets): DataLiveData {
 
     val satchel =
         Satchel.with(

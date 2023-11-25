@@ -3,7 +3,7 @@ package com.example.generator2.presets
 import com.example.generator2.generator.DataLiveData
 import com.example.generator2.generator.Generator
 
-fun presetsToLiveData(data: DataLiveData, gen : Generator) {
+fun presetsToLiveData(data: DataLiveData, gen: Generator) {
 
     gen.liveData.presetsName.value = data.presetsName.value
 
@@ -54,10 +54,10 @@ fun presetsToLiveData(data: DataLiveData, gen : Generator) {
     //Количество звезд
     gen.liveData.star.value = data.star.value
 
-    gen.liveData.ch1FmMin.value =data.ch1FmMin.value
-    gen.liveData.ch1FmMax.value =data.ch1FmMax.value
-    gen.liveData.ch2FmMin.value =data.ch2FmMin.value
-    gen.liveData.ch2FmMax.value =data.ch2FmMax.value
+    gen.liveData.ch1FmMin.value = data.ch1FmMin.value
+    gen.liveData.ch1FmMax.value = data.ch1FmMax.value
+    gen.liveData.ch2FmMin.value = data.ch2FmMin.value
+    gen.liveData.ch2FmMax.value = data.ch2FmMax.value
     //gen.liveData.parameterFloat4.value =data.parameterFloat4.value
     //gen.liveData.parameterFloat5.value =data.parameterFloat5.value
     //gen.liveData.parameterFloat6.value =data.parameterFloat6.value

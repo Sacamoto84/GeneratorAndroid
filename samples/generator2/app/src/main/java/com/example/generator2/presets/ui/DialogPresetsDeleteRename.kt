@@ -74,24 +74,32 @@ fun DialogPresetsDeleteRename(name: String) {
                         .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
                     //.clip(RoundedCornerShape(Corner)).background(Color.DarkGray)
                     ,
-                    textAlign = TextAlign.Center, fontSize = 16.sp, fontFamily = FontFamily(Font(R.font.jetbrains)), color = Color.LightGray
+                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.jetbrains)),
+                    color = Color.LightGray
                 )
 
                 OutlinedTextField(
                     value = value,
                     onValueChange = { value = it },
-                    modifier = Modifier.height(58.dp).padding(start = 16.dp, end = 16.dp, bottom = 0.dp),
+                    modifier = Modifier
+                        .height(58.dp)
+                        .padding(start = 16.dp, end = 16.dp, bottom = 0.dp),
                     colors = TextFieldDefaults.textFieldColors(
-                        textColor = Color.LightGray, leadingIconColor = Color.LightGray,
-                        backgroundColor = colorLightBackground, focusedIndicatorColor = Color.Transparent ),
+                        textColor = Color.LightGray,
+                        leadingIconColor = Color.LightGray,
+                        backgroundColor = colorLightBackground,
+                        focusedIndicatorColor = Color.Transparent
+                    ),
                     placeholder = { Text(text = "File Name", color = Color.Gray) },
                     singleLine = true,
                     shape = RoundedCornerShape(Corner),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
 
-                        val oldFile = File(AppPath().presets+"/${name}.txt")
-                        val newFile = File(AppPath().presets+"/${value}.txt")
+                        val oldFile = File(AppPath().presets + "/${name}.txt")
+                        val newFile = File(AppPath().presets + "/${value}.txt")
 
                         if (oldFile.renameTo(newFile)) {
                             println("Файл успешно переименован.")
@@ -121,13 +129,16 @@ fun DialogPresetsDeleteRename(name: String) {
                         .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
                     //.clip(RoundedCornerShape(Corner)).background(Color.DarkGray)
                     ,
-                    textAlign = TextAlign.Center, fontSize = 16.sp, fontFamily = FontFamily(Font(R.font.jetbrains)), color = Color.LightGray
+                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.jetbrains)),
+                    color = Color.LightGray
                 )
 
                 Button(
                     onClick = {
 
-                        val pathDocuments = AppPath().presets+"/${name}.txt"
+                        val pathDocuments = AppPath().presets + "/${name}.txt"
                         File(pathDocuments).delete()
 
                         Presets.presetList.clear()
@@ -138,7 +149,9 @@ fun DialogPresetsDeleteRename(name: String) {
                         Presets.isOpenDialogDeleteRename.value = false
 
                     },
-                    modifier = Modifier.fillMaxWidth().height(72.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(72.dp)
                         .padding(start = 16.dp, end = 16.dp, top = 0.dp, bottom = 16.dp),
                     shape = RoundedCornerShape(Corner),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
@@ -154,8 +167,6 @@ fun DialogPresetsDeleteRename(name: String) {
                 //Divider(color = Color.Gray, thickness = 2.dp)
 
                 //Spacer(modifier = Modifier.height(16.dp))
-
-
 
 
             }

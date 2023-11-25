@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 
 
-object Presets{
+object Presets {
 
     //Текущий список для отображения и сохранения, да и вообще работы
     var presetList = mutableStateListOf<String>() //mutableListOf<String>()
@@ -13,10 +13,10 @@ object Presets{
     var isOpenDialogNewFile = MutableStateFlow(false)
 
     //Открыть диалог создания нового пресета
-    var isOpenDialogDeleteRename= MutableStateFlow(false)
+    var isOpenDialogDeleteRename = MutableStateFlow(false)
 
     //Открыть диалог создания нового пресета
-    var isOpenDialogRename= MutableStateFlow(false)
+    var isOpenDialogRename = MutableStateFlow(false)
 
     //Открыть диалог создания нового пресета
     var isOpenDialogDelete = MutableStateFlow(false)

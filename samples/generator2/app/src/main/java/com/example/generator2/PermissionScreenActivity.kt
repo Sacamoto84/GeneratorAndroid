@@ -31,7 +31,8 @@ import kotlinx.coroutines.delay
 
 class PermissionScreenActivity : ComponentActivity() {
 
-    @OptIn(UnstableApi::class) override fun onCreate(savedInstanceState: Bundle?) {
+    @OptIn(UnstableApi::class)
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         println("Запуск PermissionScreenActivity")

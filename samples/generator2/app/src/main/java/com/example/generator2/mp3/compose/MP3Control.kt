@@ -35,7 +35,12 @@ import com.example.generator2.theme.colorLightBackground
 
 @Composable
 fun MP3Control(vm: VMMain4) {
-    Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp ).background(colorLightBackground)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp, bottom = 8.dp)
+            .background(colorLightBackground)
+    ) {
 
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             Text(

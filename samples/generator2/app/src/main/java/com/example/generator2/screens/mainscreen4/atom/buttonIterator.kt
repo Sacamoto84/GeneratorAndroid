@@ -58,7 +58,7 @@ private val buttonW = 42.dp
 
 @Composable
 fun ButtonIterator(
-    text : String,
+    text: String,
     value: Int,
     onValueChange: (Int) -> Unit,
 ) {
@@ -89,7 +89,7 @@ fun ButtonIterator(
 
             onClick = {
                 v.intValue = v.intValue - 1
-                if ( v.intValue <= 0 ) v.intValue = 0
+                if (v.intValue <= 0) v.intValue = 0
                 onValueChange(v.intValue)
             }) {
 
@@ -112,8 +112,7 @@ fun ButtonIterator(
                 )
                 .border(1.dp, Color.LightGray)
                 .offset(0.dp, 3.dp),
-            textAlign = TextAlign.Center
-            , fontSize = 18.sp
+            textAlign = TextAlign.Center, fontSize = 18.sp
 
         )
 

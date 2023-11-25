@@ -58,7 +58,6 @@ fun Navigation() {
     ) {
 
 
-
         composable("home",
             enterTransition = { fadeIn(animationSpec = tween(0)) },
             exitTransition = { fadeOut(animationSpec = tween(0)) })

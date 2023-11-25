@@ -14,8 +14,7 @@ val channelAudioOutLissagu = Channel<FloatArray>(capacity = 8, BufferOverflow.DR
 val channelDataStreamOutCompressor = Channel<FloatArray>(capacity = 1, BufferOverflow.DROP_LATEST)
 
 
-
-enum class OSCILLSYNC{
+enum class OSCILLSYNC {
     NONE, R, L
 }
 

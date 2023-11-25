@@ -47,13 +47,13 @@ fun MainScreenTextBoxGuest(
     value: Float, //Вывод icrementalAngle от 0 до rangeAngle при rangeAngle != 0, и от +- Float при rangeAngle = 0
     onValueChange: (Float) -> Unit,
     range: ClosedFloatingPointRange<Float> = 0f..1000f,
-    useDrag : Boolean = false,
+    useDrag: Boolean = false,
     fontSize: TextUnit = 24.sp,
     fontFamily: FontFamily = FontFamily.Default,
-    color : Color = Color.LightGray
-    ) {
+    color: Color = Color.LightGray
+) {
 
-    val s =  rememberUpdatedState(sensing)
+    val s = rememberUpdatedState(sensing)
 
     val onValueChangeState = rememberUpdatedState(onValueChange)
     var incrementalAngle by remember { mutableFloatStateOf(value) }

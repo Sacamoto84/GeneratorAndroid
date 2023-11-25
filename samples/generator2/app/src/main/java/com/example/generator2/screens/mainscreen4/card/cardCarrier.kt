@@ -62,24 +62,25 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
         ) {
 
             // Кнопка включения канала
-            Box(modifier = Modifier
-                .padding(start = 8.dp)
-                .height(32.dp)
-                .width(ms4SwitchWidth)
-                .border(
-                    2.dp,
-                    color = if (chEN.value) Color(0xFF1B5E20) else Color.DarkGray,
-                    RoundedCornerShape(8.dp)
-                )
-                .clip(RoundedCornerShape(8.dp))
-                .background(
-                    color = if (chEN.value) Color(0xFF4DD0E1) else colorDarkBackground
-                )
-                .noRippleClickable(onClick = {
-                    if (str == "CH0") gen.liveData.ch1_EN.value = !gen.liveData.ch1_EN.value
-                    else gen.liveData.ch2_EN.value = !gen.liveData.ch2_EN.value
-                    println("Кнопка")
-                }), contentAlignment = Alignment.Center
+            Box(
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .height(32.dp)
+                    .width(ms4SwitchWidth)
+                    .border(
+                        2.dp,
+                        color = if (chEN.value) Color(0xFF1B5E20) else Color.DarkGray,
+                        RoundedCornerShape(8.dp)
+                    )
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(
+                        color = if (chEN.value) Color(0xFF4DD0E1) else colorDarkBackground
+                    )
+                    .noRippleClickable(onClick = {
+                        if (str == "CH0") gen.liveData.ch1_EN.value = !gen.liveData.ch1_EN.value
+                        else gen.liveData.ch2_EN.value = !gen.liveData.ch2_EN.value
+                        println("Кнопка")
+                    }), contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = if (chEN.value) "On" else "Off",

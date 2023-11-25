@@ -10,7 +10,7 @@ class itemList(// Путь к файлу
 ) {
 
     var name = "xxx" // название без окончания
-    var bitmap : Bitmap? = null //Картинка несущей
+    var bitmap: Bitmap? = null //Картинка несущей
     //var buf : ByteArray? = null
 
     //= Utils.readFileMod2048byte(path) //Здесь должны прочитать файл и записать в массив;
@@ -22,11 +22,10 @@ class itemList(// Путь к файлу
             if (mod == 0)
                 Utils.CreateBitmapCarrier2("$path/$filename")
             else
-                Utils.CreateBitmapModulation("$path/$filename" )
+                Utils.CreateBitmapModulation("$path/$filename")
 
         //buf = Utils.readFileMod2048byte(path + filename) //Здесь должны прочитать файл и записать в массив;
     }
-
 
 
 }

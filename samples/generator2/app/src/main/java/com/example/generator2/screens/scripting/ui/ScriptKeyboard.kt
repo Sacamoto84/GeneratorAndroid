@@ -57,7 +57,6 @@ data class RouteKeyboard(
 class ScriptKeyboard(private val s: Script, val gen: Generator) {
 
 
-
     private var selectIndex = s.pc
     private val list = s.list
 
@@ -139,12 +138,12 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
     }
 
     @Composable
-    fun Core(pc : () -> Int ) {
+    fun Core(pc: () -> Int) {
 
-        if (selectIndex <  0 ) selectIndex = 0
-        if (pc() < 0 ) s.pc = 0
+        if (selectIndex < 0) selectIndex = 0
+        if (pc() < 0) s.pc = 0
 
-        if (selectIndex >  list.lastIndex ) selectIndex = list.lastIndex
+        if (selectIndex > list.lastIndex) selectIndex = list.lastIndex
         if (s.pc > list.lastIndex) s.pc = list.lastIndex
 
         textToListCommand(list[selectIndex])
@@ -152,18 +151,18 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
         Log.i("script", "Keyboard Core() PC:${s.pc}")
 
         when (route.value.route) {
-            RouteKeyboardEnum.HOME       -> ScreenHOME()
-            RouteKeyboardEnum.NUMBER     -> ScreenNUMBERPAD { route.value.argument }
-            RouteKeyboardEnum.F          -> ScreenFPAD { route.value.argument }
-            RouteKeyboardEnum.ONOFF      -> ScreenONOFF(route.value.argument)
-            RouteKeyboardEnum.CRAMFM     -> ScreenCRAMFM(route.value.argument)
-            RouteKeyboardEnum.CRAMValue  -> ScreenCRAMValue(route.value.argument)
-            RouteKeyboardEnum.FMValue    -> ScreenFMValue(route.value.argument)
+            RouteKeyboardEnum.HOME -> ScreenHOME()
+            RouteKeyboardEnum.NUMBER -> ScreenNUMBERPAD { route.value.argument }
+            RouteKeyboardEnum.F -> ScreenFPAD { route.value.argument }
+            RouteKeyboardEnum.ONOFF -> ScreenONOFF(route.value.argument)
+            RouteKeyboardEnum.CRAMFM -> ScreenCRAMFM(route.value.argument)
+            RouteKeyboardEnum.CRAMValue -> ScreenCRAMValue(route.value.argument)
+            RouteKeyboardEnum.FMValue -> ScreenFMValue(route.value.argument)
             RouteKeyboardEnum.Comparison -> ScreenComparison(route.value.argument)
-            RouteKeyboardEnum.IFValue    -> ScreenIFValue(route.value.argument)
-            RouteKeyboardEnum.MODCR      -> ScreenMod(route.value.argument, "CR")
-            RouteKeyboardEnum.MODAM      -> ScreenMod(route.value.argument, "AM")
-            RouteKeyboardEnum.MODFM      -> ScreenMod(route.value.argument, "FM")
+            RouteKeyboardEnum.IFValue -> ScreenIFValue(route.value.argument)
+            RouteKeyboardEnum.MODCR -> ScreenMod(route.value.argument, "CR")
+            RouteKeyboardEnum.MODAM -> ScreenMod(route.value.argument, "AM")
+            RouteKeyboardEnum.MODFM -> ScreenMod(route.value.argument, "FM")
         }
 
     }
@@ -197,7 +196,10 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
         val selectedIndex = remember { mutableStateOf(0) }
         Row {
             LazyColumn(
-                modifier = Modifier.height(192.dp).fillMaxWidth().weight(1f)
+                modifier = Modifier
+                    .height(192.dp)
+                    .fillMaxWidth()
+                    .weight(1f)
                     .background(colorDarkBackground),
                 state = lazyListState                          //
             ) {
@@ -210,7 +212,9 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
                 ) { index, item ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth().border(0.2.dp, Color.Magenta)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(0.2.dp, Color.Magenta)
                             .selectable(selected = selectedIndex.value == index, onClick = {
                                 listCommandAddToIndex(arg, item.name)
                                 list[selectIndex] = listCommandToText()
@@ -222,9 +226,11 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
                             Image(
                                 bitmap = it.asImageBitmap(),
                                 contentDescription = null,
-                                modifier = Modifier.padding(
-                                    start = 6.dp, top = 2.dp, bottom = 2.dp, end = 20.dp
-                                ).height(40.dp)
+                                modifier = Modifier
+                                    .padding(
+                                        start = 6.dp, top = 2.dp, bottom = 2.dp, end = 20.dp
+                                    )
+                                    .height(40.dp)
                             )
                         }
                         Text(
@@ -753,15 +759,17 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             },
             k2 = { },
             k3 = { KeyBack() },
-            k4 = { KeyX("MOD", onClick = {
-                
-                listCommandRemoveToIndex(arg)
-                listCommandAddToIndex(arg, "MOD")
-                list[selectIndex] = listCommandToText()
+            k4 = {
+                KeyX("MOD", onClick = {
 
-                routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.MODFM))
+                    listCommandRemoveToIndex(arg)
+                    listCommandAddToIndex(arg, "MOD")
+                    list[selectIndex] = listCommandToText()
 
-            }) },
+                    routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.MODFM))
+
+                })
+            },
             k5 = { },
             k6 = { },
             k7 = { },
@@ -901,7 +909,9 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
         CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
             OutlinedButton(
                 onClick = {},
-                modifier = Modifier.fillMaxWidth().padding(start = 8.dp, end = 4.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp, end = 4.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
                     backgroundColor = Color.Transparent, contentColor = Color.White
                 ),
@@ -932,32 +942,42 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
         k15: (@Composable () -> Unit)? = null,
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().background(colorDarkBackground)
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(colorDarkBackground)
         ) {
             Row(horizontalArrangement = Arrangement.SpaceAround) {
 
                 if (k0 != null) Box(
-                    modifier = Modifier.fillMaxWidth().weight(1f)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
                 ) {
                     k0()
                 }
 
                 if (k1 != null) Box(
-                    modifier = Modifier.fillMaxWidth().weight(1f)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
                 ) {
                     k1()
                 }
 
                 if (k2 != null) {
                     Box(
-                        modifier = Modifier.fillMaxWidth().weight(1f)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
                         k2()
                     }
                 }
                 if (k3 != null) {
                     Box(
-                        modifier = Modifier.fillMaxWidth().weight(1f)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
                         k3()
                     }
@@ -969,7 +989,9 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
 
                 if (k4 != null) {
                     Box(
-                        modifier = Modifier.fillMaxWidth().weight(1f)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
                         k4()
                     }
@@ -977,7 +999,9 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
 
                 if (k5 != null) {
                     Box(
-                        modifier = Modifier.fillMaxWidth().weight(1f)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
                         k5()
                     }
@@ -985,7 +1009,9 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
 
                 if (k6 != null) {
                     Box(
-                        modifier = Modifier.fillMaxWidth().weight(1f)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
                         k6()
                     }
@@ -993,7 +1019,9 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
 
                 if (k7 != null) {
                     Box(
-                        modifier = Modifier.fillMaxWidth().weight(1f)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
                         k7()
                     }
@@ -1004,28 +1032,36 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             Row() {
                 if (k8 != null) {
                     Box(
-                        modifier = Modifier.fillMaxWidth().weight(1f)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
                         k8()
                     }
                 }
                 if (k9 != null) {
                     Box(
-                        modifier = Modifier.fillMaxWidth().weight(1f)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
                         k9()
                     }
                 }
                 if (k10 != null) {
                     Box(
-                        modifier = Modifier.fillMaxWidth().weight(1f)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
                         k10()
                     }
                 }
                 if (k11 != null) {
                     Box(
-                        modifier = Modifier.fillMaxWidth().weight(1f)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
                         k11()
                     }
@@ -1035,28 +1071,36 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             Row() {
                 if (k12 != null) {
                     Box(
-                        modifier = Modifier.fillMaxWidth().weight(1f)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
                         k12()
                     }
                 }
                 if (k13 != null) {
                     Box(
-                        modifier = Modifier.fillMaxWidth().weight(1f)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
                         k13()
                     }
                 }
                 if (k14 != null) {
                     Box(
-                        modifier = Modifier.fillMaxWidth().weight(1f)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
                         k14()
                     }
                 }
                 if (k15 != null) {
                     Box(
-                        modifier = Modifier.fillMaxWidth().weight(1f)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
                         k15()
                     }

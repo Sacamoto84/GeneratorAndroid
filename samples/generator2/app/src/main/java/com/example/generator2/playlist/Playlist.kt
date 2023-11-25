@@ -16,8 +16,6 @@ object Playlist {
     }
 
 
-
-
     private fun readFromSQL() {
         val playlistJson = mutableListOf<PlaylistJson>()
         playlistJson.addAll(PlaylistSQL.read()) //Читаем списки того что есть в SQL

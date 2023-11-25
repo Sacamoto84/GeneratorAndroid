@@ -69,8 +69,11 @@ fun CardCommander(vm: VMMain4) {
             Crossfade(targetState = mono.value, animationSpec = tween(time), label = "")
             {
                 if (!it) {
-                    IconButton(onClick = { vm.gen.liveData.shuffle.value = !vm.gen.liveData.shuffle.value }) {
-                        val color = if (shuffle.value) MaterialColor.GREEN_500 else colorDarkBackground
+                    IconButton(onClick = {
+                        vm.gen.liveData.shuffle.value = !vm.gen.liveData.shuffle.value
+                    }) {
+                        val color =
+                            if (shuffle.value) MaterialColor.GREEN_500 else colorDarkBackground
                         Icon(
                             painter = painterResource(R.drawable.shuffle74),
                             contentDescription = null,
@@ -78,7 +81,9 @@ fun CardCommander(vm: VMMain4) {
                         )
                     }
                 } else {
-                    IconButton(onClick = { vm.gen.liveData.invert.value = !vm.gen.liveData.invert.value }) {
+                    IconButton(onClick = {
+                        vm.gen.liveData.invert.value = !vm.gen.liveData.invert.value
+                    }) {
                         val color =
                             if (invert.value) MaterialColor.GREEN_500 else colorDarkBackground
                         Icon(

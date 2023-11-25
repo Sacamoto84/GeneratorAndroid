@@ -28,7 +28,9 @@ fun TemplateButtonBottomBar(
     contentColor: Color = Color.White,
 ) {
     OutlinedButton(
-        onClick = onClick, modifier = Modifier.fillMaxWidth().then(modifier) //.weight(1f)
+        onClick = onClick, modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier) //.weight(1f)
             .padding(start = 8.dp, end = 4.dp), colors = ButtonDefaults.outlinedButtonColors(
             backgroundColor = backgroundColor, contentColor = contentColor
         ), border = BorderStroke(1.dp, Color.LightGray), contentPadding = PaddingValues(2.dp)
@@ -45,20 +47,27 @@ fun OutlinedButtonTextAndIcon(
     backgroundColor: Color = colorDarkBackground,
     contentColor: Color = Color.White,
     resId: Int, //Ресурс для анимации
-    paddingStart : Dp = 4.dp,
-    paddingEnd : Dp = 4.dp,
-    paddingStartText : Dp = 8.dp,
-    paddingStartIcon : Dp = 0.dp
+    paddingStart: Dp = 4.dp,
+    paddingEnd: Dp = 4.dp,
+    paddingStartText: Dp = 8.dp,
+    paddingStartIcon: Dp = 0.dp
 ) {
 
     OutlinedButton(
         onClick = {
             onClick()
 
-        }, modifier = Modifier.fillMaxWidth().height(50.dp)
-            .padding(start = paddingStart, end = paddingEnd).then(modifier), colors = ButtonDefaults.outlinedButtonColors(
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .padding(start = paddingStart, end = paddingEnd)
+            .then(modifier),
+        colors = ButtonDefaults.outlinedButtonColors(
             backgroundColor = backgroundColor, contentColor = contentColor
-        ), border = BorderStroke(1.dp, Color.LightGray), contentPadding = PaddingValues(2.dp)
+        ),
+        border = BorderStroke(1.dp, Color.LightGray),
+        contentPadding = PaddingValues(2.dp)
     ) {
 
         Row(
@@ -67,7 +76,12 @@ fun OutlinedButtonTextAndIcon(
             horizontalArrangement = Arrangement.Start
         ) {
 
-            Icon(painter = painterResource(resId), contentDescription = null, tint = Color.LightGray, modifier = Modifier.padding(start = paddingStartIcon))
+            Icon(
+                painter = painterResource(resId),
+                contentDescription = null,
+                tint = Color.LightGray,
+                modifier = Modifier.padding(start = paddingStartIcon)
+            )
 
             Text(
                 str,

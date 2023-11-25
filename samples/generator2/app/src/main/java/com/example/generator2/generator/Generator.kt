@@ -25,7 +25,6 @@ class Generator {
     private val renderChanelR = RenderChannel(liveData)
 
 
-
     suspend fun renderAudio(numFrames: Int = 1024): Pair<FloatArray, FloatArray> {
 
         if (numFrames == 0) Timber.e("numFrames == 0")
@@ -35,18 +34,18 @@ class Generator {
 
         if (!liveData.mono.value) {
 
-                val job1 = CoroutineScope(Dispatchers.IO).async  {
-                    renderChanelL.renderChanel(ch1, numFrames / 2, sampleRate)
-                }
+            val job1 = CoroutineScope(Dispatchers.IO).async {
+                renderChanelL.renderChanel(ch1, numFrames / 2, sampleRate)
+            }
 
-                val job2 = CoroutineScope(Dispatchers.IO).async  {
-                    renderChanelR.renderChanel(ch2, numFrames / 2, sampleRate)
-                }
+            val job2 = CoroutineScope(Dispatchers.IO).async {
+                renderChanelR.renderChanel(ch2, numFrames / 2, sampleRate)
+            }
 
-                val results = awaitAll(job1, job2)
+            val results = awaitAll(job1, job2)
 
-                l = results[0]
-                r = results[1]
+            l = results[0]
+            r = results[1]
 
 //           l = renderChanelL.renderChanel(ch1, numFrames / 2, sampleRate)
 //           r = renderChanelR.renderChanel(ch2, numFrames / 2, sampleRate)
@@ -85,13 +84,6 @@ class Generator {
             buf[i] = (x + (y * source[i] / 4095.0F)).toInt().toShort()
         }
     }
-
-
-
-
-
-
-
 
 
 }
@@ -151,7 +143,6 @@ data class DataLiveData(
     val ch1FmMax: MutableStateFlow<Float> = MutableStateFlow(2000.0f), //PR PS PC CH1 FM max
     val ch2FmMin: MutableStateFlow<Float> = MutableStateFlow(1500.0f), //PR PS PC CH2 FM min
     val ch2FmMax: MutableStateFlow<Float> = MutableStateFlow(2500.0f), //PR PS PC CH2 FM max
-
 
 
     val parameterInt0: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс

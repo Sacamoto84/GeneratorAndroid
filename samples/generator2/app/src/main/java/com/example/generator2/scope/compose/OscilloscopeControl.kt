@@ -22,8 +22,8 @@ import com.example.generator2.mp3.oscillSync
 private val m = Modifier
     .height(32.dp)
     .width(32.dp)
-    //.border(1.dp, Color.Gray)
-    //.background(Color.Black)
+//.border(1.dp, Color.Gray)
+//.background(Color.Black)
 
 private val colorEnabled = Color.Black
 private val colorTextEnabled = Color.Green
@@ -37,7 +37,9 @@ fun OscilloscopeControl() {
     Row {
 
         Box(
-            modifier = m.clip(RoundedCornerShape(topStart = a, bottomStart = a)).border(1.dp, Color.Gray, RoundedCornerShape(topStart = a, bottomStart = a))
+            modifier = m
+                .clip(RoundedCornerShape(topStart = a, bottomStart = a))
+                .border(1.dp, Color.Gray, RoundedCornerShape(topStart = a, bottomStart = a))
                 .clickable(onClick = { oscillSync.value = OSCILLSYNC.NONE })
                 .background(if (oscillSync.value == OSCILLSYNC.NONE) colorEnabled else Color.Black),
             contentAlignment = Alignment.Center
@@ -49,7 +51,8 @@ fun OscilloscopeControl() {
         }
 
         Box(
-            modifier = m.border(1.dp, Color.Gray)
+            modifier = m
+                .border(1.dp, Color.Gray)
                 .clickable(onClick = { oscillSync.value = OSCILLSYNC.L })
                 .background(if (oscillSync.value == OSCILLSYNC.L) colorEnabled else Color.Black),
             contentAlignment = Alignment.Center
@@ -61,7 +64,9 @@ fun OscilloscopeControl() {
         }
 
         Box(
-            modifier = m.clip(RoundedCornerShape(topEnd = a, bottomEnd = a)).border(1.dp, Color.Gray, RoundedCornerShape(topEnd = a, bottomEnd = a))
+            modifier = m
+                .clip(RoundedCornerShape(topEnd = a, bottomEnd = a))
+                .border(1.dp, Color.Gray, RoundedCornerShape(topEnd = a, bottomEnd = a))
                 .clickable(onClick = { oscillSync.value = OSCILLSYNC.R })
                 .background(if (oscillSync.value == OSCILLSYNC.R) colorEnabled else Color.Black),
             contentAlignment = Alignment.Center

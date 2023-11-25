@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--Для <12 версий-->
+<?xml version="1.0" encoding="utf-8"?><!--Для <12 версий-->
 <full-backup-content>
-    <include domain="external" path="."/>
+    <include
+        domain="external"
+        path="." />
 </full-backup-content>

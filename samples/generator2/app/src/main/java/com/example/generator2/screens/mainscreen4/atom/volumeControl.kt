@@ -71,7 +71,8 @@ fun VolumeControl(value: Float, onValueChange: (Float) -> Unit) {
 
     val density = LocalDensity.current
 
-    position = (1f-volume)*(H.value * density.density - 20.dp.value * density.density) + 2.dp.value * density.density
+    position =
+        (1f - volume) * (H.value * density.density - 20.dp.value * density.density) + 2.dp.value * density.density
 
     position = (position).coerceIn(
         2.dp.value * density.density,

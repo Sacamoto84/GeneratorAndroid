@@ -19,10 +19,11 @@ fun EditorLinkButtons(modifier: Modifier = Modifier) {
     Row(
         Modifier
             .height(28.dp)
-            .fillMaxWidth().then(modifier)
-            //.clip(RoundedCornerShape(8.dp))
-            //.border(1.dp, Color.Gray, RoundedCornerShape(8.dp)),
-    ,horizontalArrangement = Arrangement.SpaceAround
+            .fillMaxWidth()
+            .then(modifier)
+        //.clip(RoundedCornerShape(8.dp))
+        //.border(1.dp, Color.Gray, RoundedCornerShape(8.dp)),
+        , horizontalArrangement = Arrangement.SpaceAround
     ) {
 
         repeat(6)
@@ -30,9 +31,8 @@ fun EditorLinkButtons(modifier: Modifier = Modifier) {
             OutlinedButton(onClick = { /*TODO*/ }) {
 
             }
-            
+
         }
-        
 
 
     }

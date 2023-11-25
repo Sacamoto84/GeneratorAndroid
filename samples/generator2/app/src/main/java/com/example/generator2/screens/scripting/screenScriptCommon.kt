@@ -45,7 +45,7 @@ fun ScreenScriptCommon(global: VMScripting = hiltViewModel()) {
 
 
             //Кнопка назад
-            IconButton( modifier = Modifier.testTag("buttonM4ScriptGoBack"),
+            IconButton(modifier = Modifier.testTag("buttonM4ScriptGoBack"),
                 onClick = { navController.popBackStack() }) {
                 Icon(painter = painterResource(R.drawable.back4), contentDescription = null)
             }
@@ -66,10 +66,10 @@ fun ScreenScriptCommon(global: VMScripting = hiltViewModel()) {
                 }) {
                     if (global.script.state != StateCommandScript.ISPAUSE)
                         Icon(
-                        painter = painterResource(
-                            R.drawable.pause
-                        ), contentDescription = null
-                    )
+                            painter = painterResource(
+                                R.drawable.pause
+                            ), contentDescription = null
+                        )
                     else
                         Icon(
                             painter = painterResource(

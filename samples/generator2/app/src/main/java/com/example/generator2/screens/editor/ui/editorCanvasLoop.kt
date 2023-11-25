@@ -22,15 +22,21 @@ import com.smarttoolfactory.gesture.pointerMotionEvents
 @Composable
 fun EditorCanvasLoop(modifier: Modifier = Modifier) {
 
-    Canvas(modifier = Modifier.padding(0.dp).height(200.dp).fillMaxWidth().then(modifier).background(Color.Black)
-        .border(1.dp, color = Color.DarkGray).clipToBounds()
+    Canvas(modifier = Modifier
+        .padding(0.dp)
+        .height(200.dp)
+        .fillMaxWidth()
+        .then(modifier)
+        .background(Color.Black)
+        .border(1.dp, color = Color.DarkGray)
+        .clipToBounds()
         .pointerMotionEvents(onDown = { pointerInputChange: PointerInputChange ->
             //model.motionEvent.value = MotionEvent.Down
             pointerInputChange.consume()
         }, onMove = { pointerInputChange: PointerInputChange ->
             val dx = pointerInputChange.position.x - pointerInputChange.previousPosition.x
             val dy = pointerInputChange.position.y - pointerInputChange.previousPosition.y
-            model.currentPosition.value += Offset(dx/16, dy/128)
+            model.currentPosition.value += Offset(dx / 16, dy / 128)
             model.motionEvent.value = MotionEvent.Move
             model.refsresh.value++
             pointerInputChange.consume()
@@ -48,15 +54,13 @@ fun EditorCanvasLoop(modifier: Modifier = Modifier) {
         drawLine(
             color = Color.LightGray.copy(alpha = 0.5f),
             start = Offset(size.width / 2, 70.dp.toPx()),
-            end = Offset(size.width / 2, size.height - 70.dp.toPx())
-        , strokeWidth = 1.dp.toPx()
+            end = Offset(size.width / 2, size.height - 70.dp.toPx()), strokeWidth = 1.dp.toPx()
         )
 
         drawLine(
             color = Color.LightGray,
             start = Offset(70.dp.toPx(), size.height / 2),
-            end = Offset(size.width - 70.dp.toPx(), size.height / 2)
-            , strokeWidth = 1.dp.toPx()
+            end = Offset(size.width - 70.dp.toPx(), size.height / 2), strokeWidth = 1.dp.toPx()
         )
         ////////////////////
 
@@ -71,7 +75,7 @@ fun EditorCanvasLoop(modifier: Modifier = Modifier) {
             strokeWidth = 5f
         )
 
-       //Рисуем кадрат
+        //Рисуем кадрат
         drawPath(
             color = Color.Red,
             path = pointsCache.four,

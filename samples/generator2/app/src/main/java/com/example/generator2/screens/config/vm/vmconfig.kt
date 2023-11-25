@@ -22,8 +22,8 @@ import javax.inject.Inject
 class VMConfig @Inject constructor(
     @ApplicationContext
     private val context: Context,
-    val gen :Generator
-) : ViewModel(){
+    val gen: Generator
+) : ViewModel() {
 
 
     //var LVolume by  mutableStateOf(0.55F)
@@ -41,9 +41,8 @@ class VMConfig @Inject constructor(
             val pm: PackageManager = context.packageManager
             if (intent.resolveActivity(pm) != null) {
 
-                startActivity( context, intent, null)
-            }
-            else {
+                startActivity(context, intent, null)
+            } else {
                 Toast.makeText(context, "Error message", Toast.LENGTH_LONG).show()
             }
 
@@ -54,11 +53,10 @@ class VMConfig @Inject constructor(
 
     }
 
-    fun saveVolume()    = mmkv.saveVolume(gen) //backup.json.saveJsonVolume()
+    fun saveVolume() = mmkv.saveVolume(gen) //backup.json.saveJsonVolume()
     fun saveConstrain() = mmkv.saveConstrain() //backup.json.saveJsonConstrain()
 
-    fun toastSaveVolume()
-    {
+    fun toastSaveVolume() {
         Toastic.toastic(
             context = context,
             message = "Volume Saved",
@@ -74,9 +72,7 @@ class VMConfig @Inject constructor(
     }
 
 
-
-    fun toastText(str : String)
-    {
+    fun toastText(str: String) {
         Toastic.toastic(
             context = context,
             message = str,

@@ -71,8 +71,7 @@ class Console2 {
         textSize: TextUnit = textSizeDefault
     ) {
 
-        if ((colorlineAndText.size == 1) && (colorlineAndText[0].pairList[0].text==""))
-        {
+        if ((colorlineAndText.size == 1) && (colorlineAndText[0].pairList[0].text == "")) {
             colorlineAndText.removeAt(0)
         }
 
@@ -158,93 +157,88 @@ class Console2 {
         } //.background(Color(0xFF090909))
 
 
-
-
         Box(
-            Modifier.fillMaxSize().background(Color(0xFF090909)).then(modifier) //.weight(1f)
+            Modifier
+                .fillMaxSize()
+                .background(Color(0xFF090909))
+                .then(modifier) //.weight(1f)
         ) {
 
-                ///////////////////////////////////////////////////////////
-                LazyColumn(                                              //
-                    modifier = Modifier.fillMaxSize(),
-                    state = lazyListState                          //
-                ) {
+            ///////////////////////////////////////////////////////////
+            LazyColumn(                                              //
+                modifier = Modifier.fillMaxSize(),
+                state = lazyListState                          //
+            ) {
 
-                    //val z = manual_recomposeLazy.value
-                    //println("LAZY Счетчик рекомпозиций $z")
+                //val z = manual_recomposeLazy.value
+                //println("LAZY Счетчик рекомпозиций $z")
 
 
+                itemsIndexed(messages.toList()) { index, item ->
+                    Row() {
 
-                    itemsIndexed(messages.toList()) { index, item ->
-                        Row() {
+                        val s = item.pairList.size
 
-                            val s = item.pairList.size
+                        if ((s > 0) && (isCheckedUselineVisible.value)) {
 
-                            if ((s > 0) && (isCheckedUselineVisible.value)) {
+                            val str: String = when (index) {
+                                in 0..9 -> String.format("   %d>", index)
+                                in 10..99 -> String.format("  %d>", index)
+                                in 100..999 -> String.format(" %d>", index)
+                                else -> String.format("%d>", index)
+                            }
+                            Text(
+                                text = str,
+                                color = if (item.text.isBlank()) Color.Black else Color.Gray,
+                                fontSize = textSizeDefault,
+                                fontFamily = FontFamily(
+                                    Font(
+                                        com.example.generator2.R.font.jetbrains,
+                                        FontWeight.Normal
+                                    )
+                                )
+                            )
+                        }
 
-                                val str: String = when (index) {
-                                    in 0..9     -> String.format("   %d>", index)
-                                    in 10..99   -> String.format("  %d>", index)
-                                    in 100..999 -> String.format(" %d>", index)
-                                    else        -> String.format("%d>", index)
-                                }
+
+                        for (i in 0 until s) {
+
+                            //val colorSelect = if (SelectLine.value == index) Color.Magenta else Color.DarkGray
+
+                            Box(
+                                Modifier.fillMaxWidth() //.background(colorSelect)
+                            ) {
+
                                 Text(
-                                    text = str,
-                                    color = if (item.text.isBlank()) Color.Black else Color.Gray,
-                                    fontSize = textSizeDefault,
-                                    fontFamily = FontFamily(
-                                        Font(
-                                            com.example.generator2.R.font.jetbrains,
-                                            FontWeight.Normal
+                                    text = item.pairList[i].text,
+                                    color = if (!item.pairList[i].flash) item.pairList[i].colorText
+                                    else if (update) item.pairList[i].colorText else Color(
+                                        0xFF090909
+                                    ),
+                                    modifier = Modifier.background(
+                                        if (!item.pairList[i].flash) item.pairList[i].colorBg
+                                        else if (update) item.pairList[i].colorBg else Color(
+                                            0xFF090909
                                         )
+                                    ),
+                                    textDecoration = if (item.pairList[i].underline) TextDecoration.Underline else null,
+                                    fontWeight = if (item.pairList[i].bold) FontWeight.Bold else null,
+                                    fontStyle = if (item.pairList[i].italic) FontStyle.Italic else null,
+                                    fontSize = item.pairList[i].textSize,
+                                    fontFamily = FontFamily(
+                                        Font(R.font.jetbrains, FontWeight.Normal)
                                     )
                                 )
                             }
 
-
-                            for (i in 0 until s) {
-
-                                //val colorSelect = if (SelectLine.value == index) Color.Magenta else Color.DarkGray
-
-                                Box(
-                                    Modifier.fillMaxWidth() //.background(colorSelect)
-                                ) {
-
-                                    Text(
-                                        text = item.pairList[i].text,
-                                        color = if (!item.pairList[i].flash) item.pairList[i].colorText
-                                        else if (update) item.pairList[i].colorText else Color(
-                                            0xFF090909
-                                        ),
-                                        modifier = Modifier.background(
-                                            if (!item.pairList[i].flash) item.pairList[i].colorBg
-                                            else if (update) item.pairList[i].colorBg else Color(
-                                                0xFF090909
-                                            )
-                                        ),
-                                        textDecoration = if (item.pairList[i].underline) TextDecoration.Underline else null,
-                                        fontWeight = if (item.pairList[i].bold) FontWeight.Bold else null,
-                                        fontStyle = if (item.pairList[i].italic) FontStyle.Italic else null,
-                                        fontSize = item.pairList[i].textSize,
-                                        fontFamily = FontFamily(
-                                            Font(R.font.jetbrains, FontWeight.Normal)
-                                        )
-                                    )
-                                }
-
-                            }
-
-
                         }
+
+
                     }
-
-
-
-
-
-
                 }
 
+
+            }
 
 
         }

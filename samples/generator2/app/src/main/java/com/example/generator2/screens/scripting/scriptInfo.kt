@@ -6,16 +6,14 @@ import com.example.generator2.element.Console2
 
 //Экран описания языка
 @Composable
-fun ScreenScriptInfo()
-{
+fun ScreenScriptInfo() {
     val console = Console2()
     Info0(console)
     console.Draw()
 }
 
 @Composable
-private fun Info0( console: Console2 )
-{
+private fun Info0(console: Console2) {
     console.println("Описание работы скриптов V1")
     console.println("╭─── Генератор ────────────────────╮")
     console.println("│ CH[1 2] [CR AM FM] [ON OFF]      │")
@@ -56,7 +54,6 @@ private fun Info0( console: Console2 )
     console.println("│ LOAD F1 2344.0  │ 2344.0 -> F1 │")
     console.println("│ LOAD F1 F2      │ F2     -> F1 │")
     console.println("╰─────────────────┴──────────────╯")
-
 
 
 }

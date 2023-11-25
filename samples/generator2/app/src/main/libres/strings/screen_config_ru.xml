@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   <string name="screenConfigSliderSensitivity">Чувствительность слайдера</string>
-   <string name="screenConfigSliderCarrierSensitivity">Чувствительность слайдера несущая (0.2)</string>
+    <string name="screenConfigSliderSensitivity">Чувствительность слайдера</string>
+    <string name="screenConfigSliderCarrierSensitivity">Чувствительность слайдера несущая (0.2)
+    </string>
 </resources>

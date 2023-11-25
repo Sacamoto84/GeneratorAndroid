@@ -107,9 +107,9 @@ object UIspinner {
                             .width(72.dp)
                             .height(32.dp)
 
-                            //.width(104.dp)
-                            //.height(48.dp)
-                            //.padding(start = 4.dp, end = 4.dp) //128 64
+                        //.width(104.dp)
+                        //.height(48.dp)
+                        //.padding(start = 4.dp, end = 4.dp) //128 64
                     )
                 }
 
@@ -133,23 +133,27 @@ object UIspinner {
 
                     itemlist.forEach {
                         DropdownMenuItem(
-                            modifier = Modifier.padding(2.dp)
+                            modifier = Modifier
+                                .padding(2.dp)
                                 .background(Color(0xFF454954))
                                 .width(340.dp)
-                                .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
-                            ,
+                                .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp)),
                             onClick = {
                                 currentValue = it.name
                                 expanded.value = false
                                 if (CH == "CH0") {
                                     when (Mod) {
-                                        "CR" -> gen.liveData.ch1_Carrier_Filename.value = currentValue
+                                        "CR" -> gen.liveData.ch1_Carrier_Filename.value =
+                                            currentValue
+
                                         "AM" -> gen.liveData.ch1_AM_Filename.value = currentValue
                                         "FM" -> gen.liveData.ch1_FM_Filename.value = currentValue
                                     }
                                 } else {
                                     when (Mod) {
-                                        "CR" -> gen.liveData.ch2_Carrier_Filename.value = currentValue
+                                        "CR" -> gen.liveData.ch2_Carrier_Filename.value =
+                                            currentValue
+
                                         "AM" -> gen.liveData.ch2_AM_Filename.value = currentValue
                                         "FM" -> gen.liveData.ch2_FM_Filename.value = currentValue
 

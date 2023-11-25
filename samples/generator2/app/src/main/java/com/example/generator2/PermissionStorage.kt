@@ -19,9 +19,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
-
-
-
 /*
 
    PermissionStorage.hasPermissions(context) - проверка что есть пермишен</strong>
@@ -83,7 +80,10 @@ object PermissionStorage {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             Environment.isExternalStorageManager() //Проверка есть ли разрешение? >=A11
         } else {
-            (ContextCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+            (ContextCompat.checkSelfPermission(
+                context!!,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED)
         }
     }
 

@@ -1,633 +1,615 @@
 {
-	"archive" : {},
-	"artifacts" : 
-	[
-		{
-			"path" : "oboe-bin/liboboe.a"
-		}
-	],
-	"backtrace" : 1,
-	"backtraceGraph" : 
-	{
-		"commands" : 
-		[
-			"add_library",
-			"install",
-			"target_compile_options",
-			"target_compile_definitions",
-			"target_include_directories"
-		],
-		"files" : 
-		[
-			"D:/Dropbox/Android/GeneratorAndroid/CMakeLists.txt"
-		],
-		"nodes" : 
-		[
-			{
-				"file" : 0
-			},
-			{
-				"command" : 0,
-				"file" : 0,
-				"line" : 71,
-				"parent" : 0
-			},
-			{
-				"command" : 1,
-				"file" : 0,
-				"line" : 98,
-				"parent" : 0
-			},
-			{
-				"command" : 2,
-				"file" : 0,
-				"line" : 81,
-				"parent" : 0
-			},
-			{
-				"command" : 3,
-				"file" : 0,
-				"line" : 93,
-				"parent" : 0
-			},
-			{
-				"command" : 4,
-				"file" : 0,
-				"line" : 74,
-				"parent" : 0
-			}
-		]
-	},
-	"compileGroups" : 
-	[
-		{
-			"compileCommandFragments" : 
-			[
-				{
-					"fragment" : "-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC"
-				},
-				{
-					"backtrace" : 3,
-					"fragment" : "-std=c++17"
-				},
-				{
-					"backtrace" : 3,
-					"fragment" : "-Wall"
-				},
-				{
-					"backtrace" : 3,
-					"fragment" : "-Wextra-semi"
-				},
-				{
-					"backtrace" : 3,
-					"fragment" : "-Wshadow"
-				},
-				{
-					"backtrace" : 3,
-					"fragment" : "-Wshadow-field"
-				},
-				{
-					"backtrace" : 3,
-					"fragment" : "-O3"
-				},
-				{
-					"backtrace" : 3,
-					"fragment" : "-Werror"
-				}
-			],
-			"defines" : 
-			[
-				{
-					"backtrace" : 4,
-					"define" : "OBOE_ENABLE_LOGGING=1"
-				}
-			],
-			"includes" : 
-			[
-				{
-					"backtrace" : 5,
-					"path" : "D:/Dropbox/Android/GeneratorAndroid/src"
-				},
-				{
-					"backtrace" : 5,
-					"path" : "D:/Dropbox/Android/GeneratorAndroid/include"
-				}
-			],
-			"language" : "CXX",
-			"sourceIndexes" : 
-			[
-				0,
-				1,
-				2,
-				3,
-				4,
-				5,
-				6,
-				7,
-				8,
-				9,
-				10,
-				11,
-				12,
-				13,
-				14,
-				15,
-				16,
-				17,
-				18,
-				19,
-				20,
-				21,
-				22,
-				23,
-				24,
-				25,
-				26,
-				27,
-				28,
-				29,
-				30,
-				31,
-				32,
-				33,
-				34,
-				35,
-				36,
-				37,
-				38,
-				39,
-				40,
-				41,
-				42,
-				43,
-				44,
-				45,
-				46,
-				47,
-				48,
-				49,
-				50,
-				51,
-				52,
-				53,
-				54,
-				55,
-				56,
-				57,
-				58
-			],
-			"sysroot" : 
-			{
-				"path" : "C:/Users/user/AppData/Local/Android/Sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/windows-x86_64/sysroot"
-			}
-		}
-	],
-	"id" : "oboe::@2eb8bc11657237233fcf",
-	"install" : 
-	{
-		"destinations" : 
-		[
-			{
-				"backtrace" : 2,
-				"path" : "lib/x86"
-			}
-		],
-		"prefix" : 
-		{
-			"path" : "C:/Program Files (x86)/Project"
-		}
-	},
-	"name" : "oboe",
-	"nameOnDisk" : "liboboe.a",
-	"paths" : 
-	{
-		"build" : "oboe-bin",
-		"source" : "D:/Dropbox/Android/GeneratorAndroid"
-	},
-	"sourceGroups" : 
-	[
-		{
-			"name" : "Source Files",
-			"sourceIndexes" : 
-			[
-				0,
-				1,
-				2,
-				3,
-				4,
-				5,
-				6,
-				7,
-				8,
-				9,
-				10,
-				11,
-				12,
-				13,
-				14,
-				15,
-				16,
-				17,
-				18,
-				19,
-				20,
-				21,
-				22,
-				23,
-				24,
-				25,
-				26,
-				27,
-				28,
-				29,
-				30,
-				31,
-				32,
-				33,
-				34,
-				35,
-				36,
-				37,
-				38,
-				39,
-				40,
-				41,
-				42,
-				43,
-				44,
-				45,
-				46,
-				47,
-				48,
-				49,
-				50,
-				51,
-				52,
-				53,
-				54,
-				55,
-				56,
-				57,
-				58
-			]
-		}
-	],
-	"sources" : 
-	[
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/aaudio/AAudioLoader.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/aaudio/AudioStreamAAudio.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/AudioSourceCaller.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/AudioStream.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/AudioStreamBuilder.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/DataConversionFlowGraph.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/FilterAudioStream.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/FixedBlockAdapter.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/FixedBlockReader.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/FixedBlockWriter.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/LatencyTuner.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/OboeExtensions.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/SourceFloatCaller.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/SourceI16Caller.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/SourceI24Caller.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/SourceI32Caller.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/Utilities.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/QuirksManager.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/fifo/FifoBuffer.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/fifo/FifoController.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/fifo/FifoControllerBase.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/fifo/FifoControllerIndirect.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/FlowGraphNode.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/ChannelCountConverter.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/ClipToRange.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/Limiter.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/ManyToMultiConverter.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/MonoBlend.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/MonoToMultiConverter.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/MultiToManyConverter.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/MultiToMonoConverter.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/RampLinear.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SampleRateConverter.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SinkFloat.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SinkI16.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SinkI24.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SinkI32.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SourceFloat.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SourceI16.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SourceI24.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SourceI32.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/resampler/IntegerRatio.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/resampler/LinearResampler.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/resampler/MultiChannelResampler.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/resampler/PolyphaseResampler.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/resampler/PolyphaseResamplerMono.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/resampler/PolyphaseResamplerStereo.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/resampler/SincResampler.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/resampler/SincResamplerStereo.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/opensles/AudioInputStreamOpenSLES.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/opensles/AudioOutputStreamOpenSLES.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/opensles/AudioStreamBuffered.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/opensles/AudioStreamOpenSLES.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/opensles/EngineOpenSLES.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/opensles/OpenSLESUtilities.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/opensles/OutputMixerOpenSLES.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/StabilizedCallback.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/Trace.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "D:/Dropbox/Android/GeneratorAndroid/src/common/Version.cpp",
-			"sourceGroupIndex" : 0
-		}
-	],
-	"type" : "STATIC_LIBRARY"
+  "archive": {},
+  "artifacts": [
+    {
+      "path": "oboe-bin/liboboe.a"
+    }
+  ],
+  "backtrace": 1,
+  "backtraceGraph": {
+    "commands": [
+      "add_library",
+      "install",
+      "target_compile_options",
+      "target_compile_definitions",
+      "target_include_directories"
+    ],
+    "files": [
+      "D:/Dropbox/Android/GeneratorAndroid/CMakeLists.txt"
+    ],
+    "nodes": [
+      {
+        "file": 0
+      },
+      {
+        "command": 0,
+        "file": 0,
+        "line": 71,
+        "parent": 0
+      },
+      {
+        "command": 1,
+        "file": 0,
+        "line": 98,
+        "parent": 0
+      },
+      {
+        "command": 2,
+        "file": 0,
+        "line": 81,
+        "parent": 0
+      },
+      {
+        "command": 3,
+        "file": 0,
+        "line": 93,
+        "parent": 0
+      },
+      {
+        "command": 4,
+        "file": 0,
+        "line": 74,
+        "parent": 0
+      }
+    ]
+  },
+  "compileGroups": [
+    {
+      "compileCommandFragments": [
+        {
+          "fragment": "-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC"
+        },
+        {
+          "backtrace": 3,
+          "fragment": "-std=c++17"
+        },
+        {
+          "backtrace": 3,
+          "fragment": "-Wall"
+        },
+        {
+          "backtrace": 3,
+          "fragment": "-Wextra-semi"
+        },
+        {
+          "backtrace": 3,
+          "fragment": "-Wshadow"
+        },
+        {
+          "backtrace": 3,
+          "fragment": "-Wshadow-field"
+        },
+        {
+          "backtrace": 3,
+          "fragment": "-O3"
+        },
+        {
+          "backtrace": 3,
+          "fragment": "-Werror"
+        }
+      ],
+      "defines": [
+        {
+          "backtrace": 4,
+          "define": "OBOE_ENABLE_LOGGING=1"
+        }
+      ],
+      "includes": [
+        {
+          "backtrace": 5,
+          "path": "D:/Dropbox/Android/GeneratorAndroid/src"
+        },
+        {
+          "backtrace": 5,
+          "path": "D:/Dropbox/Android/GeneratorAndroid/include"
+        }
+      ],
+      "language": "CXX",
+      "sourceIndexes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58
+      ],
+      "sysroot": {
+        "path": "C:/Users/user/AppData/Local/Android/Sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/windows-x86_64/sysroot"
+      }
+    }
+  ],
+  "id": "oboe::@2eb8bc11657237233fcf",
+  "install": {
+    "destinations": [
+      {
+        "backtrace": 2,
+        "path": "lib/x86"
+      }
+    ],
+    "prefix": {
+      "path": "C:/Program Files (x86)/Project"
+    }
+  },
+  "name": "oboe",
+  "nameOnDisk": "liboboe.a",
+  "paths": {
+    "build": "oboe-bin",
+    "source": "D:/Dropbox/Android/GeneratorAndroid"
+  },
+  "sourceGroups": [
+    {
+      "name": "Source Files",
+      "sourceIndexes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/aaudio/AAudioLoader.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/aaudio/AudioStreamAAudio.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/AudioSourceCaller.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/AudioStream.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/AudioStreamBuilder.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/DataConversionFlowGraph.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/FilterAudioStream.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/FixedBlockAdapter.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/FixedBlockReader.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/FixedBlockWriter.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/LatencyTuner.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/OboeExtensions.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/SourceFloatCaller.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/SourceI16Caller.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/SourceI24Caller.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/SourceI32Caller.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/Utilities.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/QuirksManager.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/fifo/FifoBuffer.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/fifo/FifoController.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/fifo/FifoControllerBase.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/fifo/FifoControllerIndirect.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/FlowGraphNode.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/ChannelCountConverter.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/ClipToRange.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/Limiter.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/ManyToMultiConverter.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/MonoBlend.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/MonoToMultiConverter.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/MultiToManyConverter.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/MultiToMonoConverter.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/RampLinear.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SampleRateConverter.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SinkFloat.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SinkI16.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SinkI24.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SinkI32.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SourceFloat.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SourceI16.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SourceI24.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/SourceI32.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/resampler/IntegerRatio.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/resampler/LinearResampler.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/resampler/MultiChannelResampler.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/resampler/PolyphaseResampler.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/resampler/PolyphaseResamplerMono.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/resampler/PolyphaseResamplerStereo.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/resampler/SincResampler.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/flowgraph/resampler/SincResamplerStereo.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/opensles/AudioInputStreamOpenSLES.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/opensles/AudioOutputStreamOpenSLES.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/opensles/AudioStreamBuffered.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/opensles/AudioStreamOpenSLES.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/opensles/EngineOpenSLES.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/opensles/OpenSLESUtilities.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/opensles/OutputMixerOpenSLES.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/StabilizedCallback.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/Trace.cpp",
+      "sourceGroupIndex": 0
+    },
+    {
+      "backtrace": 1,
+      "compileGroupIndex": 0,
+      "path": "D:/Dropbox/Android/GeneratorAndroid/src/common/Version.cpp",
+      "sourceGroupIndex": 0
+    }
+  ],
+  "type": "STATIC_LIBRARY"
 }

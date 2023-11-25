@@ -21,14 +21,18 @@ fun ConfigVolume(vm: VMConfig) {
     Config_header("Громкость")
 
 
-    Row( modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween) {
+    Row(
+        modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
 
         Text(
             text = "Максимальная громкость левый канал 0..1", color = Color.LightGray,
             maxLines = 3,
             minLines = 1,
-            modifier = Modifier.weight(1f).padding(start = 8.dp)
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 8.dp)
         )
 
         val value0 = vm.gen.liveData.maxVolume0.collectAsState()
@@ -42,14 +46,18 @@ fun ConfigVolume(vm: VMConfig) {
             })
     }
 
-    Row( modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween) {
+    Row(
+        modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
 
         Text(
             text = "Максимальная громкость правый канал 0..1", color = Color.LightGray,
             maxLines = 3,
             minLines = 1,
-            modifier = Modifier.weight(1f).padding(start = 8.dp)
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 8.dp)
         )
 
         val value1 = vm.gen.liveData.maxVolume1.collectAsState()

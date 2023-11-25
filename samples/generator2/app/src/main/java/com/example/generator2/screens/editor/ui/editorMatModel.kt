@@ -34,16 +34,13 @@ class EditorMatModel {
         gainYYNormalize()
 
         signal.clear()
-        for (i in 0 ..editWight)
-        {
-            signal.add( editMax / 2)
+        for (i in 0..editWight) {
+            signal.add(editMax / 2)
         }
     }
 
     var stateEditMax = mutableStateOf(editMax)
-    var stateEditWight= mutableStateOf(editWight)
-
-
+    var stateEditWight = mutableStateOf(editWight)
 
 
     val refsresh = mutableStateOf(0)
@@ -55,9 +52,7 @@ class EditorMatModel {
         mutableStateOf(MotionEvent.Idle)  // This is our motion event we get from touch motion
 
 
-   //val signal: IntArray = IntArray(editWight + 1) { editMax / 2 }
-
-
+    //val signal: IntArray = IntArray(editWight + 1) { editMax / 2 }
 
 
     var sizeCanvas: Size = Size(1f, 1f)  //Размер канвы рисования самого редактора
@@ -74,8 +69,7 @@ class EditorMatModel {
         sizeCanvas.width / 2, sizeCanvas.height / 2
     )
 
-    fun reinit(_editMax : Int, _editWight : Int)
-    {
+    fun reinit(_editMax: Int, _editWight: Int) {
         editMax = _editMax
         editWight = _editWight
         gainXX.value = 1f
@@ -84,9 +78,8 @@ class EditorMatModel {
 
         signal.clear()
 
-        for (i in 0 ..editWight)
-        {
-            signal.add( editMax / 2)
+        for (i in 0..editWight) {
+            signal.add(editMax / 2)
         }
 
         stateEditMax.value = editMax
@@ -243,7 +236,8 @@ class EditorMatModel {
 
             val mapX: Int = map(x.toFloat(), 0f, size.width - 1, 0f, editWight.toFloat()).toInt()
 
-            val y = map(signal[mapX].toFloat(), 0f, editMax.toFloat(), 0f, size.height - 1).toFloat()
+            val y =
+                map(signal[mapX].toFloat(), 0f, editMax.toFloat(), 0f, size.height - 1).toFloat()
             points.add(Offset(x.toFloat(), y))
 
         }
@@ -252,31 +246,27 @@ class EditorMatModel {
     }
 
 
-
-
-    fun gainXXInc()
-    {
+    fun gainXXInc() {
         gainXX.value *= 2.0f
     }
-    fun gainXXDec()
-    {
+
+    fun gainXXDec() {
         gainXX.value /= 2.0f
     }
 
-    fun gainYYInc()
-    {
+    fun gainYYInc() {
         gainYY.value *= 2.0f
     }
-    fun gainYYDec()
-    {
+
+    fun gainYYDec() {
         gainYY.value /= 2.0f
     }
 
-    fun gainYYNormalize()
-    {
+    fun gainYYNormalize() {
         gainXX.value = 1f
-        gainYY.value = gainXX.value * editWight/editMax
+        gainYY.value = gainXX.value * editWight / editMax
     }
+
     /**
      * Создать точки из signal для отображения
      */
@@ -285,8 +275,8 @@ class EditorMatModel {
 
         println("------------------- createPointLoop")
 
-        val gainX =  1024/editWight * gainXX.value
-        val k = sizeCanvas.height/ sizeCanvas.width
+        val gainX = 1024 / editWight * gainXX.value
+        val k = sizeCanvas.height / sizeCanvas.width
 
         //val k2 = 1024/editMax
 

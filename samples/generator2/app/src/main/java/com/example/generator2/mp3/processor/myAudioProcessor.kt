@@ -19,7 +19,7 @@ val audioProcessorInputFormat = MutableStateFlow(
 )
 
 @androidx.media3.common.util.UnstableApi
-class myAudioProcessor(var isPlayingD : Boolean ) : AudioProcessor {
+class myAudioProcessor(var isPlayingD: Boolean) : AudioProcessor {
 
     private lateinit var inputAudioFormat: AudioProcessor.AudioFormat
     private var isActive: Boolean = false

@@ -99,7 +99,7 @@ class MainActivity : ComponentActivity() {
             //exitTransition  - управляет тем, что ExitTransition  запускается, когда initialState NavBackStackEntry исчезает с экрана.
             Generator2Theme {
                 Timber.i("..................................Generator2Theme.................................")
-                   Navigation()
+                Navigation()
             }
         }
     }

@@ -33,7 +33,8 @@ fun ScreenExplorerTopBar(vm: ScreenExplorerViewModel) {
 
         Text(
             modifier = Modifier
-                .fillMaxWidth().padding(top = 1.dp)
+                .fillMaxWidth()
+                .padding(top = 1.dp)
                 .border(1.dp, Color(0xFF313A42), RoundedCornerShape(4.dp))
                 .clip(RoundedCornerShape(4.dp))
                 .background(Color(0xFF1D2428))

@@ -95,12 +95,13 @@ class Console(driver: Int = 0) {
             Box(
                 Modifier
                     .fillMaxSize()
-                    .weight(1f))
+                    .weight(1f)
+            )
             {
 
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                       , state = lazyListState)
+                    modifier = Modifier.fillMaxSize(), state = lazyListState
+                )
                 {
 
                     recompose

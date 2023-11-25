@@ -22,7 +22,7 @@ import com.example.generator2.screens.editor.ui.model
 import com.example.generator2.theme.colorDarkBackground
 
 
-val comboboxLine = ComboBox(listOf("2","4","6","16", "32", "128", "256", "512"))
+val comboboxLine = ComboBox(listOf("2", "4", "6", "16", "32", "128", "256", "512"))
 val comboboxRow = ComboBox(listOf("4", "8", "16", "32", "64", "128", "256", "512"))
 
 @Composable
@@ -36,7 +36,10 @@ fun DialogNew(openDialog: MutableState<Boolean>) {
             ), shape = RoundedCornerShape(8.dp), backgroundColor = colorDarkBackground
         ) {
 
-            Column(Modifier.padding(16.dp).width(210.dp)) {
+            Column(
+                Modifier
+                    .padding(16.dp)
+                    .width(210.dp)) {
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
 

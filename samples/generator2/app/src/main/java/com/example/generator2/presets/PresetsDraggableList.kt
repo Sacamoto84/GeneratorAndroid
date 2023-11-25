@@ -39,11 +39,11 @@ fun PresetsDraggableList() {
     val state = rememberReorderableLazyListState(
 
         onMove = { from, to ->
-        data.value = data.value.toMutableList().apply {
-            add(to.index, removeAt(from.index))
-        }
+            data.value = data.value.toMutableList().apply {
+                add(to.index, removeAt(from.index))
+            }
 
-    })
+        })
 
     var rating: Float by remember { mutableFloatStateOf(3.2f) }
 
@@ -61,7 +61,8 @@ fun PresetsDraggableList() {
                 val elevation = animateDpAsState(if (isDragging) 16.dp else 0.dp, label = "")
 
                 Row(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .shadow(elevation.value)
                         .background(Color.Gray),
                     horizontalArrangement = Arrangement.SpaceEvenly

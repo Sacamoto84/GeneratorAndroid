@@ -47,7 +47,7 @@ private val Corner = 8.dp
 
 @Composable
 fun DialogPresetsRename(name: String) {
-    
+
     println("DialogDeleteRename name:$name")
 
     var value by remember { mutableStateOf("") }
@@ -56,9 +56,7 @@ fun DialogPresetsRename(name: String) {
 
     Dialog(onDismissRequest = { Presets.isOpenDialogRename.value = false }) {
         Card(
-            Modifier.width(220.dp)
-                
-            , elevation = 8.dp, border = BorderStroke(
+            Modifier.width(220.dp), elevation = 8.dp, border = BorderStroke(
                 1.dp, Color.Gray
             ), shape = RoundedCornerShape(Corner), backgroundColor = colorDarkBackground
         ) {
@@ -72,7 +70,10 @@ fun DialogPresetsRename(name: String) {
                         .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 16.dp)
                     //.clip(RoundedCornerShape(Corner)).background(Color.DarkGray)
                     ,
-                    textAlign = TextAlign.Center, fontSize = 16.sp, fontFamily = FontFamily(Font(R.font.jetbrains)), color = Color.LightGray
+                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.jetbrains)),
+                    color = Color.LightGray
                 )
 
                 OutlinedTextField(
@@ -82,16 +83,19 @@ fun DialogPresetsRename(name: String) {
                         .height(58.dp)
                         .padding(start = 16.dp, end = 16.dp, bottom = 0.dp),
                     colors = TextFieldDefaults.textFieldColors(
-                        textColor = Color.LightGray, leadingIconColor = Color.LightGray,
-                        backgroundColor = colorLightBackground, focusedIndicatorColor = Color.Transparent ),
+                        textColor = Color.LightGray,
+                        leadingIconColor = Color.LightGray,
+                        backgroundColor = colorLightBackground,
+                        focusedIndicatorColor = Color.Transparent
+                    ),
                     placeholder = { Text(text = "File Name", color = Color.Gray) },
                     singleLine = true,
                     shape = RoundedCornerShape(Corner),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
 
-                        val oldFile = File(AppPath().presets+"/${name}.txt")
-                        val newFile = File(AppPath().presets+"/${value}.txt")
+                        val oldFile = File(AppPath().presets + "/${name}.txt")
+                        val newFile = File(AppPath().presets + "/${value}.txt")
 
                         if (oldFile.renameTo(newFile)) {
                             println("Файл успешно переименован.")
@@ -113,7 +117,7 @@ fun DialogPresetsRename(name: String) {
                         fontSize = 18.sp, fontFamily = FontFamily(Font(R.font.jetbrains)),
                     ),
                 )
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
 
             }

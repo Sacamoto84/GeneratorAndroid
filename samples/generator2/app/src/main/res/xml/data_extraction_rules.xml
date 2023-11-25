@@ -1,15 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
    Для >11 версий
    Sample data extraction rules file; uncomment and customize as necessary.
    See https://developer.android.com/about/versions/12/backup-restore#xml-changes
    for details.
 -->
-<data-extraction-rules >
+<data-extraction-rules>
 
-    <cloud-backup disableIfNoEncryptionCapabilities="false" >
+    <cloud-backup disableIfNoEncryptionCapabilities="false">
 
-        <include domain="external" path="."/>
+        <include
+            domain="external"
+            path="." />
 
         <!--
         TODO: Use <include> and <exclude> to control what is backed up.

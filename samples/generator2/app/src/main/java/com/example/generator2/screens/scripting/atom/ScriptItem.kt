@@ -25,15 +25,21 @@ class ScriptItem {
         println("Draw  ${index()}")
 
         val x = convertStringToAnnotatedString({ str() }, { index() })
-        Text(x,
-            modifier = Modifier.fillMaxWidth().padding(top = 0.dp)
+        Text(
+            x,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 0.dp)
                 .background(if (select()) Color.Cyan else Color.Transparent),
             fontSize = 20.sp
         )
 
     }
 
-    private fun convertStringToAnnotatedString(str: () -> String, index: () -> Int): AnnotatedString {
+    private fun convertStringToAnnotatedString(
+        str: () -> String,
+        index: () -> Int
+    ): AnnotatedString {
         //lateinit var x : AnnotatedString
         var x = buildAnnotatedString {
             withStyle(style = SpanStyle(color = Color.Blue, background = Color.White)) {

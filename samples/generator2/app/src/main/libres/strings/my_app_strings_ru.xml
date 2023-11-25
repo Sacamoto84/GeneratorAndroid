@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   <string name="rusoturisto">Русотуристо!</string>
+    <string name="rusoturisto">Русотуристо!</string>
     <string name="simple_string">Привет!</string>
     <string name="string_with_arguments">Привет ${name}!</string>
     <plurals name="plural_string">
         <item quantity="one">чсчсчс</item>
         <item quantity="other">счсчс</item>
     </plurals>
-
 
 
     <string name="splashLoading">ЗАГРУЗКА</string>

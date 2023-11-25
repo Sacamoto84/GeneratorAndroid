@@ -31,8 +31,8 @@ fun initialization(context: Context, gen: Generator, utils: UtilsKT) {
         GlobalScope.launch(Dispatchers.IO) {
             Timber.i("Типа инициализация Start")
 
-           // val path = AppPath()
-           // path.mkDir()
+            // val path = AppPath()
+            // path.mkDir()
 
 //            val patchCarrier = path.carrier
 //            val patchMod = path.mod

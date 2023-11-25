@@ -54,16 +54,20 @@ import libs.modifier.noRippleClickable
 @Composable
 fun CardFM(str: String = "CH0", gen: Generator) {
 
-    val fmEN: State<Boolean?> = if (str == "CH0") gen.liveData.ch1_FM_EN.collectAsState() else gen.liveData.ch2_FM_EN.collectAsState()
-    val fmFr: State<Float?> = if (str == "CH0") gen.liveData.ch1_FM_Fr.collectAsState() else gen.liveData.ch2_FM_Fr.collectAsState()
+    val fmEN: State<Boolean?> =
+        if (str == "CH0") gen.liveData.ch1_FM_EN.collectAsState() else gen.liveData.ch2_FM_EN.collectAsState()
+    val fmFr: State<Float?> =
+        if (str == "CH0") gen.liveData.ch1_FM_Fr.collectAsState() else gen.liveData.ch2_FM_Fr.collectAsState()
 
     Column()
     {
 
-        Box(modifier = Modifier
-            .background(Color.DarkGray)
-            .height(1.dp)
-            .fillMaxWidth())
+        Box(
+            modifier = Modifier
+                .background(Color.DarkGray)
+                .height(1.dp)
+                .fillMaxWidth()
+        )
 
         Row(
             //Modifier.height(48.dp)
@@ -186,10 +190,12 @@ fun CardFM(str: String = "CH0", gen: Generator) {
 /////////////////////////
 
         //Вторая строка
-        Box(modifier = Modifier
-            .background(Color.Transparent)
-            .height(1.dp)
-            .fillMaxWidth())
+        Box(
+            modifier = Modifier
+                .background(Color.Transparent)
+                .height(1.dp)
+                .fillMaxWidth()
+        )
         SecondLine(str, gen = gen)
 
     }
@@ -238,7 +244,10 @@ private fun SecondLine(str: String = "CH0", gen: Generator) {
 
         }
 
-        if (fmSelectMode.value == 0) SecondLineMode0(str, gen = gen) else SecondLineMode1(str, gen = gen)
+        if (fmSelectMode.value == 0) SecondLineMode0(str, gen = gen) else SecondLineMode1(
+            str,
+            gen = gen
+        )
 
     }
 }

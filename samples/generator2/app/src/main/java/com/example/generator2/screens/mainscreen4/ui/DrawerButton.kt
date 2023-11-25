@@ -19,7 +19,10 @@ fun DrawerButton(
     action: () -> Unit,
 ) {
     val surfaceModifier =
-        Modifier.then(modifier).padding(start = 8.dp, top = 8.dp, end = 8.dp).fillMaxWidth()
+        Modifier
+            .then(modifier)
+            .padding(start = 8.dp, top = 8.dp, end = 8.dp)
+            .fillMaxWidth()
 
     Surface(
         modifier = surfaceModifier,

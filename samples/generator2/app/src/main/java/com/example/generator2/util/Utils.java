@@ -57,19 +57,19 @@ public class Utils {
     public static Context ContextMainActivity;
 
     public static String patchDocument = "";
-    public static String patchCarrier  = "";
-    public static String patchMod      = "";
+    public static String patchCarrier = "";
+    public static String patchMod = "";
 
     private static final Integer[] CHANNEL_COUNT_OPTIONS = {1, 2, 3, 4, 5, 6, 7, 8};
     private static final int REQUEST_SINGLE_PERMISSION = 102;
 
     public static String[] PERMISSIONS = {
-            READ_CALENDAR, WRITE_CALENDAR, READ_CALL_LOG, WRITE_CALL_LOG, PROCESS_OUTGOING_CALLS, CAMERA, READ_CONTACTS,            WRITE_CONTACTS,
-            GET_ACCOUNTS, ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION, RECORD_AUDIO, READ_PHONE_STATE,  READ_PHONE_NUMBERS, CALL_PHONE, ANSWER_PHONE_CALLS, ADD_VOICEMAIL, USE_SIP, BODY_SENSORS, SEND_SMS, RECEIVE_SMS, READ_SMS, RECEIVE_WAP_PUSH, RECEIVE_MMS, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE
+            READ_CALENDAR, WRITE_CALENDAR, READ_CALL_LOG, WRITE_CALL_LOG, PROCESS_OUTGOING_CALLS, CAMERA, READ_CONTACTS, WRITE_CONTACTS,
+            GET_ACCOUNTS, ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION, RECORD_AUDIO, READ_PHONE_STATE, READ_PHONE_NUMBERS, CALL_PHONE, ANSWER_PHONE_CALLS, ADD_VOICEMAIL, USE_SIP, BODY_SENSORS, SEND_SMS, RECEIVE_SMS, READ_SMS, RECEIVE_WAP_PUSH, RECEIVE_MMS, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE
     };
 
     public static boolean checkPermissions(Activity c, int[] pchk) {
-        List<String> permissionlist =new ArrayList<>();
+        List<String> permissionlist = new ArrayList<>();
 
         for (int i : pchk) {
             if (ContextCompat.checkSelfPermission(c, PERMISSIONS[i - 1])
@@ -78,21 +78,20 @@ public class Utils {
             }
         }
 
-        if(!permissionlist.isEmpty()) {
-            ActivityCompat.requestPermissions(c,permissionlist.toArray(new String[permissionlist.size()]), 101);
+        if (!permissionlist.isEmpty()) {
+            ActivityCompat.requestPermissions(c, permissionlist.toArray(new String[permissionlist.size()]), 101);
             return false;
         }
         return true;
     }
 
     /**
-     *  Получить список файлов по пути
+     * Получить список файлов по пути
      *
      * @return Список String[] файлов в папке
      */
-    public static String[] listFileInDir(String path)
-    {
-        Log.d("Utils", "listFileInDir("+ path +")");
+    public static String[] listFileInDir(String path) {
+        Log.d("Utils", "listFileInDir(" + path + ")");
         Storage storage = new Storage(ContextMainActivity);
         List<File> files = storage.getFiles(path);
         String[] strFiles = new String[files.size()];
@@ -106,36 +105,33 @@ public class Utils {
     }
 
     /**
-     *  Получить список файлов в папке Carrier
+     * Получить список файлов в папке Carrier
      *
      * @return Список String[] файлов в папке
      */
-    public static String[] listFileInCarrier()
-    {
+    public static String[] listFileInCarrier() {
         Timber.tag("Utils").d("listFileInCarrier()");
-        String path = patchCarrier ;
+        String path = patchCarrier;
         return listFileInDir(path);
     }
 
     /**
-     *  Получить список файлов в папке Mod
+     * Получить список файлов в папке Mod
      *
      * @return Список String[] файлов в папке
      */
-    public static String[] listFileInMod()
-    {
+    public static String[] listFileInMod() {
         Timber.tag("Utils").d("listFileInMod()");
-        String path = patchMod ;
+        String path = patchMod;
         return listFileInDir(path);
     }
 
     /**
-     *  Чтение файла и возврат массива байтов
+     * Чтение файла и возврат массива байтов
      *
      * @return Массив byte[]
      */
-    public static byte[] readFileMod2048byte (String path)
-    {
+    public static byte[] readFileMod2048byte(String path) {
         File file = new File(path);
         long len = file.length();
         byte[] fileData = new byte[(int) len];
@@ -147,20 +143,17 @@ public class Utils {
 
             dis.readFully(fileData);
             dis.close();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             Timber.tag("readFileMod2048byte:").e("!IOException! : Error%s", e.getLocalizedMessage());
         }
 
         return fileData;
     }
 
-    public static Bitmap CreateBitmapModulation(String path )
-    {
-        Bitmap bitmap = Bitmap.createBitmap(1024, 512,  Bitmap.Config.RGB_565);
+    public static Bitmap CreateBitmapModulation(String path) {
+        Bitmap bitmap = Bitmap.createBitmap(1024, 512, Bitmap.Config.RGB_565);
 
-        byte [] array8 = readFileMod2048byte (path); //Получим массив 8 бит
+        byte[] array8 = readFileMod2048byte(path); //Получим массив 8 бит
 
         if (array8.length != 2048) {
             Timber.tag("!ERROR!").i("CreateBitmapModulation:readFileMod2048byte len:" + Integer.toString(array8.length));
@@ -172,16 +165,16 @@ public class Utils {
 
         int i = 0;
 
-        int [] arrayU8 = new int [2048];
+        int[] arrayU8 = new int[2048];
 
-        for(i = 0; i<2048 ; i++)
+        for (i = 0; i < 2048; i++)
             arrayU8[i] = Byte.toUnsignedInt(array8[i]);
 
-        int  [] arrayInt = new int[1024];
+        int[] arrayInt = new int[1024];
 
 
-        for( i = 0; i < 1024; i++){
-            arrayInt[i] =  ((arrayU8[i*2+1]) * 256) + (arrayU8[ i*2 ]);
+        for (i = 0; i < 1024; i++) {
+            arrayInt[i] = ((arrayU8[i * 2 + 1]) * 256) + (arrayU8[i * 2]);
         }
 
         Paint mPaint = new Paint();
@@ -192,18 +185,18 @@ public class Utils {
 
         mPaint.setStrokeWidth(4);
         mPaint.setColor(Color.DKGRAY);
-        c.drawLine(512,0, 512,512, mPaint);
+        c.drawLine(512, 0, 512, 512, mPaint);
 
         mPaint.setColor(Color.GREEN);
         mPaint.setStrokeWidth(10);
 
 
-        for(i=0;i<512;i++) {
-            c.drawLine(i,               32 +  (float) (4095 - arrayInt[i * 2]) /18 , i,           (float) (arrayInt[i * 2]) / 18 + 256, mPaint);
+        for (i = 0; i < 512; i++) {
+            c.drawLine(i, 32 + (float) (4095 - arrayInt[i * 2]) / 18, i, (float) (arrayInt[i * 2]) / 18 + 256, mPaint);
         }
 
-        for(i=0;i<512;i++) {
-            c.drawLine(i +512,    32 + (float) (4095 - arrayInt[i * 2]) /18 , i+512,   (float) (arrayInt[i * 2]) / 18 + 256, mPaint);
+        for (i = 0; i < 512; i++) {
+            c.drawLine(i + 512, 32 + (float) (4095 - arrayInt[i * 2]) / 18, i + 512, (float) (arrayInt[i * 2]) / 18 + 256, mPaint);
         }
 
         mPaint.setStrokeWidth(2);
@@ -214,16 +207,15 @@ public class Utils {
         pathLine.lineTo(0, 256);
         pathLine.lineTo(1023, 255);
         //c.drawPath(pathLine, mPaint);
-        c.drawLine(0,256, 1023,256, mPaint);
+        c.drawLine(0, 256, 1023, 256, mPaint);
 
         return bitmap;
     }
 
-    public static Bitmap CreateBitmapCarrier2( String path )
-    {
-        Bitmap bitmap = Bitmap.createBitmap(1024, 512,  Bitmap.Config.RGB_565);
+    public static Bitmap CreateBitmapCarrier2(String path) {
+        Bitmap bitmap = Bitmap.createBitmap(1024, 512, Bitmap.Config.RGB_565);
 
-        byte [] array8 = readFileMod2048byte (path); //Получим массив 8 бит
+        byte[] array8 = readFileMod2048byte(path); //Получим массив 8 бит
 
         Log.i("CreateBitmapModulation:A8 len:", Integer.toString(array8.length));
 
@@ -236,16 +228,16 @@ public class Utils {
 
         int i = 0;
 
-        int [] arrayU8 = new int [2048];
-        for(i = 0; i<2048 ; i++)
+        int[] arrayU8 = new int[2048];
+        for (i = 0; i < 2048; i++)
             arrayU8[i] = Byte.toUnsignedInt(array8[i]);
 
 
-        int  [] arrayInt = new int[1024];
+        int[] arrayInt = new int[1024];
 
 
-        for( i = 0; i < 1024; i++){
-            arrayInt[i] =  ((arrayU8[i*2+1]) * 256) + (arrayU8[ i*2 ]);
+        for (i = 0; i < 1024; i++) {
+            arrayInt[i] = ((arrayU8[i * 2 + 1]) * 256) + (arrayU8[i * 2]);
             //bitmap.setPixel(i, arrayInt[i]/8, Color.GREEN);
         }
 
@@ -260,13 +252,13 @@ public class Utils {
 
         mPaint.setStrokeWidth(4);
         mPaint.setColor(Color.DKGRAY);
-        c.drawLine(512,0, 512,512, mPaint);
+        c.drawLine(512, 0, 512, 512, mPaint);
 
 
         //mPaint.setColor(Color.BLUE);
         mPaint.setColor(Color.TRANSPARENT);
         mPaint.setStrokeWidth(10);
-        c.drawLine(0,256,1023,256, mPaint);
+        c.drawLine(0, 256, 1023, 256, mPaint);
 
 
         Path mPath = new Path();
@@ -275,20 +267,19 @@ public class Utils {
         mPath.reset();
 
 
-        mPath.moveTo(0,  32 + (4096 - arrayInt[0])/9);
-        for(i=1;i<512;i++)
-            mPath.lineTo(i, 32 + (4096 - arrayInt[i*2])/9) ;
+        mPath.moveTo(0, 32 + (4096 - arrayInt[0]) / 9);
+        for (i = 1; i < 512; i++)
+            mPath.lineTo(i, 32 + (4096 - arrayInt[i * 2]) / 9);
 
         //mPath.moveTo(512,  32 + (4096 - arrayInt[0])/9);
-        for(i=0;i<512;i++)
-            mPath.lineTo(i+512, 32 + (4096 - arrayInt[i*2])/9) ;
+        for (i = 0; i < 512; i++)
+            mPath.lineTo(i + 512, 32 + (4096 - arrayInt[i * 2]) / 9);
 
 
         mPaint.setColor(Color.GREEN);
         mPaint.setStrokeWidth(10);
         mPaint.setStyle(Paint.Style.STROKE);
         c.drawPath(mPath, mPaint);
-
 
 
         // Выводим уменьшенную в два раза картинку
@@ -301,14 +292,12 @@ public class Utils {
         return bmHalf;
     }
 
-    public static float ConvertValueToP(int min, int step, double value)
-    {
-        return (float)(value - min)/step;
+    public static float ConvertValueToP(int min, int step, double value) {
+        return (float) (value - min) / step;
     }
 
     //Конвертируем частоту в позицию
-    public static int ConvertAM_FM_FloatValueToP(double value)
-    {
+    public static int ConvertAM_FM_FloatValueToP(double value) {
         if (value < 10.0)
             return (int) (value * 10.0);
         else
@@ -316,8 +305,7 @@ public class Utils {
     }
 
     //Конвертируем позицию в частоту
-    public static float ConvertAM_FM_FloatPToValue(int position)
-    {
+    public static float ConvertAM_FM_FloatPToValue(int position) {
         float res = 0;
 
         if (position < 100)

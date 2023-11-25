@@ -1,102 +1,86 @@
 {
-	"configurations" : 
-	[
-		{
-			"directories" : 
-			[
-				{
-					"build" : ".",
-					"childIndexes" : 
-					[
-						1
-					],
-					"hasInstallRule" : true,
-					"minimumCMakeVersion" : 
-					{
-						"string" : "3.18.1"
-					},
-					"projectIndex" : 0,
-					"source" : ".",
-					"targetIndexes" : 
-					[
-						0
-					]
-				},
-				{
-					"build" : "oboe-bin",
-					"hasInstallRule" : true,
-					"minimumCMakeVersion" : 
-					{
-						"string" : "3.4.1"
-					},
-					"parentIndex" : 0,
-					"projectIndex" : 1,
-					"source" : "D:/Dropbox/Android/GeneratorAndroid",
-					"targetIndexes" : 
-					[
-						1
-					]
-				}
-			],
-			"name" : "Debug",
-			"projects" : 
-			[
-				{
-					"childIndexes" : 
-					[
-						1
-					],
-					"directoryIndexes" : 
-					[
-						0
-					],
-					"name" : "Project",
-					"targetIndexes" : 
-					[
-						0
-					]
-				},
-				{
-					"directoryIndexes" : 
-					[
-						1
-					],
-					"name" : "oboe",
-					"parentIndex" : 0,
-					"targetIndexes" : 
-					[
-						1
-					]
-				}
-			],
-			"targets" : 
-			[
-				{
-					"directoryIndex" : 0,
-					"id" : "app::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-app-Debug-88aa334b015b4c4d18ac.json",
-					"name" : "app",
-					"projectIndex" : 0
-				},
-				{
-					"directoryIndex" : 1,
-					"id" : "oboe::@2eb8bc11657237233fcf",
-					"jsonFile" : "target-oboe-Debug-5529e9656fd7c1779fe4.json",
-					"name" : "oboe",
-					"projectIndex" : 1
-				}
-			]
-		}
-	],
-	"kind" : "codemodel",
-	"paths" : 
-	{
-		"build" : "D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/232g6p3e/x86",
-		"source" : "D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/src/main/cpp"
-	},
-	"version" : 
-	{
-		"major" : 2,
-		"minor" : 1
-	}
+  "configurations": [
+    {
+      "directories": [
+        {
+          "build": ".",
+          "childIndexes": [
+            1
+          ],
+          "hasInstallRule": true,
+          "minimumCMakeVersion": {
+            "string": "3.18.1"
+          },
+          "projectIndex": 0,
+          "source": ".",
+          "targetIndexes": [
+            0
+          ]
+        },
+        {
+          "build": "oboe-bin",
+          "hasInstallRule": true,
+          "minimumCMakeVersion": {
+            "string": "3.4.1"
+          },
+          "parentIndex": 0,
+          "projectIndex": 1,
+          "source": "D:/Dropbox/Android/GeneratorAndroid",
+          "targetIndexes": [
+            1
+          ]
+        }
+      ],
+      "name": "Debug",
+      "projects": [
+        {
+          "childIndexes": [
+            1
+          ],
+          "directoryIndexes": [
+            0
+          ],
+          "name": "Project",
+          "targetIndexes": [
+            0
+          ]
+        },
+        {
+          "directoryIndexes": [
+            1
+          ],
+          "name": "oboe",
+          "parentIndex": 0,
+          "targetIndexes": [
+            1
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "directoryIndex": 0,
+          "id": "app::@6890427a1f51a3e7e1df",
+          "jsonFile": "target-app-Debug-88aa334b015b4c4d18ac.json",
+          "name": "app",
+          "projectIndex": 0
+        },
+        {
+          "directoryIndex": 1,
+          "id": "oboe::@2eb8bc11657237233fcf",
+          "jsonFile": "target-oboe-Debug-5529e9656fd7c1779fe4.json",
+          "name": "oboe",
+          "projectIndex": 1
+        }
+      ]
+    }
+  ],
+  "kind": "codemodel",
+  "paths": {
+    "build": "D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/232g6p3e/x86",
+    "source": "D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/src/main/cpp"
+  },
+  "version": {
+    "major": 2,
+    "minor": 1
+  }
 }

@@ -23,7 +23,7 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 @androidx.media3.common.util.UnstableApi
-class PlayerMP3(val context: Context, scope : Scope) {
+class PlayerMP3(val context: Context, scope: Scope) {
 
     var player: ExoPlayer
 
@@ -122,8 +122,6 @@ class PlayerMP3(val context: Context, scope : Scope) {
                 }
 
             }
-
-
 
 
             //isPlaying — играет ли игрок.

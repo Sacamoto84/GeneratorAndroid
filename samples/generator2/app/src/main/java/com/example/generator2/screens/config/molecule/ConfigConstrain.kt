@@ -35,7 +35,9 @@ private fun EditConfig(
             text = text, color = Color.LightGray,
             maxLines = 3,
             minLines = 1,
-            modifier = Modifier.weight(1f).padding(start = 8.dp)
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 8.dp)
         )
 
         editConfig(

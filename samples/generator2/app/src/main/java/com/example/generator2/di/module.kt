@@ -25,13 +25,12 @@ object HomeActivityModule {
     @Singleton
     fun provideAudioMixerPump(
         gen: Generator,
-        exoplayer : PlayerMP3,
-        scope : Scope
+        exoplayer: PlayerMP3,
+        scope: Scope
     ): AudioMixerPump {
         println("..DI AudioMixerPump()")
         return AudioMixerPump(gen, exoplayer, scope)
     }
-
 
 
     @Provides
@@ -54,7 +53,7 @@ object HomeActivityModule {
     @Singleton
     fun providePlayerMP3(
         @ApplicationContext context: Context,
-        scope : Scope
+        scope: Scope
     ): PlayerMP3 {
         println("..DI PlayerMP3()")
         return PlayerMP3(context, scope)

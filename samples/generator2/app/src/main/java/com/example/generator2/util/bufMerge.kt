@@ -1,7 +1,6 @@
 package com.example.generator2.util
 
 
-
 fun bufMerge(
     array1: FloatArray,
     array2: FloatArray,

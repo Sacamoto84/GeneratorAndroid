@@ -130,8 +130,7 @@ fun Mainsreen4(
                 //slideInVertically() +
                 expandVertically(expandFrom = Alignment.Bottom),// + fadeIn(),
                 exit = //slideOutVertically(targetOffsetY = { fullHeight -> fullHeight })// +
-                 shrinkVertically() //+ fadeOut()
-                ,
+                shrinkVertically(), //+ fadeOut()
             )
             {
                 //Осциллограф

@@ -16,34 +16,41 @@ import androidx.compose.ui.unit.dp
 import com.example.generator2.mp3.PlayerMP3
 
 @Composable
-fun Mp3Library(exoplayer : PlayerMP3)
-{
-  Column(modifier = Modifier
-      .fillMaxWidth()
-      .height(200.dp)
-      .border(1.dp, Color.LightGray), verticalArrangement = Arrangement.SpaceBetween) {
-      Mp3LibraryList(Modifier.weight(1f))
-      Mp3LibraryControl()
-  }
+fun Mp3Library(exoplayer: PlayerMP3) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .border(1.dp, Color.LightGray), verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Mp3LibraryList(Modifier.weight(1f))
+        Mp3LibraryControl()
+    }
 
 }
 
 @Composable
-fun Mp3LibraryList(modifier : Modifier = Modifier)
-{
-   Column(modifier = Modifier.fillMaxWidth().fillMaxHeight().then(modifier).background(Color.Gray)) {
+fun Mp3LibraryList(modifier: Modifier = Modifier) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .then(modifier)
+            .background(Color.Gray)
+    ) {
 
-   }
+    }
 }
 
 @Composable
-fun Mp3LibraryControl()
-{
-   Row (modifier = Modifier
-       .padding(4.dp)
-       .fillMaxWidth()
-       .height(32.dp)
-       .border(1.dp, Color.Magenta)){
+fun Mp3LibraryControl() {
+    Row(
+        modifier = Modifier
+            .padding(4.dp)
+            .fillMaxWidth()
+            .height(32.dp)
+            .border(1.dp, Color.Magenta)
+    ) {
 
-   }
+    }
 }

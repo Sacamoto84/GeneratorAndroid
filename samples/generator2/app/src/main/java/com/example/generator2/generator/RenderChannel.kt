@@ -1,14 +1,14 @@
 package com.example.generator2.generator
 
-class RenderChannel(val liveData: DataLiveData){
+class RenderChannel(val liveData: DataLiveData) {
 
     private var mBuffer = FloatArray(0)
 
     var o: Float = 0f
 
-    var sampleRate : Int = 48000
+    var sampleRate: Int = 48000
 
-    fun renderChanel(CH: StructureCh, numFrames: Int, sampleRate : Int): FloatArray {
+    fun renderChanel(CH: StructureCh, numFrames: Int, sampleRate: Int): FloatArray {
 
         this.sampleRate = sampleRate
 

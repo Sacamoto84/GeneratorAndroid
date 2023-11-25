@@ -37,14 +37,14 @@ import timber.log.Timber
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MainscreenTextBoxAndDropdownMenu(
-        str: String,
-        modifier: Modifier = Modifier,
-        enable: Boolean = true,
-        items: List<String>,
-        value: Float,
-        onChange: (Float) -> Unit,
-        sensing: Float = LiveConstrain.sensetingSliderCr.floatValue * 2,
-        range: ClosedFloatingPointRange<Float>
+    str: String,
+    modifier: Modifier = Modifier,
+    enable: Boolean = true,
+    items: List<String>,
+    value: Float,
+    onChange: (Float) -> Unit,
+    sensing: Float = LiveConstrain.sensetingSliderCr.floatValue * 2,
+    range: ClosedFloatingPointRange<Float>
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableIntStateOf(0) }
@@ -64,31 +64,31 @@ fun MainscreenTextBoxAndDropdownMenu(
     {
 
         MainScreenTextBoxGuest(
-                str = str,
-                modifier = Modifier
-                        .padding(start = 8.dp)
-                        .height(48.dp)
-                        .fillMaxSize(),
-                value = value,
-                sensing = sensing,
-                range = range,
-                onValueChange = {
-                    if (enable)
-                        onChange(it)
-                },
-                fontSize = textStyleEditFontSize,
-                fontFamily = textStyleEditFontFamily,
-                color = if (enable) Color.LightGray else Color.DarkGray
+            str = str,
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .height(48.dp)
+                .fillMaxSize(),
+            value = value,
+            sensing = sensing,
+            range = range,
+            onValueChange = {
+                if (enable)
+                    onChange(it)
+            },
+            fontSize = textStyleEditFontSize,
+            fontFamily = textStyleEditFontFamily,
+            color = if (enable) Color.LightGray else Color.DarkGray
         )
 
         DropdownMenu(
-                offset = DpOffset(12.dp, 4.dp),
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier
-                        .wrapContentWidth()
-                        .background(colorLightBackground2)
-                        .border(1.dp, color = Color.DarkGray, shape = RoundedCornerShape(16.dp))
+            offset = DpOffset(12.dp, 4.dp),
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .wrapContentWidth()
+                .background(colorLightBackground2)
+                .border(1.dp, color = Color.DarkGray, shape = RoundedCornerShape(16.dp))
         ) {
 
             DropdownMenuItem(onClick = {
@@ -115,22 +115,19 @@ fun MainscreenTextBoxAndDropdownMenu(
 
 
 
-                items.forEachIndexed { index, s ->
-                    DropdownMenuItem(onClick = {
-                        selectedIndex = index
-                        expanded = false
+            items.forEachIndexed { index, s ->
+                DropdownMenuItem(onClick = {
+                    selectedIndex = index
+                    expanded = false
 
-                        if (enable)
-                            onChange(s.toFloat())
+                    if (enable)
+                        onChange(s.toFloat())
 
-                    })
-                    {
-                        Text(text = s, color = Color.White)
-                    }
+                })
+                {
+                    Text(text = s, color = Color.White)
                 }
-
-
-
+            }
 
 
         }

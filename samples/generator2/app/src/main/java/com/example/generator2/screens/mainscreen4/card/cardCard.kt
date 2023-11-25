@@ -14,7 +14,9 @@ import com.example.generator2.theme.colorLightBackground
 
 @Composable
 fun CardCard(str: String = "CH0", gen: Generator) {
-    Box(modifier = Modifier.fillMaxWidth().background(colorLightBackground))
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .background(colorLightBackground))
     {
         Column {
             CardCarrier(str, gen = gen)

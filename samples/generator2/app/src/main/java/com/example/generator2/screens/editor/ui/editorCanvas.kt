@@ -28,11 +28,13 @@ fun EditorCanvas() {
     // color and text are for debugging and observing state changes and position
     val gestureColor by remember { mutableStateOf(Color.Black) } //Цвет фона
 
-    val drawModifier = Modifier.padding(16.dp) //.shadow(1.dp)
+    val drawModifier = Modifier
+        .padding(16.dp) //.shadow(1.dp)
         //.fillMaxWidth()
         //.height(300.dp)
         //.clipToBounds()
-        .fillMaxSize().background(gestureColor)
+        .fillMaxSize()
+        .background(gestureColor)
         .pointerMotionEvents(onDown = { pointerInputChange: PointerInputChange ->
             model.currentPosition.value = pointerInputChange.position
             model.motionEvent.value = MotionEvent.Down //gestureColor = Color.Blue
@@ -56,7 +58,8 @@ fun EditorCanvas() {
 
     Box(
         modifier = Modifier //.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp)
-            .fillMaxWidth().aspectRatio(2f) //.clip(RoundedCornerShape(12.dp))
+            .fillMaxWidth()
+            .aspectRatio(2f) //.clip(RoundedCornerShape(12.dp))
             .background(Color.Black)
     ) {
 
@@ -103,7 +106,7 @@ fun EditorCanvas() {
                     //println(model.motionEvent)
 
                     when (model.state) {
-                        PaintingState.Show       -> {
+                        PaintingState.Show -> {
                             model.setPositionAndLast(
                                 Offset(
                                     model.currentPosition.value.x,
@@ -112,7 +115,7 @@ fun EditorCanvas() {
                             )
                         }
 
-                        PaintingState.PaintLine  -> {
+                        PaintingState.PaintLine -> {
                             model.setOnlyPosition(
                                 Offset(
                                     model.currentPosition.value.x,
@@ -120,6 +123,7 @@ fun EditorCanvas() {
                                 )
                             ) //println("..PaintLine")
                         }
+
                         PaintingState.PaintPoint -> {
                             model.setPositionAndLast(
                                 Offset(
@@ -131,10 +135,11 @@ fun EditorCanvas() {
                     }
                 }
 
-                MotionEvent.Up   -> { //path.lineTo(currentPosition.x, currentPosition.y)
+                MotionEvent.Up -> { //path.lineTo(currentPosition.x, currentPosition.y)
                     model.motionEvent.value = MotionEvent.Idle //println(model.motionEvent)
                 }
-                else             -> {}
+
+                else -> {}
             }
 
             //Центральная вертикальная

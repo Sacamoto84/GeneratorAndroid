@@ -14,7 +14,8 @@ var consoleLog = Console2()
 @Composable
 fun ConsoleLogDraw(modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier.padding(2.dp)
+        modifier = Modifier
+            .padding(2.dp)
             //.border(width = 1.dp, color = Color.White)
             .then(modifier)
     ) {

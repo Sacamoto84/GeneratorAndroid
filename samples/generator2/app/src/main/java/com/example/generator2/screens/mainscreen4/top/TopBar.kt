@@ -27,7 +27,7 @@ fun TopBarAudioSource(vm: VMMain4) {
         .border(1.dp, Color.Gray)
         .background(Color.Black)
 
-    Row (modifier = Modifier.fillMaxWidth()){
+    Row(modifier = Modifier.fillMaxWidth()) {
 
         Box(
             modifier = m
@@ -54,7 +54,9 @@ fun TopBarAudioSource(vm: VMMain4) {
         }
 
         Box(
-            modifier = m.weight(1f).clickable(onClick = { vm.scope.isUse.value = vm.scope.isUse.value.not() }),
+            modifier = m
+                .weight(1f)
+                .clickable(onClick = { vm.scope.isUse.value = vm.scope.isUse.value.not() }),
             contentAlignment = Alignment.Center
         ) {
             Text(

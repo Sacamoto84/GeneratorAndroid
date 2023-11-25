@@ -31,6 +31,7 @@ import com.example.generator2.MainRes
 import com.example.generator2.R
 import com.example.generator2.navController
 import com.example.generator2.screens.config.molecule.ConfigConstrain
+import com.example.generator2.screens.config.molecule.ConfigLanguage
 import com.example.generator2.screens.config.molecule.ConfigVolume
 import com.example.generator2.screens.config.vm.VMConfig
 import com.example.generator2.strings.MainResStrings
@@ -54,7 +55,7 @@ fun ScreenConfig(
 
     val focusManager = LocalFocusManager.current
 
-    Scaffold(backgroundColor = colorLightBackground, bottomBar = { BottomBar() } )
+    Scaffold(backgroundColor = colorLightBackground, bottomBar = { BottomBar() })
     {
 
         Column(
@@ -76,6 +77,8 @@ fun ScreenConfig(
             ConfigConstrain(vm)
             Divider()
             ConfigVolume(vm)
+            Divider()
+            ConfigLanguage()
             Divider()
             Spacer(modifier = Modifier.height(400.dp))
         }

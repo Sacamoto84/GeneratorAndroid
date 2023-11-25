@@ -29,25 +29,48 @@ import com.example.generator2.R
 import com.example.generator2.generator.Generator
 import com.example.generator2.theme.colorDarkBackground
 
-private val m : Modifier = Modifier.fillMaxHeight().aspectRatio(1.5f).clip(RoundedCornerShape(15.dp)).border(1.dp, Color.DarkGray, CircleShape)
-    .background(colorDarkBackground).offset(1.dp, 0.dp)
+private val m: Modifier = Modifier
+    .fillMaxHeight()
+    .aspectRatio(1.5f)
+    .clip(RoundedCornerShape(15.dp))
+    .border(1.dp, Color.DarkGray, CircleShape)
+    .background(colorDarkBackground)
+    .offset(1.dp, 0.dp)
 
 val fontSize = 20.sp
 
 @Composable
-fun LR(gen : Generator) {
-    Row( modifier = Modifier.height(30.dp).clip(RoundedCornerShape(15.dp)) ,verticalAlignment = Alignment.CenterVertically )
+fun LR(gen: Generator) {
+    Row(
+        modifier = Modifier
+            .height(30.dp)
+            .clip(RoundedCornerShape(15.dp)),
+        verticalAlignment = Alignment.CenterVertically
+    )
     {
         val mono = gen.liveData.mono.collectAsState()
         val shuffle = gen.liveData.shuffle.collectAsState()
         val enL = gen.liveData.enL.collectAsState()
         val enR = gen.liveData.enR.collectAsState()
 
-        val colorL = if (enL.value) { if (!shuffle.value) Color.White else { if (!mono.value) Color.Red else Color.White } } else Color.DarkGray
-        val colorR = if (enR.value) { if (!shuffle.value) Color.White else { if (!mono.value) Color.Red else Color.White } } else Color.DarkGray
+        val colorL = if (enL.value) {
+            if (!shuffle.value) Color.White else {
+                if (!mono.value) Color.Red else Color.White
+            }
+        } else Color.DarkGray
+        val colorR = if (enR.value) {
+            if (!shuffle.value) Color.White else {
+                if (!mono.value) Color.Red else Color.White
+            }
+        } else Color.DarkGray
 
-        Text(text = if (!mono.value) { if (!shuffle.value) "L" else "R" } else "L",
-            modifier = Modifier.then(m).clickable { gen.liveData.enL.value = !gen.liveData.enL.value },
+        Text(
+            text = if (!mono.value) {
+                if (!shuffle.value) "L" else "R"
+            } else "L",
+            modifier = Modifier
+                .then(m)
+                .clickable { gen.liveData.enL.value = !gen.liveData.enL.value },
             fontSize = fontSize,
             textAlign = TextAlign.Center, fontWeight = FontWeight.Bold,
             color = colorL, fontFamily = FontFamily(Font(R.font.jetbrains))
@@ -55,8 +78,13 @@ fun LR(gen : Generator) {
 
         Spacer(modifier = Modifier.width(4.dp))
 
-        Text(text =  if (!mono.value) { if (!shuffle.value) "R" else "L" } else "R",
-            modifier = Modifier.then(m).clickable { gen.liveData.enR.value = !gen.liveData.enR.value },
+        Text(
+            text = if (!mono.value) {
+                if (!shuffle.value) "R" else "L"
+            } else "R",
+            modifier = Modifier
+                .then(m)
+                .clickable { gen.liveData.enR.value = !gen.liveData.enR.value },
             fontSize = fontSize,
             textAlign = TextAlign.Center, fontWeight = FontWeight.Bold,
             color = colorR, fontFamily = FontFamily(Font(R.font.jetbrains))

@@ -18,23 +18,29 @@ import com.example.generator2.screens.editor.EditorMatModel
 @Composable
 fun EditorPreviewCarrier(model: EditorMatModel) {
     Box(
-        modifier = Modifier.padding(8.dp).fillMaxWidth().aspectRatio(4f).background(Color.Black)
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+            .aspectRatio(4f)
+            .background(Color.Black)
     ) {
 
 
         val points = remember { mutableListOf<Offset>() }
-        val dispose = remember {  mutableStateOf(true)}
+        val dispose = remember { mutableStateOf(true) }
 
-        Canvas(modifier = Modifier.fillMaxSize().clipToBounds()) {
+        Canvas(modifier = Modifier
+            .fillMaxSize()
+            .clipToBounds()) {
 
-            if(dispose.value) {
+            if (dispose.value) {
                 dispose.value = false
 
-                model.signal[model.signal.lastIndex] =  model.signal[model.signal.lastIndex - 1]
+                model.signal[model.signal.lastIndex] = model.signal[model.signal.lastIndex - 1]
 
                 val sizeW = size.width
                 points.clear()
-                for (x in 0 until size.width.toInt() / 2 ) {
+                for (x in 0 until size.width.toInt() / 2) {
                     val mapX: Int =
                         model.map(x.toFloat(), 0f, sizeW / 2 - 1, 0f, model.editWight.toFloat())
                             .toInt()
@@ -71,7 +77,7 @@ fun EditorPreviewCarrier(model: EditorMatModel) {
 
             model.refsresh.value
 
-            model.signal[model.signal.lastIndex] =  model.signal[model.signal.lastIndex - 1]
+            model.signal[model.signal.lastIndex] = model.signal[model.signal.lastIndex - 1]
 
             if (model.refsreshButton.value == 1) {
                 val sizeW = size.width
@@ -143,21 +149,25 @@ fun EditorPreviewCarrier(model: EditorMatModel) {
 fun EditorPreviewFM(model: EditorMatModel) {
 
     Box(
-        modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp).fillMaxWidth()
-            .aspectRatio(4f).background(Color.Black)
+        modifier = Modifier
+            .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
+            .fillMaxWidth()
+            .aspectRatio(4f)
+            .background(Color.Black)
     ) {
         val points = remember { mutableListOf<Offset>() }
 
-        val dispose = remember {  mutableStateOf(true)}
+        val dispose = remember { mutableStateOf(true) }
 
-        Canvas(modifier = Modifier.fillMaxSize().clipToBounds()) {
+        Canvas(modifier = Modifier
+            .fillMaxSize()
+            .clipToBounds()) {
 
-            if(dispose.value)
-            {
+            if (dispose.value) {
                 dispose.value = false
                 points.clear()
-                
-                model.signal[model.signal.lastIndex] =  model.signal[model.signal.lastIndex - 1]
+
+                model.signal[model.signal.lastIndex] = model.signal[model.signal.lastIndex - 1]
 
                 val sizeW = size.width
 
@@ -166,7 +176,11 @@ fun EditorPreviewFM(model: EditorMatModel) {
                         model.map(x.toFloat(), 0f, sizeW / 2 - 1, 0f, model.editWight.toFloat())
                             .toInt()
                     val y = model.map(
-                        model.signal[mapX].toFloat(), 0f, model.editMax.toFloat(), 0f, size.height - 1
+                        model.signal[mapX].toFloat(),
+                        0f,
+                        model.editMax.toFloat(),
+                        0f,
+                        size.height - 1
                     ).toFloat()
                     points.add(Offset(x.toFloat(), y))
 
@@ -176,7 +190,11 @@ fun EditorPreviewFM(model: EditorMatModel) {
                         model.map(x.toFloat(), sizeW / 2, sizeW - 1, 0f, model.editWight.toFloat())
                             .toInt()
                     val y = model.map(
-                        model.signal[mapX].toFloat(), 0f, model.editMax.toFloat(), 0f, size.height - 1
+                        model.signal[mapX].toFloat(),
+                        0f,
+                        model.editMax.toFloat(),
+                        0f,
+                        size.height - 1
                     ).toFloat()
                     points.add(Offset(x.toFloat(), y))
                 }
@@ -184,7 +202,7 @@ fun EditorPreviewFM(model: EditorMatModel) {
 
             model.refsresh.value
 
-            model.signal[model.signal.lastIndex] =  model.signal[model.signal.lastIndex - 1]
+            model.signal[model.signal.lastIndex] = model.signal[model.signal.lastIndex - 1]
 
             if (model.refsreshButton.value == 1) {
                 points.clear()
@@ -194,7 +212,11 @@ fun EditorPreviewFM(model: EditorMatModel) {
                         model.map(x.toFloat(), 0f, sizeW / 2 - 1, 0f, model.editWight.toFloat())
                             .toInt()
                     val y = model.map(
-                        model.signal[mapX].toFloat(), 0f, model.editMax.toFloat(), 0f, size.height - 1
+                        model.signal[mapX].toFloat(),
+                        0f,
+                        model.editMax.toFloat(),
+                        0f,
+                        size.height - 1
                     ).toFloat()
                     points.add(Offset(x.toFloat(), y))
 
@@ -204,7 +226,11 @@ fun EditorPreviewFM(model: EditorMatModel) {
                         model.map(x.toFloat(), sizeW / 2, sizeW - 1, 0f, model.editWight.toFloat())
                             .toInt()
                     val y = model.map(
-                        model.signal[mapX].toFloat(), 0f, model.editMax.toFloat(), 0f, size.height - 1
+                        model.signal[mapX].toFloat(),
+                        0f,
+                        model.editMax.toFloat(),
+                        0f,
+                        size.height - 1
                     ).toFloat()
                     points.add(Offset(x.toFloat(), y))
                 }
