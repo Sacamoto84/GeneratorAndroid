@@ -26,11 +26,13 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.R
 import com.example.generator2.navController
 import com.example.generator2.screens.config.molecule.ConfigConstrain
 import com.example.generator2.screens.config.molecule.ConfigLanguage
+import com.example.generator2.screens.config.molecule.ConfigUpdate
 import com.example.generator2.screens.config.molecule.ConfigVolume
 import com.example.generator2.screens.config.vm.VMConfig
 import com.example.generator2.theme.colorLightBackground
@@ -64,9 +66,11 @@ fun ScreenConfig(
         ) {
             vm.recompose
             Divider()
-            Config_header(Update.currentVersion)
+            //Config_header(Update.currentVersion)
+            ConfigUpdate()
             Divider()
-            Divider() ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ConfigLanguage(vm)
+            Divider()
             Divider()
             Divider()
             Divider()
@@ -74,7 +78,7 @@ fun ScreenConfig(
             Divider()
             ConfigVolume(vm)
             Divider()
-            ConfigLanguage(vm)
+
             Divider()
             Spacer(modifier = Modifier.height(400.dp))
         }
@@ -89,7 +93,8 @@ fun Config_header(str: String) {
         text = str,
         color = Color(0xFFFFC300),
         textAlign = TextAlign.Center,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        fontSize = 16.sp
     )
 }
 

@@ -34,7 +34,8 @@ private fun EditConfig(
     ) {
 
         Text(
-            text = text, color = Color.LightGray,
+            text = text,
+            color = Color.LightGray,
             maxLines = 3,
             minLines = 1,
             modifier = Modifier
@@ -56,10 +57,6 @@ private fun EditConfig(
 
 @Composable
 fun ConfigConstrain(vm: VMConfig) {
-
-    run {
-        vm.recompose
-    }
 
     Divider()
     Config_header(MainRes.string.screenConfigSliderSensitivity)

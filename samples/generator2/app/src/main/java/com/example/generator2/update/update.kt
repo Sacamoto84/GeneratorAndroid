@@ -31,10 +31,25 @@ object Update {
 
     var state = MutableStateFlow(UPDATESTATE.NONE)
 
+    /**
+     * Версия программы на сервере в виде строки "2.0.0.7"
+     */
     var externalVersion = "" //Версия программы на сервере
+
+    /**
+     * Текущая версия программы в виде строки "2.0.0.7"
+     */
     var currentVersion = ""  //Текущая версия программы
 
-    var url = ""
+
+
+
+
+
+
+
+
+    private var url = ""
     private var fil = AppPath().download + "/update.apk"
 
 //    private static final String RELEASE_API_URL = "https://api.github.com/repos/Dar9586/NClientV2/releases";

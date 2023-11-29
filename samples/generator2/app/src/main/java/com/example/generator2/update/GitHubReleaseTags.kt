@@ -9,7 +9,7 @@ import org.json.JSONArray
 //}
 
 /**
- * Получение списка бегов по нужному репозиторию
+ * Получение списка тегов по нужному репозиторию
  */
 
 fun gitHubReleaseTags(owner: String, repo: String): List<String> {

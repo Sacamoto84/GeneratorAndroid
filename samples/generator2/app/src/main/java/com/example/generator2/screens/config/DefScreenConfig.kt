@@ -37,7 +37,7 @@ object DefScreenConfig {
     /**
      * Высота эдиток
      */
-    val heightEdit = 22.dp
+    val heightEdit = 28.dp
 
     /**
      * Форма эдиток

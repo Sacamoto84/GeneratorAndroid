@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -84,6 +86,7 @@ fun Demo_ExposedDropdownMenuBox(vm: VMConfig) {
             .width(DefScreenConfig.widthEdit)
             .height(DefScreenConfig.heightEdit)
     ) {
+
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = {
@@ -93,10 +96,10 @@ fun Demo_ExposedDropdownMenuBox(vm: VMConfig) {
 
             Box(contentAlignment = Alignment.Center) {
 
-                BasicTextField(
-                    readOnly = true,
-                    value = selectedText,
-                    onValueChange = {},
+                BasicText(
+
+                    text = selectedText,
+
 
                     modifier = Modifier
                         .fillMaxWidth()
@@ -110,13 +113,16 @@ fun Demo_ExposedDropdownMenuBox(vm: VMConfig) {
                             color = Color(0xFF696B6B),
                             shape = DefScreenConfig.shapeEdit
                         )
-                        .menuAnchor(),
+                        .menuAnchor()
+                    ,
 
-                    textStyle = TextStyle(
-                        fontSize = 18.sp,
+                    style = TextStyle(
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.W600,
                         color = Color.White,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        //background = Color.Gray,
+                        baselineShift = BaselineShift(-0.1f)
                     ),
 
                     )
