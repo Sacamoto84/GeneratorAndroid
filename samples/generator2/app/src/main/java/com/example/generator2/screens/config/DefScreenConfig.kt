@@ -1,13 +1,16 @@
 package com.example.generator2.screens.config
 
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.generator2.R
 import com.siddroid.holi.colors.MaterialColor
+
 
 object DefScreenConfig {
 
@@ -25,6 +28,22 @@ object DefScreenConfig {
         letterSpacing = 0.4.sp,
         fontFamily = FontFamily(Font(R.font.jetbrains))
     )
+
+    /**
+     * Ширина эдиток
+     */
+    val widthEdit = 120.dp
+
+    /**
+     * Высота эдиток
+     */
+    val heightEdit = 22.dp
+
+    /**
+     * Форма эдиток
+     */
+    val shapeEdit = RoundedCornerShape(size = 8.dp)
+
 }
 
 

@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.example.generator2.MainRes
 import com.example.generator2.model.LiveConstrain
 import com.example.generator2.screens.config.Config_header
+import com.example.generator2.screens.config.DefScreenConfig
 import com.example.generator2.screens.config.atom.editConfig
 import com.example.generator2.screens.config.vm.VMConfig
 
@@ -42,7 +43,7 @@ private fun EditConfig(
         )
 
         editConfig(
-            Modifier.width(120.dp).height(22.dp), "", value = minCR, min = 0f, max = 10000f, toInt = toInt,
+            Modifier.width(DefScreenConfig.widthEdit).height(DefScreenConfig.heightEdit), "", value = minCR, min = 0f, max = 10000f, toInt = toInt,
             onDone = {
                 minCR.floatValue = it
                 vm.toastText("saved")
@@ -55,6 +56,10 @@ private fun EditConfig(
 
 @Composable
 fun ConfigConstrain(vm: VMConfig) {
+
+    run {
+        vm.recompose
+    }
 
     Divider()
     Config_header(MainRes.string.screenConfigSliderSensitivity)

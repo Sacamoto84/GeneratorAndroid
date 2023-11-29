@@ -7,14 +7,19 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
 import android.widget.Toast
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import com.example.generator2.R
 import com.example.generator2.generator.Generator
 import com.example.generator2.mmkv
+import com.example.generator2.noSQL.KEY_NOSQL_CONFIG2
+import com.example.generator2.noSQL.noSQLConfig2
 import com.yagmurerdogan.toasticlib.Toastic
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.github.skeptick.libres.LibresSettings
 import javax.inject.Inject
 
 @SuppressLint("StaticFieldLeak")
@@ -25,6 +30,7 @@ class VMConfig @Inject constructor(
     val gen: Generator
 ) : ViewModel() {
 
+    val recompose = mutableStateOf(0)
 
     //var LVolume by  mutableStateOf(0.55F)
     //var RVolume by  mutableStateOf(0.65F)
@@ -85,6 +91,41 @@ class VMConfig @Inject constructor(
             textColor = Color.WHITE,
             //customIconAnimation = androidx.appcompat.R.anim.abc_slide_out_bottom
         ).show()
+    }
+
+    /**
+     * Сохранения языка
+     * @param str Сохраняемый язык "ru" "Русский" "en" "English"
+     */
+    fun saveLanguage(str: String = "ru") {
+
+        val out = when (str) {
+            "Русский", "ru" -> "ru"
+            "English", "en" -> "en"
+            else ->
+                "ru"
+        }
+
+        //Читаем язык
+        LibresSettings.languageCode = out
+
+        //Сохранение в базу
+        noSQLConfig2.write(KEY_NOSQL_CONFIG2.LANGUAGE.value, out)
+
+    }
+
+    /**
+     * Узнать текущия язык
+     * @return "en" "ru"
+     */
+    fun readLanguage() = LibresSettings.languageCode
+
+
+    /**
+     * Рекомпозиция экрана
+     */
+    fun recompose(){
+        recompose.value++
     }
 
 }

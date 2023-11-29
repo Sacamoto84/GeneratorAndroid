@@ -26,6 +26,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.generator2.screens.config.DefScreenConfig
 
 //@Composable
 //public fun TextFieldDefaults.colorsEdit(
@@ -74,7 +75,7 @@ fun editConfig(
             .border(
                 width = 1.dp,
                 color = Color(0xFF696B6B),
-                shape = RoundedCornerShape(size = 16.dp)
+                shape = DefScreenConfig.shapeEdit
             ),
 
         keyboardOptions = KeyboardOptions(

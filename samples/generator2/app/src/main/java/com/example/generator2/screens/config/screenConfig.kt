@@ -27,18 +27,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.generator2.MainRes
 import com.example.generator2.R
 import com.example.generator2.navController
 import com.example.generator2.screens.config.molecule.ConfigConstrain
 import com.example.generator2.screens.config.molecule.ConfigLanguage
 import com.example.generator2.screens.config.molecule.ConfigVolume
 import com.example.generator2.screens.config.vm.VMConfig
-import com.example.generator2.strings.MainResStrings
 import com.example.generator2.theme.colorLightBackground
 import com.example.generator2.update.Update
-import io.github.skeptick.libres.LibresSettings
-import io.github.skeptick.libres.strings.getCurrentLanguageCode
 
 val modifierGreenButton = Modifier
     .padding(8.dp)
@@ -51,7 +47,7 @@ fun ScreenConfig(
     vm: VMConfig = hiltViewModel()
 ) {
 
-    LibresSettings.languageCode = "en"
+    vm.recompose.value
 
     val focusManager = LocalFocusManager.current
 
@@ -66,7 +62,7 @@ fun ScreenConfig(
                 .pointerInput(Unit)
                 { detectTapGestures(onTap = { focusManager.clearFocus() }) }
         ) {
-
+            vm.recompose
             Divider()
             Config_header(Update.currentVersion)
             Divider()
@@ -78,7 +74,7 @@ fun ScreenConfig(
             Divider()
             ConfigVolume(vm)
             Divider()
-            ConfigLanguage()
+            ConfigLanguage(vm)
             Divider()
             Spacer(modifier = Modifier.height(400.dp))
         }
