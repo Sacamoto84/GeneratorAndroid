@@ -3,6 +3,7 @@ package com.example.generator2.screens.config.molecule
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
@@ -41,7 +42,7 @@ private fun EditConfig(
         )
 
         editConfig(
-            Modifier.width(120.dp), "", value = minCR, min = 0f, max = 10000f, toInt = toInt,
+            Modifier.width(120.dp).height(22.dp), "", value = minCR, min = 0f, max = 10000f, toInt = toInt,
             onDone = {
                 minCR.floatValue = it
                 vm.toastText("saved")
