@@ -63,7 +63,6 @@ fun ConfigLanguage(vm: VMConfig) {
 }
 
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Demo_ExposedDropdownMenuBox(vm: VMConfig) {
@@ -74,12 +73,10 @@ fun Demo_ExposedDropdownMenuBox(vm: VMConfig) {
     val leng = vm.readLanguage()
 
 
-
     var selectedText by remember {
         if (leng == "ru") {
             mutableStateOf(coffeeDrinks[0])
-        }
-        else
+        } else
             mutableStateOf(coffeeDrinks[1])
     }
 
@@ -116,8 +113,7 @@ fun Demo_ExposedDropdownMenuBox(vm: VMConfig) {
                             color = Color(0xFF696B6B),
                             shape = DefScreenConfig.shapeEdit
                         )
-                        .menuAnchor()
-                    ,
+                        .menuAnchor(),
 
                     style =
 
@@ -128,9 +124,7 @@ fun Demo_ExposedDropdownMenuBox(vm: VMConfig) {
                         textAlign = TextAlign.Center,
                         //background = Color.Gray,
                         baselineShift = BaselineShift(-0.1f)
-                    )
-
-                    ,
+                    ),
 
                     )
 
@@ -157,12 +151,20 @@ fun Demo_ExposedDropdownMenuBox(vm: VMConfig) {
             ) {
                 coffeeDrinks.forEach { item ->
                     DropdownMenuItem(
-                        text = { Text(text = item) },
+                        text = {
+                            Text(
+                                text = item,
+                                style =
+                                TextStyle(
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.W600,
+                                )
+                            )
+                        },
                         onClick = {
                             selectedText = item
                             expanded = false
                             Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
-
                             vm.saveLanguage(item)
                             vm.recompose()
                         }

@@ -12,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.example.generator2.strings.MainResStrings
 import com.example.generator2.update.UPDATESTATE
 import com.example.generator2.update.Update
@@ -23,10 +24,10 @@ fun WidgetUpdate() {
 
     if (state == UPDATESTATE.DOWNLOADING)
 
-        Column {
+        Column(Modifier.padding(bottom = 8.dp)) {
 
             Text(
-                text = MainResStrings.downloading +" ${Update.currentVersion} -> ${Update.externalVersion}",
+                text = MainResStrings.downloading + " ${Update.currentVersion} -> ${Update.externalVersion}",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 color = Color.White

@@ -7,6 +7,6 @@
     <string name="autoUpdate">Automatic update</string>
     <string name="update">Update</string>
     <string name="languageSelection">Language selection</string>
-    <string name="downloading">downloading</string>
+    <string name="downloading">Downloading</string>
 
 </resources>

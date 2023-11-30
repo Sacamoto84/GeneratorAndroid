@@ -132,7 +132,7 @@ object Update {
                 Timber.i("e=$e ee=$ee")
 
                 //cc=2007 ee=2006
-                if (ee > cc)
+                if ((ee > cc) and (autoupdate.value))
                     state.value = UPDATESTATE.DOWNLOADING
 
                 //visibleDialogNew.value = true //Показ диалога обновления
