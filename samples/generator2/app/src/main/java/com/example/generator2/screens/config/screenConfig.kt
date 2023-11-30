@@ -67,7 +67,7 @@ fun ScreenConfig(
             vm.recompose
             Divider()
             //Config_header(Update.currentVersion)
-            ConfigUpdate()
+            ConfigUpdate(vm)
             Divider()
             ConfigLanguage(vm)
             Divider()

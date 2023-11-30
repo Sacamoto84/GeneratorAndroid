@@ -37,8 +37,10 @@ import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.generator2.MainRes
 import com.example.generator2.screens.config.DefScreenConfig
 import com.example.generator2.screens.config.vm.VMConfig
+import com.example.generator2.strings.MainResStrings
 
 
 @Composable
@@ -48,12 +50,13 @@ fun ConfigLanguage(vm: VMConfig) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "Выбор языка", color = Color.LightGray,
+            text = MainResStrings.languageSelection, color = Color.LightGray,
             maxLines = 3,
             minLines = 1,
             modifier = Modifier
                 .weight(1f)
-                .padding(start = 8.dp)
+                .padding(start = 8.dp),
+            style = DefScreenConfig.textStyle
         )
         Demo_ExposedDropdownMenuBox(vm)
     }
@@ -116,14 +119,18 @@ fun Demo_ExposedDropdownMenuBox(vm: VMConfig) {
                         .menuAnchor()
                     ,
 
-                    style = TextStyle(
+                    style =
+
+                    TextStyle(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.W600,
                         color = Color.White,
                         textAlign = TextAlign.Center,
                         //background = Color.Gray,
                         baselineShift = BaselineShift(-0.1f)
-                    ),
+                    )
+
+                    ,
 
                     )
 

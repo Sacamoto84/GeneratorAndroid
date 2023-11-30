@@ -1,7 +1,5 @@
 package com.example.generator2.screens.config.atom
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,10 +18,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.generator2.screens.config.DefScreenConfig
-import com.example.generator2.update.Update
 
 @Composable
-fun ConfigLineText(text : String = "", text2: String = ""){
+fun ConfigLineText(text: String = "", text2: String = "") {
 
     Row(
         modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
@@ -32,12 +29,13 @@ fun ConfigLineText(text : String = "", text2: String = ""){
 
         Text(
             text = text,
-            color = Color.LightGray,
+            color = DefScreenConfig.textColor,
             maxLines = 3,
             minLines = 1,
             modifier = Modifier
                 .weight(1f)
-                .padding(start = 8.dp)
+                .padding(start = 8.dp),
+            style = DefScreenConfig.textStyle
         )
 
         Text(
@@ -46,17 +44,7 @@ fun ConfigLineText(text : String = "", text2: String = ""){
                 .padding(end = 8.dp, top = 8.dp, bottom = 8.dp)
                 .width(DefScreenConfig.widthEdit)
                 .height(DefScreenConfig.heightEdit)
-                //.padding(end = 8.dp)
-                .background(
-                    color = Color(0xFF353838),
-                    shape = DefScreenConfig.shapeEdit
-                )
-                .border(
-                    width = 1.dp,
-                    color = Color(0xFF696B6B),
-                    shape = DefScreenConfig.shapeEdit
-                ),
-            style = TextStyle(
+            , style = TextStyle(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.W600,
                 color = Color.White,

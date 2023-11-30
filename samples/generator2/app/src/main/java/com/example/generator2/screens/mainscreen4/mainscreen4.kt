@@ -7,16 +7,10 @@ import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -43,14 +37,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.mp3.compose.MP3Control
-import com.example.generator2.mp3.compose.Mp3Library
 import com.example.generator2.presets.Presets
 import com.example.generator2.presets.ui.DialogPresetsNewFile
 import com.example.generator2.screens.mainscreen4.bottom.M4BottomAppBarComponent
 import com.example.generator2.screens.mainscreen4.card.CardCard
 import com.example.generator2.screens.mainscreen4.top.TopBarAudioSource
 import com.example.generator2.theme.colorDarkBackground
-import com.example.generator2.update.ui.WigetUpdate
+import com.example.generator2.update.ui.WidgetUpdate
 import timber.log.Timber
 
 @androidx.media3.common.util.UnstableApi
@@ -72,7 +65,7 @@ fun Mainsreen4(
 
         topBar = {
             Column {
-                WigetUpdate()
+                WidgetUpdate()
                 Text(
                     text = vm.gen.liveData.presetsName.collectAsState().value,
                     color = Color.LightGray,

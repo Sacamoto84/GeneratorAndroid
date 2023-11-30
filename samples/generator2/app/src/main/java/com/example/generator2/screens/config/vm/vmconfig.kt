@@ -16,6 +16,8 @@ import com.example.generator2.generator.Generator
 import com.example.generator2.mmkv
 import com.example.generator2.noSQL.KEY_NOSQL_CONFIG2
 import com.example.generator2.noSQL.noSQLConfig2
+import com.example.generator2.update.UPDATESTATE
+import com.example.generator2.update.Update
 import com.yagmurerdogan.toasticlib.Toastic
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -93,8 +95,9 @@ class VMConfig @Inject constructor(
         ).show()
     }
 
+///////////////////////////
     /**
-     * Сохранения языка
+     * ### Сохранения языка
      * @param str Сохраняемый язык "ru" "Русский" "en" "English"
      */
     fun saveLanguage(str: String = "ru") {
@@ -113,19 +116,23 @@ class VMConfig @Inject constructor(
         noSQLConfig2.write(KEY_NOSQL_CONFIG2.LANGUAGE.value, out)
 
     }
-
+///////////////////////////
     /**
-     * Узнать текущия язык
+     * ### Узнать текущия язык
      * @return "en" "ru"
      */
     fun readLanguage() = LibresSettings.languageCode
-
-
+///////////////////////////
     /**
-     * Рекомпозиция экрана
+     * ### Рекомпозиция экрана
      */
     fun recompose(){
         recompose.value++
     }
+///////////////////////////
+
+fun update(){
+    Update.state.value = UPDATESTATE.DOWNLOADING
+}
 
 }

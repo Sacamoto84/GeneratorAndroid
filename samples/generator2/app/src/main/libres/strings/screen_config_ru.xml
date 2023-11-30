@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="screenConfigSliderSensitivity">Чувствительность слайдера</string>
-    <string name="screenConfigSliderCarrierSensitivity">Чувствительность слайдера несущая (0.2)
-    </string>
+    <string name="screenConfigSliderCarrierSensitivity">Чувствительность слайдера несущая (0.2)</string>
+    <string name="currentVersion">Текущая версия</string>
+    <string name="externalVersion">Версия на сервере</string>
+    <string name="autoUpdate">Автообновление</string>
+    <string name="update">Обновить</string>
+    <string name="languageSelection">Выбор языка</string>
+    <string name="downloading">Скачивание</string>
+
 </resources>

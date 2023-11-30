@@ -6,6 +6,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.BaselineShift
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.generator2.R
@@ -28,6 +30,24 @@ object DefScreenConfig {
         letterSpacing = 0.4.sp,
         fontFamily = FontFamily(Font(R.font.jetbrains))
     )
+
+
+
+
+
+    val textColor = Color.LightGray
+
+    /**
+     * Стиль для просто текста
+     */
+    val textStyle = TextStyle(
+        fontSize = 16.sp,
+        fontWeight = FontWeight.W400,
+        color = Color.White,
+        textAlign = TextAlign.Left,
+        //baselineShift = BaselineShift(-0.1f)
+    )
+
 
     /**
      * Ширина эдиток

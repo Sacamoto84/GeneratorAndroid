@@ -2,6 +2,8 @@ package com.example.generator2.update
 
 import android.content.Context
 import com.example.generator2.AppPath
+import com.example.generator2.noSQL.KEY_NOSQL_CONFIG2
+import com.example.generator2.noSQL.noSQLConfig2
 import com.kdownloader.KDownloader
 import com.yandex.metrica.YandexMetrica
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -20,7 +22,7 @@ lateinit var kDownloader: KDownloader
 
 enum class UPDATESTATE {
     NONE,
-    DOWNLOADING,
+    DOWNLOADING, //Запуск скачивания
     DOWNLOADED,
 }
 
@@ -42,23 +44,32 @@ object Update {
     var currentVersion = ""  //Текущая версия программы
 
 
-
-
-
-
-
-
-
     private var url = ""
     private var fil = AppPath().download + "/update.apk"
 
 //    private static final String RELEASE_API_URL = "https://api.github.com/repos/Dar9586/NClientV2/releases";
 //    private static final String LATEST_RELEASE_URL = "https://github.com/Dar9586/NClientV2/releases/latest";
 
+    /**
+     * Автообновление
+     */
+    var autoupdate = MutableStateFlow( false)
+
+
+
+
+    //Сохранить автосохранение
+    fun autoupdate(onoff : Boolean = false){
+        autoupdate.value = onoff
+        noSQLConfig2.write(KEY_NOSQL_CONFIG2.UPDATEAUTO.value, onoff)
+    }
+
     @OptIn(DelicateCoroutinesApi::class)
     fun run(context: Context) {
 
         GlobalScope.launch(Dispatchers.IO) {
+
+            autoupdate.value = noSQLConfig2.read(KEY_NOSQL_CONFIG2.UPDATEAUTO.value, false)
 
             currentVersion = getVersionName(context) //"2.0.0.7"
 
@@ -123,6 +134,7 @@ object Update {
                 //cc=2007 ee=2006
                 if (ee > cc)
                     state.value = UPDATESTATE.DOWNLOADING
+
                 //visibleDialogNew.value = true //Показ диалога обновления
 
             } catch (e: Exception) {
@@ -135,11 +147,15 @@ object Update {
 
 
         GlobalScope.launch(Dispatchers.IO) {
+
             state.collect {
                 when (it) {
 
                     UPDATESTATE.DOWNLOADING -> {
                         //downloadFile(url, File(fil))
+
+                        if (url == "")
+                            return@collect
 
                         val request = kDownloader
                             .newRequestBuilder(url, AppPath().download, "update.apk")
@@ -166,7 +182,6 @@ object Update {
                     UPDATESTATE.DOWNLOADED -> {
                         installAPK(context, File(fil))
                     }
-
 
                     else -> {}
                 }

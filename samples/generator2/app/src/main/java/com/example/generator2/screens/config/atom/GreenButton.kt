@@ -31,7 +31,7 @@ fun Config_Green_button_refresh(
 }
 
 @Composable
-fun Config_Green_button(
+fun ConfigGreenButton(
     modifier: Modifier, onClick: () -> Unit, label: String = ""
 ) {
 

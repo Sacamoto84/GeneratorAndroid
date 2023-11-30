@@ -2,4 +2,11 @@
 <resources>
     <string name="screenConfigSliderSensitivity">Slider Sensitivity</string>
     <string name="screenConfigSliderCarrierSensitivity">Slider carrier sensitivity (0.2)</string>
+    <string name="currentVersion">Current version</string>
+    <string name="externalVersion">External version</string>
+    <string name="autoUpdate">Automatic update</string>
+    <string name="update">Update</string>
+    <string name="languageSelection">Language selection</string>
+    <string name="downloading">downloading</string>
+
 </resources>
