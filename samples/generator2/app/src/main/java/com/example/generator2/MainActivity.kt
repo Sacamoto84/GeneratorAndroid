@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.SideEffect
+import com.bugsnag.android.Bugsnag
 import com.example.generator2.audio.AudioMixerPump
 import com.example.generator2.generator.Generator
 import com.example.generator2.presets.presetsSaveFile
@@ -83,6 +84,10 @@ class MainActivity : ComponentActivity() {
         //exoplayer = PlayerMP3(applicationContext)
         //}
 
+        Bugsnag.notify(RuntimeException("Test error"))
+
+       //var a = 5
+        //a = a/0
 
         setContent {
 

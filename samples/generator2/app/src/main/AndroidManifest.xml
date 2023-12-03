@@ -31,7 +31,12 @@
     <uses-sdk tools:overrideLibrary="androidx.security" />
 
 
+
+
     <application
+
+
+
         android:largeHeap="true"
         android:name=".App"
         android:allowBackup="true"
@@ -74,6 +79,13 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
+
+        <meta-data
+            android:name="com.bugsnag.android.API_KEY"
+            android:value="e4bf50278fb1109c567e0ba0cd82cf61"/>
+
+
 
     </application>
 

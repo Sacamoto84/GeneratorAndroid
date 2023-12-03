@@ -24,6 +24,7 @@ import com.example.generator2.util.Utils
 import com.example.generator2.util.UtilsKT
 import com.example.generator2.util.findActivity
 import com.kdownloader.KDownloader
+import com.singhajit.sherlock.core.Sherlock
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
 import dagger.hilt.android.AndroidEntryPoint
@@ -62,6 +63,9 @@ class SplashScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+
+        //Sherlock.init(this) //Initializing Sherlock
+        //Sherlock.getInstance().getAllCrashes()
 
         Timber.plant(Timber.DebugTree())
 

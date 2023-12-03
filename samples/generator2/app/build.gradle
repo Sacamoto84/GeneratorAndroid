@@ -11,6 +11,11 @@ plugins {
 
     //id 'org.jetbrains.kotlin.plugin.serialization'
 
+
+
+// Apply the Bugsnag plugin
+    id  'com.bugsnag.android.gradle'
+
 }
 
 android {
@@ -369,7 +374,23 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:5.0.0-rc01'
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
+    //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
+
+    //https://github.com/ajitsing/Sherlock
+    debugImplementation('com.github.ajitsing:sherlock:1.0.4@aar') //{
+        //transitive = true
+    //}
+    releaseImplementation('com.github.ajitsing:sherlock-no-op:1.0.4@aar')
+
+
+
+    implementation "com.bugsnag:bugsnag-android:5.31.3"
+    implementation "com.bugsnag:bugsnag-android-performance:1.2.0"
+
+    //https://github.com/wasabeef/Takt
+    releaseImplementation 'jp.wasabeef:takt-no-op:2.1.1'
+    debugImplementation 'jp.wasabeef:takt:2.1.1'
+
 
 }
 
