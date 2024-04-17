@@ -7,17 +7,16 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
 import android.widget.Toast
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import com.example.generator2.R
+import com.example.generator2.features.update.UPDATESTATE
+import com.example.generator2.features.update.Update
 import com.example.generator2.generator.Generator
 import com.example.generator2.mmkv
 import com.example.generator2.noSQL.KEY_NOSQL_CONFIG2
 import com.example.generator2.noSQL.noSQLConfig2
-import com.example.generator2.update.UPDATESTATE
-import com.example.generator2.update.Update
 import com.yagmurerdogan.toasticlib.Toastic
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -126,13 +125,13 @@ class VMConfig @Inject constructor(
     /**
      * ### Рекомпозиция экрана
      */
-    fun recompose(){
+    fun recompose() {
         recompose.value++
     }
 ///////////////////////////
 
-fun update(){
-    Update.state.value = UPDATESTATE.DOWNLOADING
-}
+    fun update() {
+        Update.state.value = UPDATESTATE.DOWNLOADING
+    }
 
 }

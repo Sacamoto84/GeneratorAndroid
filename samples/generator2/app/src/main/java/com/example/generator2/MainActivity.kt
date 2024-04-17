@@ -58,15 +58,19 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var scope: Scope
 
+    @Inject
+    lateinit var appPath: AppPath
+
+
     override fun onPause() {
-        presetsSaveFile("default", AppPath().config, gen)
+        presetsSaveFile("default", appPath.config, gen)
         //R.drawable.add
         super.onPause()
         println("...................onPause")
         //exitProcess(0)
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
+
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,4 +1,4 @@
-package com.example.generator2.update
+package com.example.generator2.features.update
 
 import android.content.Context
 import android.content.pm.PackageManager

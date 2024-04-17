@@ -6,46 +6,45 @@ import cafe.adriel.satchel.encrypter.bypass.BypassSatchelEncrypter
 import cafe.adriel.satchel.ktx.getOrDefault
 import cafe.adriel.satchel.serializer.raw.RawSatchelSerializer
 import cafe.adriel.satchel.storer.file.FileSatchelStorer
-import com.example.generator2.AppPath
-import timber.log.Timber
 import java.io.File
 
-inline fun <reified T : Any> noSQLread(
-    nameDB: String,
-    key: String,
-    default: T,
-    path: String = AppPath().config
-): T {
-    val satchel =
-        Satchel.with(
-            storer = FileSatchelStorer(File(path, "${nameDB}.db")),
-            encrypter = BypassSatchelEncrypter,
-            serializer = RawSatchelSerializer
-        )
+//inline fun <reified T : Any> noSQLread(
+//    nameDB: String,
+//    key: String,
+//    default: T,
+//    path: String = AppPath().config
+//): T {
+//    val satchel =
+//        Satchel.with(
+//            storer = FileSatchelStorer(File(path, "${nameDB}.db")),
+//            encrypter = BypassSatchelEncrypter,
+//            serializer = RawSatchelSerializer
+//        )
+//
+//    val res: T = satchel.getOrDefault(key, default)
+//    return res
+//}
+//
+//
+//inline fun <reified T : Any> noSQLwrite(
+//    nameDB: String,
+//    key: String,
+//    value: T,
+//    path: String = AppPath().config
+//) {
+//    val satchel =
+//        Satchel.with(
+//            storer = FileSatchelStorer(File(path, "${nameDB}.db")),
+//            encrypter = BypassSatchelEncrypter,
+//            serializer = RawSatchelSerializer
+//        )
+//
+//    satchel[key] = value
+//
+//}
 
-    val res: T = satchel.getOrDefault(key, default)
-    return res
-}
-
-
-inline fun <reified T : Any> noSQLwrite(
-    nameDB: String,
-    key: String,
-    value: T,
-    path: String = AppPath().config
-) {
-    val satchel =
-        Satchel.with(
-            storer = FileSatchelStorer(File(path, "${nameDB}.db")),
-            encrypter = BypassSatchelEncrypter,
-            serializer = RawSatchelSerializer
-        )
-
-    satchel[key] = value
-
-}
-
-class NoSQL(val path: String = AppPath().config, val nameDB: String) {
+//= AppPath().config
+class NoSQL(val path: String, val nameDB: String) {
 
     val satchel: SatchelStorage = Satchel.with(
         storer = FileSatchelStorer(File(path, "${nameDB}.db")),

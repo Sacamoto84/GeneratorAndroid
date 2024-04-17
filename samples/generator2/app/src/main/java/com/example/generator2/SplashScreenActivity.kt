@@ -11,20 +11,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.util.UnstableApi
 import cafe.adriel.pufferdb.android.AndroidPufferDB
 import com.example.generator2.audio.AudioMixerPump
+import com.example.generator2.features.update.Update
+import com.example.generator2.features.update.kDownloader
 import com.example.generator2.generator.Generator
 import com.example.generator2.model.itemList
 import com.example.generator2.noSQL.KEY_NOSQL_CONFIG2
-import com.example.generator2.noSQL.noSQLConfig2
 import com.example.generator2.playlist.Playlist
 import com.example.generator2.presets.presetsInit
 import com.example.generator2.scope.Scope
-import com.example.generator2.update.Update
-import com.example.generator2.update.kDownloader
 import com.example.generator2.util.Utils
 import com.example.generator2.util.UtilsKT
 import com.example.generator2.util.findActivity
 import com.kdownloader.KDownloader
-import com.singhajit.sherlock.core.Sherlock
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,6 +56,15 @@ class SplashScreenActivity : AppCompatActivity() {
 
     @Inject
     lateinit var utils: UtilsKT
+
+    @Inject
+    lateinit var appPath: AppPath
+
+    @Inject
+    lateinit var global: Global
+
+    @Inject
+    lateinit var update: Update
 
     @kotlin.OptIn(DelicateCoroutinesApi::class)
     @OptIn(UnstableApi::class)
@@ -134,7 +141,7 @@ class SplashScreenActivity : AppCompatActivity() {
             //noSQLConfig2.write(KEY_NOSQL_CONFIG2.LANGUAGE.value, "ru")
 
             //Читаем язык
-            LibresSettings.languageCode = noSQLConfig2.read(KEY_NOSQL_CONFIG2.LANGUAGE.value, "ru")
+            LibresSettings.languageCode = global.noSQLConfig2.read(KEY_NOSQL_CONFIG2.LANGUAGE.value, "ru")
 
             val myTextView: TextView = findViewById(R.id.myTextView)
             myTextView.text = MainRes.string.splashLoading
@@ -152,8 +159,8 @@ class SplashScreenActivity : AppCompatActivity() {
             GlobalScope.launch(Dispatchers.IO) {
 
                 println("Типа инициализация Splash")
-                val path = AppPath()
-                path.mkDir()
+                val path = appPath
+                //path.mkDir()
 
                 val patchCarrier = path.carrier
                 val patchMod = path.mod
@@ -189,12 +196,13 @@ class SplashScreenActivity : AppCompatActivity() {
                 AndroidPufferDB.init(applicationContext)
                 presetsInit()
 
-                initialization(applicationContext, gen, utils)
+                initialization(applicationContext, gen, utils, appPath, global)
+
                 audioOut
                 audioMixerPump
                 scope
 
-                Update.run(applicationContext)
+                update.run()
 
                 GlobalScope.launch(Dispatchers.Main) {
                     val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)

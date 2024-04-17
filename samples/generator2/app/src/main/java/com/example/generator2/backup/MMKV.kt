@@ -10,12 +10,12 @@ import com.example.generator2.generator.Generator
 import com.example.generator2.model.LiveConstrain
 import java.io.File
 
-class MMKv {
+class MMKv(val appPath: AppPath) {
 
     fun readVolume(gen: Generator) {
 
         val satchel = Satchel.with(
-            storer = FileSatchelStorer(File(AppPath().config, "volume.txt")),
+            storer = FileSatchelStorer(File(appPath.config, "volume.txt")),
             encrypter = BypassSatchelEncrypter, serializer = RawSatchelSerializer
         )
 
@@ -32,7 +32,7 @@ class MMKv {
 
     fun saveVolume(gen: Generator) {
         val satchel = Satchel.with(
-            storer = FileSatchelStorer(File(AppPath().config, "volume.txt")),
+            storer = FileSatchelStorer(File(appPath.config, "volume.txt")),
             encrypter = BypassSatchelEncrypter, serializer = RawSatchelSerializer
         )
 
@@ -42,7 +42,7 @@ class MMKv {
 
     fun saveConstrain() {
         val satchel = Satchel.with(
-            storer = FileSatchelStorer(File(AppPath().config, "constrain.txt")),
+            storer = FileSatchelStorer(File(appPath.config, "constrain.txt")),
             encrypter = BypassSatchelEncrypter, serializer = RawSatchelSerializer
         )
 
@@ -53,7 +53,7 @@ class MMKv {
 
     fun readConstrain() {
         val satchel = Satchel.with(
-            storer = FileSatchelStorer(File(AppPath().config, "constrain.txt")),
+            storer = FileSatchelStorer(File(appPath.config, "constrain.txt")),
             encrypter = BypassSatchelEncrypter, serializer = RawSatchelSerializer
         )
 

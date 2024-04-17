@@ -16,7 +16,7 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.example.generator2.explorer.compose.ScreenExplorer
+import com.example.generator2.features.update.explorer.compose.ScreenExplorer
 import com.example.generator2.presets.ui.DialogPresets
 import com.example.generator2.screens.config.ScreenConfig
 import com.example.generator2.screens.editor.ScreenEditor

@@ -1,4 +1,4 @@
-package com.example.generator2.explorer.viewmodel
+package com.example.generator2.features.explorer.viewmodel
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.transformer.EditedMediaItem
 import com.example.generator2.AppPath
-import com.example.generator2.explorer.model.ExplorerItem
+import com.example.generator2.features.update.explorer.model.ExplorerItem
 import com.example.generator2.mp3.PlayerMP3
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -27,26 +27,41 @@ import javax.inject.Inject
 @HiltViewModel
 class ScreenExplorerViewModel @Inject constructor(
     @ApplicationContext val context: Context,
-    val exoplayer: PlayerMP3
+    val exoplayer: PlayerMP3,
+    val appPath: AppPath
 ) : ViewModel() {
 
+
     /**
-     * Текущая рабочая папка
+     *
+     * ## ▶ Текущая рабочая папка ◀
      */
-    val currentDir = MutableStateFlow(AppPath().music)
+    val currentDir = MutableStateFlow(appPath.music)
+
+
+
 
     var update by mutableIntStateOf(0)
 
+
     var listItems = mutableListOf<ExplorerItem>()
 
+    //-----------------------------------------------------------//
+    /**
+     * ## ⚡ Подняться выше по папке ⚡
+     */
     fun up() {
-
-        if (currentDir.value == AppPath().sdcard)
+        if (currentDir.value == appPath.sdcard)
             return
 
         val s = currentDir.value.substringBeforeLast('/')
         currentDir.value = s
     }
+
+
+
+
+
 
     @androidx.media3.common.util.UnstableApi
     fun play(s: String) {
@@ -121,6 +136,9 @@ class ScreenExplorerViewModel @Inject constructor(
 
     }
 
+    /**
+     *
+     */
     private fun tagInItemMp3(item: ExplorerItem) {
         try {
             if ((item.isDirectory) or (item.isFormat == "")) return
@@ -167,7 +185,7 @@ class ScreenExplorerViewModel @Inject constructor(
         }
     }
 
-    //    Аудио:
+//    Аудио:
 //
 //    MP3 (.mp3)
 //    WAV (.wav)

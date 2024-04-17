@@ -21,7 +21,7 @@ import java.io.IOException
 var isInitialized = false  //Признак того что произошла инициализация
 
 @OptIn(DelicateCoroutinesApi::class)
-fun initialization(context: Context, gen: Generator, utils: UtilsKT) {
+fun initialization(context: Context, gen: Generator, utils: UtilsKT, appPath: AppPath, global: Global) {
 
 //Инициализация
     if ((!isInitialized) && (PermissionStorage.hasPermissions(context))) {
@@ -64,9 +64,9 @@ fun initialization(context: Context, gen: Generator, utils: UtilsKT) {
 
             observe(utils, gen)
 
-            mmkv.readConstrain()
+            global.mmkv.readConstrain()
 
-            presetsToLiveData(presetsReadFile("default", path = AppPath().config), gen)
+            presetsToLiveData(presetsReadFile("default", path = appPath.config), gen)
 
             //mmkv.readVolume()
 

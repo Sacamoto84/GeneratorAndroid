@@ -1,4 +1,4 @@
-package com.example.generator2.update
+package com.example.generator2.features.update
 
 import android.content.ActivityNotFoundException
 import android.content.Context

@@ -1,9 +1,30 @@
 package com.example.generator2
 
+import android.app.Application
+import android.content.Context
 import android.os.Environment
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import java.io.File
+import javax.inject.Singleton
 
-enum class Folder(val value: String) {
+@Module
+@InstallIn(SingletonComponent::class)
+object AppPathModule {
+
+    @Provides
+    @Singleton
+    fun providePath(@ApplicationContext context: Context): AppPath {
+        println("..DI providePath()")
+        return AppPath(context)
+    }
+
+}
+
+private enum class Folder(val value: String) {
     CARRIER("Carrier"),
     MOD("Mod"),
     SCRIPT("Script"),
@@ -14,30 +35,50 @@ enum class Folder(val value: String) {
     PLAYLIST("Playlist"),
 }
 
-class AppPath {
+enum class EnvironmentStorage {
+    INTERNAL,
+    EXTERNAL,
+    EXTERNAL_STORAGE,
+}
+
+/**
+ * Предоставляет пути хранения файлов
+ */
+class AppPath(
+    context: Context,
+    val root: EnvironmentStorage = EnvironmentStorage.EXTERNAL_STORAGE
+) {
 
     private val appMain = "Gen3"
 
-    val sdcard = Environment.getExternalStorageDirectory().absolutePath.toString()
-    val main = Environment.getExternalStorageDirectory().absolutePath + "/" + appMain
-    val carrier =
-        Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.CARRIER.value}"
-    val mod =
-        Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.MOD.value}"
-    val script =
-        Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.SCRIPT.value}"
-    val config =
-        Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.CONFIG.value}"
-    val download =
-        Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.DOWNLOAD.value}"
-    val presets =
-        Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.PRESETS.value}"
-    val music =
-        Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.MUSIC.value}"
-    val playlist =
-        Environment.getExternalStorageDirectory().absolutePath + "/${appMain}/${Folder.PLAYLIST.value}"
+    private val envoriment = when (root) {
+        EnvironmentStorage.INTERNAL -> Environment.getDataDirectory() // /data
+        EnvironmentStorage.EXTERNAL -> (context as Application).getExternalFilesDir(null) // /storage/sdcard0/Android/data/package/files
+        EnvironmentStorage.EXTERNAL_STORAGE -> Environment.getExternalStorageDirectory() // /storage/sdcard0
+    }
 
-    fun mkDir() {
+    /**
+     * Путь до sdcard
+     */
+    val sdcard = Environment.getExternalStorageDirectory().absolutePath.toString()
+
+
+    val main = envoriment?.absolutePath + "/" + appMain
+
+    val carrier = envoriment?.absolutePath  + "/${appMain}/${Folder.CARRIER.value}"
+    val mod = envoriment?.absolutePath  + "/${appMain}/${Folder.MOD.value}"
+    val script = envoriment?.absolutePath + "/${appMain}/${Folder.SCRIPT.value}"
+    val config = envoriment?.absolutePath + "/${appMain}/${Folder.CONFIG.value}"
+    val download = envoriment?.absolutePath + "/${appMain}/${Folder.DOWNLOAD.value}"
+    val presets = envoriment?.absolutePath + "/${appMain}/${Folder.PRESETS.value}"
+    val music = envoriment?.absolutePath + "/${appMain}/${Folder.MUSIC.value}"
+    val playlist = envoriment?.absolutePath + "/${appMain}/${Folder.PLAYLIST.value}"
+
+
+    init {
+        println("---AppPath---")
+        println("sdcard: $sdcard")
+
         File(main).mkdirs()
         File(carrier).mkdirs()
         File(mod).mkdirs()

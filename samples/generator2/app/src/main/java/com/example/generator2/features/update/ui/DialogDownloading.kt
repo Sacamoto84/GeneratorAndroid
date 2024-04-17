@@ -1,4 +1,4 @@
-package com.example.generator2.update.ui
+package com.example.generator2.features.update.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.generator2.update.Update
+import com.example.generator2.features.update.Update
 
 //@Preview(device = "spec:width=411dp,height=891dp", apiLevel = 33)
 //@Composable

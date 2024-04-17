@@ -1,4 +1,4 @@
-package com.example.generator2.update.ui
+package com.example.generator2.features.update.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.generator2.R
-import com.example.generator2.update.Update
+import com.example.generator2.features.update.Update
 
 //@Composable
 //fun DialogNewVersion() {

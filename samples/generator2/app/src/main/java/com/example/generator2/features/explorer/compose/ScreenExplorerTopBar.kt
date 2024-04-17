@@ -1,4 +1,4 @@
-package com.example.generator2.explorer.compose
+package com.example.generator2.features.update.explorer.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,7 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.generator2.AppPath
 import com.example.generator2.R
-import com.example.generator2.explorer.viewmodel.ScreenExplorerViewModel
+import com.example.generator2.features.explorer.viewmodel.ScreenExplorerViewModel
 import com.example.generator2.navController
 
 
@@ -30,7 +30,7 @@ fun ScreenExplorerTopBar(vm: ScreenExplorerViewModel) {
 
     Column {
 
-        var s = vm.currentDir.collectAsState().value.substringAfter(AppPath().sdcard)
+        var s = vm.currentDir.collectAsState().value.substringAfter(vm.appPath.sdcard)
         if (s == "") s = "/"
 
         Text(
@@ -69,7 +69,7 @@ fun ScreenExplorerTopBar(vm: ScreenExplorerViewModel) {
                 )
             }
 
-            IconButton(onClick = { vm.currentDir.value = AppPath().music }) {
+            IconButton(onClick = { vm.currentDir.value = vm.appPath.music }) {
                 Icon(
                     painter = painterResource(R.drawable.player_home),
                     contentDescription = null,
@@ -77,7 +77,7 @@ fun ScreenExplorerTopBar(vm: ScreenExplorerViewModel) {
                 )
             }
 
-            IconButton(onClick = { vm.currentDir.value = AppPath().sdcard }) {
+            IconButton(onClick = { vm.currentDir.value = vm.appPath.sdcard }) {
                 Icon(
                     painter = painterResource(R.drawable.player_memory1),
                     contentDescription = null,

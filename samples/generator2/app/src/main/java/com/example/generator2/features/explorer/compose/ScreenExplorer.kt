@@ -1,4 +1,4 @@
-package com.example.generator2.explorer.compose
+package com.example.generator2.features.update.explorer.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.R
-import com.example.generator2.explorer.model.ExplorerItem
-import com.example.generator2.explorer.viewmodel.ScreenExplorerViewModel
+import com.example.generator2.features.update.explorer.model.ExplorerItem
+import com.example.generator2.features.explorer.viewmodel.ScreenExplorerViewModel
 
 @androidx.media3.common.util.UnstableApi
 @Composable

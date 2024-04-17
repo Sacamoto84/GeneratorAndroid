@@ -1,11 +1,12 @@
-package com.example.generator2.update
+package com.example.generator2.features.update
 
 import android.content.Context
 import com.example.generator2.AppPath
+import com.example.generator2.Global
 import com.example.generator2.noSQL.KEY_NOSQL_CONFIG2
-import com.example.generator2.noSQL.noSQLConfig2
 import com.kdownloader.KDownloader
 import com.yandex.metrica.YandexMetrica
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -17,6 +18,8 @@ import okhttp3.Request
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
+import javax.inject.Inject
+import javax.inject.Singleton
 
 lateinit var kDownloader: KDownloader
 
@@ -26,10 +29,15 @@ enum class UPDATESTATE {
     DOWNLOADED,
 }
 
-object Update {
+@Singleton
+class Update @Inject constructor(
+    val appPath: AppPath,
+    val global: Global,
+    @ApplicationContext val context: Context
+) {
 
-    private const val owner = "Sacamoto84"
-    private const val repo = "GeneratorAndroid"
+    private val owner = "Sacamoto84"
+    private val repo = "GeneratorAndroid"
 
     var state = MutableStateFlow(UPDATESTATE.NONE)
 
@@ -45,7 +53,7 @@ object Update {
 
 
     private var url = ""
-    private var fil = AppPath().download + "/update.apk"
+    private var fil = appPath.download + "/update.apk"
 
 //    private static final String RELEASE_API_URL = "https://api.github.com/repos/Dar9586/NClientV2/releases";
 //    private static final String LATEST_RELEASE_URL = "https://github.com/Dar9586/NClientV2/releases/latest";
@@ -61,15 +69,15 @@ object Update {
     //Сохранить автосохранение
     fun autoupdate(onoff : Boolean = false){
         autoupdate.value = onoff
-        noSQLConfig2.write(KEY_NOSQL_CONFIG2.UPDATEAUTO.value, onoff)
+        global.noSQLConfig2.write(KEY_NOSQL_CONFIG2.UPDATEAUTO.value, onoff)
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    fun run(context: Context) {
+    fun run() {
 
         GlobalScope.launch(Dispatchers.IO) {
 
-            autoupdate.value = noSQLConfig2.read(KEY_NOSQL_CONFIG2.UPDATEAUTO.value, false)
+            autoupdate.value = global.noSQLConfig2.read(KEY_NOSQL_CONFIG2.UPDATEAUTO.value, false)
 
             currentVersion = getVersionName(context) //"2.0.0.7"
 
@@ -97,7 +105,7 @@ object Update {
 
                 //https://github.com/Sacamoto84/GeneratorAndroid/releases/download/2.0.0.6/2.0.0.6.Release.apk
                 url =
-                    "https://github.com/${owner}/${repo}/releases/download/${externalVersion}/${files.first()}"
+                    "https://github.com/$owner/$repo/releases/download/$externalVersion/${files.first()}"
                 Timber.i(url)
 
             } catch (e: Exception) {
@@ -158,7 +166,7 @@ object Update {
                             return@collect
 
                         val request = kDownloader
-                            .newRequestBuilder(url, AppPath().download, "update.apk")
+                            .newRequestBuilder(url, appPath.download, "update.apk")
                             .tag("TAG")
                             .build()
 

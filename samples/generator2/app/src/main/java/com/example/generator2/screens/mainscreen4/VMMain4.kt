@@ -1,9 +1,12 @@
 package com.example.generator2.screens.mainscreen4
 
+import androidx.annotation.OptIn
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.util.UnstableApi
 import com.example.generator2.audio.AudioMixerPump
 import com.example.generator2.element.Console2
+import com.example.generator2.features.update.Update
 import com.example.generator2.generator.Generator
 import com.example.generator2.isInitialized
 import com.example.generator2.mp3.PlayerMP3
@@ -17,12 +20,13 @@ import javax.inject.Inject
 
 //@SuppressLint("StaticFieldLeak")
 @HiltViewModel
-class VMMain4 @Inject constructor(
+class VMMain4 @OptIn(UnstableApi::class) @Inject constructor(
     //@ApplicationContext contextActivity: Context,
     val gen: Generator,
     val exoplayer: PlayerMP3,
     val audioMixerPump: AudioMixerPump,
-    val scope: Scope
+    val scope: Scope,
+    val update: Update
 ) : ViewModel() {
 
     val consoleLog = Console2()

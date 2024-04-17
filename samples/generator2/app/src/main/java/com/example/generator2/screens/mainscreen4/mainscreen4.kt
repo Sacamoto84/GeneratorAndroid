@@ -43,7 +43,7 @@ import com.example.generator2.screens.mainscreen4.bottom.M4BottomAppBarComponent
 import com.example.generator2.screens.mainscreen4.card.CardCard
 import com.example.generator2.screens.mainscreen4.top.TopBarAudioSource
 import com.example.generator2.theme.colorDarkBackground
-import com.example.generator2.update.ui.WidgetUpdate
+import com.example.generator2.features.update.ui.WidgetUpdate
 import timber.log.Timber
 
 @androidx.media3.common.util.UnstableApi

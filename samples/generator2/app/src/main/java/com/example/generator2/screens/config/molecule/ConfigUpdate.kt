@@ -12,16 +12,16 @@ import com.example.generator2.screens.config.ConfigGreenButton
 import com.example.generator2.screens.config.atom.ConfigLineText
 import com.example.generator2.screens.config.atom.ConfigLineTextSwitch
 import com.example.generator2.screens.config.vm.VMConfig
-import com.example.generator2.update.Update
-import com.example.generator2.update.ui.WidgetUpdate
+import com.example.generator2.features.update.Update
+import com.example.generator2.features.update.ui.WidgetUpdate
 
 @Composable
 fun ConfigUpdate(vm: VMConfig) {
     Column {
 
         ConfigLineTextSwitch(MainRes.string.autoUpdate, Update.autoupdate.collectAsState().value,  { Update.autoupdate(it) } )
-        ConfigLineText(MainRes.string.currentVersion, Update.currentVersion)
-        ConfigLineText(MainRes.string.externalVersion, Update.externalVersion)
+        ConfigLineText(MainRes.string.currentVersion, update.currentVersion)
+        ConfigLineText(MainRes.string.externalVersion, update.externalVersion)
 
         ConfigGreenButton(
             Modifier
