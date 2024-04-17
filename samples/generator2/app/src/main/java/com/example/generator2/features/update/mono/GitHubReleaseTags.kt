@@ -1,4 +1,4 @@
-package com.example.generator2.features.update
+package com.example.generator2.features.update.mono
 
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -11,7 +11,6 @@ import org.json.JSONArray
 /**
  * Получение списка тегов по нужному репозиторию
  */
-
 fun gitHubReleaseTags(owner: String, repo: String): List<String> {
 
     val client = OkHttpClient()

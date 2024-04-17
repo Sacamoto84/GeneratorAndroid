@@ -10,7 +10,7 @@ import com.example.generator2.features.update.Update
 import com.example.generator2.generator.Generator
 import com.example.generator2.isInitialized
 import com.example.generator2.mp3.PlayerMP3
-import com.example.generator2.scope.Scope
+import com.example.generator2.features.scope.Scope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

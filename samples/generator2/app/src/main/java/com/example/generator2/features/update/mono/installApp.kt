@@ -1,11 +1,9 @@
-package com.example.generator2.features.update
+package com.example.generator2.features.update.mono
 
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import timber.log.Timber
@@ -36,13 +34,6 @@ fun installAPK(context: Context, f: File) {
     }
 }
 
-fun uriFromFile(context: Context?, file: File?): Uri? {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        FileProvider.getUriForFile(
-            context!!, context.packageName + ".provider",
-            file!!
-        )
-    } else {
-        Uri.fromFile(file)
-    }
+private fun uriFromFile(context: Context?, file: File?): Uri? {
+    return FileProvider.getUriForFile(context!!, context.packageName + ".provider",  file!! )
 }

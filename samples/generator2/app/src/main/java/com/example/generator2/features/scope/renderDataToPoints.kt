@@ -1,4 +1,4 @@
-package com.example.generator2.scope
+package com.example.generator2.features.scope
 
 import android.graphics.Bitmap
 import android.graphics.Canvas

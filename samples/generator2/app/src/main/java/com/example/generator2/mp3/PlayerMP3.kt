@@ -9,10 +9,10 @@ import androidx.media3.common.Tracks
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.transformer.EditedMediaItem
 import com.example.generator2.AppPath
-import com.example.generator2.scope.Scope
-import com.example.generator2.scope.dataCompressor
-import com.example.generator2.scope.lissaguToBitmap
-import com.example.generator2.scope.renderDataToPoints
+import com.example.generator2.features.scope.Scope
+import com.example.generator2.features.scope.dataCompressor
+import com.example.generator2.features.scope.lissaguToBitmap
+import com.example.generator2.features.scope.renderDataToPoints
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

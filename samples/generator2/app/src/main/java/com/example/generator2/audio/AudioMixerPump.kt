@@ -11,7 +11,7 @@ import com.example.generator2.mp3.chDataStreamOutAudioProcessor
 import com.example.generator2.mp3.channelAudioOut
 import com.example.generator2.mp3.channelAudioOutLissagu
 import com.example.generator2.mp3.processor.audioProcessorInputFormat
-import com.example.generator2.scope.Scope
+import com.example.generator2.features.scope.Scope
 import com.example.generator2.util.BufSplitFloat
 import com.example.generator2.util.bufMerge
 import kotlinx.coroutines.DelicateCoroutinesApi

@@ -18,7 +18,7 @@ import com.example.generator2.model.itemList
 import com.example.generator2.noSQL.KEY_NOSQL_CONFIG2
 import com.example.generator2.playlist.Playlist
 import com.example.generator2.presets.presetsInit
-import com.example.generator2.scope.Scope
+import com.example.generator2.features.scope.Scope
 import com.example.generator2.util.Utils
 import com.example.generator2.util.UtilsKT
 import com.example.generator2.util.findActivity

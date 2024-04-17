@@ -5,7 +5,7 @@ import com.example.generator2.audio.AudioMixerPump
 import com.example.generator2.element.Script
 import com.example.generator2.generator.Generator
 import com.example.generator2.mp3.PlayerMP3
-import com.example.generator2.scope.Scope
+import com.example.generator2.features.scope.Scope
 import com.example.generator2.screens.scripting.ui.ScriptKeyboard
 import com.example.generator2.util.UtilsKT
 import dagger.Module

@@ -1,4 +1,4 @@
-package com.example.generator2.scope
+package com.example.generator2.features.scope
 
 import androidx.compose.runtime.mutableFloatStateOf
 import com.example.generator2.mp3.channelAudioOut

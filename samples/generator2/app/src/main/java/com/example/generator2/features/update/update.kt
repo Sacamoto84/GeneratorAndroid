@@ -3,6 +3,10 @@ package com.example.generator2.features.update
 import android.content.Context
 import com.example.generator2.AppPath
 import com.example.generator2.Global
+import com.example.generator2.features.update.mono.getVersionName
+import com.example.generator2.features.update.mono.gitHubReleaseFiles
+import com.example.generator2.features.update.mono.gitHubReleaseTags
+import com.example.generator2.features.update.mono.installAPK
 import com.example.generator2.noSQL.KEY_NOSQL_CONFIG2
 import com.kdownloader.KDownloader
 import com.yandex.metrica.YandexMetrica

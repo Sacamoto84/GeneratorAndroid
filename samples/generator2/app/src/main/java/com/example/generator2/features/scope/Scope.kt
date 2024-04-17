@@ -1,4 +1,4 @@
-package com.example.generator2.scope
+package com.example.generator2.features.scope
 
 import android.graphics.Bitmap
 import android.graphics.Typeface
@@ -36,7 +36,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.generator2.scope.compose.OscilloscopeControl
+import com.example.generator2.features.scope.compose.OscilloscopeControl
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay

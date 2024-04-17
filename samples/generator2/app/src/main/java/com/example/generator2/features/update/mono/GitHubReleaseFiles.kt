@@ -1,4 +1,4 @@
-package com.example.generator2.features.update
+package com.example.generator2.features.update.mono
 
 import okhttp3.OkHttpClient
 import okhttp3.Request
