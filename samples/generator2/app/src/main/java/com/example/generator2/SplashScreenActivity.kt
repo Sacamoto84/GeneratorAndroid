@@ -66,9 +66,8 @@ class SplashScreenActivity : AppCompatActivity() {
     @Inject
     lateinit var update: Update
 
-
     @Inject
-    lateinit var playlist : Lazy<Playlist>
+    lateinit var playlist : Playlist
 
     @kotlin.OptIn(DelicateCoroutinesApi::class)
     @OptIn(UnstableApi::class)
