@@ -1,4 +1,4 @@
-package com.example.generator2.presets.ui
+package com.example.generator2.features.presets.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -43,18 +43,18 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.R
 import com.example.generator2.navController
-import com.example.generator2.presets.Presets
-import com.example.generator2.presets.presetsGetListName
-import com.example.generator2.presets.presetsVM
+import com.example.generator2.features.presets.Presets
+import com.example.generator2.features.presets.presetsGetListName
+import com.example.generator2.features.presets.presetsVM
 import com.siddroid.holi.colors.MaterialColor
-//import libs.modifier.scrollbar
+
 
 val PresetsDialogRecompose = mutableIntStateOf(0)
 
 @Composable
 fun DialogPresets(vm: presetsVM = hiltViewModel()) {
 
-    Presets.presetList = presetsGetListName()
+    Presets.presetList = presetsGetListName(vm.appPath)
 
     PresetsDialogRecompose
 

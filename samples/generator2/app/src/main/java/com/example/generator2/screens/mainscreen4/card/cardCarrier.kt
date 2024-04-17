@@ -30,7 +30,7 @@ import com.example.generator2.screens.mainscreen4.ui.UIspinner
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.theme.colorGreen
 import com.example.generator2.theme.colorOrange
-import com.example.libs.modifier.noRippleClickable
+import com.example.generator2.modifier.noRippleClickable
 
 
 @Composable

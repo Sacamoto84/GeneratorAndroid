@@ -1,4 +1,4 @@
-package com.example.generator2.presets
+package com.example.generator2.features.presets
 
 import cafe.adriel.satchel.Satchel
 import cafe.adriel.satchel.encrypter.bypass.BypassSatchelEncrypter
@@ -12,7 +12,7 @@ import java.io.File
 /**
  * Создание пресета по имени
  */
-fun presetsSaveFile(name: String, path: String = AppPath().presets, gen: Generator) {
+fun presetsSaveFile(name: String, path: String, gen: Generator) {
 
     val satchel =
         Satchel.with(

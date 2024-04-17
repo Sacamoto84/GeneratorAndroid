@@ -16,7 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import lan.ping
+import com.example.generator2.features.update.mono.ping
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import timber.log.Timber

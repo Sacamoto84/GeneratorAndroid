@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.example.generator2.generator.Generator
 import com.example.generator2.screens.mainscreen4.ms4SwitchWidth
 import com.example.generator2.theme.colorDarkBackground
-import com.example.libs.modifier.noRippleClickable
+import com.example.generator2.modifier.noRippleClickable
 
 @Composable
 fun ButtonChEn(str: String = "CH0", gen: Generator) {

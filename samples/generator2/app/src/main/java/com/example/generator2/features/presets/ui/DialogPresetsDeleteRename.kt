@@ -1,8 +1,7 @@
-package com.example.generator2.presets.ui
+package com.example.generator2.features.presets.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -33,20 +32,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.generator2.AppPath
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.R
-import com.example.generator2.presets.Presets
-import com.example.generator2.presets.presetsGetListName
+import com.example.generator2.features.presets.Presets
+import com.example.generator2.features.presets.presetsGetListName
+import com.example.generator2.features.presets.presetsVM
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.theme.colorLightBackground
 import com.example.generator2.util.toast
 import java.io.File
 
-
 private val Corner = 8.dp
 
 @Composable
-fun DialogPresetsRename(name: String) {
+fun DialogPresetsDeleteRename(name: String, vm: presetsVM = hiltViewModel()) {
+
+    val context = LocalContext.current
 
     println("DialogDeleteRename name:$name")
 
@@ -54,7 +55,8 @@ fun DialogPresetsRename(name: String) {
 
     value = name
 
-    Dialog(onDismissRequest = { Presets.isOpenDialogRename.value = false }) {
+    //var valueDelete by remember { mutableStateOf("") }
+    Dialog(onDismissRequest = { Presets.isOpenDialogDeleteRename.value = false }) {
         Card(
             Modifier.width(220.dp), elevation = 8.dp, border = BorderStroke(
                 1.dp, Color.Gray
@@ -64,10 +66,10 @@ fun DialogPresetsRename(name: String) {
             Column {
 
                 Text(
-                    text = "Переименовать",
+                    text = "Rename",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 16.dp)
+                        .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
                     //.clip(RoundedCornerShape(Corner)).background(Color.DarkGray)
                     ,
                     textAlign = TextAlign.Center,
@@ -94,8 +96,8 @@ fun DialogPresetsRename(name: String) {
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
 
-                        val oldFile = File(AppPath().presets + "/${name}.txt")
-                        val newFile = File(AppPath().presets + "/${value}.txt")
+                        val oldFile = File(vm.appPath.presets + "/${name}.txt")
+                        val newFile = File(vm.appPath.presets + "/${value}.txt")
 
                         if (oldFile.renameTo(newFile)) {
                             println("Файл успешно переименован.")
@@ -104,11 +106,11 @@ fun DialogPresetsRename(name: String) {
                         }
 
                         Presets.presetList.clear()
-                        Presets.presetList = presetsGetListName()
+                        Presets.presetList = presetsGetListName(vm.appPath)
 
                         PresetsDialogRecompose.intValue++
 
-                        Presets.isOpenDialogRename.value = false
+                        Presets.isOpenDialogDeleteRename.value = false
 
                         toast.show("Renamed")
 
@@ -118,7 +120,52 @@ fun DialogPresetsRename(name: String) {
                     ),
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "or",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
+                    //.clip(RoundedCornerShape(Corner)).background(Color.DarkGray)
+                    ,
+                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.jetbrains)),
+                    color = Color.LightGray
+                )
+
+                Button(
+                    onClick = {
+
+                        val pathDocuments = vm.appPath.presets + "/${name}.txt"
+                        File(pathDocuments).delete()
+
+                        Presets.presetList.clear()
+                        Presets.presetList = presetsGetListName(vm.appPath)
+
+                        PresetsDialogRecompose.intValue++
+
+                        Presets.isOpenDialogDeleteRename.value = false
+
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(72.dp)
+                        .padding(start = 16.dp, end = 16.dp, top = 0.dp, bottom = 16.dp),
+                    shape = RoundedCornerShape(Corner),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
+                ) {
+                    Text(
+                        "Delete",
+                        fontSize = 28.sp,
+                        color = Color.White,
+                        modifier = Modifier.offset(0.dp, (0).dp)
+                    )
+                }
+
+                //Divider(color = Color.Gray, thickness = 2.dp)
+
+                //Spacer(modifier = Modifier.height(16.dp))
+
 
             }
 

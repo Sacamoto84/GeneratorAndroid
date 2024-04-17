@@ -4,6 +4,7 @@ import androidx.annotation.OptIn
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.util.UnstableApi
+import com.example.generator2.AppPath
 import com.example.generator2.audio.AudioMixerPump
 import com.example.generator2.element.Console2
 import com.example.generator2.features.update.Update
@@ -26,7 +27,8 @@ class VMMain4 @OptIn(UnstableApi::class) @Inject constructor(
     val exoplayer: PlayerMP3,
     val audioMixerPump: AudioMixerPump,
     val scope: Scope,
-    val update: Update
+    val update: Update,
+    val appPath: AppPath
 ) : ViewModel() {
 
     val consoleLog = Console2()

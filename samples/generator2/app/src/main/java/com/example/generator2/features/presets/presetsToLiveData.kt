@@ -1,4 +1,4 @@
-package com.example.generator2.presets
+package com.example.generator2.features.presets
 
 import com.example.generator2.generator.DataLiveData
 import com.example.generator2.generator.Generator

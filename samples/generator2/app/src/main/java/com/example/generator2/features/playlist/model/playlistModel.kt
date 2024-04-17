@@ -1,7 +1,4 @@
-package com.example.generator2.playlist
-
-import android.graphics.Bitmap
-import com.example.generator2.AppPath
+package com.example.generator2.features.playlist.model
 
 
 data class PlaylistList(val playlistName: String = ".", val data: MutableList<PlaylistItem>)
@@ -29,7 +26,7 @@ data class PlaylistItem(
 //Структура которая хранится в JSON по файлу
 data class PlaylistItemJson(
     val name: String = "?",
-    val path: String = AppPath().music, //путь до файла
+    val path: String = "", //путь до файла
     val balance: Int = 0,     //Баланс
     val volume: Float = 1.0f, //Громкость
     val additionalData: Map<String, Any> = mapOf()

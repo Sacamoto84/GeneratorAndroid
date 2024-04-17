@@ -4,8 +4,8 @@ import android.content.Context
 import com.example.generator2.audio.checkSupport192k
 import com.example.generator2.generator.Generator
 import com.example.generator2.model.itemList
-import com.example.generator2.presets.presetsReadFile
-import com.example.generator2.presets.presetsToLiveData
+import com.example.generator2.features.presets.presetsReadFile
+import com.example.generator2.features.presets.presetsToLiveData
 import com.example.generator2.util.Utils
 import com.example.generator2.util.UtilsKT
 import com.example.generator2.util.toast

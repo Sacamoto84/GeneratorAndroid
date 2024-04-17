@@ -16,8 +16,8 @@ import com.example.generator2.features.update.kDownloader
 import com.example.generator2.generator.Generator
 import com.example.generator2.model.itemList
 import com.example.generator2.noSQL.KEY_NOSQL_CONFIG2
-import com.example.generator2.playlist.Playlist
-import com.example.generator2.presets.presetsInit
+import com.example.generator2.features.playlist.Playlist
+import com.example.generator2.features.presets.presetsInit
 import com.example.generator2.features.scope.Scope
 import com.example.generator2.util.Utils
 import com.example.generator2.util.UtilsKT
@@ -66,6 +66,10 @@ class SplashScreenActivity : AppCompatActivity() {
     @Inject
     lateinit var update: Update
 
+
+    @Inject
+    lateinit var playlist : Lazy<Playlist>
+
     @kotlin.OptIn(DelicateCoroutinesApi::class)
     @OptIn(UnstableApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,7 +112,7 @@ class SplashScreenActivity : AppCompatActivity() {
         //playlistJson.addAll(PlaylistSQL.read())
         //playlistJson
 
-        Playlist
+        playlist
 
 //        if (LeakCanary.isInAnalyzerProcess(this)) {
 //            // This process is dedicated to LeakCanary for heap analysis.
@@ -194,7 +198,7 @@ class SplashScreenActivity : AppCompatActivity() {
                 kDownloader = KDownloader.create(applicationContext)
 
                 AndroidPufferDB.init(applicationContext)
-                presetsInit()
+                presetsInit(appPath)
 
                 initialization(applicationContext, gen, utils, appPath, global)
 

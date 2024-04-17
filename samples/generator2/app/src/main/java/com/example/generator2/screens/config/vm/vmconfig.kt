@@ -10,13 +10,12 @@ import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
+import com.example.generator2.Global
 import com.example.generator2.R
 import com.example.generator2.features.update.UPDATESTATE
 import com.example.generator2.features.update.Update
 import com.example.generator2.generator.Generator
-import com.example.generator2.mmkv
 import com.example.generator2.noSQL.KEY_NOSQL_CONFIG2
-import com.example.generator2.noSQL.noSQLConfig2
 import com.yagmurerdogan.toasticlib.Toastic
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -28,7 +27,9 @@ import javax.inject.Inject
 class VMConfig @Inject constructor(
     @ApplicationContext
     private val context: Context,
-    val gen: Generator
+    val gen: Generator,
+    val update: Update,
+    val global: Global
 ) : ViewModel() {
 
     val recompose = mutableStateOf(0)
@@ -60,8 +61,8 @@ class VMConfig @Inject constructor(
 
     }
 
-    fun saveVolume() = mmkv.saveVolume(gen) //backup.json.saveJsonVolume()
-    fun saveConstrain() = mmkv.saveConstrain() //backup.json.saveJsonConstrain()
+    fun saveVolume() = global.mmkv.saveVolume(gen) //backup.json.saveJsonVolume()
+    fun saveConstrain() = global.mmkv.saveConstrain() //backup.json.saveJsonConstrain()
 
     fun toastSaveVolume() {
         Toastic.toastic(
@@ -112,7 +113,7 @@ class VMConfig @Inject constructor(
         LibresSettings.languageCode = out
 
         //Сохранение в базу
-        noSQLConfig2.write(KEY_NOSQL_CONFIG2.LANGUAGE.value, out)
+        global.noSQLConfig2.write(KEY_NOSQL_CONFIG2.LANGUAGE.value, out)
 
     }
 ///////////////////////////
@@ -131,7 +132,7 @@ class VMConfig @Inject constructor(
 ///////////////////////////
 
     fun update() {
-        Update.state.value = UPDATESTATE.DOWNLOADING
+        update.state.value = UPDATESTATE.DOWNLOADING
     }
 
 }

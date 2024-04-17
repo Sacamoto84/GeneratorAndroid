@@ -1,4 +1,4 @@
-package com.example.generator2.presets
+package com.example.generator2.features.presets
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background

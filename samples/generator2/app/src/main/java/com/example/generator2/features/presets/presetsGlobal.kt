@@ -1,4 +1,4 @@
-package com.example.generator2.presets
+package com.example.generator2.features.presets
 
 import androidx.compose.runtime.mutableStateListOf
 import kotlinx.coroutines.flow.MutableStateFlow

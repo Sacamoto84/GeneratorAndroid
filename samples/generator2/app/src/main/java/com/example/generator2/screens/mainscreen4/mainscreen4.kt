@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.mp3.compose.MP3Control
-import com.example.generator2.presets.Presets
-import com.example.generator2.presets.ui.DialogPresetsNewFile
+import com.example.generator2.features.presets.Presets
+import com.example.generator2.features.presets.ui.DialogPresetsNewFile
 import com.example.generator2.screens.mainscreen4.bottom.M4BottomAppBarComponent
 import com.example.generator2.screens.mainscreen4.card.CardCard
 import com.example.generator2.screens.mainscreen4.top.TopBarAudioSource
@@ -65,7 +65,7 @@ fun Mainsreen4(
 
         topBar = {
             Column {
-                WidgetUpdate()
+                WidgetUpdate(vm.update)
                 Text(
                     text = vm.gen.liveData.presetsName.collectAsState().value,
                     color = Color.LightGray,

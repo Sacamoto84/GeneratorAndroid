@@ -1,8 +1,10 @@
-package com.example.generator2.presets.ui
+package com.example.generator2.features.presets.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,16 +15,12 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -31,47 +29,43 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.generator2.AppPath
 import com.example.generator2.R
-import com.example.generator2.generator.Generator
-import com.example.generator2.presets.Presets
-import com.example.generator2.presets.presetsGetListName
-import com.example.generator2.presets.presetsSaveFile
-import com.example.generator2.theme.colorLightBackground2
-import kotlinx.coroutines.delay
+import com.example.generator2.features.presets.Presets
+import com.example.generator2.features.presets.presetsGetListName
+import com.example.generator2.features.presets.presetsVM
+import com.example.generator2.theme.colorDarkBackground
+import com.example.generator2.theme.colorLightBackground
+import com.example.generator2.util.toast
+import java.io.File
+
 
 private val Corner = 8.dp
 
 @Composable
-fun DialogPresetsNewFile(gen: Generator) {
+fun DialogPresetsRename(name: String, vm: presetsVM = hiltViewModel()) {
 
-    val context = LocalContext.current
+    println("DialogDeleteRename name:$name")
+
     var value by remember { mutableStateOf("") }
-    val focusRequester = remember { FocusRequester() }
 
-    Dialog(onDismissRequest = { Presets.isOpenDialogNewFile.value = false }) {
+    value = name
 
+    Dialog(onDismissRequest = { Presets.isOpenDialogRename.value = false }) {
         Card(
-            Modifier
-                .width(220.dp),
-            elevation = 8.dp,
-            border = BorderStroke(1.dp, Color.Gray),
-            shape = RoundedCornerShape(Corner),
-            backgroundColor = colorLightBackground2
-        )
-        {
-
-            LaunchedEffect(Unit) {
-                delay(500)
-                focusRequester.requestFocus()
-            }
+            Modifier.width(220.dp), elevation = 8.dp, border = BorderStroke(
+                1.dp, Color.Gray
+            ), shape = RoundedCornerShape(Corner), backgroundColor = colorDarkBackground
+        ) {
 
             Column {
 
                 Text(
-                    text = "Save As",
+                    text = "Переименовать",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
+                        .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 16.dp)
                     //.clip(RoundedCornerShape(Corner)).background(Color.DarkGray)
                     ,
                     textAlign = TextAlign.Center,
@@ -84,11 +78,13 @@ fun DialogPresetsNewFile(gen: Generator) {
                     value = value,
                     onValueChange = { value = it },
                     modifier = Modifier
-                        .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
-                        .focusRequester(focusRequester),
+                        .height(58.dp)
+                        .padding(start = 16.dp, end = 16.dp, bottom = 0.dp),
                     colors = TextFieldDefaults.textFieldColors(
-                        textColor = Color.LightGray, leadingIconColor = Color.LightGray,
-                        backgroundColor = Color.Black, focusedIndicatorColor = Color.Transparent
+                        textColor = Color.LightGray,
+                        leadingIconColor = Color.LightGray,
+                        backgroundColor = colorLightBackground,
+                        focusedIndicatorColor = Color.Transparent
                     ),
                     placeholder = { Text(text = "File Name", color = Color.Gray) },
                     singleLine = true,
@@ -96,30 +92,38 @@ fun DialogPresetsNewFile(gen: Generator) {
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
 
-                        presetsSaveFile(value, gen = gen)
+                        val oldFile = File(vm.appPath.presets + "/${name}.txt")
+                        val newFile = File(vm.appPath.presets + "/${value}.txt")
 
-                        Presets.isOpenDialogNewFile.value = false
+                        if (oldFile.renameTo(newFile)) {
+                            println("Файл успешно переименован.")
+                        } else {
+                            println("Не удалось переименовать файл.")
+                        }
 
                         Presets.presetList.clear()
-                        Presets.presetList = presetsGetListName()
+                        Presets.presetList = presetsGetListName(vm.appPath)
 
                         PresetsDialogRecompose.intValue++
 
+                        Presets.isOpenDialogRename.value = false
+
+                        toast.show("Renamed")
 
                     }),
                     textStyle = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.jetbrains))
-                    )
+                        fontSize = 18.sp, fontFamily = FontFamily(Font(R.font.jetbrains)),
+                    ),
                 )
 
+                Spacer(modifier = Modifier.height(16.dp))
+
             }
+
+
         }
+
+
     }
+
 }
-
-
-
-
-
-

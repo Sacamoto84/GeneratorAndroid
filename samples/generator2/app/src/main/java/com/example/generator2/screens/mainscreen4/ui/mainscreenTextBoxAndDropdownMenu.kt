@@ -3,8 +3,6 @@ package com.example.generator2.screens.mainscreen4.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,7 +29,7 @@ import com.example.generator2.model.LiveConstrain
 import com.example.generator2.screens.mainscreen4.textStyleEditFontFamily
 import com.example.generator2.screens.mainscreen4.textStyleEditFontSize
 import com.example.generator2.theme.colorLightBackground2
-import com.example.libs.modifier.noRippleClickable
+import com.example.generator2.modifier.noRippleClickable
 
 
 @Composable

@@ -22,8 +22,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.generator2.R
 import com.example.generator2.navController
-import com.example.generator2.presets.Presets
-import com.example.generator2.presets.presetsSaveFile
+import com.example.generator2.features.presets.Presets
+import com.example.generator2.features.presets.presetsSaveFile
 import com.example.generator2.screens.mainscreen4.VMMain4
 import com.example.generator2.theme.colorLightBackground
 
@@ -75,7 +75,7 @@ fun M4BottomAppBarComponent(
                             if ((vm.gen.liveData.presetsName.value == "") || (vm.gen.liveData.presetsName.value == "default")) {
                                 Presets.isOpenDialogNewFile.value = true
                             } else {
-                                presetsSaveFile(vm.gen.liveData.presetsName.value, gen = vm.gen)
+                                presetsSaveFile(vm.gen.liveData.presetsName.value, path = vm.appPath.presets, gen = vm.gen)
                             }
                         },
                         onLongClick = {

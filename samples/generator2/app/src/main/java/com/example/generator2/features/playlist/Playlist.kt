@@ -1,9 +1,18 @@
-package com.example.generator2.playlist
+package com.example.generator2.features.playlist
 
+import com.example.generator2.AppPath
+import com.example.generator2.features.playlist.model.PlaylistItem
+import com.example.generator2.features.playlist.model.PlaylistJson
+import com.example.generator2.features.playlist.model.PlaylistList
 import timber.log.Timber
 import java.io.File
+import javax.inject.Inject
+import javax.inject.Singleton
 
-object Playlist {
+@Singleton
+class Playlist @Inject constructor(
+    val appPath: AppPath
+) {
     //Список из списков для UI
     val list = mutableListOf<PlaylistList>()
 
@@ -15,10 +24,9 @@ object Playlist {
         }
     }
 
-
     private fun readFromSQL() {
         val playlistJson = mutableListOf<PlaylistJson>()
-        playlistJson.addAll(PlaylistSQL.read()) //Читаем списки того что есть в SQL
+        playlistJson.addAll(PlaylistSQL(appPath).read()) //Читаем списки того что есть в SQL
 
         //Заполняем list по данным из playlistJson
         playlistJson.forEach {

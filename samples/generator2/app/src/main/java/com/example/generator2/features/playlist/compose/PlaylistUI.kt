@@ -1,4 +1,4 @@
-package com.example.generator2.playlist.compose
+package com.example.generator2.features.playlist.compose
 
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
