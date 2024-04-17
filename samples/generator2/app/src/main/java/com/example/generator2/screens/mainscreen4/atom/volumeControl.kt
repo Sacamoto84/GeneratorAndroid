@@ -45,8 +45,9 @@ import androidx.compose.ui.unit.sp
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.theme.colorLightBackground2
 import com.example.generator2.util.format
+import com.example.libs.modifier.noRippleClickable
 import com.siddroid.holi.colors.MaterialColor
-import libs.modifier.noRippleClickable
+
 
 lateinit var customTypeface: Typeface
 

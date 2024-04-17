@@ -48,8 +48,9 @@ import com.example.generator2.screens.mainscreen4.ui.MainscreenTextBoxPlus2Line
 import com.example.generator2.screens.mainscreen4.ui.UIspinner
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.theme.colorLightBackground2
+import com.example.libs.modifier.noRippleClickable
 import kotlinx.coroutines.flow.update
-import libs.modifier.noRippleClickable
+
 
 @Composable
 fun CardFM(str: String = "CH0", gen: Generator) {

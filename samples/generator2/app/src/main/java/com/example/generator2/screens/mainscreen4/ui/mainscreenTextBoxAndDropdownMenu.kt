@@ -31,10 +31,9 @@ import com.example.generator2.model.LiveConstrain
 import com.example.generator2.screens.mainscreen4.textStyleEditFontFamily
 import com.example.generator2.screens.mainscreen4.textStyleEditFontSize
 import com.example.generator2.theme.colorLightBackground2
-import libs.modifier.noRippleClickable
-import timber.log.Timber
+import com.example.libs.modifier.noRippleClickable
 
-@OptIn(ExperimentalLayoutApi::class)
+
 @Composable
 fun MainscreenTextBoxAndDropdownMenu(
     str: String,

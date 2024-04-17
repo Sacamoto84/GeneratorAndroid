@@ -22,6 +22,8 @@ import com.example.generator2.R
 import com.example.generator2.explorer.viewmodel.ScreenExplorerViewModel
 import com.example.generator2.navController
 
+
+
 @androidx.media3.common.util.UnstableApi
 @Composable
 fun ScreenExplorerTopBar(vm: ScreenExplorerViewModel) {

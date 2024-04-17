@@ -30,13 +30,7 @@
 
     <uses-sdk tools:overrideLibrary="androidx.security" />
 
-
-
-
     <application
-
-
-
         android:largeHeap="true"
         android:name=".App"
         android:allowBackup="true"

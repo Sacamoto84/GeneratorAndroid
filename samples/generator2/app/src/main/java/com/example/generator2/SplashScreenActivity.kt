@@ -52,6 +52,7 @@ class SplashScreenActivity : AppCompatActivity() {
     @Inject
     lateinit var scope: Scope
 
+    @UnstableApi
     @Inject
     lateinit var audioMixerPump: AudioMixerPump
 

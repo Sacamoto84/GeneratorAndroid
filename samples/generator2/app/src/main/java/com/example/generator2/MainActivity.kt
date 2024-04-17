@@ -86,7 +86,7 @@ class MainActivity : ComponentActivity() {
 
         Bugsnag.notify(RuntimeException("Test error"))
 
-       //var a = 5
+        //var a = 5
         //a = a/0
 
         setContent {

@@ -10,12 +10,12 @@
               <deviceKey>
                 <Key>
                   <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="C:\Users\user\.android\avd\Medium_Phone_API_34.avd" />
+                  <value value="C:\Users\user\.android\avd\Medium_Phone_API_33.avd" />
                 </Key>
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2023-11-18T19:28:17.674760700Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-01-22T17:43:33.578428500Z" />
         </State>
       </entry>
       <entry key="appKdownloader">

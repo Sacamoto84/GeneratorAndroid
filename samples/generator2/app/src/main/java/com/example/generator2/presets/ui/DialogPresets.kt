@@ -47,7 +47,7 @@ import com.example.generator2.presets.Presets
 import com.example.generator2.presets.presetsGetListName
 import com.example.generator2.presets.presetsVM
 import com.siddroid.holi.colors.MaterialColor
-import libs.modifier.scrollbar
+//import libs.modifier.scrollbar
 
 val PresetsDialogRecompose = mutableIntStateOf(0)
 
@@ -112,14 +112,15 @@ private fun Content(vm: presetsVM) {
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 8.dp, end = 8.dp)
-            .scrollbar(
-                count = count,
-                state = state,
-                horizontal = false,
-                hiddenAlpha = 0f,
-                knobColor = Color.Black,
-                trackColor = Color.White
-            ),
+//            .scrollbar(
+//                count = count,
+//                state = state,
+//                horizontal = false,
+//                hiddenAlpha = 0f,
+//                knobColor = Color.Black,
+//                trackColor = Color.White
+//            )
+        ,
         state = state
     )
     {

@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.generator2.screens.config.DefScreenConfig
-import libs.modifier.scrollbar
+//import libs.modifier.scrollbar
 
 @Composable
 fun ConfigLineTextSwitch(text: String = "", checked: Boolean, action: ((Boolean) -> Unit)?) {
