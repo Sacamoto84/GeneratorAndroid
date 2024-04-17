@@ -91,15 +91,15 @@ fun M4BottomAppBarComponent(
             Icon(painter = painterResource(R.drawable.info), contentDescription = null)
         }
 
-//        IconButton(modifier = Modifier.testTag("buttonM4GoToScript"),
-//            onClick = { navController.navigate("script") }) {
-//            Icon(painter = painterResource(R.drawable.script3), contentDescription = null)
-//        }
+        IconButton(modifier = Modifier.testTag("buttonM4GoToScript"),
+            onClick = { navController.navigate("script") }) {
+            Icon(painter = painterResource(R.drawable.script3), contentDescription = null)
+        }
 
-//        IconButton(modifier = Modifier.testTag("edit"),
-//            onClick = { navController.navigate("editor") }) {
-//            Icon(painter = painterResource(R.drawable.editor), contentDescription = null)
-//        }
+        IconButton(modifier = Modifier.testTag("edit"),
+            onClick = { navController.navigate("editor") }) {
+            Icon(painter = painterResource(R.drawable.editor), contentDescription = null)
+        }
 
         Spacer(modifier = Modifier.width(8.dp))
 

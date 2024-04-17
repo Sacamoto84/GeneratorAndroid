@@ -22,7 +22,6 @@ import com.example.generator2.screens.config.vm.VMConfig
 fun ConfigVolume(vm: VMConfig) {
     Config_header("Громкость")
 
-
     Row(
         modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween

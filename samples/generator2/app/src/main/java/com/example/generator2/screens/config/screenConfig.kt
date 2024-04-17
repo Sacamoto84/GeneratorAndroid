@@ -36,7 +36,6 @@ import com.example.generator2.screens.config.molecule.ConfigUpdate
 import com.example.generator2.screens.config.molecule.ConfigVolume
 import com.example.generator2.screens.config.vm.VMConfig
 import com.example.generator2.theme.colorLightBackground
-import com.example.generator2.features.update.Update
 
 val modifierGreenButton = Modifier
     .padding(8.dp)

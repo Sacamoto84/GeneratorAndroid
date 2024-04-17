@@ -23,30 +23,25 @@ object DefScreenConfig {
     val disabledBackgroundColorGreenButton = Color(0xFF262726)
     val textSizeGreenButton = 16.sp
 
-    //Стиль для строчек с информацийе
-    val caption: TextStyle = TextStyle(
-        fontWeight = FontWeight.Normal,
-        fontSize = 14.sp,
-        letterSpacing = 0.4.sp,
-        fontFamily = FontFamily(Font(R.font.jetbrains))
-    )
-
 
 
 
 
     val textColor = Color.LightGray
 
+
+
     /**
-     * Стиль для просто текста
+     * ## Стиль для просто текста
      */
     val textStyle = TextStyle(
-        fontSize = 16.sp,
+        fontSize = 18.sp,
         fontWeight = FontWeight.W400,
         color = Color.White,
         textAlign = TextAlign.Left,
         //baselineShift = BaselineShift(-0.1f)
     )
+
 
 
     /**

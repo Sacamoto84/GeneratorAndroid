@@ -11,9 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -37,25 +35,25 @@ import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.generator2.MainRes
 import com.example.generator2.screens.config.DefScreenConfig
 import com.example.generator2.screens.config.vm.VMConfig
 import com.example.generator2.strings.MainResStrings
 
-
+/**
+ * ## Настройка -> Блок выбора языка
+ */
 @Composable
 fun ConfigLanguage(vm: VMConfig) {
     Row(
         modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
+
         Text(
-            text = MainResStrings.languageSelection, color = Color.LightGray,
+            text = MainResStrings.languageSelection,
             maxLines = 3,
             minLines = 1,
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 8.dp),
+            modifier = Modifier.weight(1f).padding(start = 8.dp),
             style = DefScreenConfig.textStyle
         )
         Demo_ExposedDropdownMenuBox(vm)
@@ -65,7 +63,7 @@ fun ConfigLanguage(vm: VMConfig) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Demo_ExposedDropdownMenuBox(vm: VMConfig) {
+private fun Demo_ExposedDropdownMenuBox(vm: VMConfig) {
     val context = LocalContext.current
     val coffeeDrinks = arrayOf("Русский", "English")
     var expanded by remember { mutableStateOf(false) }
@@ -99,7 +97,6 @@ fun Demo_ExposedDropdownMenuBox(vm: VMConfig) {
                 BasicText(
 
                     text = selectedText,
-
 
                     modifier = Modifier
                         .fillMaxWidth()
