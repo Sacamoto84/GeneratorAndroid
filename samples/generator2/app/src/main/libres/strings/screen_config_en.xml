@@ -8,5 +8,7 @@
     <string name="update">Update</string>
     <string name="languageSelection">Language selection</string>
     <string name="downloading">Downloading</string>
-
+    <string name="volume">Maximum Volume</string>
+    <string name="maxvolumeleft">Left channel %</string>
+    <string name="maxvolumeright">Right channel %</string>
 </resources>

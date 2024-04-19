@@ -8,9 +8,8 @@ import com.example.generator2.AppPath
 import com.example.generator2.audio.AudioMixerPump
 import com.example.generator2.element.Console2
 import com.example.generator2.features.update.Update
-import com.example.generator2.generator.Generator
-import com.example.generator2.isInitialized
-import com.example.generator2.mp3.PlayerMP3
+import com.example.generator2.features.generator.Generator
+import com.example.generator2.features.mp3.PlayerMP3
 import com.example.generator2.features.scope.Scope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -49,9 +48,9 @@ class VMMain4 @OptIn(UnstableApi::class) @Inject constructor(
         //launchScriptScope() //Запуск скриптового потока
         println("OK")
 
-        while (!isInitialized) {
-            Timber.i("Ждем окончания инициализации")
-        }
+//        while (!isInitialized) {
+//            Timber.i("Ждем окончания инициализации")
+//        }
 
         Timber.i("VMMain4 init{} end")
     }

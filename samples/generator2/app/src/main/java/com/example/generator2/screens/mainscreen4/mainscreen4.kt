@@ -36,7 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.generator2.mp3.compose.MP3Control
+import com.example.generator2.features.mp3.compose.MP3Control
 import com.example.generator2.features.presets.Presets
 import com.example.generator2.features.presets.ui.DialogPresetsNewFile
 import com.example.generator2.screens.mainscreen4.bottom.M4BottomAppBarComponent

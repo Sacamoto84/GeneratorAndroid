@@ -3,7 +3,7 @@ package com.example.generator2
 import android.media.AudioFormat
 import com.example.generator2.audio.AudioOut
 import com.example.generator2.backup.MMKv
-import com.example.generator2.noSQL.NoSQL
+import com.example.generator2.features.noSQL.NoSQL
 import javax.inject.Inject
 import javax.inject.Singleton
 

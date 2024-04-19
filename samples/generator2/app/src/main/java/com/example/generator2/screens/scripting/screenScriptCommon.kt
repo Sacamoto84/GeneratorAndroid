@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.R
 import com.example.generator2.navController
-import com.example.generator2.element.StateCommandScript
+import com.example.generator2.features.script.StateCommandScript
 import com.example.generator2.screens.scripting.ui.RegisterViewDraw
 import com.example.generator2.screens.scripting.ui.ScriptTable
 import com.example.generator2.screens.scripting.vm.VMScripting

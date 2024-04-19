@@ -1,4 +1,4 @@
-package com.example.generator2.generator
+package com.example.generator2.features.generator
 
 class RenderChannel(val liveData: DataLiveData) {
 

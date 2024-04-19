@@ -35,8 +35,8 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.generator2.element.Script
-import com.example.generator2.generator.Generator
+import com.example.generator2.features.script.Script
+import com.example.generator2.features.generator.Generator
 import com.example.generator2.screens.scripting.atom.TemplateButtonBottomBar
 import com.example.generator2.theme.NoRippleTheme
 import com.example.generator2.theme.colorDarkBackground

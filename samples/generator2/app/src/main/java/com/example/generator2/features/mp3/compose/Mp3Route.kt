@@ -1,4 +1,4 @@
-package com.example.generator2.mp3.compose
+package com.example.generator2.features.mp3.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

@@ -6,10 +6,10 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import com.example.generator2.audio.Calculator
-import com.example.generator2.mp3.OSCILLSYNC
-import com.example.generator2.mp3.channelAudioOutLissagu
-import com.example.generator2.mp3.channelDataStreamOutCompressor
-import com.example.generator2.mp3.oscillSync
+import com.example.generator2.features.mp3.OSCILLSYNC
+import com.example.generator2.features.mp3.channelAudioOutLissagu
+import com.example.generator2.features.mp3.channelDataStreamOutCompressor
+import com.example.generator2.features.mp3.oscillSync
 import com.example.generator2.util.BufSplitFloat
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers

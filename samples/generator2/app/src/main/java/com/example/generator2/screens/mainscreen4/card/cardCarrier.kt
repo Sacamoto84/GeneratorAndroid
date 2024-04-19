@@ -19,7 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.generator2.generator.Generator
+import com.example.generator2.features.generator.Generator
 import com.example.generator2.model.LiveConstrain
 import com.example.generator2.screens.mainscreen4.modifierInfinitySlider
 import com.example.generator2.screens.mainscreen4.ms4SwitchWidth

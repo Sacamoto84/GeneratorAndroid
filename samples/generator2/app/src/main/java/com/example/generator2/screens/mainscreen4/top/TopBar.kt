@@ -14,8 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.generator2.mp3.OSCILLSYNC
-import com.example.generator2.mp3.oscillSync
+import com.example.generator2.features.mp3.OSCILLSYNC
+import com.example.generator2.features.mp3.oscillSync
 import com.example.generator2.screens.mainscreen4.VMMain4
 
 @Composable

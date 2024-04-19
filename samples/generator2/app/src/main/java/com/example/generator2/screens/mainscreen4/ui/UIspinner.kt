@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
-import com.example.generator2.generator.Generator
+import com.example.generator2.features.generator.Generator
 import com.example.generator2.model.itemList
 
 object UIspinner {

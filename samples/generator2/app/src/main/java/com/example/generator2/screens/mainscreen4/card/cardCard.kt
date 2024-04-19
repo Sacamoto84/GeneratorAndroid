@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.generator2.generator.Generator
+import com.example.generator2.features.generator.Generator
 import com.example.generator2.theme.colorLightBackground
 
 @Composable

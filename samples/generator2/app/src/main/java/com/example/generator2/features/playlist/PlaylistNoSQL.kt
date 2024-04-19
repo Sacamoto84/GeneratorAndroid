@@ -2,7 +2,7 @@ package com.example.generator2.features.playlist
 
 import com.example.generator2.AppPath
 import com.example.generator2.features.playlist.model.PlaylistJson
-import com.example.generator2.noSQL.NoSQL
+import com.example.generator2.features.noSQL.NoSQL
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken

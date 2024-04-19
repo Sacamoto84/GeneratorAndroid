@@ -5,7 +5,7 @@ import cafe.adriel.satchel.encrypter.bypass.BypassSatchelEncrypter
 import cafe.adriel.satchel.ktx.getOrDefault
 import cafe.adriel.satchel.serializer.raw.RawSatchelSerializer
 import cafe.adriel.satchel.storer.file.FileSatchelStorer
-import com.example.generator2.generator.DataLiveData
+import com.example.generator2.features.generator.DataLiveData
 import java.io.File
 
 fun presetsReadFile(name: String, path: String): DataLiveData {

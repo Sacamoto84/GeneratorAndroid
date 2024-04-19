@@ -1,8 +1,8 @@
 package com.example.generator2.features.scope
 
 import androidx.compose.runtime.mutableFloatStateOf
-import com.example.generator2.mp3.channelAudioOut
-import com.example.generator2.mp3.channelDataStreamOutCompressor
+import com.example.generator2.features.mp3.channelAudioOut
+import com.example.generator2.features.mp3.channelDataStreamOutCompressor
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

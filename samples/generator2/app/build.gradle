@@ -118,7 +118,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.11"
+        kotlinCompilerExtensionVersion = "1.5.12"
     }
     packagingOptions {
         resources {
@@ -375,14 +375,14 @@ dependencies {
     //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
 
     //https://github.com/ajitsing/Sherlock
-    debugImplementation('com.github.ajitsing:sherlock:1.0.4@aar') //{
+    //debugImplementation('com.github.ajitsing:sherlock:1.0.4@aar') //{
         //transitive = true
     //}
-    releaseImplementation('com.github.ajitsing:sherlock-no-op:1.0.4@aar')
+    //releaseImplementation('com.github.ajitsing:sherlock-no-op:1.0.4@aar')
 
 
-    implementation 'com.bugsnag:bugsnag-android:6.4.0'
-    implementation 'com.bugsnag:bugsnag-android-performance:1.2.2'
+    //implementation 'com.bugsnag:bugsnag-android:6.4.0'
+    //implementation 'com.bugsnag:bugsnag-android-performance:1.2.2'
 
     //https://github.com/wasabeef/Takt
     //releaseImplementation 'jp.wasabeef:takt-no-op:2.1.1'

@@ -1,7 +1,7 @@
 package com.example.generator2.util
 
 import android.content.Context
-import com.example.generator2.generator.Generator
+import com.example.generator2.features.generator.Generator
 import com.example.generator2.util.ArrayUtils.byteToShortArrayLittleEndian
 import java.io.File
 import java.io.IOException

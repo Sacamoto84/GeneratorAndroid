@@ -1,6 +1,6 @@
 package com.example.generator2
 
-import com.example.generator2.generator.Generator
+import com.example.generator2.features.generator.Generator
 import com.example.generator2.util.UtilsKT
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers

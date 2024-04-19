@@ -8,5 +8,7 @@
     <string name="update">Обновить</string>
     <string name="languageSelection">Выбор языка</string>
     <string name="downloading">Скачивание</string>
-
+    <string name="volume">Максимальная громкость</string>
+    <string name="maxvolumeleft">Левый канал %</string>
+    <string name="maxvolumeright">Правый канал %</string>
 </resources>

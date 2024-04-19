@@ -1,4 +1,4 @@
-package com.example.generator2.mp3.compose
+package com.example.generator2.features.mp3.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.example.generator2.NavigationRoute
 import com.example.generator2.R
 import com.example.generator2.audio.AudioSampleRate
-import com.example.generator2.mp3.formatMinSec
+import com.example.generator2.features.mp3.formatMinSec
 import com.example.generator2.navController
 import com.example.generator2.screens.mainscreen4.VMMain4
 import com.example.generator2.theme.Purple200

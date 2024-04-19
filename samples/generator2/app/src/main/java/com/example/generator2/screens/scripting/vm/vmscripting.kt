@@ -2,13 +2,12 @@ package com.example.generator2.screens.scripting.vm
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.inputmethodservice.Keyboard
 import android.widget.Toast
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.generator2.element.Script
-import com.example.generator2.element.StateCommandScript
+import com.example.generator2.features.script.Script
+import com.example.generator2.features.script.StateCommandScript
 import com.example.generator2.screens.scripting.ui.ScriptKeyboard
 import com.example.generator2.util.UtilsKT
 import dagger.hilt.android.lifecycle.HiltViewModel

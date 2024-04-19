@@ -5,19 +5,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.SideEffect
-import com.bugsnag.android.Bugsnag
 import com.example.generator2.audio.AudioMixerPump
-import com.example.generator2.generator.Generator
+import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.presets.presetsSaveFile
 import com.example.generator2.features.scope.Scope
 import com.example.generator2.theme.Generator2Theme
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.util.Utils
 import com.example.generator2.util.UtilsKT
-import com.example.generator2.util.KeepScreenOn
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.DelicateCoroutinesApi
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -88,7 +85,7 @@ class MainActivity : ComponentActivity() {
         //exoplayer = PlayerMP3(applicationContext)
         //}
 
-        Bugsnag.notify(RuntimeException("Test error"))
+        //Bugsnag.notify(RuntimeException("Test error"))
 
         //var a = 5
         //a = a/0

@@ -1,9 +1,9 @@
-package com.example.generator2.mp3.processor
+package com.example.generator2.features.mp3.processor
 
 import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.audio.AudioProcessor
-import com.example.generator2.mp3.chDataStreamOutAudioProcessor
+import com.example.generator2.features.mp3.chDataStreamOutAudioProcessor
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 import java.nio.ByteBuffer

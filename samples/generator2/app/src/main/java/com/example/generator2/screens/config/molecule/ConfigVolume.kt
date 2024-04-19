@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.generator2.MainRes
 import com.example.generator2.screens.config.Config_header
 import com.example.generator2.screens.config.DefScreenConfig
 import com.example.generator2.screens.config.atom.editConfig
@@ -20,7 +21,7 @@ import com.example.generator2.screens.config.vm.VMConfig
 
 @Composable
 fun ConfigVolume(vm: VMConfig) {
-    Config_header("Громкость")
+    Config_header(MainRes.string.volume)
 
     Row(
         modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
@@ -28,7 +29,7 @@ fun ConfigVolume(vm: VMConfig) {
     ) {
 
         Text(
-            text = "Максимальная громкость левый канал 0..1", color = Color.LightGray,
+            text = MainRes.string.maxvolumeleft, color = Color.LightGray,
             maxLines = 3,
             minLines = 1,
             modifier = Modifier
@@ -53,7 +54,7 @@ fun ConfigVolume(vm: VMConfig) {
     ) {
 
         Text(
-            text = "Максимальная громкость правый канал 0..1", color = Color.LightGray,
+            text = MainRes.string.maxvolumeright, color = Color.LightGray,
             maxLines = 3,
             minLines = 1,
             modifier = Modifier

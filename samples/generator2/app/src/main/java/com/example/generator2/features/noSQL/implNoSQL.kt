@@ -1,4 +1,4 @@
-package com.example.generator2.noSQL
+package com.example.generator2.features.noSQL
 
 import com.example.generator2.AppPath
 

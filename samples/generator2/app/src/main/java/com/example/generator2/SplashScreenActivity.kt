@@ -13,9 +13,9 @@ import cafe.adriel.pufferdb.android.AndroidPufferDB
 import com.example.generator2.audio.AudioMixerPump
 import com.example.generator2.features.update.Update
 import com.example.generator2.features.update.kDownloader
-import com.example.generator2.generator.Generator
+import com.example.generator2.features.generator.Generator
 import com.example.generator2.model.itemList
-import com.example.generator2.noSQL.KEY_NOSQL_CONFIG2
+import com.example.generator2.features.noSQL.KEY_NOSQL_CONFIG2
 import com.example.generator2.features.playlist.Playlist
 import com.example.generator2.features.presets.presetsInit
 import com.example.generator2.features.scope.Scope
@@ -37,7 +37,6 @@ import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
-
 
 @Singleton
 @AndroidEntryPoint
@@ -67,7 +66,10 @@ class SplashScreenActivity : AppCompatActivity() {
     lateinit var update: Update
 
     @Inject
-    lateinit var playlist : Playlist
+    lateinit var playlist: Playlist
+
+    @Inject
+    lateinit var initialization : Initialization
 
     @kotlin.OptIn(DelicateCoroutinesApi::class)
     @OptIn(UnstableApi::class)
@@ -78,7 +80,7 @@ class SplashScreenActivity : AppCompatActivity() {
         //Sherlock.init(this) //Initializing Sherlock
         //Sherlock.getInstance().getAllCrashes()
 
-        Timber.plant(Timber.DebugTree())
+
 
 //        val item1 =
 //            PlaylistItem(name = "Один", path = AppPath().music + "/one.mp3", isPresent = true)
@@ -132,88 +134,50 @@ class SplashScreenActivity : AppCompatActivity() {
 
             setContentView(R.layout.activity_splash_screen)
 
-            if (isInitialized) {
-                GlobalScope.launch(Dispatchers.Main) {
-                    val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
-                    startActivity(intent)
-                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-                    finish()
-                }
+
+
+            if (initialization.isInitialized) {
+                //GlobalScope.launch(Dispatchers.Main) {
+                val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
+                startActivity(intent)
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                finish()
+                return
+                //}
             }
 
             //noSQLConfig2.write(KEY_NOSQL_CONFIG2.LANGUAGE.value, "ru")
 
             //Читаем язык
-            LibresSettings.languageCode = global.noSQLConfig2.read(KEY_NOSQL_CONFIG2.LANGUAGE.value, "ru")
+            LibresSettings.languageCode =
+                global.noSQLConfig2.read(KEY_NOSQL_CONFIG2.LANGUAGE.value, "ru")
 
             val myTextView: TextView = findViewById(R.id.myTextView)
             myTextView.text = MainRes.string.splashLoading
 
 
-            GlobalScope.launch(Dispatchers.IO) {
-                println("Запуск Yandex Metrika")
-                val config = YandexMetricaConfig.newConfigBuilder(API_key).withLogs().build()
-                YandexMetrica.activate(this@SplashScreenActivity, config)
-                YandexMetrica.enableActivityAutoTracking(application)
-                YandexMetrica.reportEvent("Запуск")
-            }
+//            GlobalScope.launch(Dispatchers.IO) {
+//                println("Запуск Yandex Metrika")
+//                val config = YandexMetricaConfig.newConfigBuilder(API_key).withLogs().build()
+//                YandexMetrica.activate(this@SplashScreenActivity, config)
+//                YandexMetrica.enableActivityAutoTracking(application)
+//                YandexMetrica.reportEvent("Запуск")
+//            }
 
 
             GlobalScope.launch(Dispatchers.IO) {
 
-                println("Типа инициализация Splash")
-                val path = appPath
-                //path.mkDir()
-
-                val patchCarrier = path.carrier
-                val patchMod = path.mod
-
-                Utils.patchDocument = path.main
-                Utils.patchCarrier = "$patchCarrier/"
-                Utils.patchMod = "$patchMod/"
-
-                try {
-                    AssetCopier(this@SplashScreenActivity).copy("Carrier", File("$patchCarrier/"))
-                    AssetCopier(this@SplashScreenActivity).copy("Mod", File(patchMod))
-                } catch (e: IOException) {
-                    Timber.e(e.printStackTrace().toString())
-                }
-
-                println("arrFilesCarrier start")
-                val arrFilesCarrier: Array<String> = Utils.listFileInCarrier() //Заполняем список
-                for (i in arrFilesCarrier.indices) {
-                    gen.itemlistCarrier.add(itemList(patchCarrier, arrFilesCarrier[i], 0))
-                }
-
-                val arrFilesMod: Array<String> =
-                    Utils.listFileInMod() //Получение списка файлов в папке Mod
-                for (i in arrFilesMod.indices) {
-                    gen.itemlistAM.add(itemList(patchMod, arrFilesMod[i], 1))
-                    gen.itemlistFM.add(itemList(patchMod, arrFilesMod[i], 0))
-                }
-                println("Запуск MainActivity")
-
-                gen
-                kDownloader = KDownloader.create(applicationContext)
-
-                AndroidPufferDB.init(applicationContext)
-                presetsInit(appPath)
-
-                initialization(applicationContext, gen, utils, appPath, global)
-
+                initialization.run()
                 audioOut
                 audioMixerPump
                 scope
-
                 update.run()
 
-                GlobalScope.launch(Dispatchers.Main) {
-                    val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
-                    startActivity(intent)
-                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-                    finish()
-                }
-
+                val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
+                startActivity(intent)
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                finish()
+                return@launch
             }
 
         }

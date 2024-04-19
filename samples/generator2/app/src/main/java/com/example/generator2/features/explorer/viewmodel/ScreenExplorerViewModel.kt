@@ -11,7 +11,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.transformer.EditedMediaItem
 import com.example.generator2.AppPath
 import com.example.generator2.features.update.explorer.model.ExplorerItem
-import com.example.generator2.mp3.PlayerMP3
+import com.example.generator2.features.mp3.PlayerMP3
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow

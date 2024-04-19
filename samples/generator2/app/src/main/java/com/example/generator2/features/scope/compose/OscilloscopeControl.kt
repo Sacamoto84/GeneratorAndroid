@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.generator2.mp3.OSCILLSYNC
-import com.example.generator2.mp3.oscillSync
+import com.example.generator2.features.mp3.OSCILLSYNC
+import com.example.generator2.features.mp3.oscillSync
 
 
 private val m = Modifier

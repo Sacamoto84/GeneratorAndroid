@@ -14,8 +14,8 @@ import com.example.generator2.Global
 import com.example.generator2.R
 import com.example.generator2.features.update.UPDATESTATE
 import com.example.generator2.features.update.Update
-import com.example.generator2.generator.Generator
-import com.example.generator2.noSQL.KEY_NOSQL_CONFIG2
+import com.example.generator2.features.generator.Generator
+import com.example.generator2.features.noSQL.KEY_NOSQL_CONFIG2
 import com.yagmurerdogan.toasticlib.Toastic
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext

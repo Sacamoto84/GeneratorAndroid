@@ -21,7 +21,7 @@ import com.example.generator2.screens.scripting.vm.VMScripting
 import com.example.generator2.screens.scripting.atom.OutlinedButtonTextAndIcon
 import com.example.generator2.screens.scripting.dialog.DialogDeleteRename
 import com.example.generator2.screens.scripting.dialog.DialogSaveAs
-import com.example.generator2.element.StateCommandScript
+import com.example.generator2.features.script.StateCommandScript
 
 val refresh = mutableStateOf(0)
 

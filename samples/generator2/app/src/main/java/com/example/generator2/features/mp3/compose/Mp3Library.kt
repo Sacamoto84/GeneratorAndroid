@@ -1,4 +1,4 @@
-package com.example.generator2.mp3.compose
+package com.example.generator2.features.mp3.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.generator2.mp3.PlayerMP3
+import com.example.generator2.features.mp3.PlayerMP3
 
 @Composable
 fun Mp3Library(exoplayer: PlayerMP3) {

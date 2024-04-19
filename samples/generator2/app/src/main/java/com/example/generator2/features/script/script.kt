@@ -1,11 +1,11 @@
-package com.example.generator2.element
+package com.example.generator2.features.script
 
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.example.generator2.generator.Generator
+import com.example.generator2.features.generator.Generator
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -13,6 +13,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /*
  * ----------------- Логика -----------------
@@ -78,8 +80,8 @@ enum class StateCommandScript {
     ISRUNNING, ISPAUSE, ISTOPPING, ISEDITTING, //Сейчас режим редактирования
 }
 
-@Stable
-class Script(val gen: Generator) {
+//@Stable
+class Script (val gen: Generator) {
 
     //╭─ Генератор ───────────────────────╮
     var end = true
