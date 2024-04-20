@@ -8,41 +8,6 @@ import cafe.adriel.satchel.serializer.raw.RawSatchelSerializer
 import cafe.adriel.satchel.storer.file.FileSatchelStorer
 import java.io.File
 
-//inline fun <reified T : Any> noSQLread(
-//    nameDB: String,
-//    key: String,
-//    default: T,
-//    path: String = AppPath().config
-//): T {
-//    val satchel =
-//        Satchel.with(
-//            storer = FileSatchelStorer(File(path, "${nameDB}.db")),
-//            encrypter = BypassSatchelEncrypter,
-//            serializer = RawSatchelSerializer
-//        )
-//
-//    val res: T = satchel.getOrDefault(key, default)
-//    return res
-//}
-//
-//
-//inline fun <reified T : Any> noSQLwrite(
-//    nameDB: String,
-//    key: String,
-//    value: T,
-//    path: String = AppPath().config
-//) {
-//    val satchel =
-//        Satchel.with(
-//            storer = FileSatchelStorer(File(path, "${nameDB}.db")),
-//            encrypter = BypassSatchelEncrypter,
-//            serializer = RawSatchelSerializer
-//        )
-//
-//    satchel[key] = value
-//
-//}
-
 //= AppPath().config
 class NoSQL(val path: String, val nameDB: String) {
 

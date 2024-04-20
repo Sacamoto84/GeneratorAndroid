@@ -14,30 +14,39 @@ class Playlist @Inject constructor(
     val appPath: AppPath
 ) {
     //Список из списков для UI
-    val list = mutableListOf<PlaylistList>()
+    var list = mutableListOf<PlaylistList>()
 
     init {
         try {
-            readFromSQL()
+            list = readAllFromSQL().toMutableList()
         } catch (e: Exception) {
             Timber.e(e.localizedMessage)
         }
     }
 
-    private fun readFromSQL() {
+    /**
+     * Прочесть все записи из базы
+     */
+    private fun readAllFromSQL(): List<PlaylistList> {
+
+        val result = mutableListOf<PlaylistList>()
+
         val playlistJson = mutableListOf<PlaylistJson>()
-        playlistJson.addAll(PlaylistSQL(appPath).read()) //Читаем списки того что есть в SQL
+        playlistJson.addAll(PlaylistSQL(appPath).readAll()) //Читаем списки того что есть в SQL
 
         //Заполняем list по данным из playlistJson
         playlistJson.forEach {
+
             val playlistName = it.playlistName //Имя плейлиста
             val data = mutableListOf<PlaylistItem>()
             it.data.forEach { it1 ->
+
                 val name = it1.name
                 val path = it1.path
                 val balance = it1.balance
                 val volume = it1.volume
                 val isExist = File(path).exists()
+
                 val item = PlaylistItem(
                     name = name,
                     path = path,
@@ -45,18 +54,23 @@ class Playlist @Inject constructor(
                     balance = balance,
                     volume = volume
                 )
+
                 data.add(item)
             }
 
             val i = PlaylistList(playlistName, data)
-            list.add(i)
+            result.add(i)
 
         }
 
         //Получили минимальный список с проверкой существования файла
-
+        return result
 
     }
+
+
+
+
 
 
 }

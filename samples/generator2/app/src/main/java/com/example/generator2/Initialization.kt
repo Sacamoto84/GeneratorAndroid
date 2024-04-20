@@ -42,13 +42,13 @@ class Initialization(
 
         Timber.plant(Timber.DebugTree())
 
-        GlobalScope.launch(Dispatchers.IO) {
-            println("Запуск Yandex Metrika")
-            val config = YandexMetricaConfig.newConfigBuilder(API_key).withLogs().build()
-            YandexMetrica.activate(context, config)
-            YandexMetrica.enableActivityAutoTracking(context as Application)
-            YandexMetrica.reportEvent("Запуск")
-        }
+//        GlobalScope.launch(Dispatchers.IO) {
+//            println("Запуск Yandex Metrika")
+//            val config = YandexMetricaConfig.newConfigBuilder(API_key).withLogs().build()
+//            YandexMetrica.activate(context, config)
+//            YandexMetrica.enableActivityAutoTracking(context as Application)
+//            YandexMetrica.reportEvent("Запуск")
+//        }
 
         println("Типа инициализация Splash")
         val path = appPath

@@ -3,40 +3,31 @@ package com.example.generator2
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.util.UnstableApi
-import cafe.adriel.pufferdb.android.AndroidPufferDB
 import com.example.generator2.audio.AudioMixerPump
-import com.example.generator2.features.update.Update
-import com.example.generator2.features.update.kDownloader
 import com.example.generator2.features.generator.Generator
-import com.example.generator2.model.itemList
 import com.example.generator2.features.noSQL.KEY_NOSQL_CONFIG2
 import com.example.generator2.features.playlist.Playlist
-import com.example.generator2.features.presets.presetsInit
 import com.example.generator2.features.scope.Scope
-import com.example.generator2.util.Utils
+import com.example.generator2.features.update.Update
 import com.example.generator2.util.UtilsKT
 import com.example.generator2.util.findActivity
-import com.kdownloader.KDownloader
-import com.yandex.metrica.YandexMetrica
-import com.yandex.metrica.YandexMetricaConfig
 import dagger.hilt.android.AndroidEntryPoint
-import flipagram.assetcopylib.AssetCopier
 import io.github.skeptick.libres.LibresSettings
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.io.File
-import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
+
 
 @Singleton
 @AndroidEntryPoint
@@ -79,8 +70,6 @@ class SplashScreenActivity : AppCompatActivity() {
 
         //Sherlock.init(this) //Initializing Sherlock
         //Sherlock.getInstance().getAllCrashes()
-
-
 
 //        val item1 =
 //            PlaylistItem(name = "Один", path = AppPath().music + "/one.mp3", isPresent = true)

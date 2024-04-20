@@ -16,6 +16,7 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.example.generator2.features.playlist.compose.PlaylistUI
 import com.example.generator2.features.update.explorer.compose.ScreenExplorer
 import com.example.generator2.features.presets.ui.DialogPresets
 import com.example.generator2.screens.config.ScreenConfig
@@ -34,7 +35,8 @@ enum class NavigationRoute(val value: String) {
     CONFIG("config"),
     PRESETS("presets"),
     HTML("html"),
-    EXPLORER("explorer")
+    EXPLORER("explorer"),
+    PLAYLIST("playlist"),
 }
 
 @SuppressLint("StaticFieldLeak")
@@ -48,7 +50,7 @@ fun Navigation() {
 
     NavHost(
         navController = navController,
-        startDestination = "home",
+        startDestination = NavigationRoute.PLAYLIST.value,
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
@@ -58,7 +60,7 @@ fun Navigation() {
     ) {
 
 
-        composable("home",
+        composable(NavigationRoute.HOME.value,
             enterTransition = { fadeIn(animationSpec = tween(0)) },
             exitTransition = { fadeOut(animationSpec = tween(0)) })
         {
@@ -117,6 +119,13 @@ fun Navigation() {
             exitTransition = { fadeOut(animationSpec = tween(0)) })
         {
             ScreenExplorer()
+        }
+
+        composable(NavigationRoute.PLAYLIST.value,
+            enterTransition = { fadeIn(animationSpec = tween(0)) },
+            exitTransition = { fadeOut(animationSpec = tween(0)) })
+        {
+            PlaylistUI()
         }
 
 

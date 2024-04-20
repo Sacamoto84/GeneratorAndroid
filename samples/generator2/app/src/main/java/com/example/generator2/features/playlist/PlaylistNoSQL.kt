@@ -12,21 +12,21 @@ import timber.log.Timber
 class PlaylistSQL(appPath: AppPath) {
 
     //Файл playlist.db содержит список названий списков плейлистов
-    val noSQLplaylistJson = NoSQL(path = appPath.config, nameDB = "playlist")
+    val db = NoSQL(path = appPath.config, nameDB = "playlist")
 
     /**
      * Чтение Json плейлиста из базы playlist.db
      */
-    fun read(): List<PlaylistJson> {
+    fun readAll(): List<PlaylistJson> {
         Timber.i("Получение списка ключей в playlist.db")
         val list = mutableListOf<PlaylistJson>()
 
         try {
-            Timber.i("Найденно ${noSQLplaylistJson.keys()} ключей")
+            Timber.i("Найденно ${db.keys()} ключей")
 
-            noSQLplaylistJson.keys().forEach {
+            db.keys().forEach {
                 Timber.i("Ключ: $it")
-                val json = noSQLplaylistJson.read(it, "")
+                val json = db.read(it, "")
                 //Timber.i("value: $json")
                 val playlistType = object : TypeToken<PlaylistJson>() {}.type
                 val res: PlaylistJson = Gson().fromJson(json, playlistType)
@@ -47,10 +47,14 @@ class PlaylistSQL(appPath: AppPath) {
 
         list.forEach {
             val json = gson.toJson(it)
-            noSQLplaylistJson.write(it.playlistName, json)
+            db.write(it.playlistName, json)
         }
     }
 
-    fun clear() = noSQLplaylistJson.clear()
+
+    /**
+     * ## Очистить весь плейлист
+     */
+    fun clear() = db.clear()
 
 }

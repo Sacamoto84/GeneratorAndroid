@@ -1,14 +1,17 @@
 package com.example.generator2.di
 
 import android.content.Context
+import androidx.room.Room
 import com.example.generator2.AppPath
 import com.example.generator2.Global
 import com.example.generator2.Initialization
 import com.example.generator2.audio.AudioMixerPump
-import com.example.generator2.features.script.Script
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.mp3.PlayerMP3
 import com.example.generator2.features.scope.Scope
+import com.example.generator2.features.script.Script
+import com.example.generator2.room.AppDatabase
+import com.example.generator2.room.MIGRATION_1_2
 import com.example.generator2.screens.scripting.ui.ScriptKeyboard
 import com.example.generator2.util.UtilsKT
 import dagger.Module
@@ -118,5 +121,16 @@ object HomeActivityModule {
         )
     }
 
+
+    @Provides
+    @Singleton
+    fun provideStockDatabase(@ApplicationContext context: Context, appPath: AppPath): AppDatabase {
+        println("..DI provideStockDatabase ROOM")
+        return Room.databaseBuilder(context, AppDatabase::class.java, appPath.config+"/room")
+            .fallbackToDestructiveMigration()
+            .allowMainThreadQueries()
+            //.addMigrations(MIGRATION_1_2)
+            .build()
+    }
 
 }

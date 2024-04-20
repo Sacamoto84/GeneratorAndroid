@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.generator2.NavigationRoute
 import com.example.generator2.R
 import com.example.generator2.navController
 import com.example.generator2.features.presets.Presets
@@ -85,6 +86,12 @@ fun M4BottomAppBarComponent(
         }
 
         Spacer(modifier = Modifier.weight(1f))
+
+        //Запуск плейлиста
+        IconButton(modifier = Modifier.testTag("playlist"),
+            onClick = { navController.navigate(NavigationRoute.PLAYLIST.value) }) {
+            Icon(painter = painterResource(R.drawable.player_memory), contentDescription = null)
+        }
 
         IconButton(modifier = Modifier.testTag("edit"),
             onClick = { navController.navigate("html") }) {

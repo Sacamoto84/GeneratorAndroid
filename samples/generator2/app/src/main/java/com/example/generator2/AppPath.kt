@@ -2,7 +2,9 @@ package com.example.generator2
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.os.Environment
+import androidx.core.content.ContextCompat.startActivity
 import java.io.File
 
 private enum class Folder(val value: String) {
@@ -37,6 +39,10 @@ class AppPath(
         EnvironmentStorage.EXTERNAL -> (context as Application).getExternalFilesDir(null) // /storage/sdcard0/Android/data/package/files
         EnvironmentStorage.EXTERNAL_STORAGE -> Environment.getExternalStorageDirectory() // /storage/sdcard0
     }
+
+
+
+
 
     /**
      * Путь до sdcard
