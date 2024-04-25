@@ -19,6 +19,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import timber.log.Timber
 import javax.inject.Singleton
 
 @Module
@@ -126,11 +127,21 @@ object HomeActivityModule {
     @Singleton
     fun provideStockDatabase(@ApplicationContext context: Context, appPath: AppPath): AppDatabase {
         println("..DI provideStockDatabase ROOM")
-        return Room.databaseBuilder(context, AppDatabase::class.java, appPath.config+"/room")
-            .fallbackToDestructiveMigration()
-            .allowMainThreadQueries()
-            //.addMigrations(MIGRATION_1_2)
-            .build()
-    }
 
+        lateinit var base: AppDatabase
+
+        try {
+            base = Room
+                //.databaseBuilder(context, AppDatabase::class.java, appPath.config + "/room")
+                .databaseBuilder(context, AppDatabase::class.java, "room")
+                .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigrationOnDowngrade()
+                .build()
+        } catch (e: Exception) {
+            Timber.e("Ошибка создания базы")
+        }
+        println("..DI provideStockDatabase ROOM..OK")
+        return base
+    }
 }

@@ -37,7 +37,6 @@ class Initialization(
 
     var isInitialized = false  //Признак того что произошла инициализация
 
-    @OptIn(DelicateCoroutinesApi::class)
     fun run() {
 
         Timber.plant(Timber.DebugTree())
@@ -62,7 +61,7 @@ class Initialization(
         Utils.patchMod = "$patchMod/"
 
         try {
-            AssetCopier(context).copy("Carrier", File("$patchCarrier/"))
+            AssetCopier(context).copy("Carrier", File(patchCarrier))
             AssetCopier(context).copy("Mod", File(patchMod))
         } catch (e: IOException) {
             Timber.e(e.printStackTrace().toString())

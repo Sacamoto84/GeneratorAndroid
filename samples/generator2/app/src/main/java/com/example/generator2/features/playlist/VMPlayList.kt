@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.example.generator2.room.AppDatabase
 import com.example.generator2.room.EntityPlaylist
 import dagger.hilt.android.lifecycle.HiltViewModel
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -14,8 +15,9 @@ class VMPlayList @Inject constructor(
 ) : ViewModel() {
 
     init {
-        db.maindao().insert(EntityPlaylist(0, 1))
-
+        Timber.i("VMPlayList Dao")
+        db.maindao().insert(EntityPlaylist(0, "qww"))
     }
+
 
 }

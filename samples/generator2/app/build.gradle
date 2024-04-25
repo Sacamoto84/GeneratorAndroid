@@ -248,6 +248,10 @@ dependencies {
     ksp 'com.google.dagger:hilt-compiler:2.51'
     //implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03'
     ksp 'androidx.hilt:hilt-compiler:1.2.0'
+
+    implementation("it.czerwinski.android.hilt:hilt-extensions:1.4.0")
+    ksp("it.czerwinski.android.hilt:hilt-processor-ksp:1.4.0")
+
 ///////////////////
 
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0'

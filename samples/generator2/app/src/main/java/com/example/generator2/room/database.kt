@@ -7,8 +7,10 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
-    entities = [EntityPlaylist::class], exportSchema = true, version = 1,
-    //autoMigrations = [AutoMigration(from = 1, to = 2),
+    entities = [EntityPlaylist::class],
+    exportSchema = true,
+    version = 4,
+    autoMigrations = [AutoMigration(from = 1, to = 4)]
     //    AutoMigration(from = 2, to = 3)]
 )
 abstract class AppDatabase : RoomDatabase() {

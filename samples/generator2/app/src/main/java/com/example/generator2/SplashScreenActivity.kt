@@ -102,7 +102,7 @@ class SplashScreenActivity : AppCompatActivity() {
         //playlistJson.addAll(PlaylistSQL.read())
         //playlistJson
 
-        playlist
+       // playlist
 
 //        if (LeakCanary.isInAnalyzerProcess(this)) {
 //            // This process is dedicated to LeakCanary for heap analysis.

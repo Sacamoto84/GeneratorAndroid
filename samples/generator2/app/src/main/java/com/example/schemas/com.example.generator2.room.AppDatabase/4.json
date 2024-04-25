@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 1,
-    "identityHash": "297ae130109cc212071e143f9d6b2df4",
+    "version": 4,
+    "identityHash": "203c2e98c7294ffe6d28b8b047b59203",
     "entities": [
       {
         "tableName": "EntityPlaylist",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `playlistName` TEXT NOT NULL, `path` TEXT NOT NULL, `name` TEXT NOT NULL, `balance` INTEGER NOT NULL, `volume` REAL NOT NULL, `isExist` INTEGER NOT NULL, `isExist1` INTEGER NOT NULL, `isExist2` INTEGER NOT NULL, `isExist3` INTEGER NOT NULL, `lengthInSeconds` TEXT NOT NULL, `sampleRate` TEXT NOT NULL, `bitRate` TEXT NOT NULL, `channelMode` TEXT NOT NULL, `additionalData` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `playlistName` TEXT NOT NULL, `path` TEXT NOT NULL, `name` TEXT NOT NULL, `balance` INTEGER NOT NULL, `volume` REAL NOT NULL, `isExist` INTEGER NOT NULL, `isExist1` INTEGER NOT NULL, `isExist2` INTEGER NOT NULL, `isExist3` INTEGER NOT NULL, `isExist4` INTEGER NOT NULL DEFAULT false, `lengthInSeconds` TEXT NOT NULL, `sampleRate` TEXT NOT NULL, `bitRate` TEXT NOT NULL, `channelMode` TEXT NOT NULL, `additionalData` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -69,6 +69,13 @@
             "notNull": true
           },
           {
+            "fieldPath": "isExist4",
+            "columnName": "isExist4",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "false"
+          },
+          {
             "fieldPath": "lengthInSeconds",
             "columnName": "lengthInSeconds",
             "affinity": "TEXT",
@@ -112,7 +119,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '297ae130109cc212071e143f9d6b2df4')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '203c2e98c7294ffe6d28b8b047b59203')"
     ]
   }
 }
