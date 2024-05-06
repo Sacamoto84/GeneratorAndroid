@@ -17,9 +17,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.generator2.AppPath
 import com.example.generator2.R
-import com.example.generator2.features.explorer.viewmodel.ScreenExplorerViewModel
+import com.example.generator2.features.explorer.presenter.ScreenExplorerViewModel
 import com.example.generator2.navController
 
 

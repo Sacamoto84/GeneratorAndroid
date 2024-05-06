@@ -1,4 +1,4 @@
-package com.example.generator2.features.explorer.viewmodel
+package com.example.generator2.features.explorer.presenter
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.transformer.EditedMediaItem
 import com.example.generator2.AppPath
-import com.example.generator2.features.update.explorer.model.ExplorerItem
+import com.example.generator2.features.explorer.model.ExplorerItem
 import com.example.generator2.features.mp3.PlayerMP3
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -31,22 +31,17 @@ class ScreenExplorerViewModel @Inject constructor(
     val appPath: AppPath
 ) : ViewModel() {
 
-
     /**
-     *
      * ## ▶ Текущая рабочая папка ◀
      */
     val currentDir = MutableStateFlow(appPath.music)
 
 
-
-
     var update by mutableIntStateOf(0)
-
 
     var listItems = mutableListOf<ExplorerItem>()
 
-    //-----------------------------------------------------------//
+    //
     /**
      * ## ⚡ Подняться выше по папке ⚡
      */
@@ -56,12 +51,8 @@ class ScreenExplorerViewModel @Inject constructor(
 
         val s = currentDir.value.substringBeforeLast('/')
         currentDir.value = s
+
     }
-
-
-
-
-
 
     @androidx.media3.common.util.UnstableApi
     fun play(s: String) {

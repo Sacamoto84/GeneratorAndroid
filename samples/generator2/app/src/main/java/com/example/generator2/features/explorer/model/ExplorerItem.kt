@@ -1,4 +1,4 @@
-package com.example.generator2.features.update.explorer.model
+package com.example.generator2.features.explorer.model
 
 data class ExplorerItem(
     val isDirectory: Boolean, //Признак того что файл является директорией

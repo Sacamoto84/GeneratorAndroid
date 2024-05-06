@@ -1,9 +1,10 @@
 package com.example.generator2
 
-import android.app.Application
 import android.content.Context
 import cafe.adriel.pufferdb.android.AndroidPufferDB
 import com.example.generator2.audio.checkSupport192k
+import com.example.generator2.features.explorer.domen.buildTree
+import com.example.generator2.features.explorer.domen.getAllMusicUseCase
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.presets.presetsInit
 import com.example.generator2.features.presets.presetsReadFile
@@ -14,13 +15,7 @@ import com.example.generator2.util.Utils
 import com.example.generator2.util.UtilsKT
 import com.example.generator2.util.toast
 import com.kdownloader.KDownloader
-import com.yandex.metrica.YandexMetrica
-import com.yandex.metrica.YandexMetricaConfig
 import flipagram.assetcopylib.AssetCopier
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -41,6 +36,11 @@ class Initialization(
 
         Timber.plant(Timber.DebugTree())
 
+
+       val a =  getAllMusicUseCase(context)
+        a
+       val b =  buildTree(a)
+        b
 //        GlobalScope.launch(Dispatchers.IO) {
 //            println("Запуск Yandex Metrika")
 //            val config = YandexMetricaConfig.newConfigBuilder(API_key).withLogs().build()
