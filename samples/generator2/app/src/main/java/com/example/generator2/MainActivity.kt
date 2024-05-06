@@ -36,8 +36,6 @@ import javax.inject.Singleton
 //YandexMetrica.reportError(String groupIdentifier, String message)
 //YandexMetrica.reportError(String groupIdentifier, String message, Throwable error)
 
-val API_key = "5ca5814f-74a8-46c1-ab17-da3101e88888"
-
 @Singleton
 @AndroidEntryPoint
 @androidx.media3.common.util.UnstableApi

@@ -13,8 +13,9 @@ import java.util.Locale
 private val grandedList = listOf("mp3", "wav", "wav", "acc", "ogg")
 
 /**
- * Филтр по расширениям
+ * Фильтр по расширениям музыкальных файлов
  * @param list - список файлов
+ * @return список музыкальных файлов
  */
 fun explorerFilterMediaType(list : List<String>):List<String> {
     val result = mutableListOf<String>()

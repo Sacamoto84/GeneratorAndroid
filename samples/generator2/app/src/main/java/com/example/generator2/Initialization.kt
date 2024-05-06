@@ -12,6 +12,7 @@ import com.example.generator2.features.presets.presetsReadFile
 import com.example.generator2.features.presets.presetsToLiveData
 import com.example.generator2.features.update.kDownloader
 import com.example.generator2.model.itemList
+import com.example.generator2.model.traverseTree
 import com.example.generator2.util.Utils
 import com.example.generator2.util.UtilsKT
 import com.example.generator2.util.toast
@@ -37,15 +38,21 @@ class Initialization(
 
         Timber.plant(Timber.DebugTree())
 
-
         val a = getAllMusicUseCase(context)
-        a
-
         val aa = explorerFilterMediaType(a)
-        aa
+        //Получить дерево всех аудиофайлов на телефоне
+        global.treeAllAudio = explorerTreeBuild(a)
 
-        val b = explorerTreeBuild(a)
-        b
+        // Предположим, что rootNode - это корневой узел вашего дерева
+        traverseTree(global.treeAllAudio) { node ->
+            val p = node.pathToRoot()
+            var s = ""
+            p.forEach{ pp ->
+               s += if (pp.name != "/") "/${pp.name}" else ""
+            }
+            node.value.path = s
+            println(node.value.toString())
+        }
 
 
 //        GlobalScope.launch(Dispatchers.IO) {

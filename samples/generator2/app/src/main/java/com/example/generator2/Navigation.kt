@@ -50,7 +50,7 @@ fun Navigation() {
 
     NavHost(
         navController = navController,
-        startDestination = NavigationRoute.PLAYLIST.value,
+        startDestination = NavigationRoute.HOME.value,
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)

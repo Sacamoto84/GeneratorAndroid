@@ -10,8 +10,12 @@ import androidx.lifecycle.ViewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.transformer.EditedMediaItem
 import com.example.generator2.AppPath
+import com.example.generator2.Global
+import com.example.generator2.features.explorer.domen.explorerGetAllChildNode
 import com.example.generator2.features.explorer.model.ExplorerItem
 import com.example.generator2.features.mp3.PlayerMP3
+import com.example.generator2.model.countNodes
+import com.example.generator2.model.traverseTree
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,14 +26,100 @@ import java.io.File
 import java.util.Locale
 import javax.inject.Inject
 
+/**
+ * Строка кнопки назад ...
+ */
+val NODE_UP = """..."""
+
 @androidx.media3.common.util.UnstableApi
 @SuppressLint("StaticFieldLeak")
 @HiltViewModel
 class ScreenExplorerViewModel @Inject constructor(
     @ApplicationContext val context: Context,
     val exoplayer: PlayerMP3,
-    val appPath: AppPath
+    val appPath: AppPath,
+    val global: Global
 ) : ViewModel() {
+
+
+    val startNode = global.treeAllAudio
+
+    var currentNode = MutableStateFlow(global.treeAllAudio)
+
+    fun upNode() {
+        val parent = currentNode.value.parent
+        if (parent != null) {
+            currentNode.value = parent
+        }
+    }
+
+
+    fun scanNode() {
+        val childs = explorerGetAllChildNode(currentNode.value)
+
+        listItems.clear()
+
+        if (currentNode.value.parent != null) {
+            listItems.add(ExplorerItem(node = currentNode.value.parent!!, true, name = NODE_UP))
+        }
+
+        childs.forEach {
+            val value = it.value
+
+            var count = 0
+            traverseTree(it) { nod ->
+                val result: Boolean = File(nod.value.path).isFile
+                if (result) {
+                    count++
+                }
+            }
+
+            listItems.add(
+                ExplorerItem(
+                    node = it,
+                    isDirectory = File(value.path).isDirectory,
+                    name = value.name,
+                    fullPatch = value.path,
+                    counterItems = count
+                )
+            )
+        }
+
+        listItems.forEach {
+            mediaFind(it)
+            tagInItemMp3(it)
+        }
+
+//        //Сортировка
+//        val l = listItems.filter { it.isDirectory or it.isMedia }.sortedBy { it.name }
+//            .sortedByDescending { it.isDirectory }
+//        listItems = l.toMutableList()
+
+        update++
+    }
+
+
+    fun onClick_DrawItem(item: ExplorerItem) {
+
+        //Если есть символ назад
+        if (item.name == NODE_UP) {
+            upNode()
+            return
+        }
+
+        if (item.isDirectory) {
+            //Поиск ноды которая отвечает за данный путь item
+
+            val node = global.treeAllAudio.search(item.node.value)
+            if (node != null) {
+                currentNode.value = node
+            }
+        } else {
+            play(item.fullPatch)
+        }
+
+    }
+
 
     /**
      * ## ▶ Текущая рабочая папка ◀
@@ -41,91 +131,79 @@ class ScreenExplorerViewModel @Inject constructor(
 
     var listItems = mutableListOf<ExplorerItem>()
 
-    //
-    /**
-     * ## ⚡ Подняться выше по папке ⚡
-     */
-    fun up() {
-        if (currentDir.value == appPath.sdcard)
-            return
-
-        val s = currentDir.value.substringBeforeLast('/')
-        currentDir.value = s
-
-    }
 
     @androidx.media3.common.util.UnstableApi
-    fun play(s: String) {
+    fun play(path: String) {
         exoplayer.player.stop()
-        val uri = Uri.parse(s)
+        val uri = Uri.parse(path)
         val a = EditedMediaItem.Builder(MediaItem.fromUri(uri)).build()
         exoplayer.player.setMediaItem(a.mediaItem)
         exoplayer.player.prepare()
         exoplayer.player.playWhenReady = true
     }
 
-    fun scan() {
-
-        listItems.clear()
-
-        listItems.add(ExplorerItem(true, name = """..."""))
-
-        try {
-
-            val directory = File(currentDir.value)
-
-            if (directory.exists() && directory.isDirectory) {
-                val files = directory.listFiles()
-                if (files != null) {
-                    for (file in files) {
-
-                        if (file.isDirectory) {
-                            if (file.name[0] != '.') {
-                                listItems.add(
-                                    ExplorerItem(
-                                        isDirectory = true,
-                                        name = file.name,
-                                        fullPatch = file.path
-                                    )
-                                )
-                            }
-                            println("${file.name} - это папка")
-
-                        } else {
-                            listItems.add(
-                                ExplorerItem(
-                                    isDirectory = false,
-                                    name = file.name,
-                                    fullPatch = file.path
-                                )
-                            )
-                            println("${file.name} - это файл")
-                        }
-                    }
-                } else {
-                    println("Ошибка при получении списка файлов")
-                }
-            } else {
-                println("Папка не существует или это не папка")
-            }
-
-        } catch (e: Exception) {
-            Timber.e(e.localizedMessage)
-        }
-
-        listItems.forEach {
-            mediaFind(it)
-            tagInItemMp3(it)
-        }
-
-        //Сортировка
-        val l = listItems.filter { it.isDirectory or it.isMedia }.sortedBy { it.name }
-            .sortedByDescending { it.isDirectory }
-        listItems = l.toMutableList()
-
-        update++
-
-    }
+//    fun scan() {
+//
+//        listItems.clear()
+//
+//        listItems.add(ExplorerItem(true, name = """..."""))
+//
+//        try {
+//
+//            val directory = File(currentDir.value)
+//
+//            if (directory.exists() && directory.isDirectory) {
+//                val files = directory.listFiles()
+//                if (files != null) {
+//                    for (file in files) {
+//
+//                        if (file.isDirectory) {
+//                            if (file.name[0] != '.') {
+//                                listItems.add(
+//                                    ExplorerItem(
+//                                        isDirectory = true,
+//                                        name = file.name,
+//                                        fullPatch = file.path
+//                                    )
+//                                )
+//                            }
+//                            println("${file.name} - это папка")
+//
+//                        } else {
+//                            listItems.add(
+//                                ExplorerItem(
+//                                    isDirectory = false,
+//                                    name = file.name,
+//                                    fullPatch = file.path
+//                                )
+//                            )
+//                            println("${file.name} - это файл")
+//                        }
+//                    }
+//                } else {
+//                    println("Ошибка при получении списка файлов")
+//                }
+//            } else {
+//                println("Папка не существует или это не папка")
+//            }
+//
+//        } catch (e: Exception) {
+//            Timber.e(e.localizedMessage)
+//        }
+//
+//        listItems.forEach {
+//            mediaFind(it)
+//            tagInItemMp3(it)
+//        }
+//
+//        //Сортировка
+//        val l = listItems.filter { it.isDirectory or it.isMedia }.sortedBy { it.name }
+//            .sortedByDescending { it.isDirectory }
+//        listItems = l.toMutableList()
+//
+//        update++
+//
+//    }
 
     /**
      *
@@ -176,7 +254,7 @@ class ScreenExplorerViewModel @Inject constructor(
         }
     }
 
-//    Аудио:
+    //    Аудио:
 //
 //    MP3 (.mp3)
 //    WAV (.wav)

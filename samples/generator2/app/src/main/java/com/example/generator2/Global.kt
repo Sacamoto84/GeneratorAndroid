@@ -3,7 +3,9 @@ package com.example.generator2
 import android.media.AudioFormat
 import com.example.generator2.audio.AudioOut
 import com.example.generator2.backup.MMKv
+import com.example.generator2.features.explorer.model.ExploreNodeItem
 import com.example.generator2.features.noSQL.NoSQL
+import com.example.generator2.model.TreeNode
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,5 +23,12 @@ class Global @Inject constructor(
 
     //language | "ru" "en" - выбор языка
     val noSQLConfig2 = NoSQL(path = appPath.config, nameDB = "config2")
+
+
+    /**
+     * Дерево всех аудиофайлов на устройстве
+     */
+    lateinit var treeAllAudio: TreeNode<ExploreNodeItem>
+
 
 }

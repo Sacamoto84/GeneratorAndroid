@@ -1,6 +1,11 @@
 package com.example.generator2.features.explorer.model
 
+import com.example.generator2.model.TreeNode
+
 data class ExplorerItem(
+
+    val node : TreeNode<ExploreNodeItem>,
+
     val isDirectory: Boolean, //Признак того что файл является директорией
     val name: String = "",         //имя файла
     val fullPatch: String = "",     //Полный путь к файлу
@@ -15,4 +20,8 @@ data class ExplorerItem(
     val title: String = "",
     var lengthInSeconds: String = "",
     var channelMode: String = ""
+    ,
+    var counterItems : Int = 0 //Только для директорий, показ количества и темов которые есть в директории
+
+
 )

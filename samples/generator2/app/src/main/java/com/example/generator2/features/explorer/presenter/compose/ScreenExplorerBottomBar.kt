@@ -1,4 +1,4 @@
-package com.example.generator2.features.update.explorer.compose
+package com.example.generator2.features.explorer.presenter.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,17 +21,16 @@ import com.example.generator2.R
 import com.example.generator2.features.explorer.presenter.ScreenExplorerViewModel
 import com.example.generator2.navController
 
-
-
 @androidx.media3.common.util.UnstableApi
 @Composable
-fun ScreenExplorerTopBar(vm: ScreenExplorerViewModel) {
+fun ScreenExplorerBottomBar(vm: ScreenExplorerViewModel) {
 
     Column {
 
-        var s = vm.currentDir.collectAsState().value.substringAfter(vm.appPath.sdcard)
+        var s = vm.currentNode.collectAsState().value.value.path //.substringAfter(vm.appPath.sdcard)
         if (s == "") s = "/"
 
+        //Текущий путь
         Text(
             modifier = Modifier
                 .fillMaxWidth()
@@ -40,7 +39,8 @@ fun ScreenExplorerTopBar(vm: ScreenExplorerViewModel) {
                 .clip(RoundedCornerShape(4.dp))
                 .background(Color(0xFF1D2428))
                 .padding(start = 4.dp),
-            text = s, color = Color(0xFF9BA7B8)
+            text = s,
+            color = Color(0xFF9BA7B8)
         )
 
         Row(
@@ -60,7 +60,7 @@ fun ScreenExplorerTopBar(vm: ScreenExplorerViewModel) {
                 )
             }
 
-            IconButton(onClick = { vm.up() }) {
+            IconButton(onClick = { vm.upNode() }) {
                 Icon(
                     painter = painterResource(R.drawable.player_up),
                     contentDescription = null,
