@@ -3,7 +3,8 @@ package com.example.generator2
 import android.content.Context
 import cafe.adriel.pufferdb.android.AndroidPufferDB
 import com.example.generator2.audio.checkSupport192k
-import com.example.generator2.features.explorer.domen.buildTree
+import com.example.generator2.features.explorer.domen.explorerFilterMediaType
+import com.example.generator2.features.explorer.domen.explorerTreeBuild
 import com.example.generator2.features.explorer.domen.getAllMusicUseCase
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.presets.presetsInit
@@ -37,10 +38,16 @@ class Initialization(
         Timber.plant(Timber.DebugTree())
 
 
-       val a =  getAllMusicUseCase(context)
+        val a = getAllMusicUseCase(context)
         a
-       val b =  buildTree(a)
+
+        val aa = explorerFilterMediaType(a)
+        aa
+
+        val b = explorerTreeBuild(a)
         b
+
+
 //        GlobalScope.launch(Dispatchers.IO) {
 //            println("Запуск Yandex Metrika")
 //            val config = YandexMetricaConfig.newConfigBuilder(API_key).withLogs().build()
@@ -84,9 +91,6 @@ class Initialization(
 
         AndroidPufferDB.init(context)
         presetsInit(appPath)
-
-
-
 
 
 //Инициализация

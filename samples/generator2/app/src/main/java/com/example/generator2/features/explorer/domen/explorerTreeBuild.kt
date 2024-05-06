@@ -5,12 +5,12 @@ import com.example.generator2.features.explorer.model.ExplorerTreeNode
 /**
  * ## Функция для построения дерева файлов из списка путей
  */
-fun explorerBuildTree(fileList: List<String>): ExplorerTreeNode {
+fun explorerTreeBuild(fileList: List<String>): ExplorerTreeNode {
     val root = ExplorerTreeNode("/")
     for (path in fileList) {
         val components = path.split("/")
         var currentNode = root
-        for (component in components.drop(1)) { // пропускаем первый элемент, так как он пустой из-за начального слэша
+        for (component in components.drop(1)) {
             var foundChild: ExplorerTreeNode? = null
             for (child in currentNode.children) {
                 if (child.name == component) {
@@ -22,6 +22,7 @@ fun explorerBuildTree(fileList: List<String>): ExplorerTreeNode {
                 currentNode = foundChild
             } else {
                 val newNode = ExplorerTreeNode(component)
+                newNode.parent = currentNode
                 currentNode.addChild(newNode)
                 currentNode = newNode
             }
