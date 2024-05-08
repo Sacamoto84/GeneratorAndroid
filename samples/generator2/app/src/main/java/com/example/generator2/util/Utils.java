@@ -27,6 +27,8 @@ import static android.Manifest.permission.WRITE_CALL_LOG;
 import static android.Manifest.permission.WRITE_CONTACTS;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
+import static com.example.generator2.features.initialization.utils.ReadFileMod2048byteKt.readFileMod2048byte;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -126,171 +128,70 @@ public class Utils {
         return listFileInDir(path);
     }
 
-    /**
-     * Чтение файла и возврат массива байтов
-     *
-     * @return Массив byte[]
-     */
-    public static byte[] readFileMod2048byte(String path) {
-        File file = new File(path);
-        long len = file.length();
-        byte[] fileData = new byte[(int) len];
 
-        //Timber.tag("readFileMod2048byte:").i(path + " len:" + Long.toString(len));
-
-        try {
-            DataInputStream dis = new DataInputStream(new FileInputStream(file));
-
-            dis.readFully(fileData);
-            dis.close();
-        } catch (IOException e) {
-            Timber.tag("readFileMod2048byte:").e("!IOException! : Error%s", e.getLocalizedMessage());
-        }
-
-        return fileData;
-    }
-
-    public static Bitmap CreateBitmapModulation(String path) {
-        Bitmap bitmap = Bitmap.createBitmap(1024, 512, Bitmap.Config.RGB_565);
-
-        byte[] array8 = readFileMod2048byte(path); //Получим массив 8 бит
-
-        if (array8.length != 2048) {
-            Timber.tag("!ERROR!").i("CreateBitmapModulation:readFileMod2048byte len:" + Integer.toString(array8.length));
-            bitmap.eraseColor(Color.RED); // Закрашиваем синим цветом
-            return bitmap;
-        }
-
-        bitmap.eraseColor(Color.BLACK); // Закрашиваем синим цветом
-
-        int i = 0;
-
-        int[] arrayU8 = new int[2048];
-
-        for (i = 0; i < 2048; i++)
-            arrayU8[i] = Byte.toUnsignedInt(array8[i]);
-
-        int[] arrayInt = new int[1024];
-
-
-        for (i = 0; i < 1024; i++) {
-            arrayInt[i] = ((arrayU8[i * 2 + 1]) * 256) + (arrayU8[i * 2]);
-        }
-
-        Paint mPaint = new Paint();
-
-        Canvas c = new Canvas();
-        c.setBitmap(bitmap);
-        mPaint.setStyle(Paint.Style.STROKE);
-
-        mPaint.setStrokeWidth(4);
-        mPaint.setColor(Color.DKGRAY);
-        c.drawLine(512, 0, 512, 512, mPaint);
-
-        mPaint.setColor(Color.GREEN);
-        mPaint.setStrokeWidth(10);
-
-
-        for (i = 0; i < 512; i++) {
-            c.drawLine(i, 32 + (float) (4095 - arrayInt[i * 2]) / 18, i, (float) (arrayInt[i * 2]) / 18 + 256, mPaint);
-        }
-
-        for (i = 0; i < 512; i++) {
-            c.drawLine(i + 512, 32 + (float) (4095 - arrayInt[i * 2]) / 18, i + 512, (float) (arrayInt[i * 2]) / 18 + 256, mPaint);
-        }
-
-        mPaint.setStrokeWidth(2);
-        //mPaint.setColor(Color.BLUE);
-        //mPaint.setPathEffect(new DashPathEffect(new float[] { 20F, 30F, 40F, 50F}, 0));
-        Path pathLine = new Path();
-        pathLine.moveTo(0, 256);
-        pathLine.lineTo(0, 256);
-        pathLine.lineTo(1023, 255);
-        //c.drawPath(pathLine, mPaint);
-        c.drawLine(0, 256, 1023, 256, mPaint);
-
-        return bitmap;
-    }
-
-    public static Bitmap CreateBitmapCarrier2(String path) {
-        Bitmap bitmap = Bitmap.createBitmap(1024, 512, Bitmap.Config.RGB_565);
-
-        byte[] array8 = readFileMod2048byte(path); //Получим массив 8 бит
-
-        Log.i("CreateBitmapModulation:A8 len:", Integer.toString(array8.length));
-
-        if (array8.length != 2048) {
-            bitmap.eraseColor(Color.RED); // Закрашиваем синим цветом
-            return bitmap;
-        }
-
-        bitmap.eraseColor(Color.TRANSPARENT); // Закрашиваем синим цветом
-
-        int i = 0;
-
-        int[] arrayU8 = new int[2048];
-        for (i = 0; i < 2048; i++)
-            arrayU8[i] = Byte.toUnsignedInt(array8[i]);
+//    public static Bitmap CreateBitmapModulation(String path) {
+//        Bitmap bitmap = Bitmap.createBitmap(1024, 512, Bitmap.Config.RGB_565);
+//
+//        byte[] array8 = readFileMod2048byte(path); //Получим массив 8 бит
+//
+//        if (array8.length != 2048) {
+//            Timber.tag("!ERROR!").i("CreateBitmapModulation:readFileMod2048byte len:" + Integer.toString(array8.length));
+//            bitmap.eraseColor(Color.RED); // Закрашиваем синим цветом
+//            return bitmap;
+//        }
+//
+//        bitmap.eraseColor(Color.BLACK); // Закрашиваем синим цветом
+//
+//        int i = 0;
+//
+//        int[] arrayU8 = new int[2048];
+//
+//        for (i = 0; i < 2048; i++)
+//            arrayU8[i] = Byte.toUnsignedInt(array8[i]);
+//
+//        int[] arrayInt = new int[1024];
+//
+//
+//        for (i = 0; i < 1024; i++) {
+//            arrayInt[i] = ((arrayU8[i * 2 + 1]) * 256) + (arrayU8[i * 2]);
+//        }
+//
+//        Paint mPaint = new Paint();
+//
+//        Canvas c = new Canvas();
+//        c.setBitmap(bitmap);
+//        mPaint.setStyle(Paint.Style.STROKE);
+//
+//        mPaint.setStrokeWidth(4);
+//        mPaint.setColor(Color.DKGRAY);
+//        c.drawLine(512, 0, 512, 512, mPaint);
+//
+//        mPaint.setColor(Color.GREEN);
+//        mPaint.setStrokeWidth(10);
+//
+//
+//        for (i = 0; i < 512; i++) {
+//            c.drawLine(i, 32 + (float) (4095 - arrayInt[i * 2]) / 18, i, (float) (arrayInt[i * 2]) / 18 + 256, mPaint);
+//        }
+//
+//        for (i = 0; i < 512; i++) {
+//            c.drawLine(i + 512, 32 + (float) (4095 - arrayInt[i * 2]) / 18, i + 512, (float) (arrayInt[i * 2]) / 18 + 256, mPaint);
+//        }
+//
+//        mPaint.setStrokeWidth(2);
+//        //mPaint.setColor(Color.BLUE);
+//        //mPaint.setPathEffect(new DashPathEffect(new float[] { 20F, 30F, 40F, 50F}, 0));
+//        Path pathLine = new Path();
+//        pathLine.moveTo(0, 256);
+//        pathLine.lineTo(0, 256);
+//        pathLine.lineTo(1023, 255);
+//        //c.drawPath(pathLine, mPaint);
+//        c.drawLine(0, 256, 1023, 256, mPaint);
+//
+//        return bitmap;
+//    }
 
 
-        int[] arrayInt = new int[1024];
-
-
-        for (i = 0; i < 1024; i++) {
-            arrayInt[i] = ((arrayU8[i * 2 + 1]) * 256) + (arrayU8[i * 2]);
-            //bitmap.setPixel(i, arrayInt[i]/8, Color.GREEN);
-        }
-
-        Canvas c = new Canvas();
-        c.setBitmap(bitmap);
-
-        Paint mPaint = new Paint();
-
-        //mPaint.setStrokeWidth(4);
-        //mPaint.setColor(0x1000FF00);
-        //c.drawRect( 0, 0, 1024-1 ,512-1, mPaint);
-
-        mPaint.setStrokeWidth(4);
-        mPaint.setColor(Color.DKGRAY);
-        c.drawLine(512, 0, 512, 512, mPaint);
-
-
-        //mPaint.setColor(Color.BLUE);
-        mPaint.setColor(Color.TRANSPARENT);
-        mPaint.setStrokeWidth(10);
-        c.drawLine(0, 256, 1023, 256, mPaint);
-
-
-        Path mPath = new Path();
-
-        // очистка path
-        mPath.reset();
-
-
-        mPath.moveTo(0, 32 + (4096 - arrayInt[0]) / 9);
-        for (i = 1; i < 512; i++)
-            mPath.lineTo(i, 32 + (4096 - arrayInt[i * 2]) / 9);
-
-        //mPath.moveTo(512,  32 + (4096 - arrayInt[0])/9);
-        for (i = 0; i < 512; i++)
-            mPath.lineTo(i + 512, 32 + (4096 - arrayInt[i * 2]) / 9);
-
-
-        mPaint.setColor(Color.GREEN);
-        mPaint.setStrokeWidth(10);
-        mPaint.setStyle(Paint.Style.STROKE);
-        c.drawPath(mPath, mPaint);
-
-
-        // Выводим уменьшенную в два раза картинку
-        Bitmap bmHalf = Bitmap.createScaledBitmap(bitmap, 512,
-                256, false);
-
-        bitmap.recycle();
-
-
-        return bmHalf;
-    }
 
     public static float ConvertValueToP(int min, int step, double value) {
         return (float) (value - min) / step;

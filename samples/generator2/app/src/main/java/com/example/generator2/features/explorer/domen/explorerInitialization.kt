@@ -3,6 +3,8 @@ package com.example.generator2.features.explorer.domen
 import android.annotation.SuppressLint
 import android.content.Context
 import com.example.generator2.features.explorer.data.treeAllAudio
+import com.example.generator2.features.explorer.model.ExploreNodeItem
+import com.example.generator2.model.TreeNode
 import com.example.generator2.model.traverseTree
 import org.jaudiotagger.audio.AudioFileIO
 import java.io.File
@@ -18,7 +20,7 @@ fun explorerInitialization(context: Context) {
     traverseTree(treeAllAudio) { node ->
         val p = node.pathToRoot()
         var s = ""
-        p.forEach{ pp ->
+        p.forEach { pp ->
             s += if (pp.name != "/") "/${pp.name}" else ""
         }
         node.value.path = s
@@ -40,7 +42,7 @@ fun explorerInitialization(context: Context) {
         node.value.counterItems = count
         ///////////////////////
 
-        val path =  node.value.path
+        val path = node.value.path
         val isDirectory = File(path).isDirectory
         node.value.isDirectory = isDirectory
         if (isDirectory) {
@@ -55,20 +57,7 @@ fun explorerInitialization(context: Context) {
 
         if (format == "") return@traverseTree
 
-        val audioFile = AudioFileIO.read(File(path))
-        val tag = audioFile.tag
-        val header = audioFile.audioHeader
-        header.toString()
-
-        val lengthInSeconds = header.trackLength.toLong().formatSecondsToTime()
-        val sampleRate = header.sampleRate
-        val bitRate = header.bitRate + "kbps "// + if (header.isVariableBitRate) "VBR" else ""
-        val channelMode = header.channels.toString()
-
-        node.value.lengthInSeconds = lengthInSeconds
-        node.value.sampleRate = sampleRate
-        node.value.bitRate = bitRate
-        node.value.channelMode = channelMode
+        tagInItemMp3(node)
 
         node.value.isInit = true
 
@@ -76,8 +65,19 @@ fun explorerInitialization(context: Context) {
     }
 
 
-
 }
+
+
+fun tagInItemMp3(node: TreeNode<ExploreNodeItem>) {
+    if ((node.value.isFormat == "") || (node.value.isDirectory)) return
+    val audioFile = AudioFileIO.read(File(node.value.path))
+    val header = audioFile.audioHeader
+    node.value.lengthInSeconds = header.trackLength.toLong().formatSecondsToTime()
+    node.value.sampleRate = header.sampleRate
+    node.value.bitRate = header.bitRate + "kbps "// + if (header.isVariableBitRate) "VBR" else ""
+    node.value.channelMode = header.channels.toString()
+}
+
 
 @SuppressLint("DefaultLocale")
 private fun Long.formatSecondsToTime(): String {

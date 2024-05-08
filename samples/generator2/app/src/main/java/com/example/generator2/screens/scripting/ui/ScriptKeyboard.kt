@@ -22,9 +22,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,10 +33,9 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.generator2.features.script.Script
 import com.example.generator2.features.generator.Generator
+import com.example.generator2.features.script.Script
 import com.example.generator2.screens.scripting.atom.TemplateButtonBottomBar
-import com.example.generator2.theme.NoRippleTheme
 import com.example.generator2.theme.colorDarkBackground
 import timber.log.Timber
 import java.util.Stack
@@ -906,7 +903,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
 
     @Composable
     fun KeyBlank() {
-        CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
+        //CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
             OutlinedButton(
                 onClick = {},
                 modifier = Modifier
@@ -919,7 +916,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
                 contentPadding = PaddingValues(2.dp)
             ) { //Text("str")
             }
-        }
+        //}
     }
 
     @Composable

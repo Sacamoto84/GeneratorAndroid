@@ -7,7 +7,7 @@ data class ExplorerItem(
     val node: TreeNode<ExploreNodeItem>,
 
     //val isDirectory: Boolean, //Признак того что файл является директорией
-    //val name: String = "",         //имя файла
+    val name: String = "",         //имя файла
     //val fullPatch: String = "",     //Полный путь к файлу
 
     //var isMedia: Boolean = false,

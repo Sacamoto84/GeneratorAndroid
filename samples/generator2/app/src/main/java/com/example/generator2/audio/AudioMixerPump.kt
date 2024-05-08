@@ -49,7 +49,7 @@ class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope: Sc
 
     init {
         Timber.i("Запуск AudioMixerPump ")
-        run()
+        //run()
     }
 
 

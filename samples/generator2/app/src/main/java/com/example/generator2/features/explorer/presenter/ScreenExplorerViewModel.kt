@@ -13,6 +13,8 @@ import com.example.generator2.AppPath
 import com.example.generator2.Global
 import com.example.generator2.features.explorer.data.treeAllAudio
 import com.example.generator2.features.explorer.domen.explorerGetAllChildNode
+import com.example.generator2.features.explorer.domen.explorerMediaFormat
+import com.example.generator2.features.explorer.domen.tagInItemMp3
 import com.example.generator2.features.explorer.model.ExplorerItem
 import com.example.generator2.features.mp3.PlayerMP3
 import com.example.generator2.model.countNodes
@@ -61,7 +63,7 @@ class ScreenExplorerViewModel @Inject constructor(
         listItems.clear()
 
         if (currentNode.value.parent != null) {
-            listItems.add(ExplorerItem(node = currentNode.value.parent!!, true, name = NODE_UP))
+            listItems.add(ExplorerItem(node = currentNode.value.parent!!, name = NODE_UP))
         }
 
         childs.forEach {
@@ -75,21 +77,26 @@ class ScreenExplorerViewModel @Inject constructor(
                 }
             }
 
-
-
-
             listItems.add(
                 ExplorerItem(
                     node = it,
-                    isDirectory = File(value.path).isDirectory,
                     name = value.name,
-                    fullPatch = value.path,
                     counterItems = count
                 )
             )
         }
 
         listItems.forEach {
+
+            if (!it.node.value.isInit) {
+                if (!it.node.value.isDirectory) {
+                    val format = explorerMediaFormat(it.node.value.path)
+                    it.node.value.isFormat = format
+                    tagInItemMp3(it.node)
+                }
+                it.node.value.isInit = true
+            }
+
            // mediaFind(it)
            // tagInItemMp3(it)
         }
@@ -111,7 +118,7 @@ class ScreenExplorerViewModel @Inject constructor(
             return
         }
 
-        if (item.isDirectory) {
+        if (item.node.value.isDirectory) {
             //Поиск ноды которая отвечает за данный путь item
 
             val node = treeAllAudio.search(item.node.value)
@@ -119,7 +126,7 @@ class ScreenExplorerViewModel @Inject constructor(
                 currentNode.value = node
             }
         } else {
-            play(item.fullPatch)
+            play(item.node.value.path)
         }
 
     }
@@ -212,39 +219,39 @@ class ScreenExplorerViewModel @Inject constructor(
     /**
      *
      */
-    private fun tagInItemMp3(item: ExplorerItem) {
-        try {
-            if ((item.isDirectory) or (item.isFormat == "")) return
-
-            println("----------------------------------------------")
-            println(item.fullPatch)
-
-            val audioFile = AudioFileIO.read(File(item.fullPatch))
-            val tag = audioFile.tag
-
-
-            val header = audioFile.audioHeader
-            header.toString()
-
-            item.lengthInSeconds = header.trackLength.toLong().formatSecondsToTime()
-            item.sampleRate = header.sampleRate
-            item.bitRate = header.bitRate + "kbps "// + if (header.isVariableBitRate) "VBR" else ""
-            item.channelMode = header.channels.toString()
-
-            val title = tag.getFirst(FieldKey.TITLE)
-            val artist = tag.getFirst(FieldKey.ARTIST)
-            val album = tag.getFirst(FieldKey.ALBUM)
-
-            println("Title: $title")
-            println("Artist: $artist")
-            println("Album: $album")
-
-
-        } catch (e: Exception) {
-            Timber.e(e.localizedMessage)
-        }
-
-    }
+//    private fun tagInItemMp3(item: ExplorerItem) {
+//        try {
+//            if ((item.isDirectory) or (item.isFormat == "")) return
+//
+//            println("----------------------------------------------")
+//            println(item.fullPatch)
+//
+//            val audioFile = AudioFileIO.read(File(item.fullPatch))
+//            val tag = audioFile.tag
+//
+//
+//            val header = audioFile.audioHeader
+//            header.toString()
+//
+//            item.lengthInSeconds = header.trackLength.toLong().formatSecondsToTime()
+//            item.sampleRate = header.sampleRate
+//            item.bitRate = header.bitRate + "kbps "// + if (header.isVariableBitRate) "VBR" else ""
+//            item.channelMode = header.channels.toString()
+//
+//            val title = tag.getFirst(FieldKey.TITLE)
+//            val artist = tag.getFirst(FieldKey.ARTIST)
+//            val album = tag.getFirst(FieldKey.ALBUM)
+//
+//            println("Title: $title")
+//            println("Artist: $artist")
+//            println("Album: $album")
+//
+//
+//        } catch (e: Exception) {
+//            Timber.e(e.localizedMessage)
+//        }
+//
+//    }
 
 
     private fun Long.formatSecondsToTime(): String {
@@ -265,28 +272,28 @@ class ScreenExplorerViewModel @Inject constructor(
 //    FLAC (.flac)
 //    AAC (.aac)
 //    OGG (.ogg)
-    private val grandedList = listOf("mp3", "wav", "acc", "ogg")
-
-    private fun mediaFind(item: ExplorerItem) {
-        try {
-            //substringAfterLast('.')
-            val format = item.name.lowercase(Locale.ROOT).substringAfterLast('.') //->lowcase
-            if (format.isNotEmpty()) {
-                grandedList.forEach {
-                    if (format.contains(it)) {
-                        when (it) {
-                            "mp3" -> item.isFormat = "mp3"
-                            "wav" -> item.isFormat = "wav"
-                            "acc" -> item.isFormat = "acc"
-                            "ogg" -> item.isFormat = "ogg"
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            Timber.e(e.localizedMessage)
-        }
-    }
+//    private val grandedList = listOf("mp3", "wav", "acc", "ogg")
+//
+//    private fun mediaFind(item: ExplorerItem) {
+//        try {
+//            //substringAfterLast('.')
+//            val format = item.name.lowercase(Locale.ROOT).substringAfterLast('.') //->lowcase
+//            if (format.isNotEmpty()) {
+//                grandedList.forEach {
+//                    if (format.contains(it)) {
+//                        when (it) {
+//                            "mp3" -> item.isFormat = "mp3"
+//                            "wav" -> item.isFormat = "wav"
+//                            "acc" -> item.isFormat = "acc"
+//                            "ogg" -> item.isFormat = "ogg"
+//                        }
+//                    }
+//                }
+//            }
+//        } catch (e: Exception) {
+//            Timber.e(e.localizedMessage)
+//        }
+//    }
 
 
 }

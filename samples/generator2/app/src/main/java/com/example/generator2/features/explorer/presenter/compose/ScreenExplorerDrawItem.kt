@@ -47,7 +47,7 @@ fun ScreenExplorerDrawItem(item: ExplorerItem, vm: ScreenExplorerViewModel) {
             .padding(start = 4.dp, end = 4.dp, top = 2.dp, bottom = 2.dp)
             .clip(RoundedCornerShape(2.dp))
             .border(1.dp, Color.DarkGray, RoundedCornerShape(2.dp))
-            .background(if (item.isDirectory) Color(0xFF006064) else Color(0xFF33313B))
+            .background(if (item.node.value.isDirectory) Color(0xFF006064) else Color(0xFF33313B))
     ) {
 
         Row(verticalAlignment = Alignment.CenterVertically,
@@ -83,7 +83,7 @@ fun ScreenExplorerDrawItem(item: ExplorerItem, vm: ScreenExplorerViewModel) {
 
 
 
-                if (item.isFormat.isNotEmpty()) {
+                if (item.node.value.isFormat.isNotEmpty()) {
 
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier
@@ -104,14 +104,14 @@ fun ScreenExplorerDrawItem(item: ExplorerItem, vm: ScreenExplorerViewModel) {
                             Spacer(modifier = Modifier.width(4.dp))
 
                             Text(
-                                text = item.lengthInSeconds,
+                                text = item.node.value.lengthInSeconds,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.width(64.dp), color = Color(0xFFCDDC39)
                             )
                         }
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            if (item.channelMode == "Mono")
+                            if (item.node.value.channelMode == "Mono")
                                 Icon(
                                     painter = painterResource(R.drawable.player_mono),
                                     contentDescription = null,
@@ -126,7 +126,7 @@ fun ScreenExplorerDrawItem(item: ExplorerItem, vm: ScreenExplorerViewModel) {
                                     tint = Color.LightGray
                                 )
 
-                            Text(text = item.channelMode, color = Color.White)
+                            Text(text = item.node.value.channelMode, color = Color.White)
                         }
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -137,7 +137,7 @@ fun ScreenExplorerDrawItem(item: ExplorerItem, vm: ScreenExplorerViewModel) {
                                 tint = Color.LightGray
                             )
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text(text = item.sampleRate, color = Color.White)
+                            Text(text = item.node.value.sampleRate, color = Color.White)
                         }
                     }
                 }

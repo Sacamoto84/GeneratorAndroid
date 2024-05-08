@@ -1,17 +1,24 @@
 package com.example.generator2
 
 import android.app.Application
+import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import com.yandex.metrica.YandexMetrica
 import com.yandex.metrica.YandexMetricaConfig
 import dagger.hilt.android.HiltAndroidApp
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 val API_key = "5ca5814f-74a8-46c1-ab17-da3101e88888"
+
+lateinit var application: Application
+
+var startTimeAplication = System.currentTimeMillis()
+
 
 @HiltAndroidApp
 class App : Application() {
@@ -20,15 +27,18 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        // Initialize YandexMetrica
+        startTimeAplication = System.currentTimeMillis()
 
-        GlobalScope.launch(Dispatchers.IO) {
-            println("Запуск Yandex Metrika")
-            val config = YandexMetricaConfig.newConfigBuilder(API_key).withLogs().build()
-            YandexMetrica.activate(this@App, config)
-            YandexMetrica.enableActivityAutoTracking(this@App)
-            YandexMetrica.reportEvent("Запуск")
-        }
+        application = this
+
+
+//        GlobalScope.launch(Dispatchers.IO) {
+//            println("Запуск Yandex Metrika")
+//            val config = YandexMetricaConfig.newConfigBuilder(API_key).withLogs().build()
+//            YandexMetrica.activate(this@App, config)
+//            YandexMetrica.enableActivityAutoTracking(this@App)
+//            YandexMetrica.reportEvent("Запуск")
+//        }
 
         if (!PermissionStorage.hasPermissions(this)) {
             val intent = Intent(this, PermissionScreenActivity::class.java)

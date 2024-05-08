@@ -74,8 +74,7 @@ class RenderChannel(val liveData: DataLiveData) {
                                 1.0F
                             )
                 } else
-                    o = volume * (CH.buffer_carrier[CH.phase_accumulator_carrier.shr(22)
-                        .toInt()].toFloat() - 2048.0F) / 2048.0F
+                    o = volume * (CH.buffer_carrier[CH.phase_accumulator_carrier.shr(22).toInt()].toFloat() - 2048.0F) / 2048.0F
 
             } else
                 o = 0F

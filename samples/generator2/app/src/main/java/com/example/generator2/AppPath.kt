@@ -61,6 +61,7 @@ class AppPath(
     val music = envoriment?.absolutePath + "/${appMain}/${Folder.MUSIC.value}"
     val playlist = envoriment?.absolutePath + "/${appMain}/${Folder.PLAYLIST.value}"
 
+    val assets = "file:///android_asset/"
 
     init {
         println("---AppPath---")

@@ -15,7 +15,7 @@ import com.example.generator2.features.explorer.model.ExplorerItem
 @Composable
 fun ScreenExplorerDrawCount(item: ExplorerItem) {
 
-    if ((item.isDirectory) && (item.counterItems > 0)) {
+    if ((item.node.value.isDirectory) && (item.counterItems > 0)) {
         Text(
             text = item.counterItems.toString(),
             fontSize = 18.sp,

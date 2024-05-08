@@ -22,7 +22,7 @@ import com.example.generator2.features.explorer.presenter.NODE_UP
 @Composable
 fun ScreenExplorerDrawItemIcon(item: ExplorerItem) {
 
-    if (item.isDirectory) {
+    if (item.node.value.isDirectory) {
 
         if (item.name != NODE_UP) {
             Icon(
@@ -46,7 +46,7 @@ fun ScreenExplorerDrawItemIcon(item: ExplorerItem) {
         ) {
 
             Text(
-                text = item.isFormat,
+                text = item.node.value.isFormat,
                 modifier = Modifier.padding(start = 4.dp)
                 //.border(1.dp, Color.Black, RoundedCornerShape(4.dp))
                 ,

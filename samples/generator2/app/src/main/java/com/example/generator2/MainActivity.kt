@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Timber.plant(Timber.DebugTree())
+        //Timber.plant(Timber.DebugTree())
         Timber.i("..................................onCreate.................................")
 
         Utils.ContextMainActivity = applicationContext
@@ -103,6 +103,15 @@ class MainActivity : ComponentActivity() {
             //exitTransition  - управляет тем, что ExitTransition  запускается, когда initialState NavBackStackEntry исчезает с экрана.
             Generator2Theme {
                 Timber.i("..................................Generator2Theme.................................")
+
+
+
+                Timber.tag("Время работы")
+                        .i("!!! MainActivity запуск Navigation он начала запуска Splash: ${System.currentTimeMillis() - startTimeSplashScreenActivity} мс!!!")
+
+                Timber.tag("Время работы")
+                    .i("!!! MainActivity запуск Navigation он начала запуска App: ${System.currentTimeMillis() - startTimeAplication} мс!!!")
+
                 Navigation()
             }
         }

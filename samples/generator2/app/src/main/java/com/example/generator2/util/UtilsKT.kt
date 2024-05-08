@@ -2,6 +2,7 @@ package com.example.generator2.util
 
 import android.content.Context
 import com.example.generator2.features.generator.Generator
+import com.example.generator2.features.initialization.utils.readFileMod2048byte
 import com.example.generator2.util.ArrayUtils.byteToShortArrayLittleEndian
 import java.io.File
 import java.io.IOException
@@ -96,7 +97,7 @@ class UtilsKT(private var context: Context) {
     ) { //String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
         var path = ""
         path += if (Mod == "CR") Utils.patchCarrier + name + ".dat" else Utils.patchMod + name + ".dat"
-        val buf = Utils.readFileMod2048byte(path) //Здесь должны прочитать файл и записать в массив;
+        val buf = readFileMod2048byte(path) //Здесь должны прочитать файл и записать в массив;
         var ch = 0
         var mod = 0
         if (Mod == "AM") mod = 1

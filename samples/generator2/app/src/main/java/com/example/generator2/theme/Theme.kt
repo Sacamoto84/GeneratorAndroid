@@ -2,10 +2,7 @@ package com.example.generator2.theme
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
-import androidx.compose.material.ripple.RippleAlpha
-import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
     primary = Purple200,
@@ -36,11 +33,11 @@ fun Generator2Theme(content: @Composable () -> Unit) {
 
 }
 
-
-object NoRippleTheme : RippleTheme {
-    @Composable
-    override fun defaultColor() = Color.Unspecified
-
-    @Composable
-    override fun rippleAlpha(): RippleAlpha = RippleAlpha(0.0f, 0.0f, 0.0f, 0.0f)
-}
+//
+//object NoRippleTheme : RippleTheme {
+//    @Composable
+//    override fun defaultColor() = Color.Unspecified
+//
+//    @Composable
+//    override fun rippleAlpha(): RippleAlpha = RippleAlpha(0.0f, 0.0f, 0.0f, 0.0f)
+//}
