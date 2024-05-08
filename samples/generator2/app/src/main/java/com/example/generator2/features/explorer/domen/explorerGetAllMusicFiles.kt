@@ -6,7 +6,7 @@ import android.provider.MediaStore
 /**
  * ## Функция для получения списка всех музыкальных файлов, возвращает список путей к файлам
  */
-fun getAllMusicUseCase(context: Context): List<String> {
+fun explorerGetAllMusicFiles(context: Context): List<String> {
     val musicList = mutableListOf<String>()
     val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
 

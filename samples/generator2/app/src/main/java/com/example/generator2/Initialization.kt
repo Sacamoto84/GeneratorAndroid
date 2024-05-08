@@ -4,8 +4,9 @@ import android.content.Context
 import cafe.adriel.pufferdb.android.AndroidPufferDB
 import com.example.generator2.audio.checkSupport192k
 import com.example.generator2.features.explorer.domen.explorerFilterMediaType
+import com.example.generator2.features.explorer.domen.explorerGetAllMusicFiles
+import com.example.generator2.features.explorer.domen.explorerInitialization
 import com.example.generator2.features.explorer.domen.explorerTreeBuild
-import com.example.generator2.features.explorer.domen.getAllMusicUseCase
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.presets.presetsInit
 import com.example.generator2.features.presets.presetsReadFile
@@ -38,21 +39,7 @@ class Initialization(
 
         Timber.plant(Timber.DebugTree())
 
-        val a = getAllMusicUseCase(context)
-        val aa = explorerFilterMediaType(a)
-        //Получить дерево всех аудиофайлов на телефоне
-        global.treeAllAudio = explorerTreeBuild(a)
-
-        // Предположим, что rootNode - это корневой узел вашего дерева
-        traverseTree(global.treeAllAudio) { node ->
-            val p = node.pathToRoot()
-            var s = ""
-            p.forEach{ pp ->
-               s += if (pp.name != "/") "/${pp.name}" else ""
-            }
-            node.value.path = s
-            println(node.value.toString())
-        }
+        explorerInitialization(context)
 
 
 //        GlobalScope.launch(Dispatchers.IO) {

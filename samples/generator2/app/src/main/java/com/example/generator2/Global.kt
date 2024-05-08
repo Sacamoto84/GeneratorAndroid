@@ -25,10 +25,7 @@ class Global @Inject constructor(
     val noSQLConfig2 = NoSQL(path = appPath.config, nameDB = "config2")
 
 
-    /**
-     * Дерево всех аудиофайлов на устройстве
-     */
-    lateinit var treeAllAudio: TreeNode<ExploreNodeItem>
+
 
 
 }

@@ -11,6 +11,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.transformer.EditedMediaItem
 import com.example.generator2.AppPath
 import com.example.generator2.Global
+import com.example.generator2.features.explorer.data.treeAllAudio
 import com.example.generator2.features.explorer.domen.explorerGetAllChildNode
 import com.example.generator2.features.explorer.model.ExplorerItem
 import com.example.generator2.features.mp3.PlayerMP3
@@ -42,9 +43,9 @@ class ScreenExplorerViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    val startNode = global.treeAllAudio
+    val startNode = treeAllAudio
 
-    var currentNode = MutableStateFlow(global.treeAllAudio)
+    var currentNode = MutableStateFlow(treeAllAudio)
 
     fun upNode() {
         val parent = currentNode.value.parent
@@ -74,6 +75,9 @@ class ScreenExplorerViewModel @Inject constructor(
                 }
             }
 
+
+
+
             listItems.add(
                 ExplorerItem(
                     node = it,
@@ -86,8 +90,8 @@ class ScreenExplorerViewModel @Inject constructor(
         }
 
         listItems.forEach {
-            mediaFind(it)
-            tagInItemMp3(it)
+           // mediaFind(it)
+           // tagInItemMp3(it)
         }
 
 //        //Сортировка
@@ -110,7 +114,7 @@ class ScreenExplorerViewModel @Inject constructor(
         if (item.isDirectory) {
             //Поиск ноды которая отвечает за данный путь item
 
-            val node = global.treeAllAudio.search(item.node.value)
+            val node = treeAllAudio.search(item.node.value)
             if (node != null) {
                 currentNode.value = node
             }
@@ -245,7 +249,7 @@ class ScreenExplorerViewModel @Inject constructor(
 
     private fun Long.formatSecondsToTime(): String {
         return if (this == 0L) {
-            "..."
+            "00:00:00"
         } else {
             val hours = this / 3600
             val minutes = (this % 3600) / 60
@@ -261,7 +265,7 @@ class ScreenExplorerViewModel @Inject constructor(
 //    FLAC (.flac)
 //    AAC (.aac)
 //    OGG (.ogg)
-    private val grandedList = listOf("mp3", "wav", "wav", "acc", "ogg")
+    private val grandedList = listOf("mp3", "wav", "acc", "ogg")
 
     private fun mediaFind(item: ExplorerItem) {
         try {
@@ -270,22 +274,18 @@ class ScreenExplorerViewModel @Inject constructor(
             if (format.isNotEmpty()) {
                 grandedList.forEach {
                     if (format.contains(it)) {
-                        item.isMedia = true
-
                         when (it) {
                             "mp3" -> item.isFormat = "mp3"
                             "wav" -> item.isFormat = "wav"
                             "acc" -> item.isFormat = "acc"
                             "ogg" -> item.isFormat = "ogg"
                         }
-
                     }
                 }
             }
         } catch (e: Exception) {
             Timber.e(e.localizedMessage)
         }
-
     }
 
 
