@@ -11,12 +11,12 @@ import javax.inject.Inject
 @HiltViewModel
 class VMPlayList @Inject constructor(
     val playlist: Playlist,
-    val db: AppDatabase
+    //val db: AppDatabase
 ) : ViewModel() {
 
     init {
         Timber.i("VMPlayList Dao")
-        db.maindao().insert(EntityPlaylist(0, "qww"))
+        //db.maindao().insert(EntityPlaylist(0, "qww"))
     }
 
 

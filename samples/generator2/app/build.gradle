@@ -11,10 +11,8 @@ plugins {
 
     //id 'org.jetbrains.kotlin.plugin.serialization'
 
-
-
 // Apply the Bugsnag plugin
-    id  'com.bugsnag.android.gradle'
+//    id  'com.bugsnag.android.gradle'
 
 }
 
@@ -97,9 +95,12 @@ android {
 
         release {
 
-            shrinkResources true //уменьшение ресурсов
+            debuggable true
+
+            //shrinkResources true //уменьшение ресурсов
 
             minifyEnabled true //false
+
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
@@ -226,7 +227,7 @@ dependencies {
     implementation "androidx.compose.material:material-android:$compose_version"
     implementation 'androidx.compose.material3:material3:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation project(':library')
+    //implementation project(':library')
     //implementation project(':library')
     //baselineProfile project(':baselineprofile')
     //implementation project(':audiostreams')

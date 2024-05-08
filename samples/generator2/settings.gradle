@@ -26,7 +26,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "generator2"
 include ':app'
-include ':library'
+//include ':library'
 //include ':benchmark'
 //include ':audiostreams'
 //include ':resampler'

@@ -75,12 +75,9 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-
         <meta-data
             android:name="com.bugsnag.android.API_KEY"
             android:value="e4bf50278fb1109c567e0ba0cd82cf61"/>
-
-
 
     </application>
 
