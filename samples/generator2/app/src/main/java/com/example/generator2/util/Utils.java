@@ -106,16 +106,16 @@ public class Utils {
         return strFiles;
     }
 
-    /**
-     * Получить список файлов в папке Carrier
-     *
-     * @return Список String[] файлов в папке
-     */
-    public static String[] listFileInCarrier() {
-        Timber.tag("Utils").d("listFileInCarrier()");
-        String path = patchCarrier;
-        return listFileInDir(path);
-    }
+//    /**
+//     * Получить список файлов в папке Carrier
+//     *
+//     * @return Список String[] файлов в папке
+//     */
+//    public static String[] listFileInCarrier() {
+//        Timber.tag("Utils").d("listFileInCarrier()");
+//        String path = patchCarrier;
+//        return listFileInDir(path);
+//    }
 
     /**
      * Получить список файлов в папке Mod
