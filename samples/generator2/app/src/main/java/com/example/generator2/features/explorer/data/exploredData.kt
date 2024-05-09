@@ -6,4 +6,4 @@ import com.example.generator2.model.TreeNode
 /**
  * Дерево всех аудиофайлов на устройстве
  */
-lateinit var treeAllAudio: TreeNode<ExploreNodeItem>
+var treeAllAudio: TreeNode<ExploreNodeItem> = TreeNode(ExploreNodeItem("/", "/"))

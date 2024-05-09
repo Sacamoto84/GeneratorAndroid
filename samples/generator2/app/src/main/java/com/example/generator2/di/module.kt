@@ -1,16 +1,14 @@
 package com.example.generator2.di
 
 import android.content.Context
-import androidx.room.Room
 import com.example.generator2.AppPath
 import com.example.generator2.Global
-import com.example.generator2.features.initialization.Initialization
 import com.example.generator2.audio.AudioMixerPump
 import com.example.generator2.features.generator.Generator
+import com.example.generator2.features.initialization.Initialization
 import com.example.generator2.features.mp3.PlayerMP3
 import com.example.generator2.features.scope.Scope
 import com.example.generator2.features.script.Script
-import com.example.generator2.room.AppDatabase
 import com.example.generator2.screens.scripting.ui.ScriptKeyboard
 import com.example.generator2.util.UtilsKT
 import dagger.Module
@@ -18,7 +16,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import timber.log.Timber
 import javax.inject.Singleton
 
 @Module
@@ -121,26 +118,4 @@ object HomeActivityModule {
         )
     }
 
-
-    @Provides
-    @Singleton
-    fun provideStockDatabase(@ApplicationContext context: Context, appPath: AppPath): AppDatabase {
-        println("..DI provideStockDatabase ROOM")
-
-        lateinit var base: AppDatabase
-
-        try {
-            base = Room
-                //.databaseBuilder(context, AppDatabase::class.java, appPath.config + "/room")
-                .databaseBuilder(context, AppDatabase::class.java, "room")
-                .allowMainThreadQueries()
-                .fallbackToDestructiveMigration()
-                .fallbackToDestructiveMigrationOnDowngrade()
-                .build()
-        } catch (e: Exception) {
-            Timber.e("Ошибка создания базы")
-        }
-        println("..DI provideStockDatabase ROOM..OK")
-        return base
-    }
 }

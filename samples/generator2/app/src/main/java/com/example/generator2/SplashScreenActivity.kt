@@ -3,6 +3,10 @@ package com.example.generator2
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import android.widget.TextView
@@ -56,6 +60,17 @@ class SplashScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+
+        //android O fix bug orientation
+        if (android.os.Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
+
+        // Сделать активность полноэкранной и непрозрачной
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.setBackgroundDrawable(ColorDrawable(Color.BLACK))
+
 
         Timber.tag("Время работы").i("!!! SplashActivity начало !!!")
         startTimeSplashScreenActivity = System.currentTimeMillis()

@@ -104,7 +104,7 @@ class Initialization(
 
                 for (i in arrFilesMod.indices) {
                     gen.itemlistAM.add(itemList(patchMod, arrFilesMod[i], 1)) //648ms -> 369 -> 207
-                    gen.itemlistFM.add(itemList(patchMod, arrFilesMod[i], 0)) // all 65ms
+                    //gen.itemlistFM.add(itemList(patchMod, arrFilesMod[i], 0)) // all 65ms
                 }
 
             }
