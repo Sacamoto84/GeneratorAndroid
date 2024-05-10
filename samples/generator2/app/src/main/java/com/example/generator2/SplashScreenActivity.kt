@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.system.measureNanoTime
 
 var startTimeSplashScreenActivity = System.currentTimeMillis()
 
@@ -39,9 +40,9 @@ var startTimeSplashScreenActivity = System.currentTimeMillis()
 @SuppressLint("CustomSplashScreen")
 class SplashScreenActivity : AppCompatActivity() {
 
-    @UnstableApi
-    @Inject
-    lateinit var audioMixerPump: AudioMixerPump
+    //@UnstableApi
+    //@Inject
+    //lateinit var audioMixerPump: AudioMixerPump
 
     @Inject
     lateinit var appPath: AppPath
@@ -60,6 +61,31 @@ class SplashScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_splash_screen)
+
+
+
+        val fastBitmap = FastBitmap()
+        fastBitmap.WIDTH = 1024
+        fastBitmap.HEIGHT = 512
+        fastBitmap.initEngine()
+
+        fastBitmap.setPixel(0,0, 0xFFFF)
+        fastBitmap.setPixel(1,1, 0xFFFF)
+        fastBitmap.setPixel(2,2, 0xFFFF)
+
+        val executionTime = measureNanoTime {
+            fastBitmap.processBitmap(fastBitmap.bitmap)
+        }
+        executionTime
+        println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! executionTime = ${executionTime/1000} us")
+        val bitmap = fastBitmap.bitmap
+        bitmap
+
+
+
+
+
 
         //android O fix bug orientation
         if (android.os.Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
@@ -84,7 +110,7 @@ class SplashScreenActivity : AppCompatActivity() {
             finish()
         } else {
 
-            setContentView(R.layout.activity_splash_screen)
+
 
             /* При повторном запуске */
             if (initialization.isInitialized) {
@@ -107,7 +133,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
                 initialization.run()
                 audioOut
-                audioMixerPump
+                //audioMixerPump
                 //update.run()
 
                 val endTime = System.currentTimeMillis()

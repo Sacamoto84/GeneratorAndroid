@@ -60,7 +60,6 @@ class PlayerMP3(val context: Context, scope: Scope) {
         player.addListener(listener)
         loop()
 
-
         //val uri = Uri.parse("asset:///1.mp3")
         //val uri = Uri.parse("asset:///CH Blow Me_beats_in_phase Rc.mp3")
         //val uri = Uri.parse("asset:///Get Hard.mp3")

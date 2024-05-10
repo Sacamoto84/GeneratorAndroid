@@ -46,7 +46,7 @@ class Initialization(
 
     var isInitialized = false  //Признак того что произошла инициализация
 
-    lateinit var s0: Deferred<Unit>
+    //lateinit var s0: Deferred<Unit>
 
     lateinit var s1: Deferred<Unit>
     lateinit var s2: Deferred<Unit>
@@ -58,23 +58,23 @@ class Initialization(
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun run() {
 
-        Timber.plant(Timber.DebugTree())
+
         Timber.tag("Время работы").i("!!! Инициализация начало !!!")
         val startTime = System.currentTimeMillis()
 
-        /* S0 */
-        s0 = GlobalScope.async(Dispatchers.IO) {
-            Timber.tag("Время работы").i("S0 start")
-            val t = measureTimeMillis {
-                try {
-                    //AssetCopier(context).copy("Carrier", File(patchCarrier))
-                    AssetCopier(context).copy("Mod", File(appPath.mod))
-                } catch (e: IOException) {
-                    Timber.e(e.printStackTrace().toString())
-                }
-            }
-            Timber.tag("Время работы").i("S0 Stop Время инициализации AssetCopier : $t ms") //180ms
-        }
+//        /* S0 */
+//        s0 = GlobalScope.async(Dispatchers.IO) {
+//            Timber.tag("Время работы").i("S0 start")
+//            val t = measureTimeMillis {
+//                try {
+//                    //AssetCopier(context).copy("Carrier", File(patchCarrier))
+//                    AssetCopier(context).copy("Mod", File(appPath.mod))
+//                } catch (e: IOException) {
+//                    Timber.e(e.printStackTrace().toString())
+//                }
+//            }
+//            Timber.tag("Время работы").i("S0 Stop Время инициализации AssetCopier : $t ms") //180ms
+//        }
 
         /* explorer */
         GlobalScope.launch(Dispatchers.IO) {
@@ -117,7 +117,7 @@ class Initialization(
         Utils.patchCarrier = patchCarrier
         Utils.patchMod = "$patchMod/"
 
-        s0.await()
+        //s0.await()
 
         s1 = GlobalScope.async(Dispatchers.IO) {
             val t = measureTimeMillis {
@@ -133,11 +133,11 @@ class Initialization(
         s2 = GlobalScope.async(Dispatchers.IO) {
             val t = measureTimeMillis {
                 Timber.tag("Время работы").i("secondDeferred start")
-                val arrFilesMod =
-                    listFileInDir(appPath.mod) //Получение списка файлов в папке Mod //6ms
+                val arrFilesMod = listFilesInAssetsFolder(application, "Mod")
+                    //listFileInDir(appPath.mod) //Получение списка файлов в папке Mod //6ms
                 for (i in arrFilesMod.indices) {
                     gen.itemlistAM.add(itemList(patchMod, arrFilesMod[i], 1)) //648ms -> 369 -> 207
-                    //gen.itemlistFM.add(itemList(patchMod, arrFilesMod[i], 0)) // all 65ms
+                    gen.itemlistFM.add(itemList(patchMod, arrFilesMod[i], 0)) // all 65ms
                 }
             }
             Timber.tag("Время работы").i("secondDeferred stop : $t ms")
@@ -147,29 +147,23 @@ class Initialization(
         val t4 = measureTimeMillis {
 
             Timber.tag("Время работы").i("t4 start")
-//Инициализация
+            //Инициализация
             if ((!isInitialized) && (PermissionStorage.hasPermissions(context))) {
 
-                Timber.i(TAG, "Типа инициализация Start")
-
-                toast.initialized(context)
-
-                observe(utils, gen)
-
-                global.mmkv.readConstrain()
-
-                presetsToLiveData(presetsReadFile("default", path = appPath.config), gen)
-
-                //mmkv.readVolume()
+                Timber.tag("Время работы").i("t4 1")
+                toast.initialized(context) //0 ms
+                Timber.tag("Время работы").i("t4 2")
+                observe(utils, gen) //30ms
+                Timber.tag("Время работы").i("t4 3")
+                global.mmkv.readConstrain() //4ms
+                Timber.tag("Время работы").i("t4 4")
+                presetsToLiveData(presetsReadFile("default", path = appPath.config), gen) //67ms
+                Timber.tag("Время работы").i("t4 5")
 
                 //Проверка поддержки 192k
-                checkSupport192k()
+                checkSupport192k() //4ms
 
-
-
-
-                //}
-
+                Timber.tag("Время работы").i("t4 6")
             }
 
 

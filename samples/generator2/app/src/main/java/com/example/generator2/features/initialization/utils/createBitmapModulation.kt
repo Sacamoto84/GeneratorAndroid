@@ -1,5 +1,6 @@
 package com.example.generator2.features.initialization.utils
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -7,18 +8,23 @@ import android.graphics.Paint
 import android.graphics.Path
 import timber.log.Timber
 
-fun createBitmapModulation(path: String?): Bitmap {
+fun createBitmapModulation(context: Context, path: String): Bitmap {
 
     val bitmap = Bitmap.createBitmap(1024, 512, Bitmap.Config.RGB_565)
 
-    val array8 = readFileMod2048byte(path) //Получим массив 8 бит
+   // val array8 = readFileMod2048byte(path) //Получим массив 8 бит
 
-    if (array8.size != 2048) {
-        Timber.tag("!ERROR!")
-            .i("CreateBitmapModulation:readFileMod2048byte len:" + array8.size.toString())
-        bitmap.eraseColor(Color.RED) // Закрашиваем синим цветом
-        return bitmap
-    }
+    val array8 = readBytesFromAssets(context, "Mod", path, 2048) //Получим массив 8 бит
+
+
+        if (array8?.size != 2048) {
+            Timber.tag("!ERROR!")
+                .i("CreateBitmapModulation:readFileMod2048byte len:" + array8?.size.toString())
+            bitmap.eraseColor(Color.RED) // Закрашиваем синим цветом
+            return bitmap
+        }
+
+
 
     //bitmap.eraseColor(Color.BLACK) // Закрашиваем синим цветом
 

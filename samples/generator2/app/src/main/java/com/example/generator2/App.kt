@@ -12,6 +12,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 val API_key = "5ca5814f-74a8-46c1-ab17-da3101e88888"
 
@@ -25,11 +26,18 @@ class App : Application() {
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
+
+        Timber.plant(Timber.DebugTree())
+        Timber.tag("Время работы").i("Запуск APP")
+
         super.onCreate()
+        Timber.tag("Время работы").i("Запуск APP1")
+
 
         startTimeAplication = System.currentTimeMillis()
 
         application = this
+
 
 
 //        GlobalScope.launch(Dispatchers.IO) {

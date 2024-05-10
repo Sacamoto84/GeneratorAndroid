@@ -16,6 +16,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import timber.log.Timber
 import javax.inject.Singleton
 
 @Module
@@ -30,7 +31,7 @@ object HomeActivityModule {
         exoplayer: PlayerMP3,
         scope: Scope
     ): AudioMixerPump {
-        println("..DI AudioMixerPump()")
+        Timber.tag("Время работы").i("..DI AudioMixerPump()")
         return AudioMixerPump(gen, exoplayer, scope)
     }
 
@@ -38,14 +39,14 @@ object HomeActivityModule {
     @Provides
     @Singleton
     fun provideGen(): Generator {
-        println("..DI Generator()")
+        Timber.tag("Время работы").i("..DI Generator()")
         return Generator()
     }
 
     @Provides
     @Singleton
     fun provideScope(): Scope {
-        println("..DI Scope()")
+        Timber.tag("Время работы").i("..DI Scope()")
         return Scope()
     }
 
@@ -57,7 +58,7 @@ object HomeActivityModule {
         @ApplicationContext context: Context,
         scope: Scope
     ): PlayerMP3 {
-        println("..DI PlayerMP3()")
+        Timber.tag("Время работы").i("..DI PlayerMP3()")
         return PlayerMP3(context, scope)
     }
 
@@ -67,7 +68,7 @@ object HomeActivityModule {
     fun provideUtilsKT(
         @ApplicationContext context: Context
     ): UtilsKT {
-        println("..DI provideUtilsKT()")
+        Timber.tag("Время работы").i("..DI provideUtilsKT()")
         return UtilsKT(context)
     }
 
@@ -76,7 +77,7 @@ object HomeActivityModule {
     fun provideScript(
         gen: Generator,
     ): Script {
-        println("..DI provideScript()")
+        Timber.tag("Время работы").i("..DI provideScript()")
         return Script(gen)
     }
 
@@ -86,14 +87,14 @@ object HomeActivityModule {
         script: Script,
         gen: Generator
     ): ScriptKeyboard {
-        println("..DI provideKeyboard()")
+        Timber.tag("Время работы").i("..DI provideKeyboard()")
         return ScriptKeyboard(script, gen)
     }
 
     @Provides
     @Singleton
     fun providePath(@ApplicationContext context: Context): AppPath {
-        println("..DI providePath()")
+        Timber.tag("Время работы").i("..DI providePath()")
         return AppPath(context)
     }
 
@@ -107,7 +108,7 @@ object HomeActivityModule {
         global: Global
     ): Initialization {
 
-        println("..DI provideInitialization()")
+        Timber.tag("Время работы").i("..DI provideInitialization()")
 
         return Initialization(
             context = context,

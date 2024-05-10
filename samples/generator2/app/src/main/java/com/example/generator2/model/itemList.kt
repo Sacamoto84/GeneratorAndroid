@@ -26,7 +26,7 @@ class itemList(// Путь к файлу
             if (mod == 0)
                 createBitmapCarrier(application, filename)
             else
-                createBitmapModulation("$path/$filename")
+                createBitmapModulation(application, filename)
 
         //buf = Utils.readFileMod2048byte(path + filename) //Здесь должны прочитать файл и записать в массив;
     }

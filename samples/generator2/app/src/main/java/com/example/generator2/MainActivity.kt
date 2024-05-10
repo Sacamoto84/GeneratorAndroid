@@ -75,6 +75,9 @@ class MainActivity : ComponentActivity() {
 
         Utils.ContextMainActivity = applicationContext
 
+
+        audioMixerPump.run()
+
         //play()
 
 
