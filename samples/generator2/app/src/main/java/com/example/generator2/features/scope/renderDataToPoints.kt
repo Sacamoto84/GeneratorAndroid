@@ -283,8 +283,8 @@ fun renderDataToPoints(scope: Scope) {
                     }
                     calculator.update(nanos / 1000000.0)
 
-                    println("Calculate Pointer: " + nanos/1000 + "us")
-                    println("Calculate Pointer :${nanos / 1000000.0} ms ${calculator.getAvg()}")
+                    //println("Calculate Pointer: " + nanos/1000 + "us")
+                    //println("Calculate Pointer :${nanos / 1000000.0} ms ${calculator.getAvg()}")
 
                     scope.chPixel.send(ChPixelData(bitmap, hiRes))
 
