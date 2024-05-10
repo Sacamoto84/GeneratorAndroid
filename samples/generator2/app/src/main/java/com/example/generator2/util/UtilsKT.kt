@@ -88,39 +88,7 @@ class UtilsKT(private var context: Context) {
     }
 
 
-    //Для спиннера, отсылка массива
-    fun Spinner_Send_Buffer(
-        CH: String,
-        Mod: String,
-        name: String,
-        gen: Generator
-    ) { //String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
-        var path = ""
-        path += if (Mod == "CR") Utils.patchCarrier + name + ".dat" else Utils.patchMod + name + ".dat"
-        val buf = readFileMod2048byte(path) //Здесь должны прочитать файл и записать в массив;
-        var ch = 0
-        var mod = 0
-        if (Mod == "AM") mod = 1
-        if (Mod == "FM") mod = 2
-        if (CH == "CH1") ch = 1
 
-        if (CH == "CH0") {
-            when (Mod) {
-                "AM" -> gen.ch1.buffer_am = byteToShortArrayLittleEndian(buf)
-                "FM" -> gen.ch1.buffer_fm = byteToShortArrayLittleEndian(buf)
-                else -> gen.ch1.buffer_carrier = byteToShortArrayLittleEndian(buf)
-            }
-        } else {
-            when (Mod) {
-                "AM" -> gen.ch2.buffer_am = byteToShortArrayLittleEndian(buf)
-                "FM" -> gen.ch2.buffer_fm = byteToShortArrayLittleEndian(buf)
-                else -> gen.ch2.buffer_carrier = byteToShortArrayLittleEndian(buf)
-            }
-        }
-
-        //playbackEngine.CH_Send_Buffer(ch, mod, buf) //Послали буффер
-
-    }
 
 
 }

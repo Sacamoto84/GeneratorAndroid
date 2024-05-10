@@ -110,8 +110,8 @@ class Initialization(
         val path = appPath
         //path.mkDir()
 
-        val patchCarrier = appPath.assets + "/Carrier/"//path.carrier
-        val patchMod = path.mod
+        val patchCarrier = appPath.assets + "/Carrier/"   //path.carrier
+        val patchMod = appPath.assets + "/Mod/"
 
         Utils.patchDocument = path.main
         Utils.patchCarrier = patchCarrier
@@ -153,7 +153,7 @@ class Initialization(
                 Timber.tag("Время работы").i("t4 1")
                 toast.initialized(context) //0 ms
                 Timber.tag("Время работы").i("t4 2")
-                observe(utils, gen) //30ms
+                observe(gen) //30ms
                 Timber.tag("Время работы").i("t4 3")
                 global.mmkv.readConstrain() //4ms
                 Timber.tag("Время работы").i("t4 4")

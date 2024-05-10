@@ -10,22 +10,20 @@ import android.util.Log
 import timber.log.Timber
 
 
-fun createBitmapCarrier(context: Context, path: String): Bitmap {
+fun createBitmapCarrier(array8: ByteArray): Bitmap {
 
     val bitmap = Bitmap.createBitmap(1024, 512, Bitmap.Config.RGB_565)
 
-    val array8 = readBytesFromAssets(context, "Carrier", path, 2048) //Получим массив 8 бит
-
-    if (array8 != null) {
-        Timber.i("createBitmapCarrier:A8 len: " +array8.size.toString() )
-    }
-    else
-        return bitmap
-
-    if (array8.size != 2048) {
-        bitmap.eraseColor(Color.RED) // Закрашиваем синим цветом
-        return bitmap
-    }
+//    if (array8 != null) {
+//        Timber.i("createBitmapCarrier:A8 len: " +array8.size.toString() )
+//    }
+//    else
+//        return bitmap
+//
+//    if (array8.size != 2048) {
+//        bitmap.eraseColor(Color.RED) // Закрашиваем синим цветом
+//        return bitmap
+//    }
 
     //bitmap.eraseColor(Color.TRANSPARENT) // Закрашиваем синим цветом
 

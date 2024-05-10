@@ -15,8 +15,10 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import utils.maping
 import kotlin.system.measureNanoTime
+import kotlin.system.measureTimeMillis
 
 var hiRes: Boolean = false //Режим высокого разрешения
 
@@ -55,223 +57,242 @@ fun renderDataToPoints(scope: Scope) {
 
             while (true) {
 
-                if (scope.isPause.value) continue
-
-                hiRes = if (compressorCount.floatValue >= 32)
-                    false //Режим высокого разрешения
-                else
-                    true
-                //hiRes = true
-                var w: Float
-                var h: Float
-                if (hiRes) {
-                    w = scope.scopeW
-                    h = scope.scopeH
-                } else {
-                    w = scope.scopeW / 2
-                    h = scope.scopeH / 2
-                }
 
 
-                val bufRN: FloatArray
-                val bufLN: FloatArray
+                    if (scope.isPause.value) continue
 
-                if ((w == 0f) or (h == 0f)) continue
+                    hiRes = if (compressorCount.floatValue >= 32)
+                        false //Режим высокого разрешения
+                    else
+                        true
 
-
-                val bitmap: Bitmap = Bitmap.createBitmap(
-                    w.toInt(),
-                    h.toInt(),
-                    Bitmap.Config.RGB_565
-                )
-
-                canvas = Canvas()
-                canvas.setBitmap(bitmap)
-
-
-                var indexStartSignal = 0
-
-                if (compressorCount.floatValue <= 8f) {
-
-                    val buf = channelDataStreamOutCompressor.receive()
-
-                    if (buf.isEmpty()) continue
-
-                    val (bufR, bufL) = BufSplitFloat().split(buf)
-
-                    if (oscillSync.value == OSCILLSYNC.R) {
-                        var last = 0f
-                        for (i in 0 until bufR.size / 2) {
-                            val now = bufR[i]
-                            if ((last < 0) and (now >= 0)) {
-                                indexStartSignal = i
-                                break
-                            }
-                            last = now
-                        }
+                    //hiRes = true
+                    var w: Float
+                    var h: Float
+                    if (hiRes) {
+                        w = scope.scopeW
+                        h = scope.scopeH
+                    } else {
+                        w = scope.scopeW / 2
+                        h = scope.scopeH / 2
                     }
 
-                    if (oscillSync.value == OSCILLSYNC.L) {
-                        var last = 0f
-                        for (i in 0 until bufL.size / 2) {
-                            val now = bufL[i]
-                            if ((last < 0) and (now >= 0)) {
-                                indexStartSignal = i
-                                break
+
+                    val bufRN: FloatArray
+                    val bufLN: FloatArray
+
+                    if ((w == 0f) or (h == 0f)) continue
+
+
+                    val bitmap: Bitmap = Bitmap.createBitmap(
+                        w.toInt(),
+                        h.toInt(),
+                        Bitmap.Config.RGB_565
+                    )
+
+                    canvas = Canvas()
+                    canvas.setBitmap(bitmap)
+
+
+                    var indexStartSignal = 0
+
+                    if (compressorCount.floatValue <= 8f) {
+
+                        val buf = channelDataStreamOutCompressor.receive()
+
+                        if (buf.isEmpty()) continue
+
+                        val (bufR, bufL) = BufSplitFloat().split(buf)
+
+                        if (oscillSync.value == OSCILLSYNC.R) {
+                            var last = 0f
+                            for (i in 0 until bufR.size / 2) {
+                                val now = bufR[i]
+                                if ((last < 0) and (now >= 0)) {
+                                    indexStartSignal = i
+                                    break
+                                }
+                                last = now
                             }
-                            last = now
                         }
+
+                        if (oscillSync.value == OSCILLSYNC.L) {
+                            var last = 0f
+                            for (i in 0 until bufL.size / 2) {
+                                val now = bufL[i]
+                                if ((last < 0) and (now >= 0)) {
+                                    indexStartSignal = i
+                                    break
+                                }
+                                last = now
+                            }
+                        }
+
+                        bufLN =
+                            bufL.copyOfRange(
+                                indexStartSignal,
+                                (bufL.size - 1) / 2 + indexStartSignal
+                            )
+                        bufRN =
+                            bufR.copyOfRange(
+                                indexStartSignal,
+                                (bufR.size - 1) / 2 + indexStartSignal
+                            )
+
+                    } else {
+
+                        // Для compressorCount > 8 нет синхронизации
+                        val buf = channelDataStreamOutCompressor.receive()
+                        if (buf.isEmpty()) continue
+                        val (bufR, bufL) = BufSplitFloat().split(buf)
+                        bufLN = bufL
+                        bufRN = bufR
+
                     }
-
-                    bufLN =
-                        bufL.copyOfRange(indexStartSignal, (bufL.size - 1) / 2 + indexStartSignal)
-                    bufRN =
-                        bufR.copyOfRange(indexStartSignal, (bufR.size - 1) / 2 + indexStartSignal)
-
-                } else {
-
-                    // Для compressorCount > 8 нет синхронизации
-                    val buf = channelDataStreamOutCompressor.receive()
-                    if (buf.isEmpty()) continue
-                    val (bufR, bufL) = BufSplitFloat().split(buf)
-                    bufLN = bufL
-                    bufRN = bufR
-
-                }
 
 ////////////////////////////////////////////////////////////////
 
-                val pathL = Path()
-                val pathR = Path()
+                    val pathL = Path()
+                    val pathR = Path()
 
-                var pixelBufSize: Float
-                val pixelBufL = FloatArray(4096)
-                val pixelBufR = FloatArray(4096)
-
-
-
-                if (hiRes) {
-                    paintL.strokeWidth = 2f
-                    paintR.strokeWidth = 2f
-                } else {
-                    paintL.strokeWidth = 1f
-                    paintR.strokeWidth = 1f
-                }
-
-                val drawLine: Boolean
-                if (compressorCount.floatValue >= 8f) {
-                    paintL.alpha = 0x60
-                    paintR.alpha = 0x60
-                    drawLine = false
-                } else {
-                    paintL.alpha = 0xFF
-                    paintR.alpha = 0xFF
-                    drawLine = true
-                }
+                    var pixelBufSize: Float
+                    val pixelBufL = FloatArray(4096)
+                    val pixelBufR = FloatArray(4096)
 
 
-                var mapX: Int
-                var offset: Int
 
-                val nanos = measureNanoTime {
+                    if (hiRes) {
+                        paintL.strokeWidth = 2f
+                        paintR.strokeWidth = 2f
+                    } else {
+                        paintL.strokeWidth = 1f
+                        paintR.strokeWidth = 1f
+                    }
 
-                    for (x in 0 until w.toInt()) {
-
-                        //32  45.8   48k
-                        //16  22.81
-                        //8   5.7
-                        //4   2.86
-                        //2   1.42
-                        //1   0.71
-                        //0.5 0.35
-                        pixelBufSize =
-                            (bufRN.size / w).coerceIn(1f, 96f) //Размер буфера для одного пикселя
-
-                        val maxPixelBuffer = pixelBufSize.toInt()
-                        for (pixelI in 0 until maxPixelBuffer) {
-
-                            mapX = maping(x.toFloat(), 0f, w - 1f, 0f, (bufRN.size - 1f)).toInt()
-                                .coerceIn(0, bufRN.size - 1)
-
-                            offset = (mapX + pixelI).coerceAtMost(bufRN.size - 1)
-                            pixelBufL[pixelI] = bufLN[offset]
-                            pixelBufR[pixelI] = bufRN[offset]
-                        }
+                    val drawLine: Boolean
+                    if (compressorCount.floatValue >= 8f) {
+                        paintL.alpha = 0x60
+                        paintR.alpha = 0x60
+                        drawLine = false
+                    } else {
+                        paintL.alpha = 0xFF
+                        paintR.alpha = 0xFF
+                        drawLine = true
+                    }
 
 
-                        val maxL: Float
-                        val minL: Float
-                        val maxR: Float
-                        val minR: Float
+                    var mapX: Int
+                    var offset: Int
 
-                        //Пиксели
-                        if (scope.isOneTwo.value) {
-                            maxL = h - 1f
-                            minL = 0f
-                            maxR = h - 1f
-                            minR = 0f
-                        } else {
-                            maxR = h - 1f
-                            minR = h / 2
-                            maxL = h / 2
-                            minL = 0f
-                        }
+                    val nanos = measureNanoTime {
 
+                        for (x in 0 until w.toInt()) {
 
-                        if (!drawLine) {
+                            //32  45.8   48k
+                            //16  22.81
+                            //8   5.7
+                            //4   2.86
+                            //2   1.42
+                            //1   0.71
+                            //0.5 0.35
+                            pixelBufSize =
+                                (bufRN.size / w).coerceIn(
+                                    1f,
+                                    96f
+                                ) //Размер буфера для одного пикселя
+
+                            val maxPixelBuffer = pixelBufSize.toInt()
                             for (pixelI in 0 until maxPixelBuffer) {
 
-                                if (scope.isVisibleR.value) {
-                                    canvas.drawPoint(
-                                        x.toFloat(),
-                                        maping(pixelBufR[pixelI], -1f, 1f, minR, maxR),
-                                        paintR
-                                    )
-                                }
+                                mapX =
+                                    maping(x.toFloat(), 0f, w - 1f, 0f, (bufRN.size - 1f)).toInt()
+                                        .coerceIn(0, bufRN.size - 1)
 
-                                if (scope.isVisibleL.value) {
-                                    canvas.drawPoint(
-                                        x.toFloat(),
-                                        maping(pixelBufL[pixelI], -1f, 1f, minL, maxL),
-                                        paintL
-                                    )
-                                }
+                                offset = (mapX + pixelI).coerceAtMost(bufRN.size - 1)
+                                pixelBufL[pixelI] = bufLN[offset]
+                                pixelBufR[pixelI] = bufRN[offset]
                             }
-                        } else {
-                            //Рисуем линии
-                            if (x == 0) {
-                                pathL.moveTo(pixelBufL[0], maping(0f, -1f, 1f, minL, maxL))
-                                pathR.moveTo(pixelBufR[0], maping(0f, -1f, 1f, minR, maxR))
+
+
+                            val maxL: Float
+                            val minL: Float
+                            val maxR: Float
+                            val minR: Float
+
+                            //Пиксели
+                            if (scope.isOneTwo.value) {
+                                maxL = h - 1f
+                                minL = 0f
+                                maxR = h - 1f
+                                minR = 0f
                             } else {
+                                maxR = h - 1f
+                                minR = h / 2
+                                maxL = h / 2
+                                minL = 0f
+                            }
 
-                                if (scope.isVisibleL.value) {
-                                    pathL.lineTo(
-                                        x.toFloat(),
-                                        maping(pixelBufL[0], -1f, 1f, minL, maxL)
-                                    )
+
+                            if (!drawLine) {
+                                for (pixelI in 0 until maxPixelBuffer) {
+
+                                    if (scope.isVisibleR.value) {
+                                        canvas.drawPoint(
+                                            x.toFloat(),
+                                            maping(pixelBufR[pixelI], -1f, 1f, minR, maxR),
+                                            paintR
+                                        )
+                                    }
+
+                                    if (scope.isVisibleL.value) {
+                                        canvas.drawPoint(
+                                            x.toFloat(),
+                                            maping(pixelBufL[pixelI], -1f, 1f, minL, maxL),
+                                            paintL
+                                        )
+                                    }
                                 }
+                            } else {
+                                //Рисуем линии
+                                if (x == 0) {
+                                    pathL.moveTo(pixelBufL[0], maping(0f, -1f, 1f, minL, maxL))
+                                    pathR.moveTo(pixelBufR[0], maping(0f, -1f, 1f, minR, maxR))
+                                } else {
 
-                                if (scope.isVisibleR.value) {
-                                    pathR.lineTo(
-                                        x.toFloat(),
-                                        maping(pixelBufR[0], -1f, 1f, minR, maxR)
-                                    )
+                                    if (scope.isVisibleL.value) {
+                                        pathL.lineTo(
+                                            x.toFloat(),
+                                            maping(pixelBufL[0], -1f, 1f, minL, maxL)
+                                        )
+                                    }
+
+                                    if (scope.isVisibleR.value) {
+                                        pathR.lineTo(
+                                            x.toFloat(),
+                                            maping(pixelBufR[0], -1f, 1f, minR, maxR)
+                                        )
+                                    }
                                 }
                             }
                         }
+
+                        if (drawLine) {
+                            canvas.drawPath(pathR, paintR)
+                            canvas.drawPath(pathL, paintL)
+                        }
                     }
+                    calculator.update(nanos / 1000000.0)
 
-                    if (drawLine) {
-                        canvas.drawPath(pathR, paintR)
-                        canvas.drawPath(pathL, paintL)
-                    }
-                }
-                calculator.update(nanos / 1000000.0)
-                //println("Calculate Pointer: " + nanos/1000 + "us")
+                    println("Calculate Pointer: " + nanos/1000 + "us")
+                    println("Calculate Pointer :${nanos / 1000000.0} ms ${calculator.getAvg()}")
 
-                //println("Calculate Pointer :${nanos / 1000000.0} ms ${calculator.getAvg()}")
+                    scope.chPixel.send(ChPixelData(bitmap, hiRes))
 
-                scope.chPixel.send(ChPixelData(bitmap, hiRes))
+
+
+
+
+
 
 
             }

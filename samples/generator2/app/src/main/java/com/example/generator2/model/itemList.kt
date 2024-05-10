@@ -1,37 +1,44 @@
 package com.example.generator2.model
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import com.example.generator2.application
 import com.example.generator2.features.initialization.utils.createBitmapCarrier
 import com.example.generator2.features.initialization.utils.createBitmapModulation
-import com.example.generator2.util.Utils
+import com.example.generator2.features.initialization.utils.readBytesFromAssets
+import timber.log.Timber
 
-class itemList(// Путь к файлу
-    private val path: String, // Название файла
-    private val filename: String,
+class itemList(
+    private val path: String, // Путь к папке
+    private val filename: String, // файл.dat
     mod: Int
 ) {
 
-    var name = "xxx" // название без окончания
-    var bitmap: Bitmap? = null //Картинка несущей
-    var buf : ByteArray? = null
+    var name = filename.replace(".dat", "") // название без окончания
 
-    //= Utils.readFileMod2048byte(path) //Здесь должны прочитать файл и записать в массив;
+    var bitmap: Bitmap? = null //Картинка несущей
+
+    var buf = ByteArray(2048)
 
     //Конструктор
     init {
 
         name = filename.replace(".dat", "")
-        bitmap =
-            if (mod == 0)
-                createBitmapCarrier(application, filename)
-            else
-                createBitmapModulation(application, filename)
 
-        //buf = Utils.readFileMod2048byte(path + filename) //Здесь должны прочитать файл и записать в массив;
+        try {
+            buf = readBytesFromAssets(application, path, filename, 2048)!!
+            bitmap =
+                if (mod == 0)
+                    createBitmapCarrier(buf)
+                else
+                    createBitmapModulation(buf)
+
+        } catch (e: Exception) {
+            Timber.e(e.localizedMessage)
+            bitmap = Bitmap.createBitmap(1024 / 2, 512 / 2, Bitmap.Config.RGB_565)
+            bitmap!!.eraseColor(Color.RED)
+        }
+
     }
-
-
-
 
 }
