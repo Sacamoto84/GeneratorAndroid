@@ -276,21 +276,23 @@ fun renderDataToPoints(scope: Scope) {
 
 
                     if (drawLine) {
-                        canvas.drawPath(pathR, paintR)
-                        canvas.drawPath(pathL, paintL)
-                    } else {
-
                         val tt1 = measureNanoTime {
-                            if (scope.isVisibleR.value)
-                                canvas.drawPoints(bigPointnR, paintR)
+                            canvas.drawPath(pathR, paintR)
                         }
-
                         val tt2 = measureNanoTime {
-                            if (scope.isVisibleL.value)
-                                canvas.drawPoints(bigPointnL, paintL)
+                            canvas.drawPath(pathL, paintL)
                         }
                         println("tt1 ${tt1 / 1000} us")
                         println("tt2 ${tt2 / 1000} us")
+
+                    } else {
+                        //32..256 Roll
+                        if (scope.isVisibleR.value)
+                            canvas.drawPoints(bigPointnR, paintR)
+
+                        if (scope.isVisibleL.value)
+                            canvas.drawPoints(bigPointnL, paintL)
+
                     }
 
 
