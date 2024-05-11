@@ -16,6 +16,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import com.example.libs.utils.maping
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlin.system.measureNanoTime
 
 var hiRes: Boolean = false //Режим высокого разрешения
@@ -49,7 +51,7 @@ fun renderDataToPoints(scope: Scope) {
 
     Thread {
 
-        GlobalScope.launch(Dispatchers.IO) {
+        GlobalScope.launch(Dispatchers.Default) {
 
             val calculator = Calculator()
 
@@ -181,89 +183,71 @@ fun renderDataToPoints(scope: Scope) {
                 val nanos = measureNanoTime {
 
 
+                    val bigPointnL = FloatArray(96 * w.toInt() * 2) { -1.0f }
+                    val bigPointnR = FloatArray(96 * w.toInt() * 2) { -1.0f }
 
+                    var temp1 = 0
+                    var temp2 = 0
+
+                    //32  45.8   48k
+                    //16  22.81
+                    //8   5.7
+                    //4   2.86
+                    //2   1.42
+                    //1   0.71
+                    //0.5 0.35
+                    val maxPixelBuffer = (bufRN.size / w).coerceIn(1f, 96f)
+                        .toInt() //Размер буфера для одного пикселя
+
+                    val maxL: Float
+                    val minL: Float
+                    val maxR: Float
+                    val minR: Float
+
+                    //Пиксели
+                    if (scope.isOneTwo.value) {
+                        maxL = h - 1f
+                        minL = 0f
+                        maxR = h - 1f
+                        minR = 0f
+                    } else {
+                        maxR = h - 1f
+                        minR = h / 2
+                        maxL = h / 2
+                        minL = 0f
+                    }
 
                     for (x in 0 until w.toInt()) {
 
-                        
+                        //val t11 = measureNanoTime {
 
-                        //32  45.8   48k
-                        //16  22.81
-                        //8   5.7
-                        //4   2.86
-                        //2   1.42
-                        //1   0.71
-                        //0.5 0.35
-                        pixelBufSize = (bufRN.size / w).coerceIn( 1f, 96f ) //Размер буфера для одного пикселя
+                        mapX = maping(
+                            x.toFloat(),
+                            0f,
+                            w - 1f,
+                            0f,
+                            (bufRN.size - 1f)
+                        ).toInt().coerceIn(0, bufRN.size - 1)
 
-                        val maxPixelBuffer = pixelBufSize.toInt()
-
-                        val t11 = measureNanoTime {
-
-                            for (pixelI in 0 until maxPixelBuffer) {
-
-                                mapX = maping(
-                                        x.toFloat(),
-                                        0f,
-                                        w - 1f,
-                                        0f,
-                                        (bufRN.size - 1f)
-                                    ).toInt().coerceIn(0, bufRN.size - 1)
-
-                                offset = (mapX + pixelI).coerceAtMost(bufRN.size - 1)
-                                pixelBufL[pixelI] = bufLN[offset]
-                                pixelBufR[pixelI] = bufRN[offset]
-                            }
-                        }
-                        //println("t1: ${t11} ns")
-
-
-                        val maxL: Float
-                        val minL: Float
-                        val maxR: Float
-                        val minR: Float
-
-                        //Пиксели
-                        if (scope.isOneTwo.value) {
-                            maxL = h - 1f
-                            minL = 0f
-                            maxR = h - 1f
-                            minR = 0f
-                        } else {
-                            maxR = h - 1f
-                            minR = h / 2
-                            maxL = h / 2
-                            minL = 0f
+                        for (pixelI in 0 until maxPixelBuffer) {
+                            offset = (mapX + pixelI).coerceAtMost(bufRN.size - 1)
+                            pixelBufL[pixelI] = bufLN[offset]
+                            pixelBufR[pixelI] = bufRN[offset]
                         }
 
+                        //}
+                        //println("t1: ${t11/1000} ns")
 
                         if (!drawLine) {
 
-                            val t2 = measureNanoTime {
-
-                                // Создаем массив точек для отображения пикселей
-
-                                if (scope.isVisibleR.value) {
-                                    val pointsR = FloatArray(maxPixelBuffer * 2) { x.toFloat() }
-                                    for (pixelI in 0 until maxPixelBuffer) {
-                                        pointsR[pixelI * 2 + 1] =  (pixelBufR[pixelI] + 1.0f) * (maxR - minR) / (2f) + minR
-                                    }
-                                    canvas.drawPoints(pointsR, paintR)
-                                }
-
-                                if (scope.isVisibleL.value) {
-                                    val pointsL = FloatArray(maxPixelBuffer * 2) { x.toFloat() }
-                                    for (pixelI in 0 until maxPixelBuffer) {
-                                        //pointsL[pixelI *2 +1] = maping(pixelBufL[pixelI], -1f, 1f, minR, maxR)
-                                        pointsL[pixelI * 2 + 1] =
-                                            (pixelBufL[pixelI] + 1.0f) * (maxL - minL) / (2f) + minL
-                                    }
-                                    canvas.drawPoints(pointsL, paintL)
-                                }
+                            for (pixelI in 0 until maxPixelBuffer) {
+                                bigPointnR[pixelI * 2 + x * maxPixelBuffer * 2] = x.toFloat()
+                                bigPointnL[pixelI * 2 + x * maxPixelBuffer * 2] = x.toFloat()
+                                bigPointnR[pixelI * 2 + 1 + x * maxPixelBuffer * 2] =
+                                    (pixelBufR[pixelI] + 1.0f) * (maxR - minR) / (2f) + minR
+                                bigPointnL[pixelI * 2 + 1 + x * maxPixelBuffer * 2] =
+                                    (pixelBufL[pixelI] + 1.0f) * (maxL - minL) / (2f) + minL
                             }
-
-                            //println("t2: ${t2} ns maxPixelBuffer $maxPixelBuffer")
-
 
                         } else {
 
@@ -294,11 +278,20 @@ fun renderDataToPoints(scope: Scope) {
                     if (drawLine) {
                         canvas.drawPath(pathR, paintR)
                         canvas.drawPath(pathL, paintL)
+                    } else {
+
+                        val tt1 = measureNanoTime {
+                            if (scope.isVisibleR.value)
+                                canvas.drawPoints(bigPointnR, paintR)
+                        }
+
+                        val tt2 = measureNanoTime {
+                            if (scope.isVisibleL.value)
+                                canvas.drawPoints(bigPointnL, paintL)
+                        }
+                        println("tt1 ${tt1 / 1000} us")
+                        println("tt2 ${tt2 / 1000} us")
                     }
-
-
-
-
 
 
                 }
@@ -310,7 +303,13 @@ fun renderDataToPoints(scope: Scope) {
                 val fps = 1000.0 / (nanos / 1000000.0)
                 println("Полный кадр :${nanos / 1000000.0} ms FPS:${fps}   AVG ${calculator.getAvg()}")
 
-                scope.chPixel.send(ChPixelData(bitmap, hiRes, (nanos / 1000000.0).toInt().toFloat()))
+                scope.chPixel.send(
+                    ChPixelData(
+                        bitmap,
+                        hiRes,
+                        (nanos / 1000000.0).toInt().toFloat()
+                    )
+                )
 
             }
         }

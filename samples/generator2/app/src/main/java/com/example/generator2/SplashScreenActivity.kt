@@ -65,22 +65,22 @@ class SplashScreenActivity : AppCompatActivity() {
 
 
 
-        val fastBitmap = FastBitmap()
-        fastBitmap.WIDTH = 1024
-        fastBitmap.HEIGHT = 512
-        fastBitmap.initEngine()
-
-        fastBitmap.setPixel(0,0, 0xFFFF)
-        fastBitmap.setPixel(1,1, 0xFFFF)
-        fastBitmap.setPixel(2,2, 0xFFFF)
-
-        val executionTime = measureNanoTime {
-            fastBitmap.processBitmap(fastBitmap.bitmap)
-        }
-        executionTime
-        println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! executionTime = ${executionTime/1000} us")
-        val bitmap = fastBitmap.bitmap
-        bitmap
+//        val fastBitmap = FastBitmap()
+//        fastBitmap.WIDTH = 1024
+//        fastBitmap.HEIGHT = 512
+//        fastBitmap.initEngine()
+//
+//        fastBitmap.setPixel(0,0, 0xFFFF)
+//        fastBitmap.setPixel(1,1, 0xFFFF)
+//        fastBitmap.setPixel(2,2, 0xFFFF)
+//
+//        val executionTime = measureNanoTime {
+//            fastBitmap.processBitmap(fastBitmap.bitmap)
+//        }
+//        executionTime
+//        println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! executionTime = ${executionTime/1000} us")
+//        val bitmap = fastBitmap.bitmap
+//        bitmap
 
 
 
