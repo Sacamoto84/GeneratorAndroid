@@ -1,5 +1,6 @@
 package com.example.generator2.model
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import com.example.generator2.application
@@ -26,7 +27,9 @@ class itemList(
         name = filename.replace(".dat", "")
 
         try {
-            buf = readBytesFromAssets(application, path, filename, 2048)!!
+
+            buf = readBytesFromAssets(application as Context, path, filename, 2048)!!
+
             bitmap =
                 if (mod == 0)
                     createBitmapCarrier(buf)

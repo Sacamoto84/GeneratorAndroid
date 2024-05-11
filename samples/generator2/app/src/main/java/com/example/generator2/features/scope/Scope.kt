@@ -50,7 +50,7 @@ private val m = Modifier
     .border(1.dp, Color.Gray)
     .background(Color.Black)
 
-data class ChPixelData(val bitmap: Bitmap, val hiRes: Boolean)
+data class ChPixelData(val bitmap: Bitmap, val hiRes: Boolean, val fps : Float = 0f)
 
 class Scope {
 
@@ -235,6 +235,17 @@ class Scope {
                 )
             }
 
+
+
+                drawIntoCanvas {
+                    it.nativeCanvas.drawText(
+                        pairPoints.fps.toString(),
+                        size.width / 2 - 40f,
+                        40f,
+                        textPaintPause
+                    )
+                }
+
             if (isPause.value)
                 drawIntoCanvas {
                     it.nativeCanvas.drawText(
@@ -244,6 +255,8 @@ class Scope {
                         textPaintPause
                     )
                 }
+
+
 
         }
     }

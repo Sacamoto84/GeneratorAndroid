@@ -102,7 +102,7 @@ fun dataCompressor() {
                             out.addAll(buf1.toList())
                         }
                     }
-                    println("... 1..16:${compressorCount.floatValue.toInt()} | ${t / 1000} us | outsize: ${out.size}")
+                    //println("... 1..16:${compressorCount.floatValue.toInt()} | ${t / 1000} us | outsize: ${out.size}")
                     channelDataStreamOutCompressor.send(out.toFloatArray())
                 }
 
