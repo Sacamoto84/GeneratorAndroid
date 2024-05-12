@@ -6,7 +6,7 @@ import com.example.generator2.AppPath
 import com.example.generator2.Global
 import com.example.generator2.PermissionStorage
 import com.example.generator2.application
-import com.example.generator2.audio.checkSupport192k
+import com.example.generator2.features.audio.checkSupport192k
 import com.example.generator2.features.explorer.domen.explorerInitialization
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.initialization.utils.listFileInDir
@@ -110,8 +110,8 @@ class Initialization(
         val path = appPath
         //path.mkDir()
 
-        val patchCarrier = appPath.assets + "/Carrier/"   //path.carrier
-        val patchMod = appPath.assets + "/Mod/"
+        val patchCarrier = appPath.assets + "/Carrier"   //path.carrier
+        val patchMod = appPath.assets + "/Mod"
 
         Utils.patchDocument = path.main
         Utils.patchCarrier = patchCarrier
@@ -119,28 +119,28 @@ class Initialization(
 
         //s0.await()
 
-        s1 = GlobalScope.async(Dispatchers.IO) {
+        s1 = GlobalScope.async(Dispatchers.Main) {
             val t = measureTimeMillis {
                 Timber.tag("Время работы").i("firstDeferred start")
                 val arrFilesCarrier = listFilesInAssetsFolder(application, "Carrier")
                 for (i in arrFilesCarrier.indices) {
-                    gen.itemlistCarrier.add(itemList(patchCarrier, arrFilesCarrier[i], 0))
+                    gen.itemlistCarrier.add(itemList("Carrier", arrFilesCarrier[i], 0))
                 }
             }
             Timber.tag("Время работы").i("firstDeferred stop : $t ms")
         }
 
         s2 = GlobalScope.async(Dispatchers.IO) {
-            val t = measureTimeMillis {
+            val t111 = measureTimeMillis {
                 Timber.tag("Время работы").i("secondDeferred start")
                 val arrFilesMod = listFilesInAssetsFolder(application, "Mod")
                     //listFileInDir(appPath.mod) //Получение списка файлов в папке Mod //6ms
                 for (i in arrFilesMod.indices) {
-                    gen.itemlistAM.add(itemList(patchMod, arrFilesMod[i], 1)) //648ms -> 369 -> 207
-                    gen.itemlistFM.add(itemList(patchMod, arrFilesMod[i], 0)) // all 65ms
+                    gen.itemlistAM.add(itemList("Mod", arrFilesMod[i], 1)) //648ms -> 369 -> 207
+                    gen.itemlistFM.add(itemList("Mod", arrFilesMod[i], 0)) // all 65ms
                 }
             }
-            Timber.tag("Время работы").i("secondDeferred stop : $t ms")
+            Timber.tag("Время работы").i("secondDeferred stop : $t111 ms")
         }
 
 
@@ -150,10 +150,12 @@ class Initialization(
             //Инициализация
             if ((!isInitialized) && (PermissionStorage.hasPermissions(context))) {
 
+
+
                 Timber.tag("Время работы").i("t4 1")
                 toast.initialized(context) //0 ms
                 Timber.tag("Время работы").i("t4 2")
-                observe(gen) //30ms
+
                 Timber.tag("Время работы").i("t4 3")
                 global.mmkv.readConstrain() //4ms
                 Timber.tag("Время работы").i("t4 4")
@@ -173,6 +175,7 @@ class Initialization(
 
         s1.await()
         s2.await()
+        observe(gen) //30ms
         s3.await()
         s4.await()
 

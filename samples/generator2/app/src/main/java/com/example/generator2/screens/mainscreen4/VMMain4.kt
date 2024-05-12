@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.util.UnstableApi
 import com.example.generator2.AppPath
-import com.example.generator2.audio.AudioMixerPump
+import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.element.Console2
 import com.example.generator2.features.update.Update
 import com.example.generator2.features.generator.Generator

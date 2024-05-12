@@ -5,7 +5,8 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import com.example.generator2.audio.Calculator
+import com.example.generator2.features.audio.AudioSampleRate
+import com.example.generator2.features.audio.Calculator
 import com.example.generator2.features.mp3.OSCILLSYNC
 import com.example.generator2.features.mp3.channelAudioOutLissagu
 import com.example.generator2.features.mp3.channelDataStreamOutCompressor
@@ -60,7 +61,10 @@ fun renderDataToPoints(scope: Scope) {
 
                 if (scope.isPause.value) continue
                 //Режим высокого разрешения
-                hiRes = if (compressorCount.floatValue >= 32) false else true
+                //
+                // hiRes = if (compressorCount.floatValue >= 32) true else true
+
+                hiRes = AudioSampleRate.value != 192000
 
                 //hiRes = true
                 var w: Float
@@ -217,6 +221,9 @@ fun renderDataToPoints(scope: Scope) {
                         minL = 0f
                     }
 
+                    val bigPathR = FloatArray(w.toInt() * 4) { -1.0f }
+                    val bigPathL = FloatArray(w.toInt() * 4) { -1.0f }
+
                     for (x in 0 until w.toInt()) {
 
                         //val t11 = measureNanoTime {
@@ -257,19 +264,16 @@ fun renderDataToPoints(scope: Scope) {
                                 pathR.moveTo(pixelBufR[0], maping(0f, -1f, 1f, minR, maxR))
                             } else {
 
-                                if (scope.isVisibleL.value) {
-                                    pathL.lineTo(
-                                        x.toFloat(),
-                                        maping(pixelBufL[0], -1f, 1f, minL, maxL)
-                                    )
-                                }
+                                pathL.lineTo(
+                                    x.toFloat(),
+                                    maping(pixelBufL[0], -1f, 1f, minL, maxL)
+                                )
 
-                                if (scope.isVisibleR.value) {
-                                    pathR.lineTo(
-                                        x.toFloat(),
-                                        maping(pixelBufR[0], -1f, 1f, minR, maxR)
-                                    )
-                                }
+                                pathR.lineTo(
+                                    x.toFloat(),
+                                    maping(pixelBufR[0], -1f, 1f, minR, maxR)
+                                )
+
                             }
                         }
                     }
@@ -277,10 +281,12 @@ fun renderDataToPoints(scope: Scope) {
 
                     if (drawLine) {
                         val tt1 = measureNanoTime {
-                            canvas.drawPath(pathR, paintR)
+                            if (scope.isVisibleR.value)
+                                canvas.drawPath(pathR, paintR)
                         }
                         val tt2 = measureNanoTime {
-                            canvas.drawPath(pathL, paintL)
+                            if (scope.isVisibleL.value)
+                                canvas.drawPath(pathL, paintL)
                         }
                         println("tt1 ${tt1 / 1000} us")
                         println("tt2 ${tt2 / 1000} us")

@@ -25,7 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.generator2.NavigationRoute
 import com.example.generator2.R
-import com.example.generator2.audio.AudioSampleRate
+import com.example.generator2.features.audio.AudioSampleRate
 import com.example.generator2.features.mp3.formatMinSec
 import com.example.generator2.navController
 import com.example.generator2.screens.mainscreen4.VMMain4

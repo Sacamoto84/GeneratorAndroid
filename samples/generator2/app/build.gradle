@@ -79,17 +79,15 @@ android {
 //            }
 //        }
 
-        ksp {
-            arg('room.schemaLocation', "$projectDir/src/main/java/com/example/schemas")
-        }
-        externalNativeBuild {
-            cmake {
+//        ksp {
+//            arg('room.schemaLocation', "$projectDir/src/main/java/com/example/schemas")
+//        }
 
-                cppFlags ''
-
-
-            }
-        }
+//        externalNativeBuild {
+//            cmake {
+//                cppFlags ''
+//            }
+//        }
 
 
     }
@@ -100,7 +98,7 @@ android {
 
             debuggable false
 
-            shrinkResources false //уменьшение ресурсов
+            //shrinkResources false //уменьшение ресурсов
 
             minifyEnabled true //false
 
@@ -147,12 +145,13 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
-    externalNativeBuild {
-        cmake {
-            path file('src/main/cpp/CMakeLists.txt')
-            version '3.22.1'
-        }
-    }
+
+//    externalNativeBuild {
+//        cmake {
+//            path file('src/main/cpp/CMakeLists.txt')
+//            version '3.22.1'
+//        }
+//    }
 
 }
 

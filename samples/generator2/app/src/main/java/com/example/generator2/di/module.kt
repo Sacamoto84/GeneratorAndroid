@@ -3,7 +3,7 @@ package com.example.generator2.di
 import android.content.Context
 import com.example.generator2.AppPath
 import com.example.generator2.Global
-import com.example.generator2.audio.AudioMixerPump
+import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.initialization.Initialization
 import com.example.generator2.features.mp3.PlayerMP3

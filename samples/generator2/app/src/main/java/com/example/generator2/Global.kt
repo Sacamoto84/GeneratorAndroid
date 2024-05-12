@@ -1,7 +1,7 @@
 package com.example.generator2
 
 import android.media.AudioFormat
-import com.example.generator2.audio.AudioOut
+import com.example.generator2.features.audio.AudioOut
 import com.example.generator2.backup.MMKv
 import com.example.generator2.features.explorer.model.ExploreNodeItem
 import com.example.generator2.features.noSQL.NoSQL

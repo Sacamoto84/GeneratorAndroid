@@ -8,6 +8,7 @@ import java.io.IOException
  * Прочесть numBytes байтов из файла из `assets`
  */
 fun readBytesFromAssets(context: Context, directory: String, fileName: String, numBytes: Int): ByteArray? {
+
     val assetManager = context.assets
 
     return try {

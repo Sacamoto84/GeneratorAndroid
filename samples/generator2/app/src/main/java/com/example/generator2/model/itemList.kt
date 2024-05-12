@@ -28,7 +28,7 @@ class itemList(
 
         try {
 
-            buf = readBytesFromAssets(application as Context, path, filename, 2048)!!
+            buf = readBytesFromAssets(application, path, filename, 2048)!!
 
             bitmap =
                 if (mod == 0)

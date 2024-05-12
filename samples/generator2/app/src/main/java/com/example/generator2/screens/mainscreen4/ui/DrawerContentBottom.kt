@@ -13,9 +13,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.generator2.R
-import com.example.generator2.audio.audioOutBT
-import com.example.generator2.audio.audioOutSpeaker
-import com.example.generator2.audio.audioOutWired
+import com.example.generator2.features.audio.audioOutBT
+import com.example.generator2.features.audio.audioOutSpeaker
+import com.example.generator2.features.audio.audioOutWired
 import com.example.generator2.screens.mainscreen4.VMMain4
 import com.talhafaki.composablesweettoast.util.SweetToastUtil
 import kotlinx.coroutines.DelicateCoroutinesApi

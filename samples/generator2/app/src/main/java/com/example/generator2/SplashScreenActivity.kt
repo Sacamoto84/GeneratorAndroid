@@ -13,7 +13,7 @@ import android.widget.TextView
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.util.UnstableApi
-import com.example.generator2.audio.AudioMixerPump
+import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.initialization.Initialization
 import com.example.generator2.features.noSQL.KEY_NOSQL_CONFIG2
@@ -35,14 +35,15 @@ import kotlin.system.measureNanoTime
 
 var startTimeSplashScreenActivity = System.currentTimeMillis()
 
+@UnstableApi
 @Singleton
 @AndroidEntryPoint
 @SuppressLint("CustomSplashScreen")
 class SplashScreenActivity : AppCompatActivity() {
 
-    //@UnstableApi
-    //@Inject
-    //lateinit var audioMixerPump: AudioMixerPump
+    @UnstableApi
+    @Inject
+    lateinit var audioMixerPump: AudioMixerPump
 
     @Inject
     lateinit var appPath: AppPath
@@ -55,6 +56,16 @@ class SplashScreenActivity : AppCompatActivity() {
 
     @Inject
     lateinit var initialization : Initialization
+
+    @Inject
+    lateinit var gen: Generator
+
+    @Inject
+    lateinit var utils: UtilsKT
+
+    @Inject
+    lateinit var scope: Scope
+
 
     @kotlin.OptIn(DelicateCoroutinesApi::class)
     @OptIn(UnstableApi::class)
@@ -132,14 +143,20 @@ class SplashScreenActivity : AppCompatActivity() {
             GlobalScope.launch(Dispatchers.IO) {
 
                 initialization.run()
+
                 audioOut
-                //audioMixerPump
+                scope
+                gen
+                audioMixerPump
+
                 //update.run()
 
                 val endTime = System.currentTimeMillis()
                 val elapsedTime = endTime - startTimeSplashScreenActivity
                 println("Время выполнения кода: $elapsedTime мс")
                 Timber.tag("Время работы").i("!!! SplashActivity завершена: $elapsedTime мс!!!")
+
+
 
                 val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
                 startActivity(intent)

@@ -26,8 +26,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.generator2.R
-import com.example.generator2.audio.AudioMixerPump
-import com.example.generator2.audio.ROUTESTREAM
+import com.example.generator2.features.audio.AudioMixerPump
+import com.example.generator2.features.audio.ROUTESTREAM
 import com.example.generator2.theme.colorGreen
 import com.example.generator2.theme.colorOrange
 
