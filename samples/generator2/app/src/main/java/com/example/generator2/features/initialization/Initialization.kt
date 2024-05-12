@@ -9,7 +9,6 @@ import com.example.generator2.application
 import com.example.generator2.features.audio.checkSupport192k
 import com.example.generator2.features.explorer.domen.explorerInitialization
 import com.example.generator2.features.generator.Generator
-import com.example.generator2.features.initialization.utils.listFileInDir
 import com.example.generator2.features.initialization.utils.listFilesInAssetsFolder
 import com.example.generator2.features.presets.presetsInit
 import com.example.generator2.features.presets.presetsReadFile
@@ -21,18 +20,14 @@ import com.example.generator2.util.Utils
 import com.example.generator2.util.UtilsKT
 import com.example.generator2.util.toast
 import com.kdownloader.KDownloader
-import flipagram.assetcopylib.AssetCopier
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.File
-import java.io.IOException
 import kotlin.system.measureTimeMillis
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 
 private const val TAG = "initialization"
 
