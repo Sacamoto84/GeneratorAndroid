@@ -16,6 +16,8 @@ import com.example.generator2.features.scope.renderDataToPoints
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -23,7 +25,7 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 @androidx.media3.common.util.UnstableApi
-class PlayerMP3(val context: Context, scope: Scope) {
+class PlayerMP3(val context: Context) {
 
     var player: ExoPlayer
 
@@ -49,13 +51,11 @@ class PlayerMP3(val context: Context, scope: Scope) {
     lateinit var listener: Player.Listener
 
 
+    val streamOut = Channel<FloatArray>(capacity = 48, BufferOverflow.DROP_LATEST)
+
     init {
 
-        dataCompressor()
-        renderDataToPoints(scope)
-        lissaguToBitmap(scope)
-
-        player = ExoPlayer.Builder(context, renderersFactory(context, isPlayingD)).build()
+        player = ExoPlayer.Builder(context, renderersFactory(context, isPlayingD, streamOut)).build()
         listener()
         player.addListener(listener)
         loop()

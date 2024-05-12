@@ -17,8 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import com.example.libs.utils.maping
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
 import kotlin.system.measureNanoTime
 
 var hiRes: Boolean = false //Режим высокого разрешения
@@ -96,9 +94,9 @@ fun renderDataToPoints(scope: Scope) {
 
                 var indexStartSignal = 0
 
-                if (compressorCount.floatValue <= 8f) {
+                if (scope.compressorCount.floatValue <= 8f) {
 
-                    val buf = channelDataStreamOutCompressor.receive()
+                    val buf = scope.channelDataStreamOutCompressor.receive()
 
                     if (buf.isEmpty()) continue
 
@@ -142,7 +140,7 @@ fun renderDataToPoints(scope: Scope) {
                 } else {
 
                     // Для compressorCount > 8 нет синхронизации
-                    val buf = channelDataStreamOutCompressor.receive()
+                    val buf = scope.channelDataStreamOutCompressor.receive()
                     if (buf.isEmpty()) continue
                     val (bufR, bufL) = BufSplitFloat().split(buf)
                     bufLN = bufL
@@ -170,7 +168,7 @@ fun renderDataToPoints(scope: Scope) {
                 }
 
                 val drawLine: Boolean
-                if (compressorCount.floatValue >= 8f) {
+                if (scope.compressorCount.floatValue >= 8f) {
                     paintL.alpha = 0x40
                     paintR.alpha = 0x40
                     drawLine = false
@@ -221,8 +219,8 @@ fun renderDataToPoints(scope: Scope) {
                         minL = 0f
                     }
 
-                    val bigPathR = FloatArray(w.toInt() * 4) { -1.0f }
-                    val bigPathL = FloatArray(w.toInt() * 4) { -1.0f }
+                    //val bigPathR = FloatArray(w.toInt() * 4) { -1.0f }
+                    //val bigPathL = FloatArray(w.toInt() * 4) { -1.0f }
 
                     for (x in 0 until w.toInt()) {
 
@@ -311,7 +309,7 @@ fun renderDataToPoints(scope: Scope) {
                 val fps = 1000.0 / (nanos / 1000000.0)
                 println("Полный кадр :${nanos / 1000000.0} ms FPS:${fps}   AVG ${calculator.getAvg()}")
 
-                scope.chPixel.send(
+                scope.inboxCanvasPixelData.send(
                     ChPixelData(
                         bitmap,
                         hiRes,
@@ -377,7 +375,7 @@ fun lissaguToBitmap(scope: Scope) {
             }
             canvas.drawPath(path, paintLissagu)
 
-            scope.chPixelLissagu.send(ChPixelData(bitmap, true))
+            scope.inboxLisagguPixelData.send(ChPixelData(bitmap, true))
         }
     }
 }

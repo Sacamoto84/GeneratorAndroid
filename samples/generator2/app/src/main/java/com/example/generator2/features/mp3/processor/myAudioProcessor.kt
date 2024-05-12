@@ -3,7 +3,7 @@ package com.example.generator2.features.mp3.processor
 import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.audio.AudioProcessor
-import com.example.generator2.features.mp3.chDataStreamOutAudioProcessor
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 import java.nio.ByteBuffer
@@ -19,7 +19,7 @@ val audioProcessorInputFormat = MutableStateFlow(
 )
 
 @androidx.media3.common.util.UnstableApi
-class MyAudioProcessor(var isPlayingD: Boolean) : AudioProcessor {
+class MyAudioProcessor(private var isPlayingD: Boolean, private val streamOut: Channel<FloatArray>) : AudioProcessor {
 
     private lateinit var inputAudioFormat: AudioProcessor.AudioFormat
     private var isActive: Boolean = false
@@ -101,7 +101,7 @@ class MyAudioProcessor(var isPlayingD: Boolean) : AudioProcessor {
         outputBuffer = this.processBuffer
 
         if (buf.isNotEmpty()) {
-            val s = chDataStreamOutAudioProcessor.trySend(buf).isSuccess
+            val s = streamOut.trySend(buf).isSuccess
             if (!s) Timber.e("Места в канале из процессора нет")
         }
 

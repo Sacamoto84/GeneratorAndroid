@@ -1,15 +1,10 @@
 package com.example.generator2.features.audio
 
+import android.content.Context
 import android.media.AudioFormat
-import android.media.AudioTrack
 import android.media.AudioTrack.WRITE_BLOCKING
-import android.os.Build
-import com.example.generator2.audioOut
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.mp3.PlayerMP3
-import com.example.generator2.features.mp3.chDataStreamOutAudioProcessor
-import com.example.generator2.features.mp3.channelAudioOut
-import com.example.generator2.features.mp3.channelAudioOutLissagu
 import com.example.generator2.features.mp3.processor.audioProcessorInputFormat
 import com.example.generator2.features.scope.Scope
 import com.example.generator2.util.BufSplitFloat
@@ -31,7 +26,7 @@ enum class ROUTESTREAM {
 }
 
 @androidx.media3.common.util.UnstableApi
-class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope: Scope) {
+class AudioMixerPump(context: Context){
 
     //PUBLIC
     val routeR = MutableStateFlow(ROUTESTREAM.MP3) //Выбор источника для вывода сигнала
@@ -41,6 +36,20 @@ class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope: Sc
     val invertR = MutableStateFlow(false)
 
     val shuffle = MutableStateFlow(false)
+
+
+    //DI
+
+    //Звуковая аудиовыхода
+    var audioOut: AudioOut = AudioOut(48000, 200, AudioFormat.ENCODING_PCM_FLOAT)
+
+    val scope = Scope()
+
+    val gen = Generator()
+
+    val exoplayer = PlayerMP3(context)
+
+
 
 
     //val bufferSizeGenDefault = 8192 //размер буфера по умолчанию для генератора
@@ -107,7 +116,7 @@ class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope: Sc
 //                    lastEventTime = LocalDateTime.now()
 //                    println("Частота вызова mp3: "+duration+" ms")
 
-                    val bigBufMp3 = chDataStreamOutAudioProcessor.receive()
+                    val bigBufMp3 = exoplayer.streamOut.receive()
 
                     bufferSize = bigBufMp3.size
 
@@ -184,13 +193,14 @@ class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope: Sc
                         bufMerge(outR, outL)
                     }
 
+                    //Отравили в scope
                     if (scope.isUse.value) {
-                        channelAudioOut.send(v)
-                        channelAudioOutLissagu.send(v)
+                        scope.channelAudioOut.send(v)
+                        scope.channelAudioOutLissagu.send(v)
                     }
 
                     //LRLRLR
-                    audioOut.out.write(v, 0, v.size, WRITE_BLOCKING)
+                    audioOut.out?.write(v, 0, v.size, WRITE_BLOCKING)
 
                 } else {
 
@@ -199,7 +209,7 @@ class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope: Sc
 //                    calculator2.update(duration.toDouble())
 //                    println("Частота вызова: " + duration + " ms AVG: ${calculator2.getAvg()} ms")
 
-                    while (chDataStreamOutAudioProcessor.tryReceive().isSuccess) {
+                    while (exoplayer.streamOut.tryReceive().isSuccess) {
                         println("Очистка канала")
                     }
 
@@ -207,12 +217,14 @@ class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope: Sc
 
                     //Перевод на 192k только если есть поддержка устройтвом
                     if ((routeL.value == ROUTESTREAM.GEN) and (routeR.value == ROUTESTREAM.GEN)) {
-                        if ((audioOut.out.sampleRate != 192000) and isDeviceSupport192k) {
+
+                        if ((audioOut.out!!.sampleRate != 192000) and audioOut.isDeviceSupport192k) {
                             Timber.w("Меняем частоту на 192k")
                             audioOut.destroy()
                             audioOut =
                                 AudioOut(192000, 200, encoding = AudioFormat.ENCODING_PCM_FLOAT)
                         }
+
                     }
 
 
@@ -257,12 +269,13 @@ class AudioMixerPump(val gen: Generator, val exoplayer: PlayerMP3, val scope: Sc
                         bufMerge(outR, outL)
                     }
 
+                    //Отравили в scope
                     if (scope.isUse.value) {
-                        channelAudioOut.send(v)
-                        channelAudioOutLissagu.send(v)
+                        scope.channelAudioOut.send(v)
+                        scope.channelAudioOutLissagu.send(v)
                     }
 
-                    audioOut.out.write(v, 0, v.size, WRITE_BLOCKING)
+                    audioOut.out?.write(v, 0, v.size, WRITE_BLOCKING)
 
                 }
 

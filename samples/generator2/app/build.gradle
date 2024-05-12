@@ -431,6 +431,7 @@ dependencies {
 //
 //    androidTestImplementation "androidx.room:room-testing:2.6.1"
 
+    implementation ("com.github.paramsen:noise:2.0.0")
 
 }
 

@@ -27,40 +27,15 @@ object HomeActivityModule {
     @Provides
     @Singleton
     fun provideAudioMixerPump(
-        gen: Generator,
-        exoplayer: PlayerMP3,
-        scope: Scope
+        @ApplicationContext context: Context
     ): AudioMixerPump {
         Timber.tag("Время работы").i("..DI AudioMixerPump()")
-        return AudioMixerPump(gen, exoplayer, scope)
+        return AudioMixerPump(context)
     }
 
 
-    @Provides
-    @Singleton
-    fun provideGen(): Generator {
-        Timber.tag("Время работы").i("..DI Generator()")
-        return Generator()
-    }
-
-    @Provides
-    @Singleton
-    fun provideScope(): Scope {
-        Timber.tag("Время работы").i("..DI Scope()")
-        return Scope()
-    }
 
 
-    @androidx.media3.common.util.UnstableApi
-    @Provides
-    @Singleton
-    fun providePlayerMP3(
-        @ApplicationContext context: Context,
-        scope: Scope
-    ): PlayerMP3 {
-        Timber.tag("Время работы").i("..DI PlayerMP3()")
-        return PlayerMP3(context, scope)
-    }
 
 
     @Provides
@@ -72,24 +47,24 @@ object HomeActivityModule {
         return UtilsKT(context)
     }
 
-    @Provides
-    @Singleton
-    fun provideScript(
-        gen: Generator,
-    ): Script {
-        Timber.tag("Время работы").i("..DI provideScript()")
-        return Script(gen)
-    }
+//    @Provides
+//    @Singleton
+//    fun provideScript(
+//        gen: Generator,
+//    ): Script {
+//        Timber.tag("Время работы").i("..DI provideScript()")
+//        return Script(gen)
+//    }
 
-    @Provides
-    @Singleton
-    fun provideKeyboard(
-        script: Script,
-        gen: Generator
-    ): ScriptKeyboard {
-        Timber.tag("Время работы").i("..DI provideKeyboard()")
-        return ScriptKeyboard(script, gen)
-    }
+//    @Provides
+//    @Singleton
+//    fun provideKeyboard(
+//        script: Script,
+//        gen: Generator
+//    ): ScriptKeyboard {
+//        Timber.tag("Время работы").i("..DI provideKeyboard()")
+//        return ScriptKeyboard(script, gen)
+//    }
 
     @Provides
     @Singleton

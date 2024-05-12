@@ -14,31 +14,22 @@ import timber.log.Timber
 
 
 
-fun checkSupport192k() {
-    try {
-        val minBuffer = AudioTrack.getMinBufferSize(
-            192000,
-            AudioFormat.CHANNEL_OUT_STEREO,
-            AudioFormat.ENCODING_PCM_FLOAT
-        )
 
-        if (minBuffer >= 0)
-            isDeviceSupport192k = true
-
-    } catch (e: Exception) {
-        Timber.e(e.localizedMessage)
-    }
-}
 
 
 @OptIn(DelicateCoroutinesApi::class)
 class AudioOut(
     val sampleRate: Int = 48000,
-    minBufferMs: Int = 1000,
-    encoding: Int = AudioFormat.ENCODING_PCM_FLOAT
+    val minBufferMs: Int = 1000,
+    val encoding: Int = AudioFormat.ENCODING_PCM_FLOAT
 ) {
 
-    lateinit var out: AudioTrack
+    /**
+     * Признак того что устройство поддерживает 192k
+     */
+    var isDeviceSupport192k = false
+
+    var out: AudioTrack? = null
 
     init {
 
@@ -71,13 +62,11 @@ class AudioOut(
                 )
             }
 
-            out.play()
+            out!!.play()
 
-            val s = out.sampleRate
+            GlobalScope.launch { AudioSampleRate.value = out!!.sampleRate }
 
-            GlobalScope.launch { AudioSampleRate.value = out.sampleRate }
-
-            Timber.w("Запуск AudioOut ${out.sampleRate}")
+            Timber.w("Запуск AudioOut ${out!!.sampleRate}")
 
         } catch (e: Exception) {
             Timber.e(e.localizedMessage)
@@ -88,9 +77,26 @@ class AudioOut(
 
     fun destroy() {
         Timber.w("AudioOut destroy")
-        out.stop()
-        out.flush()
-        out.release()
+        out?.stop()
+        out?.flush()
+        out?.release()
     }
+
+    fun checkSupport192k() {
+        try {
+            val minBuffer = AudioTrack.getMinBufferSize(
+                192000,
+                AudioFormat.CHANNEL_OUT_STEREO,
+                AudioFormat.ENCODING_PCM_FLOAT
+            )
+
+            if (minBuffer >= 0)
+                isDeviceSupport192k = true
+
+        } catch (e: Exception) {
+            Timber.e(e.localizedMessage)
+        }
+    }
+
 
 }

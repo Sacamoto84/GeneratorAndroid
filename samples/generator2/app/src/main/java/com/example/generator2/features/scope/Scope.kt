@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -41,6 +42,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.util.LinkedList
 
 private val colorEnabled = Color.Black
 private val colorTextDisabled = Color.DarkGray
@@ -50,7 +52,7 @@ private val m = Modifier
     .border(1.dp, Color.Gray)
     .background(Color.Black)
 
-data class ChPixelData(val bitmap: Bitmap, val hiRes: Boolean, val fps : Float = 0f)
+data class ChPixelData(val bitmap: Bitmap, val hiRes: Boolean, val fps: Float = 0f)
 
 class Scope {
 
@@ -75,9 +77,12 @@ class Scope {
     var scopeHLissagu: Float = 0f
 
 
-    val chPixel = Channel<ChPixelData>(1, BufferOverflow.DROP_OLDEST)
+    /** Приемный канал для кадра осцилографа */
+    val inboxCanvasPixelData = Channel<ChPixelData>(1, BufferOverflow.DROP_OLDEST)
 
-    val chPixelLissagu = Channel<ChPixelData>(1, BufferOverflow.DROP_OLDEST)
+    /** Приемный канал для кадра лиссажу */
+    val inboxLisagguPixelData = Channel<ChPixelData>(1, BufferOverflow.DROP_OLDEST)
+
 
 
     private var pairPoints: ChPixelData =
@@ -105,6 +110,44 @@ class Scope {
     }
 
 
+    /*
+       1   |   26 ms  | 38.28 Hz |   1152 |   2304
+       2   |   52 ms  | 19.14 Hz |   2304 |   4608
+       4   |  104 ms  |  9.57 Hz |   4608 |   9216
+       8   |  208 ms  |  4.78 Hz |   9216 |  18432
+       16  |  418 ms  |  2.4  Hz |  18432 |  36864
+       32  |  836 ms  |  1.2  Hz |  36864 |  73728
+       64  |  1.64 s  |  0.6  Hz |  73728 | 147456
+       128 |  3.34 s  |  0.3  Hz | 147456 | 294912
+       256 |  6.68 s  |  0.15 Hz | 294912 | 589824
+
+     */
+    /** Количество пакетов в которое будет упакован выходной канал */
+    val compressorCount = mutableFloatStateOf(1f)
+
+    /** Выход аудиоданных -> compressor */
+    val channelAudioOut = Channel<FloatArray>(capacity = 8, BufferOverflow.DROP_OLDEST)
+
+
+    /** Выход аудиоданных -> compressor */
+    val channelAudioOutLissagu = Channel<FloatArray>(capacity = 8, BufferOverflow.DROP_OLDEST)
+
+
+
+    /** Сжатые данные после компрессора */
+    val channelDataStreamOutCompressor = Channel<FloatArray>(capacity = 1, BufferOverflow.DROP_LATEST)
+
+    init {
+
+
+        dataCompressor(this)
+        renderDataToPoints(this)
+        lissaguToBitmap(this)
+
+
+    }
+
+
     @Composable
     fun Oscilloscope() {
 
@@ -114,7 +157,7 @@ class Scope {
                 if (isPause.value) {
                     delay(1);continue
                 }
-                pairPoints = chPixel.receive()
+                pairPoints = inboxCanvasPixelData.receive()
                 if (isPause.value) {
                     delay(1);continue
                 }
@@ -128,7 +171,7 @@ class Scope {
                 if (isPause.value) {
                     delay(1);continue
                 }
-                pairPointsLissagu = chPixelLissagu.receive()
+                pairPointsLissagu = inboxLisagguPixelData.receive()
                 if (isPause.value) {
                     delay(1);continue
                 }
@@ -237,14 +280,14 @@ class Scope {
 
 
 
-                drawIntoCanvas {
-                    it.nativeCanvas.drawText(
-                        pairPoints.fps.toString(),
-                        size.width / 2 - 40f,
-                        40f,
-                        textPaintPause
-                    )
-                }
+            drawIntoCanvas {
+                it.nativeCanvas.drawText(
+                    pairPoints.fps.toString(),
+                    size.width / 2 - 40f,
+                    40f,
+                    textPaintPause
+                )
+            }
 
             if (isPause.value)
                 drawIntoCanvas {
@@ -255,7 +298,6 @@ class Scope {
                         textPaintPause
                     )
                 }
-
 
 
         }

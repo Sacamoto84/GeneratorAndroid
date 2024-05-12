@@ -8,7 +8,3 @@ import kotlinx.coroutines.flow.MutableStateFlow
  */
 val AudioSampleRate = MutableStateFlow(0) //Частота которая используется на аудиовыводе, для UI
 
-/**
- * Признак того что устройство поддерживает 192k
- */
-var isDeviceSupport192k = false
