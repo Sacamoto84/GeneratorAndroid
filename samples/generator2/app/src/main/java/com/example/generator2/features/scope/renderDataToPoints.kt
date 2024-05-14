@@ -8,8 +8,6 @@ import android.graphics.Path
 import com.example.generator2.features.audio.AudioSampleRate
 import com.example.generator2.features.audio.Calculator
 import com.example.generator2.features.mp3.OSCILLSYNC
-import com.example.generator2.features.mp3.channelAudioOutLissagu
-import com.example.generator2.features.mp3.channelDataStreamOutCompressor
 import com.example.generator2.features.mp3.oscillSync
 import com.example.generator2.util.BufSplitFloat
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -341,7 +339,7 @@ fun lissaguToBitmap(scope: Scope) {
             //val buf = channelDataStreamOutCompressorLissagu.receive()
             //channelAudioOutLissagu
 
-            val buf = channelAudioOutLissagu.receive()
+            val buf = scope.channelAudioOutLissagu.receive()
 
             if (buf.isEmpty()) continue
             val (bufR, bufL) = BufSplitFloat().split(buf)

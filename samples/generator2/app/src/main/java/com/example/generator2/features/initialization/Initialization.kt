@@ -1,12 +1,15 @@
 package com.example.generator2.features.initialization
 
 import android.content.Context
+import androidx.media3.common.util.UnstableApi
 import cafe.adriel.pufferdb.android.AndroidPufferDB
 import com.example.generator2.AppPath
 import com.example.generator2.Global
 import com.example.generator2.PermissionStorage
 import com.example.generator2.application
-import com.example.generator2.features.audio.checkSupport192k
+import com.example.generator2.di.MainAudioMixerPump
+import com.example.generator2.di.PreviewAudioMixerPump
+import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.explorer.domen.explorerInitialization
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.initialization.utils.listFilesInAssetsFolder
@@ -31,12 +34,17 @@ import kotlin.system.measureTimeMillis
 
 private const val TAG = "initialization"
 
-class Initialization(
+@androidx.annotation.OptIn(UnstableApi::class)
+class Initialization
+    (
     val context: Context,
-    val gen: Generator,
     val utils: UtilsKT,
     val appPath: AppPath,
-    val global: Global
+    val global: Global,
+
+    val audioMixerPump: AudioMixerPump,
+
+    val audioPreviewMixerPump: AudioMixerPump
 ) {
 
     var isInitialized = false  //Признак того что произошла инициализация
@@ -119,7 +127,7 @@ class Initialization(
                 Timber.tag("Время работы").i("firstDeferred start")
                 val arrFilesCarrier = listFilesInAssetsFolder(application, "Carrier")
                 for (i in arrFilesCarrier.indices) {
-                    gen.itemlistCarrier.add(itemList("Carrier", arrFilesCarrier[i], 0))
+                    audioMixerPump.gen.itemlistCarrier.add(itemList("Carrier", arrFilesCarrier[i], 0))
                 }
             }
             Timber.tag("Время работы").i("firstDeferred stop : $t ms")
@@ -131,8 +139,8 @@ class Initialization(
                 val arrFilesMod = listFilesInAssetsFolder(application, "Mod")
                     //listFileInDir(appPath.mod) //Получение списка файлов в папке Mod //6ms
                 for (i in arrFilesMod.indices) {
-                    gen.itemlistAM.add(itemList("Mod", arrFilesMod[i], 1)) //648ms -> 369 -> 207
-                    gen.itemlistFM.add(itemList("Mod", arrFilesMod[i], 0)) // all 65ms
+                    audioMixerPump.gen.itemlistAM.add(itemList("Mod", arrFilesMod[i], 1)) //648ms -> 369 -> 207
+                    audioMixerPump.gen.itemlistFM.add(itemList("Mod", arrFilesMod[i], 0)) // all 65ms
                 }
             }
             Timber.tag("Время работы").i("secondDeferred stop : $t111 ms")
@@ -145,8 +153,6 @@ class Initialization(
             //Инициализация
             if ((!isInitialized) && (PermissionStorage.hasPermissions(context))) {
 
-
-
                 Timber.tag("Время работы").i("t4 1")
                 toast.initialized(context) //0 ms
                 Timber.tag("Время работы").i("t4 2")
@@ -154,11 +160,11 @@ class Initialization(
                 Timber.tag("Время работы").i("t4 3")
                 global.mmkv.readConstrain() //4ms
                 Timber.tag("Время работы").i("t4 4")
-                presetsToLiveData(presetsReadFile("default", path = appPath.config), gen) //67ms
+                presetsToLiveData(presetsReadFile("default", path = appPath.config), audioMixerPump.gen) //67ms
                 Timber.tag("Время работы").i("t4 5")
 
                 //Проверка поддержки 192k
-                checkSupport192k() //4ms
+                audioMixerPump.audioOut.checkSupport192k() //4ms
 
                 Timber.tag("Время работы").i("t4 6")
             }
@@ -170,7 +176,7 @@ class Initialization(
 
         s1.await()
         s2.await()
-        observe(gen) //30ms
+        observe(audioMixerPump.gen) //30ms
         s3.await()
         s4.await()
 

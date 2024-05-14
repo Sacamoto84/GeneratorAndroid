@@ -13,13 +13,9 @@ import android.widget.TextView
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.util.UnstableApi
-import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.initialization.Initialization
 import com.example.generator2.features.noSQL.KEY_NOSQL_CONFIG2
-import com.example.generator2.features.playlist.Playlist
-import com.example.generator2.features.scope.Scope
-import com.example.generator2.features.update.Update
 import com.example.generator2.util.UtilsKT
 import com.example.generator2.util.findActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,7 +27,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.system.measureNanoTime
 
 var startTimeSplashScreenActivity = System.currentTimeMillis()
 
@@ -40,10 +35,6 @@ var startTimeSplashScreenActivity = System.currentTimeMillis()
 @AndroidEntryPoint
 @SuppressLint("CustomSplashScreen")
 class SplashScreenActivity : AppCompatActivity() {
-
-    @UnstableApi
-    @Inject
-    lateinit var audioMixerPump: AudioMixerPump
 
     @Inject
     lateinit var appPath: AppPath
@@ -54,18 +45,12 @@ class SplashScreenActivity : AppCompatActivity() {
     //@Inject
     //lateinit var update: Update
 
-    @Inject
-    lateinit var initialization : Initialization
+
+    //@Inject
+    //lateinit var utils: UtilsKT
 
     @Inject
-    lateinit var gen: Generator
-
-    @Inject
-    lateinit var utils: UtilsKT
-
-    @Inject
-    lateinit var scope: Scope
-
+    lateinit var initialization: Initialization
 
     @kotlin.OptIn(DelicateCoroutinesApi::class)
     @OptIn(UnstableApi::class)
@@ -144,10 +129,10 @@ class SplashScreenActivity : AppCompatActivity() {
 
                 initialization.run()
 
-                audioOut
-                scope
-                gen
-                audioMixerPump
+                //audioOut
+
+
+
 
                 //update.run()
 

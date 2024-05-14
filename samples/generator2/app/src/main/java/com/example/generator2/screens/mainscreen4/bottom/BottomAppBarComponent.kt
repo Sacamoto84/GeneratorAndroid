@@ -73,10 +73,10 @@ fun M4BottomAppBarComponent(
                     .size(36.dp)
                     .combinedClickable(
                         onClick = {
-                            if ((vm.gen.liveData.presetsName.value == "") || (vm.gen.liveData.presetsName.value == "default")) {
+                            if ((vm.audioMixerPump.gen.liveData.presetsName.value == "") || (vm.audioMixerPump.gen.liveData.presetsName.value == "default")) {
                                 Presets.isOpenDialogNewFile.value = true
                             } else {
-                                presetsSaveFile(vm.gen.liveData.presetsName.value, path = vm.appPath.presets, gen = vm.gen)
+                                presetsSaveFile(vm.audioMixerPump.gen.liveData.presetsName.value, path = vm.appPath.presets, gen = vm.audioMixerPump.gen)
                             }
                         },
                         onLongClick = {

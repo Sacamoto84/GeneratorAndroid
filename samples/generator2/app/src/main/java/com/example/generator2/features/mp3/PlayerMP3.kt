@@ -2,17 +2,10 @@ package com.example.generator2.features.mp3
 
 import android.content.Context
 import android.net.Uri
-import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.transformer.EditedMediaItem
-import com.example.generator2.AppPath
-import com.example.generator2.features.scope.Scope
-import com.example.generator2.features.scope.dataCompressor
-import com.example.generator2.features.scope.lissaguToBitmap
-import com.example.generator2.features.scope.renderDataToPoints
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

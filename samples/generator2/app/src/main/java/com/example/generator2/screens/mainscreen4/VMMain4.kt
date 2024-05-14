@@ -5,12 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.util.UnstableApi
 import com.example.generator2.AppPath
-import com.example.generator2.features.audio.AudioMixerPump
+import com.example.generator2.di.MainAudioMixerPump
 import com.example.generator2.element.Console2
+import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.update.Update
-import com.example.generator2.features.generator.Generator
-import com.example.generator2.features.mp3.PlayerMP3
-import com.example.generator2.features.scope.Scope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -22,10 +20,10 @@ import javax.inject.Inject
 @HiltViewModel
 class VMMain4 @OptIn(UnstableApi::class) @Inject constructor(
     //@ApplicationContext contextActivity: Context,
-    val gen: Generator,
-    val exoplayer: PlayerMP3,
+
+    @MainAudioMixerPump
     val audioMixerPump: AudioMixerPump,
-    val scope: Scope,
+
     val update: Update,
     val appPath: AppPath
 ) : ViewModel() {

@@ -11,22 +11,18 @@ import androidx.media3.common.MediaItem
 import androidx.media3.transformer.EditedMediaItem
 import com.example.generator2.AppPath
 import com.example.generator2.Global
+import com.example.generator2.di.MainAudioMixerPump
+import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.explorer.data.treeAllAudio
 import com.example.generator2.features.explorer.domen.explorerGetAllChildNode
 import com.example.generator2.features.explorer.domen.explorerMediaFormat
 import com.example.generator2.features.explorer.domen.tagInItemMp3
 import com.example.generator2.features.explorer.model.ExplorerItem
-import com.example.generator2.features.mp3.PlayerMP3
-import com.example.generator2.model.countNodes
 import com.example.generator2.model.traverseTree
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.jaudiotagger.audio.AudioFileIO
-import org.jaudiotagger.tag.FieldKey
-import timber.log.Timber
 import java.io.File
-import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -39,9 +35,12 @@ val NODE_UP = """..."""
 @HiltViewModel
 class ScreenExplorerViewModel @Inject constructor(
     @ApplicationContext val context: Context,
-    val exoplayer: PlayerMP3,
     val appPath: AppPath,
-    val global: Global
+    val global: Global,
+
+    @MainAudioMixerPump
+   val audioMixerPump: AudioMixerPump
+
 ) : ViewModel() {
 
 
@@ -97,8 +96,8 @@ class ScreenExplorerViewModel @Inject constructor(
                 it.node.value.isInit = true
             }
 
-           // mediaFind(it)
-           // tagInItemMp3(it)
+            // mediaFind(it)
+            // tagInItemMp3(it)
         }
 
 //        //Сортировка
@@ -145,12 +144,12 @@ class ScreenExplorerViewModel @Inject constructor(
 
     @androidx.media3.common.util.UnstableApi
     fun play(path: String) {
-        exoplayer.player.stop()
+        audioMixerPump.exoplayer.player.stop()
         val uri = Uri.parse(path)
         val a = EditedMediaItem.Builder(MediaItem.fromUri(uri)).build()
-        exoplayer.player.setMediaItem(a.mediaItem)
-        exoplayer.player.prepare()
-        exoplayer.player.playWhenReady = true
+        audioMixerPump.exoplayer.player.setMediaItem(a.mediaItem)
+        audioMixerPump.exoplayer.player.prepare()
+        audioMixerPump.exoplayer.player.playWhenReady = true
     }
 
 //    fun scan() {

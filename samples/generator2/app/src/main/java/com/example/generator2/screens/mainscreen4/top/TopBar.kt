@@ -56,12 +56,12 @@ fun TopBarAudioSource(vm: VMMain4) {
         Box(
             modifier = m
                 .weight(1f)
-                .clickable(onClick = { vm.scope.isUse.value = vm.scope.isUse.value.not() }),
+                .clickable(onClick = { vm.audioMixerPump.scope.isUse.value = vm.audioMixerPump.scope.isUse.value.not() }),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "OSCILL",
-                color = if (vm.scope.isUse.collectAsState().value) Color.Green else Color.Gray
+                color = if (vm.audioMixerPump.scope.isUse.collectAsState().value) Color.Green else Color.Gray
             )
         }
 

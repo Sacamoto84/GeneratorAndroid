@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.SideEffect
+import com.example.generator2.di.MainAudioMixerPump
 import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.presets.presetsSaveFile
@@ -41,24 +42,19 @@ import javax.inject.Singleton
 @androidx.media3.common.util.UnstableApi
 class MainActivity : ComponentActivity() {
 
+    @MainAudioMixerPump
     @Inject
     lateinit var audioMixerPump: AudioMixerPump
 
     @Inject
-    lateinit var gen: Generator
-
-    @Inject
     lateinit var utils: UtilsKT
-
-    @Inject
-    lateinit var scope: Scope
 
     @Inject
     lateinit var appPath: AppPath
 
 
     override fun onPause() {
-        presetsSaveFile("default", appPath.config, gen)
+        presetsSaveFile("default", appPath.config, audioMixerPump.gen)
         //R.drawable.add
         super.onPause()
         println("...................onPause")

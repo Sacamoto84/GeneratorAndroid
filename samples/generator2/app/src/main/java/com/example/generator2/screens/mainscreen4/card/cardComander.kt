@@ -41,7 +41,7 @@ fun CardCommander(vm: VMMain4) {
     {
 
         Row(Modifier.fillMaxSize(), Arrangement.Start, Alignment.CenterVertically) {
-            val mono = vm.gen.liveData.mono.collectAsState()
+            val mono = vm.audioMixerPump.gen.liveData.mono.collectAsState()
             val color = if (mono.value) MaterialColor.GREEN_400 else colorDarkBackground
 
             Spacer(
@@ -51,7 +51,7 @@ fun CardCommander(vm: VMMain4) {
             )
 
             //Стерео Моно
-            IconButton(onClick = { vm.gen.liveData.mono.value = !vm.gen.liveData.mono.value }) {
+            IconButton(onClick = { vm.audioMixerPump.gen.liveData.mono.value = !vm.audioMixerPump.gen.liveData.mono.value }) {
                 Icon(
                     painter = if (mono.value) painterResource(R.drawable.mono) else painterResource(
                         R.drawable.stereo
@@ -60,17 +60,17 @@ fun CardCommander(vm: VMMain4) {
                 )
             }
 
-            LR(vm.gen)
+            LR(vm.audioMixerPump.gen)
 
-            val shuffle = vm.gen.liveData.shuffle.collectAsState()
-            val invert = vm.gen.liveData.invert.collectAsState()
+            val shuffle = vm.audioMixerPump.gen.liveData.shuffle.collectAsState()
+            val invert = vm.audioMixerPump.gen.liveData.invert.collectAsState()
             val time = 160
 
             Crossfade(targetState = mono.value, animationSpec = tween(time), label = "")
             {
                 if (!it) {
                     IconButton(onClick = {
-                        vm.gen.liveData.shuffle.value = !vm.gen.liveData.shuffle.value
+                        vm.audioMixerPump.gen.liveData.shuffle.value = !vm.audioMixerPump.gen.liveData.shuffle.value
                     }) {
                         val color =
                             if (shuffle.value) MaterialColor.GREEN_500 else colorDarkBackground
@@ -82,7 +82,7 @@ fun CardCommander(vm: VMMain4) {
                     }
                 } else {
                     IconButton(onClick = {
-                        vm.gen.liveData.invert.value = !vm.gen.liveData.invert.value
+                        vm.audioMixerPump.gen.liveData.invert.value = !vm.audioMixerPump.gen.liveData.invert.value
                     }) {
                         val color =
                             if (invert.value) MaterialColor.GREEN_500 else colorDarkBackground

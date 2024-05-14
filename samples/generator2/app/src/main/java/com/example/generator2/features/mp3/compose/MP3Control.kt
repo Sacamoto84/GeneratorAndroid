@@ -44,20 +44,20 @@ fun MP3Control(vm: VMMain4) {
 
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "P:${vm.exoplayer.currentTime.collectAsState().value.formatMinSec()}",
+                text = "P:${vm.audioMixerPump.exoplayer.currentTime.collectAsState().value.formatMinSec()}",
                 color = Color.Yellow
             )
             Text(
-                text = "D:${vm.exoplayer.durationMs.collectAsState().value.formatMinSec()}",
+                text = "D:${vm.audioMixerPump.exoplayer.durationMs.collectAsState().value.formatMinSec()}",
                 color = Color.Yellow
             )
         }
 
         Slider(
             modifier = Modifier.fillMaxWidth(),
-            value = vm.exoplayer.currentTime.collectAsState().value.toFloat(),
-            onValueChange = { timeMs: Float -> vm.exoplayer.player.seekTo(timeMs.toLong()) },
-            valueRange = 0f..vm.exoplayer.durationMs.collectAsState().value.toFloat(),
+            value = vm.audioMixerPump.exoplayer.currentTime.collectAsState().value.toFloat(),
+            onValueChange = { timeMs: Float -> vm.audioMixerPump.exoplayer.player.seekTo(timeMs.toLong()) },
+            valueRange = 0f..vm.audioMixerPump.exoplayer.durationMs.collectAsState().value.toFloat(),
             colors = SliderDefaults.colors(thumbColor = Purple200, activeTickColor = Purple200)
         )
 
@@ -88,7 +88,7 @@ fun MP3Control(vm: VMMain4) {
                 )
             }
 
-            IconButton(modifier = Modifier.size(40.dp), onClick = { vm.exoplayer.player.play() }) {
+            IconButton(modifier = Modifier.size(40.dp), onClick = { vm.audioMixerPump.exoplayer.player.play() }) {
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(id = R.drawable.player_play),
@@ -99,7 +99,7 @@ fun MP3Control(vm: VMMain4) {
 
             IconButton(
                 modifier = Modifier.size(40.dp),
-                onClick = { vm.exoplayer.player.pause() }) {
+                onClick = { vm.audioMixerPump.exoplayer.player.pause() }) {
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(id = R.drawable.player_pause),
@@ -108,7 +108,7 @@ fun MP3Control(vm: VMMain4) {
                 )
             }
 
-            IconButton(modifier = Modifier.size(40.dp), onClick = { vm.exoplayer.player.stop() }) {
+            IconButton(modifier = Modifier.size(40.dp), onClick = { vm.audioMixerPump.exoplayer.player.stop() }) {
                 Icon(
                     modifier = Modifier.size(28.dp),
                     painter = painterResource(id = R.drawable.player_stop),
@@ -168,10 +168,10 @@ fun MP3Control(vm: VMMain4) {
                     .width(32.dp)
                     .offset((-1).dp)
                     .clickable(
-                        onClick = { vm.gen.liveData.mono.value = !vm.gen.liveData.mono.value })
+                        onClick = { vm.audioMixerPump.gen.liveData.mono.value = !vm.audioMixerPump.gen.liveData.mono.value })
                     .border(1.dp, Color.Gray)
                     .padding(4.dp),
-                painter = if (vm.gen.liveData.mono.collectAsState().value) painterResource(R.drawable.mono)
+                painter = if (vm.audioMixerPump.gen.liveData.mono.collectAsState().value) painterResource(R.drawable.mono)
                 else painterResource(R.drawable.stereo),
                 contentDescription = null, tint = Color.LightGray
             )

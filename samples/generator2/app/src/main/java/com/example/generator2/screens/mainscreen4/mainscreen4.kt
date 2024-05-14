@@ -58,7 +58,7 @@ fun Mainsreen4(
     Timber.e("mainsreen4")
 
     if (Presets.isOpenDialogNewFile.collectAsState().value) {
-        DialogPresetsNewFile(vm.gen)
+        DialogPresetsNewFile(vm.audioMixerPump.gen)
     }
 
     Scaffold(
@@ -67,7 +67,7 @@ fun Mainsreen4(
             Column {
                 WidgetUpdate(vm.update)
                 Text(
-                    text = vm.gen.liveData.presetsName.collectAsState().value,
+                    text = vm.audioMixerPump.gen.liveData.presetsName.collectAsState().value,
                     color = Color.LightGray,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
@@ -84,7 +84,7 @@ fun Mainsreen4(
     )
     { it ->
 
-        val mono by vm.gen.liveData.mono.collectAsState()
+        val mono by vm.audioMixerPump.gen.liveData.mono.collectAsState()
 
         val animateHeight by animateDpAsState(
             targetValue = if (!mono) 314.dp else 0.dp,
@@ -121,7 +121,7 @@ fun Mainsreen4(
             TopBarAudioSource(vm)
 
             AnimatedVisibility(
-                visible = vm.scope.isUse.collectAsState().value,
+                visible = vm.audioMixerPump.scope.isUse.collectAsState().value,
                 enter =
                 //slideInVertically() +
                 expandVertically(expandFrom = Alignment.Bottom),// + fadeIn(),
@@ -130,7 +130,7 @@ fun Mainsreen4(
             )
             {
                 //Осциллограф
-                vm.scope.Oscilloscope()
+                vm.audioMixerPump.scope.Oscilloscope()
             }
 
             MP3Control(vm)
@@ -140,7 +140,7 @@ fun Mainsreen4(
             Column()
             {
                 //CardCarrier("CH0")
-                CardCard("CH0", vm.gen)
+                CardCard("CH0", vm.audioMixerPump.gen)
                 Spacer(modifier = Modifier.height(8.dp))
 
                 //CardCommander(vm)                                                     //<-- Commander
@@ -168,7 +168,7 @@ fun Mainsreen4(
             {
                 if (!it)
                 //CardCarrier("CH1")
-                    CardCard("CH1", vm.gen)
+                    CardCard("CH1", vm.audioMixerPump.gen)
                 else Spacer(
                     modifier = Modifier
                         .height(1.dp)

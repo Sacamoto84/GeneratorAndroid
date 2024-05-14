@@ -10,7 +10,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 
-var audioOut: AudioOut = AudioOut(48000, 200, AudioFormat.ENCODING_PCM_FLOAT)
+//var audioOut: AudioOut = AudioOut(48000, 200, AudioFormat.ENCODING_PCM_FLOAT)
 
 
 @Singleton

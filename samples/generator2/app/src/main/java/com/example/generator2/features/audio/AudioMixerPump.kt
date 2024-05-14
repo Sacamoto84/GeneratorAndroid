@@ -26,7 +26,11 @@ enum class ROUTESTREAM {
 }
 
 @androidx.media3.common.util.UnstableApi
-class AudioMixerPump(context: Context){
+class AudioMixerPump
+    (
+    context: Context,
+    val gen : Generator
+) {
 
     //PUBLIC
     val routeR = MutableStateFlow(ROUTESTREAM.MP3) //Выбор источника для вывода сигнала
@@ -37,7 +41,6 @@ class AudioMixerPump(context: Context){
 
     val shuffle = MutableStateFlow(false)
 
-
     //DI
 
     //Звуковая аудиовыхода
@@ -45,12 +48,7 @@ class AudioMixerPump(context: Context){
 
     val scope = Scope()
 
-    val gen = Generator()
-
     val exoplayer = PlayerMP3(context)
-
-
-
 
     //val bufferSizeGenDefault = 8192 //размер буфера по умолчанию для генератора
     //var bufferSize: Int = bufferSizeGenDefault //Текущий размер буфера который берется от размера буфера от плеера
