@@ -2,20 +2,9 @@ package com.example.generator2.features.generator
 
 import com.example.generator2.util.ArrayUtils
 
-enum class GeneratorCH{
-    CH0,
-    CH1
-}
+enum class GeneratorCH{ CH0, CH1 }
 
-enum class GeneratorMOD{
-    CR,
-    AM,
-    FM
-}
-
-
-
-
+enum class GeneratorMOD{ CR, AM, FM }
 
 //Для спиннера, отсылка массива
 fun Spinner_Send_Buffer(

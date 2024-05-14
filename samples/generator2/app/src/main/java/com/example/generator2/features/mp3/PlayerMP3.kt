@@ -44,9 +44,24 @@ class PlayerMP3(val context: Context) {
     lateinit var listener: Player.Listener
 
 
+
+
+    /**
+     * #### Выходной канал данных от аудиопроцессора, это декодированный звук готовый для воспроизведения, шлется в AuduiPump для подготовки к AudioTrack. 44100 1152 26ms
+     */
     val streamOut = Channel<FloatArray>(capacity = 48, BufferOverflow.DROP_LATEST)
 
+
+
+
+
     init {
+
+
+
+
+
+
 
         player = ExoPlayer.Builder(context, renderersFactory(context, isPlayingD, streamOut)).build()
         listener()

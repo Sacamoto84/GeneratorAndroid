@@ -3,21 +3,27 @@ package com.example.generator2.features.audio
 import android.content.Context
 import android.media.AudioFormat
 import android.media.AudioTrack.WRITE_BLOCKING
+import com.example.generator2.application
 import com.example.generator2.features.generator.Generator
+import com.example.generator2.features.initialization.utils.listFilesInAssetsFolder
 import com.example.generator2.features.mp3.PlayerMP3
 import com.example.generator2.features.mp3.processor.audioProcessorInputFormat
 import com.example.generator2.features.scope.Scope
+import com.example.generator2.model.itemList
 import com.example.generator2.util.BufSplitFloat
 import com.example.generator2.util.bufMerge
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.LinkedList
 import kotlin.system.measureNanoTime
+import kotlin.system.measureTimeMillis
 
 enum class ROUTESTREAM {
     GEN,
@@ -280,6 +286,40 @@ class AudioMixerPump
 
             }
         }
+
+    }
+
+
+
+    @OptIn(DelicateCoroutinesApi::class)
+    suspend fun initializationGen(){
+
+        val s1 = GlobalScope.async(Dispatchers.Main) {
+            val t = measureTimeMillis {
+                Timber.tag("Время работы").i("firstDeferred start")
+                val arrFilesCarrier = listFilesInAssetsFolder(application, "Carrier")
+                for (i in arrFilesCarrier.indices) {
+                    gen.itemlistCarrier.add(itemList("Carrier", arrFilesCarrier[i], 0))
+                }
+            }
+            Timber.tag("Время работы").i("firstDeferred stop : $t ms")
+        }
+
+        val s2 = GlobalScope.async(Dispatchers.IO) {
+            val t111 = measureTimeMillis {
+                Timber.tag("Время работы").i("secondDeferred start")
+                val arrFilesMod = listFilesInAssetsFolder(application, "Mod")
+                //listFileInDir(appPath.mod) //Получение списка файлов в папке Mod //6ms
+                for (i in arrFilesMod.indices) {
+                    gen.itemlistAM.add(itemList("Mod", arrFilesMod[i], 1)) //648ms -> 369 -> 207
+                    gen.itemlistFM.add(itemList("Mod", arrFilesMod[i], 0)) // all 65ms
+                }
+            }
+            Timber.tag("Время работы").i("secondDeferred stop : $t111 ms")
+        }
+
+        s1.await()
+        s2.await()
 
     }
 

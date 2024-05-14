@@ -7,18 +7,15 @@ import com.example.generator2.AppPath
 import com.example.generator2.Global
 import com.example.generator2.PermissionStorage
 import com.example.generator2.application
-import com.example.generator2.di.MainAudioMixerPump
-import com.example.generator2.di.PreviewAudioMixerPump
 import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.explorer.domen.explorerInitialization
-import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.initialization.utils.listFilesInAssetsFolder
 import com.example.generator2.features.presets.presetsInit
 import com.example.generator2.features.presets.presetsReadFile
 import com.example.generator2.features.presets.presetsToLiveData
 import com.example.generator2.features.update.kDownloader
 import com.example.generator2.model.itemList
-import com.example.generator2.observe
+import com.example.generator2.features.generator.observe
 import com.example.generator2.util.Utils
 import com.example.generator2.util.UtilsKT
 import com.example.generator2.util.toast
@@ -84,8 +81,7 @@ class Initialization
             val t = measureTimeMillis {
                 explorerInitialization(context)
             }
-            Timber.tag("Время работы")
-                .i("Время инициализации explorer: $t ms") //6350ms на 157 файлов
+            Timber.tag("Время работы").i("Время инициализации explorer: $t ms") //6350ms на 157 файлов
         }
 
         /* S3 */
@@ -122,29 +118,29 @@ class Initialization
 
         //s0.await()
 
-        s1 = GlobalScope.async(Dispatchers.Main) {
-            val t = measureTimeMillis {
-                Timber.tag("Время работы").i("firstDeferred start")
-                val arrFilesCarrier = listFilesInAssetsFolder(application, "Carrier")
-                for (i in arrFilesCarrier.indices) {
-                    audioMixerPump.gen.itemlistCarrier.add(itemList("Carrier", arrFilesCarrier[i], 0))
-                }
-            }
-            Timber.tag("Время работы").i("firstDeferred stop : $t ms")
-        }
-
-        s2 = GlobalScope.async(Dispatchers.IO) {
-            val t111 = measureTimeMillis {
-                Timber.tag("Время работы").i("secondDeferred start")
-                val arrFilesMod = listFilesInAssetsFolder(application, "Mod")
-                    //listFileInDir(appPath.mod) //Получение списка файлов в папке Mod //6ms
-                for (i in arrFilesMod.indices) {
-                    audioMixerPump.gen.itemlistAM.add(itemList("Mod", arrFilesMod[i], 1)) //648ms -> 369 -> 207
-                    audioMixerPump.gen.itemlistFM.add(itemList("Mod", arrFilesMod[i], 0)) // all 65ms
-                }
-            }
-            Timber.tag("Время работы").i("secondDeferred stop : $t111 ms")
-        }
+//        s1 = GlobalScope.async(Dispatchers.Main) {
+//            val t = measureTimeMillis {
+//                Timber.tag("Время работы").i("firstDeferred start")
+//                val arrFilesCarrier = listFilesInAssetsFolder(application, "Carrier")
+//                for (i in arrFilesCarrier.indices) {
+//                    audioMixerPump.gen.itemlistCarrier.add(itemList("Carrier", arrFilesCarrier[i], 0))
+//                }
+//            }
+//            Timber.tag("Время работы").i("firstDeferred stop : $t ms")
+//        }
+//
+//        s2 = GlobalScope.async(Dispatchers.IO) {
+//            val t111 = measureTimeMillis {
+//                Timber.tag("Время работы").i("secondDeferred start")
+//                val arrFilesMod = listFilesInAssetsFolder(application, "Mod")
+//                    //listFileInDir(appPath.mod) //Получение списка файлов в папке Mod //6ms
+//                for (i in arrFilesMod.indices) {
+//                    audioMixerPump.gen.itemlistAM.add(itemList("Mod", arrFilesMod[i], 1)) //648ms -> 369 -> 207
+//                    audioMixerPump.gen.itemlistFM.add(itemList("Mod", arrFilesMod[i], 0)) // all 65ms
+//                }
+//            }
+//            Timber.tag("Время работы").i("secondDeferred stop : $t111 ms")
+//        }
 
 
         val t4 = measureTimeMillis {
@@ -174,8 +170,10 @@ class Initialization
         Timber.tag("Время работы").i("4 stop Время инициализации : $t4 ms") //45ms
 
 
-        s1.await()
-        s2.await()
+        audioMixerPump.initializationGen()
+
+        //s1.await()
+        //s2.await()
         observe(audioMixerPump.gen) //30ms
         s3.await()
         s4.await()

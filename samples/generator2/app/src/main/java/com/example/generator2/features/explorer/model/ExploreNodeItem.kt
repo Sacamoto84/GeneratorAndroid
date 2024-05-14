@@ -6,8 +6,8 @@ data class ExploreNodeItem (
 
     //Часть для сканера
     var lengthInSeconds: String = "",
-    var sampleRate: String = "", //44100
-    var bitRate: String = "", //224kbps
+    var sampleRate: String = "",  //44100
+    var bitRate: String = "",     //224kbps
     var channelMode: String = "", //Mono, Stereo
 
     var isDirectory: Boolean = true, //Признак того что файл является директорией
