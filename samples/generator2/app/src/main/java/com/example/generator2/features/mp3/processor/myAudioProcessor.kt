@@ -19,7 +19,7 @@ val audioProcessorInputFormat = MutableStateFlow(
 )
 
 @androidx.media3.common.util.UnstableApi
-class MyAudioProcessor(private var isPlayingD: Boolean, private val streamOut: Channel<FloatArray>) : AudioProcessor {
+class MyAudioProcessor(private var isPlayingD: MutableStateFlow<Boolean>, private val streamOut: Channel<FloatArray>) : AudioProcessor {
 
     private lateinit var inputAudioFormat: AudioProcessor.AudioFormat
     private var isActive: Boolean = false
@@ -100,16 +100,16 @@ class MyAudioProcessor(private var isPlayingD: Boolean, private val streamOut: C
         processBuffer.flip()
         outputBuffer = this.processBuffer
 
-        if (buf.isNotEmpty()) {
-            val s = streamOut.trySend(buf).isSuccess
-            if (!s) Timber.e("Места в канале из процессора нет")
-        }
+//        if (buf.isNotEmpty()) {
+//            val s = streamOut.trySend(buf).isSuccess
+//            if (!s) Timber.e("Места в канале из процессора нет")
+//        }
 
     }
 
 
     override fun queueEndOfStream() {
-        isPlayingD = false
+        isPlayingD.value = false
         Timber.e("queueEndOfStream")
         inputEnded = true
         processBuffer = AudioProcessor.EMPTY_BUFFER

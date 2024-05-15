@@ -18,76 +18,76 @@ import com.example.generator2.screens.scripting.vm.VMScripting
 //Блок регистров
 @Composable
 fun RegisterViewDraw(global: VMScripting) {
-    Box(
-        modifier = Modifier
-            .padding(start = 6.dp, end = 6.dp)
-            .fillMaxWidth()
-    ) {
-        Column(
-            Modifier.height(50.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-
-                ComposeBoxForF(
-                    0,
-                    modifier = Modifier.weight(1f),
-                    text = { global.script.f[0].toString() })
-                ComposeBoxForF(
-                    1,
-                    modifier = Modifier.weight(1f),
-                    text = { global.script.f[1].toString() })
-                ComposeBoxForF(
-                    2,
-                    modifier = Modifier.weight(1f),
-                    text = { global.script.f[2].toString() })
-                ComposeBoxForF(
-                    3,
-                    modifier = Modifier.weight(1f),
-                    text = { global.script.f[3].toString() })
-                ComposeBoxForF(
-                    4,
-                    modifier = Modifier.weight(1f),
-                    text = { global.script.f[4].toString() })
-
-
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-
-                ComposeBoxForF(
-                    5,
-                    modifier = Modifier.weight(1f),
-                    text = { global.script.f[5].toString() })
-                ComposeBoxForF(
-                    6,
-                    modifier = Modifier.weight(1f),
-                    text = { global.script.f[6].toString() })
-                ComposeBoxForF(
-                    7,
-                    modifier = Modifier.weight(1f),
-                    text = { global.script.f[7].toString() })
-                ComposeBoxForF(
-                    8,
-                    modifier = Modifier.weight(1f),
-                    text = { global.script.f[8].toString() })
-                ComposeBoxForF(
-                    9,
-                    modifier = Modifier.weight(1f),
-                    text = { global.script.f[9].toString() })
-
-
-            }
-
-        }
-    }
+//    Box(
+//        modifier = Modifier
+//            .padding(start = 6.dp, end = 6.dp)
+//            .fillMaxWidth()
+//    ) {
+//        Column(
+//            Modifier.height(50.dp)
+//        ) {
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//
+//                horizontalArrangement = Arrangement.SpaceBetween
+//            ) {
+//
+//                ComposeBoxForF(
+//                    0,
+//                    modifier = Modifier.weight(1f),
+//                    text = { global.script.f[0].toString() })
+//                ComposeBoxForF(
+//                    1,
+//                    modifier = Modifier.weight(1f),
+//                    text = { global.script.f[1].toString() })
+//                ComposeBoxForF(
+//                    2,
+//                    modifier = Modifier.weight(1f),
+//                    text = { global.script.f[2].toString() })
+//                ComposeBoxForF(
+//                    3,
+//                    modifier = Modifier.weight(1f),
+//                    text = { global.script.f[3].toString() })
+//                ComposeBoxForF(
+//                    4,
+//                    modifier = Modifier.weight(1f),
+//                    text = { global.script.f[4].toString() })
+//
+//
+//            }
+//
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//
+//                horizontalArrangement = Arrangement.SpaceBetween
+//            ) {
+//
+//                ComposeBoxForF(
+//                    5,
+//                    modifier = Modifier.weight(1f),
+//                    text = { global.script.f[5].toString() })
+//                ComposeBoxForF(
+//                    6,
+//                    modifier = Modifier.weight(1f),
+//                    text = { global.script.f[6].toString() })
+//                ComposeBoxForF(
+//                    7,
+//                    modifier = Modifier.weight(1f),
+//                    text = { global.script.f[7].toString() })
+//                ComposeBoxForF(
+//                    8,
+//                    modifier = Modifier.weight(1f),
+//                    text = { global.script.f[8].toString() })
+//                ComposeBoxForF(
+//                    9,
+//                    modifier = Modifier.weight(1f),
+//                    text = { global.script.f[9].toString() })
+//
+//
+//            }
+//
+//        }
+//    }
 }
 
 //Ячейка регистра

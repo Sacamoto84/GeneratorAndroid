@@ -77,22 +77,22 @@ class Initialization
 //        }
 
         /* explorer */
-        GlobalScope.launch(Dispatchers.IO) {
-            val t = measureTimeMillis {
-                explorerInitialization(context)
-            }
-            Timber.tag("Время работы").i("Время инициализации explorer: $t ms") //6350ms на 157 файлов
-        }
+//        GlobalScope.launch(Dispatchers.IO) {
+//            val t = measureTimeMillis {
+//                //explorerInitialization(context)
+//            }
+//            Timber.tag("Время работы").i("Время инициализации explorer: $t ms") //6350ms на 157 файлов
+//        }
 
         /* S3 */
-        s3 = GlobalScope.async(Dispatchers.IO) {
-            val t = measureTimeMillis {
-                Timber.tag("Время работы").i("S3 start")
-                kDownloader = KDownloader.create(application)
-            }
-            Timber.tag("Время работы")
-                .i("S3 stop Время инициализации : $t ms [kDownloader]") //21ms  //79ms на S7
-        }
+//        s3 = GlobalScope.async(Dispatchers.IO) {
+//            val t = measureTimeMillis {
+//                Timber.tag("Время работы").i("S3 start")
+//                kDownloader = KDownloader.create(application)
+//            }
+//            Timber.tag("Время работы")
+//                .i("S3 stop Время инициализации : $t ms [kDownloader]") //21ms  //79ms на S7
+//        }
 
         /* S4 */
         s4 = GlobalScope.async(Dispatchers.IO) {
@@ -174,8 +174,8 @@ class Initialization
 
         //s1.await()
         //s2.await()
-        observe(audioMixerPump.gen) //30ms
-        s3.await()
+        //observe(audioMixerPump.gen) //30ms
+       //s3.await()
         s4.await()
 
 

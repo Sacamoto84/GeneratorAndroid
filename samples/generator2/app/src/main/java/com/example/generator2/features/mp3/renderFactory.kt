@@ -12,10 +12,11 @@ import androidx.media3.exoplayer.audio.MediaCodecAudioRenderer
 import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
 import com.example.generator2.features.mp3.processor.MyAudioProcessor
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @androidx.media3.common.util.UnstableApi
 fun renderersFactory(context: Context,
-                     isPlayingD: Boolean,
+                     isPlayingD: MutableStateFlow<Boolean>,
                      streamOut: Channel<FloatArray>
 
 ): DefaultRenderersFactory {

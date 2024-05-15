@@ -26,56 +26,56 @@ fun ScriptConsole(
     global: VMScripting
 ) {
 
-    println("ScriptConsole selectLine:$selectLine")
-
-    val indexSelect = remember { mutableStateOf(selectLine) }
-    indexSelect.value = selectLine
-
-    val l = list.toList()
-
-    if (indexSelect.value > l.lastIndex)
-        indexSelect.value = l.lastIndex
-
-    if (indexSelect.value == 0) {
-        indexSelect.value = 1
-        global.script.pc_ex = 1 //////////////////////////////////////////////
-    }
-
-    val lazyListState: LazyListState = rememberLazyListState()
-    Box(
-        Modifier
-            .fillMaxSize()
-            .background(Color(0xFF283593))
-            .then(modifier), contentAlignment = Alignment.CenterStart
-    )
-    {
-
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(), state = lazyListState
-        ) {
-
-            itemsIndexed(l)
-            { index, item ->
-                Row(horizontalArrangement = Arrangement.Start)
-                {
-                    Box(
-                        modifier = Modifier.selectable(
-                            selected = indexSelect.value == index,
-                            onClick = {
-                                global.script.pc = index
-                                global.script.pc_ex = index
-                            })
-                    ) {
-                        val select = indexSelect.value == index
-                        ScriptItem().Draw(str = { item }, index = { index }, { select })
-                    }
-                }
-            }
-
-        }
-
-
-    }
+//    println("ScriptConsole selectLine:$selectLine")
+//
+//    val indexSelect = remember { mutableStateOf(selectLine) }
+//    indexSelect.value = selectLine
+//
+//    val l = list.toList()
+//
+//    if (indexSelect.value > l.lastIndex)
+//        indexSelect.value = l.lastIndex
+//
+//    if (indexSelect.value == 0) {
+//        indexSelect.value = 1
+//        global.script.pc_ex = 1 //////////////////////////////////////////////
+//    }
+//
+//    val lazyListState: LazyListState = rememberLazyListState()
+//    Box(
+//        Modifier
+//            .fillMaxSize()
+//            .background(Color(0xFF283593))
+//            .then(modifier), contentAlignment = Alignment.CenterStart
+//    )
+//    {
+//
+//        LazyColumn(
+//            modifier = Modifier.fillMaxSize(), state = lazyListState
+//        ) {
+//
+//            itemsIndexed(l)
+//            { index, item ->
+//                Row(horizontalArrangement = Arrangement.Start)
+//                {
+//                    Box(
+//                        modifier = Modifier.selectable(
+//                            selected = indexSelect.value == index,
+//                            onClick = {
+//                                global.script.pc = index
+//                                global.script.pc_ex = index
+//                            })
+//                    ) {
+//                        val select = indexSelect.value == index
+//                        ScriptItem().Draw(str = { item }, index = { index }, { select })
+//                    }
+//                }
+//            }
+//
+//        }
+//
+//
+//    }
 
 }
 

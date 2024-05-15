@@ -31,7 +31,7 @@ class PlayerMP3(val context: Context) {
     val currentTime = MutableStateFlow(0L)         //Текущее время воспроизведения
     val bufferedPercentage = MutableStateFlow(0)   //Процент воспроизведения 0..100
     val isPlaying = MutableStateFlow(false)
-    var isPlayingD = false
+    var isPlayingD = MutableStateFlow(false)
 
     val playbackState = MutableStateFlow(0)
 
@@ -51,17 +51,7 @@ class PlayerMP3(val context: Context) {
      */
     val streamOut = Channel<FloatArray>(capacity = 48, BufferOverflow.DROP_LATEST)
 
-
-
-
-
     init {
-
-
-
-
-
-
 
         player = ExoPlayer.Builder(context, renderersFactory(context, isPlayingD, streamOut)).build()
         listener()
@@ -114,7 +104,7 @@ class PlayerMP3(val context: Context) {
                 currentTime.value = player1.currentPosition.coerceAtLeast(0L)
                 bufferedPercentage.value = player1.bufferedPercentage
                 isPlaying.value = player1.isPlaying
-                isPlayingD = player1.isPlaying
+                isPlayingD.value = player1.isPlaying
                 playbackState.value = player1.playbackState
 
                 val format = player.audioFormat
@@ -135,7 +125,7 @@ class PlayerMP3(val context: Context) {
             override fun onIsPlayingChanged(isPlaying1: Boolean) {
                 Timber.w("onIsPlayingChanged")
                 isPlaying.value = isPlaying1
-                isPlayingD = isPlaying1
+                isPlayingD.value = isPlaying1
             }
 
             override fun onTracksChanged(tracks: Tracks) {

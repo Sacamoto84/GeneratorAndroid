@@ -140,9 +140,9 @@ class Scope {
     init {
 
 
-        dataCompressor(this)
-        renderDataToPoints(this)
-        lissaguToBitmap(this)
+       // dataCompressor(this)
+       // renderDataToPoints(this)
+       // lissaguToBitmap(this)
 
 
     }

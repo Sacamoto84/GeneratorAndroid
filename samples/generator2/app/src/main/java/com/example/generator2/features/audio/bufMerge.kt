@@ -1,5 +1,8 @@
-package com.example.generator2.util
+package com.example.generator2.features.audio
 
+
+
+private var combinedArrayFloat = FloatArray(1)
 
 fun bufMerge(
     array1: FloatArray,
@@ -8,7 +11,8 @@ fun bufMerge(
 
     val len = array1.size + array2.size
 
-    val combinedArrayFloat = FloatArray(len)
+    if (combinedArrayFloat.size != len)
+        combinedArrayFloat = FloatArray(len)
 
     var index1 = 0
     var index2 = 0
