@@ -23,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,6 +73,15 @@ class Scope {
     var scopeH: Float = 0f
 
 
+    val bitmapPool = BitmapPool(4)
+
+    val floatArrayPool = FloatArrayPool(4)
+
+
+
+
+
+
     var isLissagu = MutableStateFlow(true)
     var scopeWLissagu: Float = 0f
     var scopeHLissagu: Float = 0f
@@ -83,6 +93,9 @@ class Scope {
     /** Приемный канал для кадра лиссажу */
     val inboxLisagguPixelData = Channel<ChPixelData>(1, BufferOverflow.DROP_OLDEST)
 
+
+    /** Приемный канал для кадра осцилографа */
+    val inboxCanvasPixelDataFrames = Channel<Long>(1, BufferOverflow.DROP_OLDEST)
 
 
     private var pairPoints: ChPixelData =
@@ -135,49 +148,45 @@ class Scope {
 
 
     /** Сжатые данные после компрессора */
-    val channelDataStreamOutCompressor = Channel<FloatArray>(capacity = 1, BufferOverflow.DROP_LATEST)
+    val channelDataStreamOutCompressor = Channel<FloatArray>(capacity = Channel.RENDEZVOUS)
+
+    /** Сжатые данные после компрессора */
+    val channelDataStreamOutCompressorIndex = Channel<Long>(capacity = Channel.RENDEZVOUS)
+
 
     init {
 
 
-       // dataCompressor(this)
-       // renderDataToPoints(this)
-       // lissaguToBitmap(this)
+        dataCompressor(this)
+        renderDataToPoints(this)
+        //lissaguToBitmap(this)
 
 
     }
 
 
+
+
+
+
     @Composable
     fun Oscilloscope() {
 
-        LaunchedEffect(key1 = true)
-        {
-            while (true) {
-                if (isPause.value) {
-                    delay(1);continue
-                }
-                pairPoints = inboxCanvasPixelData.receive()
-                if (isPause.value) {
-                    delay(1);continue
-                }
-                update++
-            }
-        }
 
-        LaunchedEffect(key1 = true)
-        {
-            while (true) {
-                if (isPause.value) {
-                    delay(1);continue
-                }
-                pairPointsLissagu = inboxLisagguPixelData.receive()
-                if (isPause.value) {
-                    delay(1);continue
-                }
-                updateLissagu++
-            }
-        }
+
+//        LaunchedEffect(key1 = true)
+//        {
+//            while (true) {
+//                if (isPause.value) {
+//                    delay(1);continue
+//                }
+//                pairPointsLissagu = inboxLisagguPixelData.receive()
+//                if (isPause.value) {
+//                    delay(1);continue
+//                }
+//                updateLissagu++
+//            }
+//        }
 
 
         //if (isUse.collectAsState().value) {
@@ -200,22 +209,60 @@ class Scope {
 
     @Composable
     fun CanvasLissagu() {
-        if (isLissagu.collectAsState().value)
-            Canvas(
-                modifier = Modifier.size(100.dp)
-            )
-            {
-                updateLissagu
-                scopeWLissagu = size.width
-                scopeHLissagu = size.height
-                drawImage(
-                    image = pairPointsLissagu.bitmap.asImageBitmap()
-                )
-            }
+//        if (isLissagu.collectAsState().value)
+//            Canvas(
+//                modifier = Modifier.size(100.dp)
+//            )
+//            {
+//                updateLissagu
+//                scopeWLissagu = size.width
+//                scopeHLissagu = size.height
+//                drawImage(
+//                    image = pairPointsLissagu.bitmap.asImageBitmap()
+//                )
+//            }
     }
+
+
+
+
+    val bitmapOscillIndex = MutableStateFlow(0L)
+
 
     @Composable
     fun CanvasOscill(modifier: Modifier) {
+
+//        var index by remember {
+//            mutableIntStateOf(0)
+//        }
+
+//        LaunchedEffect(key1 = true)
+//        {
+//            while (true) {
+//                if (isPause.value) {
+//                    delay(1);continue
+//                }
+//
+//                //pairPoints = inboxCanvasPixelData.receive()
+//
+//
+//
+//               val frames = inboxCanvasPixelDataFrames.receive() //Текущий кадр
+//               index = bitmapPool.findFrameIndex(frames)
+//
+//                if (index == -1)
+//                    continue
+//
+//                if (isPause.value) {
+//                    delay(1);continue
+//                }
+//                update++
+//            }
+//        }
+
+
+        val frames = bitmapPool.findFrameIndex(bitmapOscillIndex.collectAsState().value)
+
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
@@ -251,21 +298,22 @@ class Scope {
             scopeW = size.width
             scopeH = size.height
 
-            if (!pairPoints.hiRes) {
+//            if (!pairPoints.hiRes) {
+//
+//                val scaledWidth = pairPoints.bitmap.width * 2
+//                val scaledHeight = pairPoints.bitmap.height * 2
+//                val scaledBitmap: Bitmap =
+//                    Bitmap.createScaledBitmap(
+//                        bitmapPool.pool[index].bitmap,
+//                        scaledWidth,
+//                        scaledHeight,
+//                        false
+//                    )
+//                drawImage(image = scaledBitmap.asImageBitmap())
+//            } else
 
-                val scaledWidth = pairPoints.bitmap.width * 2
-                val scaledHeight = pairPoints.bitmap.height * 2
-                val scaledBitmap: Bitmap =
-                    Bitmap.createScaledBitmap(
-                        pairPoints.bitmap,
-                        scaledWidth,
-                        scaledHeight,
-                        false
-                    )
-                drawImage(image = scaledBitmap.asImageBitmap())
-            } else
                 drawImage(
-                    image = pairPoints.bitmap.asImageBitmap()
+                    image = bitmapPool.pool[frames].bitmap.asImageBitmap()//pairPoints.bitmap.asImageBitmap()
                 )
 
             //Индекс компресии

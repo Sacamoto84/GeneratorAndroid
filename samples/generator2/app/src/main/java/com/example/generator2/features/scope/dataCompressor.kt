@@ -17,24 +17,23 @@ fun dataCompressor(scope: Scope) {
 
     val roll64 = LinkedList<FloatArray>()
 
-    var resultArray = FloatArray(1)
+
+
+
+
 
     GlobalScope.launch(Dispatchers.IO) {
 
         var lastCompressorCount = 0f
 
-        var buf: FloatArray
-
-        val out = LinkedList<Float>()
-
         while (true) {
-
+            val out = mutableListOf<Float>()
 
             if (scope.compressorCount.floatValue >= 1.0F) {
 
                 if (scope.compressorCount.floatValue >= 32) {
 
-                    buf = scope.channelAudioOut.receive()
+                    val buf = scope.channelAudioOut.receive()
 
                     if (lastCompressorCount != scope.compressorCount.floatValue) {
                         roll64.clear()
@@ -49,34 +48,43 @@ fun dataCompressor(scope: Scope) {
                     roll64.add(buf)
 
                     val totalSize = roll64.sumOf { it.size }
+                    val resultArray = scope.floatArrayPool.getFloatArrayFrame(totalSize)  //FloatArray(totalSize)
 
-                    if (resultArray.size != totalSize)
-                        resultArray = FloatArray(totalSize)
+//                    if (lastCompressorCount != scope.compressorCount.floatValue) {
+//                       for( i in resultArray.array.indices)
+//                         {
+//                             resultArray.array[i] = 0.0f
+//                        }
+//                    }
 
                     val nanos = measureNanoTime {
                         var currentIndex = 0
                         for (floatArray in roll64) {
-                            floatArray.copyInto(resultArray, currentIndex)
+                            floatArray.copyInto(resultArray.array, currentIndex)
                             currentIndex += floatArray.size
                         }
                     }
                     println("Roll64: ${nanos / 1000} us totalSize $totalSize байт")
 
+                    val s = scope.channelDataStreamOutCompressorIndex.trySend(resultArray.frame).isSuccess
 
-                    //val s = scope.channelDataStreamOutCompressor.trySend(resultArray).isSuccess
-                    //if (!s) Timber.e("Нет места в channelDataOutRoll")
-
+                    //val s = scope.channelDataStreamOutCompressor.trySend(resultArray.array).isSuccess
+                    if (!s)
+                        Timber.e("Нет места в channelDataOutRoll")
 
                 } else {
-                    out.clear()
 
                     //1..16
+
                     val t = measureNanoTime {
                         for (i in 0 until scope.compressorCount.floatValue.toInt()) {
-                            buf = scope.channelAudioOut.receive()
-                            out.addAll(buf.toList())
+                            val buf1 = scope.channelAudioOut.receive()
+                            out.addAll(buf1.toList())
                         }
                     }
+
+
+
                     //println("... 1..16:${compressorCount.floatValue.toInt()} | ${t / 1000} us | outsize: ${out.size}")
                     //scope.channelDataStreamOutCompressor.send(out.toFloatArray())
                 }
@@ -84,10 +92,10 @@ fun dataCompressor(scope: Scope) {
 
             } else {
                 //compressorCount.floatValue < 1.0F
-                buf = scope.channelAudioOut.receive()
+                val buf = scope.channelAudioOut.receive()
                 val size = buf.size * scope.compressorCount.floatValue
                 val buf2 = buf.copyOf(size.toInt())
-                scope.channelDataStreamOutCompressor.send(buf2)
+                //scope.channelDataStreamOutCompressor.send(buf2)
             }
 
             lastCompressorCount = scope.compressorCount.floatValue

@@ -42,8 +42,16 @@ class BufSplitFloat {
 
     fun split(buf: FloatArray): Pair<FloatArray, FloatArray> {
 
-        val bufRf = FloatArray(buf.size / 2)
-        val bufLf = FloatArray(buf.size / 2)
+        if (bufRf.size != buf.size /2)
+            bufRf = FloatArray(buf.size / 2)
+
+        if (bufLf.size != buf.size/ 2)
+            bufLf = FloatArray(buf.size / 2)
+
+        for (i in bufLf.indices){
+            bufRf[i] = 0f
+            bufLf[i] = 0f
+        }
 
         var index1 = 0
         var index2 = 0

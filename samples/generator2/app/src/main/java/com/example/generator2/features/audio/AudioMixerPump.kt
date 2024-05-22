@@ -10,14 +10,14 @@ import com.example.generator2.features.mp3.PlayerMP3
 import com.example.generator2.features.mp3.processor.audioProcessorInputFormat
 import com.example.generator2.features.scope.Scope
 import com.example.generator2.model.itemList
-import kotlinx.coroutines.CoroutineName
+import com.example.generator2.util.BufMenge
+import com.example.generator2.util.BufSplitFloat
+import com.example.generator2.util.bufMerge
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.LinkedList
@@ -34,7 +34,7 @@ enum class ROUTESTREAM {
 class AudioMixerPump
     (
     context: Context,
-    val gen: Generator
+    val gen : Generator
 ) {
 
     //PUBLIC
@@ -80,22 +80,15 @@ class AudioMixerPump
         var delay = 50
         //
 
-        var bufferSize = 8192
+        var bufferSize = 2048
 
         val calculator = Calculator()
 
-        var outR: FloatArray
-        var outL: FloatArray
 
-        var v: FloatArray
-
-        /**
-         * Буффер для отсуствия звука
-         */
-        var dummyFloatBuffer = FloatArray(0)
-
-        var dummyMp3RFloatBuffer = FloatArray(0)
-        var dummyMp3LFloatBuffer = FloatArray(0)
+       val bufMerge0 = BufMenge()
+        val bufMerge1 = BufMenge()
+        val bufMerge2 = BufMenge()
+        val bufMerge3 = BufMenge()
 
         GlobalScope.launch(Dispatchers.IO) {
 
@@ -110,23 +103,23 @@ class AudioMixerPump
                 }
             }
 
-            GlobalScope.launch(Dispatchers.IO) {
-                var isPlayingLast = false
-                exoplayer.isPlayingD.collect {
-                    if (it and !isPlayingLast) {
-                        start = true
-                        delay = 20
-                    }
-                    isPlayingLast = it
-                }
-            }
+//            GlobalScope.launch(Dispatchers.IO) {
+//
+//                var isPlayingLast = false
+//                while (true) {
+//                    isPlaying = exoplayer.isPlayingD
+//                    if (isPlaying and !isPlayingLast) {
+//                        start = true; delay = 20
+//                    }
+//                    isPlayingLast = isPlaying
+//                    delay(1)
+//                }
+//            }
 
             while (true) {
-                delay(100000)
-                continue
 
 
-                if (exoplayer.isPlayingD.value) {
+                if (exoplayer.isPlayingD) {
 
 //                    val duration = Duration.between(lastEventTime, LocalDateTime.now()).toMillis()
 //                    lastEventTime = LocalDateTime.now()
@@ -181,26 +174,16 @@ class AudioMixerPump
 
                     val (bufMp3L, bufMp3R) = BufSplitFloat().split(bigBufMp3)
 //
-                    outR = when (routeR.value) {
+                    val outR = when (routeR.value) {
                         ROUTESTREAM.MP3 -> bufMp3R
                         ROUTESTREAM.GEN -> bufGenR
-                        ROUTESTREAM.OFF -> {
-                            if (dummyFloatBuffer.size != bufferSize / 2) {
-                                dummyFloatBuffer = FloatArray(bufferSize / 2)
-                            }
-                            dummyFloatBuffer
-                        }
+                        ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
                     }
 
-                    outL = when (routeL.value) {
+                    val outL = when (routeL.value) {
                         ROUTESTREAM.MP3 -> bufMp3L
                         ROUTESTREAM.GEN -> bufGenL
-                        ROUTESTREAM.OFF -> {
-                            if (dummyFloatBuffer.size != bufferSize / 2) {
-                                dummyFloatBuffer = FloatArray(bufferSize / 2)
-                            }
-                            dummyFloatBuffer
-                        }
+                        ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
                     }
 //
                     //invertL
@@ -212,17 +195,19 @@ class AudioMixerPump
                         outR[i] = -outR[i]
                     }
 
-                    v = if (shuffle.value) {
-                        bufMerge(outL, outR)
+                    val v = if (shuffle.value) {
+                        //bufMerge0.merge(outL, outR)//
+                     bufMerge(outL, outR)
                     } else {
                         //Нормальный режим
-                        bufMerge(outR, outL)
+                        //bufMerge1.merge(outR, outL)//
+                     bufMerge(outR, outL)
                     }
 
                     //Отравили в scope
                     if (scope.isUse.value) {
-                        //scope.channelAudioOut.send(v)
-                        //scope.channelAudioOutLissagu.send(v)
+                        scope.channelAudioOut.send(v)
+                        scope.channelAudioOutLissagu.send(v)
                     }
 
                     //LRLRLR
@@ -253,9 +238,7 @@ class AudioMixerPump
 
                     }
 
-
                     gen.sampleRate = audioOut.sampleRate
-
                     val buf: Pair<FloatArray, FloatArray>
 
                     //mi8  2220us release 192k 8192
@@ -264,38 +247,20 @@ class AudioMixerPump
                         buf = gen.renderAudio(bufferSize)
                     }
 
+                    calculator.update(nanos / 1000.0)
+
                     //println("measure :${nanos / 1000.0} us bufferSize: $bufferSize среднее ${calculator.getAvg()}")
 
-                    outR = when (routeR.value) {
-                        ROUTESTREAM.MP3 -> {
-                            if (dummyMp3RFloatBuffer.size != buf.second.size)
-                                dummyMp3RFloatBuffer = FloatArray(buf.second.size)
-                            dummyMp3RFloatBuffer
-                        }
-
+                    val outR = when (routeR.value) {
+                        ROUTESTREAM.MP3 -> FloatArray(buf.second.size)
                         ROUTESTREAM.GEN -> buf.second
-                        ROUTESTREAM.OFF -> {
-                            if (dummyFloatBuffer.size != bufferSize / 2) {
-                                dummyFloatBuffer = FloatArray(bufferSize / 2)
-                            }
-                            dummyFloatBuffer
-                        }
+                        ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
                     }
 
-                    outL = when (routeL.value) {
-                        ROUTESTREAM.MP3 -> {
-                            if (dummyMp3LFloatBuffer.size != buf.first.size)
-                                dummyMp3LFloatBuffer = FloatArray(buf.first.size)
-                            dummyMp3LFloatBuffer
-                        }
-
+                    val outL = when (routeL.value) {
+                        ROUTESTREAM.MP3 -> FloatArray(buf.first.size)
                         ROUTESTREAM.GEN -> buf.first
-                        ROUTESTREAM.OFF -> {
-                            if (dummyFloatBuffer.size != bufferSize / 2) {
-                                dummyFloatBuffer = FloatArray(bufferSize / 2)
-                            }
-                            dummyFloatBuffer
-                        }
+                        ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
                     }
 
                     //invertL
@@ -307,17 +272,19 @@ class AudioMixerPump
                         outR[i] = -outR[i]
                     }
 
-                    v = if (shuffle.value) {
-                        bufMerge(outL, outR)
+                    val v = if (shuffle.value) {
+                       // bufMerge2.merge(outL, outR)//
+                     bufMerge(outL, outR)
                     } else {
                         //Нормальный режим
-                        bufMerge(outR, outL)
+                        //bufMerge3.merge(outR, outL)//
+                     bufMerge(outR, outL)
                     }
 
                     //Отравили в scope
                     if (scope.isUse.value) {
-                        //scope.channelAudioOut.send(v)
-                        //scope.channelAudioOutLissagu.send(v)
+                        scope.channelAudioOut.send(v)
+                        scope.channelAudioOutLissagu.send(v)
                     }
 
                     audioOut.out?.write(v, 0, v.size, WRITE_BLOCKING)
@@ -331,8 +298,9 @@ class AudioMixerPump
     }
 
 
+
     @OptIn(DelicateCoroutinesApi::class)
-    suspend fun initializationGen() {
+    suspend fun initializationGen(){
 
         val s1 = GlobalScope.async(Dispatchers.Main) {
             val t = measureTimeMillis {
