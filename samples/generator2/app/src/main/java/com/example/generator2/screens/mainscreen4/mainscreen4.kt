@@ -130,7 +130,7 @@ fun Mainsreen4(
             )
             {
                 //Осциллограф
-                //vm.audioMixerPump.scope.Oscilloscope()
+                vm.audioMixerPump.scope.Oscilloscope()
             }
 
             MP3Control(vm)

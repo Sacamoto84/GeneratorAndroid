@@ -1,5 +1,6 @@
 package com.example.generator2.features.scope
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Typeface
 import androidx.compose.foundation.Canvas
@@ -151,7 +152,7 @@ class Scope {
     val channelDataStreamOutCompressor = Channel<FloatArray>(capacity = Channel.RENDEZVOUS)
 
     /** Сжатые данные после компрессора */
-    val channelDataStreamOutCompressorIndex = Channel<Long>(capacity = Channel.RENDEZVOUS)
+    val channelDataStreamOutCompressorIndex = Channel<Long>(capacity = 3)
 
 
     init {
@@ -229,6 +230,7 @@ class Scope {
     val bitmapOscillIndex = MutableStateFlow(0L)
 
 
+    @SuppressLint("SuspiciousIndentation")
     @Composable
     fun CanvasOscill(modifier: Modifier) {
 

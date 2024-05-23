@@ -11,7 +11,6 @@ import com.example.generator2.features.mp3.processor.audioProcessorInputFormat
 import com.example.generator2.features.scope.Scope
 import com.example.generator2.model.itemList
 import com.example.generator2.util.BufMenge
-import com.example.generator2.util.BufSplitFloat
 import com.example.generator2.util.bufMerge
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +33,7 @@ enum class ROUTESTREAM {
 class AudioMixerPump
     (
     context: Context,
-    val gen : Generator
+    val gen: Generator
 ) {
 
     //PUBLIC
@@ -85,7 +84,7 @@ class AudioMixerPump
         val calculator = Calculator()
 
 
-       val bufMerge0 = BufMenge()
+        val bufMerge0 = BufMenge()
         val bufMerge1 = BufMenge()
         val bufMerge2 = BufMenge()
         val bufMerge3 = BufMenge()
@@ -119,7 +118,7 @@ class AudioMixerPump
             while (true) {
 
 
-                if (exoplayer.isPlayingD) {
+                if (exoplayer.isPlayingD.value) {
 
 //                    val duration = Duration.between(lastEventTime, LocalDateTime.now()).toMillis()
 //                    lastEventTime = LocalDateTime.now()
@@ -197,11 +196,11 @@ class AudioMixerPump
 
                     val v = if (shuffle.value) {
                         //bufMerge0.merge(outL, outR)//
-                     bufMerge(outL, outR)
+                        bufMerge(outL, outR)
                     } else {
                         //Нормальный режим
                         //bufMerge1.merge(outR, outL)//
-                     bufMerge(outR, outL)
+                        bufMerge(outR, outL)
                     }
 
                     //Отравили в scope
@@ -273,12 +272,12 @@ class AudioMixerPump
                     }
 
                     val v = if (shuffle.value) {
-                       // bufMerge2.merge(outL, outR)//
-                     bufMerge(outL, outR)
+                        // bufMerge2.merge(outL, outR)//
+                        bufMerge(outL, outR)
                     } else {
                         //Нормальный режим
                         //bufMerge3.merge(outR, outL)//
-                     bufMerge(outR, outL)
+                        bufMerge(outR, outL)
                     }
 
                     //Отравили в scope
@@ -298,9 +297,8 @@ class AudioMixerPump
     }
 
 
-
     @OptIn(DelicateCoroutinesApi::class)
-    suspend fun initializationGen(){
+    suspend fun initializationGen() {
 
         val s1 = GlobalScope.async(Dispatchers.Main) {
             val t = measureTimeMillis {

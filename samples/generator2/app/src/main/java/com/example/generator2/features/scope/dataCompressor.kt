@@ -27,7 +27,10 @@ fun dataCompressor(scope: Scope) {
         var lastCompressorCount = 0f
 
         while (true) {
-            val out = mutableListOf<Float>()
+
+
+
+
 
             if (scope.compressorCount.floatValue >= 1.0F) {
 
@@ -75,15 +78,27 @@ fun dataCompressor(scope: Scope) {
                 } else {
 
                     //1..16
+                    val out = mutableListOf<FloatArray>()
 
                     val t = measureNanoTime {
                         for (i in 0 until scope.compressorCount.floatValue.toInt()) {
                             val buf1 = scope.channelAudioOut.receive()
-                            out.addAll(buf1.toList())
+                            out.add(buf1)
                         }
                     }
+                    val totalSize = out.sumOf { it.size }
+                    val resultArray = scope.floatArrayPool.getFloatArrayFrame(totalSize)
 
+                    var currentIndex = 0
+                    for (floatArray in out) {
+                        floatArray.copyInto(resultArray.array, currentIndex)
+                        currentIndex += floatArray.size
+                    }
 
+                    val s = scope.channelDataStreamOutCompressorIndex.trySend(resultArray.frame).isSuccess
+
+                    if (!s)
+                        Timber.e("1..16 Нет места в channelDataStreamOutCompressorIndex")
 
                     //println("... 1..16:${compressorCount.floatValue.toInt()} | ${t / 1000} us | outsize: ${out.size}")
                     //scope.channelDataStreamOutCompressor.send(out.toFloatArray())

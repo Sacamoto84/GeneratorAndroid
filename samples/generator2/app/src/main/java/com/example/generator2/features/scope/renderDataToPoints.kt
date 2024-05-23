@@ -5,18 +5,15 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import com.example.generator2.features.audio.AudioSampleRate
-import com.example.generator2.features.audio.Calculator
+import com.example.generator2.features.audio.BufSplitFloat
 import com.example.generator2.features.mp3.OSCILLSYNC
 import com.example.generator2.features.mp3.oscillSync
-import com.example.generator2.util.BufSplitFloat
+import com.example.libs.utils.maping
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import com.example.libs.utils.maping
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.yield
+import kotlinx.coroutines.launch
 import kotlin.system.measureNanoTime
 
 var hiRes: Boolean = false //Режим высокого разрешения
