@@ -157,11 +157,11 @@ class Scope {
 
     init {
 
+       dataCompressor(this)
 
-        dataCompressor(this)
-        renderDataToPoints(this)
+       renderDataToPoints(this)
+
         //lissaguToBitmap(this)
-
 
     }
 
@@ -264,6 +264,10 @@ class Scope {
 
 
         val frames = bitmapPool.findFrameIndex(bitmapOscillIndex.collectAsState().value)
+
+ if (frames == -1)
+     return
+
 
         Canvas(
             modifier = Modifier

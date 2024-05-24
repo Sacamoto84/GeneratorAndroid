@@ -14,9 +14,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.coroutines.AbstractCoroutineContextElement
+import kotlin.coroutines.CoroutineContext
 import kotlin.system.measureNanoTime
 
 var hiRes: Boolean = false //Режим высокого разрешения
+
+
+// Определение класса для хранения имени корутины в контексте
+class CoroutineName(val name: String) : AbstractCoroutineContextElement(CoroutineName) {
+    companion object Key : CoroutineContext.Key<CoroutineName>
+}
+
 
 @OptIn(DelicateCoroutinesApi::class)
 fun renderDataToPoints(scope: Scope) {
@@ -61,7 +70,7 @@ fun renderDataToPoints(scope: Scope) {
 
     var pairFlatArray: Pair<FloatArray, FloatArray>
 
-    GlobalScope.launch(Dispatchers.IO) {
+    GlobalScope.launch(Dispatchers.IO + CoroutineName("!!!RenderDataToPoints")) {
 
 
         while (true) {
@@ -207,10 +216,16 @@ fun renderDataToPoints(scope: Scope) {
                 paintR.strokeWidth = 1f
             }
 
+            if (scope.compressorCount.floatValue == 8f) {
+                paintL.strokeWidth = 4f
+                paintR.strokeWidth = 4f
+            }
+
             val drawLine: Boolean
+
             if (scope.compressorCount.floatValue >= 8f) {
-                paintL.alpha = 0x40
-                paintR.alpha = 0x40
+                paintL.alpha = 0x60
+                paintR.alpha = 0x60
                 drawLine = false
             } else {
                 paintL.alpha = 0xFF
@@ -225,6 +240,10 @@ fun renderDataToPoints(scope: Scope) {
             val nanos = measureNanoTime {
 
                 if (!drawLine) {
+
+                    bigPointnL.fill(-1.0f)
+                    bigPointnR.fill(-1.0f)
+
                     val len = 96 * w.toInt() * 2
 
                     if (bigPointnL.size != len)
@@ -332,7 +351,9 @@ fun renderDataToPoints(scope: Scope) {
                     println("tt2 ${tt2 / 1000} us")
 
                 } else {
-                    //32..256 Roll
+                    //16..256 Roll
+
+
                     if (scope.isVisibleR.value)
                         canvas.drawPoints(bigPointnR, paintR)
 

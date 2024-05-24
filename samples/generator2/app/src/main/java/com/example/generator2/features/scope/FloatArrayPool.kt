@@ -2,7 +2,6 @@ package com.example.generator2.features.scope
 
 import timber.log.Timber
 
-
 data class FloatArrayFrame(var array: FloatArray, var frame: Long)
 
 class FloatArrayPool(maxSize: Int) {
@@ -20,11 +19,11 @@ class FloatArrayPool(maxSize: Int) {
         }
     }
 
-    @Synchronized
+    //@Synchronized
     fun getFloatArrayFrame(len: Int): FloatArrayFrame {
 
         //Минимальный кадр в пуле
-        val indexMin = findMinFrameIndex(pool)
+        val indexMin = findMinFrameIndex()
 
         //Если найден
         if (indexMin != -1) {
@@ -33,12 +32,13 @@ class FloatArrayPool(maxSize: Int) {
             if (pool[indexMin].array.size == len) {
                 frame++
                 pool[indexMin].frame = frame
-                Timber.d("FloatArray найден i:${indexMin} frame:${frame}")
+                //Timber.d("dddd","FloatArray найден i:${indexMin} frame:${frame}")
                 return pool[indexMin]
             } else {
                 frame++
                 pool[indexMin] = FloatArrayFrame(FloatArray(len), frame)
-                Timber.d("FloatArray не верный размер, создаем новый i:${indexMin} frame:${frame}")
+                //Timber.d("FloatArray не верный размер, создаем новый i:${indexMin} frame:${frame}")
+                //println("FloatArray не верный размер, создаем новый i:${indexMin} frame:${frame}")
                 return pool[indexMin]
             }
         }
@@ -51,8 +51,8 @@ class FloatArrayPool(maxSize: Int) {
     }
 
     //Поиск индекса елемента с минимальным номером кадра
-    private fun findMinFrameIndex(pool: Array<FloatArrayFrame>): Int {
-        if (pool.isEmpty()) return -1
+    private fun findMinFrameIndex(): Int {
+        //if (pool.isEmpty()) return -1
 
         var minIndex = 0
         var minFrameValue = pool[0].frame

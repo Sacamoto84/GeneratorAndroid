@@ -29,7 +29,7 @@ class BitmapPool(maxSize: Int) {
 
     }
 
-    @Synchronized
+    //@Synchronized
     fun getBitmap(width: Int, height: Int, config: Bitmap.Config): Frame {
 
         //Минимальный кадр в пуле
