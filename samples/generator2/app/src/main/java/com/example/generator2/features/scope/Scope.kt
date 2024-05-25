@@ -39,6 +39,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.generator2.features.audio.AudioOut
 import com.example.generator2.features.scope.compose.OscilloscopeControl
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
@@ -57,6 +58,9 @@ private val m = Modifier
 data class ChPixelData(val bitmap: Bitmap, val hiRes: Boolean, val fps: Float = 0f)
 
 class Scope {
+
+    var audioSampleRate = 44100
+
 
     /**
      * Используем компонент или нет
@@ -140,7 +144,7 @@ class Scope {
     val compressorCount = mutableFloatStateOf(1f)
 
     /** Выход аудиоданных -> compressor */
-    val channelAudioOut = Channel<FloatArray>(capacity = 8, BufferOverflow.DROP_OLDEST)
+    val channelAudioOut = Channel<FloatArray>(capacity = 16, BufferOverflow.DROP_OLDEST)
 
 
     /** Выход аудиоданных -> compressor */

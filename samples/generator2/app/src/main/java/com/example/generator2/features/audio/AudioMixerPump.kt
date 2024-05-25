@@ -79,7 +79,7 @@ class AudioMixerPump
         var delay = 50
         //
 
-        var bufferSize = 2048
+        var bufferSize = 2048 //R+L
 
         val calculator = Calculator()
 
@@ -238,6 +238,8 @@ class AudioMixerPump
                     }
 
                     gen.sampleRate = audioOut.sampleRate
+                    scope.audioSampleRate = audioOut.sampleRate
+
                     val buf: Pair<FloatArray, FloatArray>
 
                     //mi8  2220us release 192k 8192

@@ -53,11 +53,31 @@ fun dataCompressor(scope: Scope) {
 
                     roll64.add(buf)
 
+
+                    val samplerate = scope.audioSampleRate
+                    val timeBuf  = buf.size / 2.0f / samplerate //44100 1152 26ms
+                    val herz = 1.0f / timeBuf                   //44100 1152 38.28Hz
+
+
+//                    println(samplerate)
+//                    println(timeBuf)
+//                    println(herz)
+                    //Количество кадров, которое нужно пропустить
+
+
+
+                    val framesSkip = findBestDivisor(herz.toInt(), if (scope.compressorCount.floatValue >= 32) 7.0 else 14.0)
+
+                    println(framesSkip)
+
+
+
+
                     if (
-                        frame % 6 == 0L
-                        //((scope.compressorCount.floatValue >= 32) && (frame % 6 == 0L))
-                        //||
-                        //(scope.compressorCount.floatValue < 32)
+                        frame % framesSkip == 0L
+                    //((scope.compressorCount.floatValue >= 32) && (frame % 6 == 0L))
+                    //||
+                    //(scope.compressorCount.floatValue < 32)
                     ) {
 
                         totalSize = roll64.sumOf { it.size }
@@ -96,4 +116,22 @@ fun dataCompressor(scope: Scope) {
             lastCompressorCount = scope.compressorCount.floatValue
         }
     }
+}
+
+fun findBestDivisor(herz: Int, target: Double = 7.0): Int {
+    var bestDivisor = 1
+    var bestDifference = Double.MAX_VALUE
+
+    for (divisor in 1..herz) {
+        val result = herz.toDouble() / divisor
+        if (result <= target) {
+            val difference = target - result
+            if (difference < bestDifference) {
+                bestDifference = difference
+                bestDivisor = divisor
+            }
+        }
+    }
+
+    return bestDivisor
 }
