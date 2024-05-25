@@ -25,13 +25,15 @@ fun dataCompressor(scope: Scope) {
 
     var frame = 0L
 
+    var roll256 = FloatRingBuffer(2048)
+
     GlobalScope.launch(Dispatchers.IO) {
 
         var lastCompressorCount = 0f
 
         while (true) {
 
-            delay(10)
+            //delay(10)
 
             if (scope.compressorCount.floatValue >= 1.0F) {
 
@@ -39,25 +41,26 @@ fun dataCompressor(scope: Scope) {
 
                 val nanos = measureNanoTime {
 
-                    if (lastCompressorCount != scope.compressorCount.floatValue) {
-                        roll64.clear()
-                    }
+                    if ((buf.size != roll256.entrySize) || (roll256.bufferSize != scope.compressorCount.floatValue.toInt()))
+                       roll256 = FloatRingBuffer(buf.size, scope.compressorCount.floatValue.toInt())
 
-                    while (roll64.size < scope.compressorCount.floatValue) {
-                        roll64.add(FloatArray(buf.size))
-                    }
+//
+//                    if (lastCompressorCount != scope.compressorCount.floatValue) {
+//                        roll64.clear()
+//                    }
+//                    while (roll64.size < scope.compressorCount.floatValue) {
+//                        roll64.add(FloatArray(buf.size))
+//                    }
+//                    while (roll64.size >= scope.compressorCount.floatValue) {
+//                        roll64.removeAt(0)
+//                    }
+//                    roll64.add(buf)
 
-                    while (roll64.size >= scope.compressorCount.floatValue) {
-                        roll64.removeAt(0)
-                    }
-
-                    roll64.add(buf)
-
+                    roll256.add(buf)
 
                     val samplerate = scope.audioSampleRate
                     val timeBuf  = buf.size / 2.0f / samplerate //44100 1152 26ms
                     val herz = 1.0f / timeBuf                   //44100 1152 38.28Hz
-
 
 //                    println(samplerate)
 //                    println(timeBuf)
@@ -68,9 +71,7 @@ fun dataCompressor(scope: Scope) {
 
                     val framesSkip = findBestDivisor(herz.toInt(), if (scope.compressorCount.floatValue >= 32) 7.0 else 14.0)
 
-                    println(framesSkip)
-
-
+                  //  println(framesSkip)
 
 
                     if (
@@ -80,28 +81,32 @@ fun dataCompressor(scope: Scope) {
                     //(scope.compressorCount.floatValue < 32)
                     ) {
 
-                        totalSize = roll64.sumOf { it.size }
+                        //totalSize = roll64.sumOf { it.size }
+
+                        totalSize = roll256.buffer.size
 
                         resultArray =
                             scope.floatArrayPool.getFloatArrayFrame(totalSize)  //FloatArray(totalSize)
 
-                        var currentIndex = 0
-                        for (floatArray in roll64) {
-                            floatArray.copyInto(resultArray.array, currentIndex)
-                            currentIndex += floatArray.size
-                        }
+                        roll256.toExternalFloatArray(resultArray.array)
+
+//                        var currentIndex = 0
+//                        for (floatArray in roll64) {
+//                            floatArray.copyInto(resultArray.array, currentIndex)
+//                            currentIndex += floatArray.size
+//                        }
 
                         val s =
                             scope.channelDataStreamOutCompressorIndex.trySend(resultArray.frame).isSuccess
 
-                        if (!s)
-                            Timber.e("Нет места в channelDataOutRoll")
+                        //if (!s)
+                        //    Timber.e("Нет места в channelDataOutRoll")
 
                     }
 
                 }
 
-                println("Roll64: ${nanos / 1000} us totalSize $totalSize")
+                //println("Roll64: ${nanos / 1000} us totalSize $totalSize")
 
             } else {
                 //compressorCount.floatValue < 1.0F
@@ -134,4 +139,57 @@ fun findBestDivisor(herz: Int, target: Double = 7.0): Int {
     }
 
     return bestDivisor
+}
+
+class FloatRingBuffer(val entrySize: Int, val bufferSize: Int = 256) {
+    val buffer = FloatArray(entrySize * bufferSize)
+    private var start = 0
+    private var end = 0
+    private var isFull = false
+
+    fun add(entry: FloatArray) {
+        require(entry.size == entrySize) { "Entry size must be $entrySize" }
+
+        // Записываем новую запись в буфер
+        //entry.copyInto(buffer, end * entrySize)
+
+        System.arraycopy(entry, 0, buffer, end * entrySize, entrySize)
+
+        end = (end + 1) % bufferSize
+
+        // Проверяем, если буфер заполнен, двигаем старт
+        if (isFull) {
+            start = (start + 1) % bufferSize
+        } else if (end == start) {
+            isFull = true
+        }
+    }
+
+    fun toFloatArray(): FloatArray {
+        val result = FloatArray(if (isFull) bufferSize * entrySize else end * entrySize)
+        if (isFull) {
+            // Копируем данные из двух частей буфера
+            val part1Size = (bufferSize - start) * entrySize
+            buffer.copyInto(result, 0, start * entrySize, start * entrySize + part1Size)
+            buffer.copyInto(result, part1Size, 0, end * entrySize)
+        } else {
+            // Копируем данные из одной части буфера
+            buffer.copyInto(result, 0, 0, end * entrySize)
+        }
+        return result
+    }
+
+    fun toExternalFloatArray(result : FloatArray){
+        if (isFull) {
+            // Копируем данные из двух частей буфера
+            val part1Size = (bufferSize - start) * entrySize
+            System.arraycopy(buffer, start * entrySize, result, 0, part1Size)
+            System.arraycopy(buffer, 0, result, part1Size, end * entrySize)
+        } else {
+            // Копируем данные из одной части буфера
+            System.arraycopy(buffer, 0, result, 0, end * entrySize)
+        }
+    }
+
+
 }
