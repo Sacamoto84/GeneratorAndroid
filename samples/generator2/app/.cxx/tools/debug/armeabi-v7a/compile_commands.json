@@ -1,6 +1,11 @@
 [
 {
   "directory": "D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/4qy5l292/armeabi-v7a",
+  "command": "C:\\Users\\user\\AppData\\Local\\Android\\Sdk\\ndk\\26.1.10909125\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=armv7-none-linux-androideabi24 --sysroot=C:/Users/user/AppData/Local/Android/Sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dgenerator2_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -Ofast -Wall -std=c++17 -fPIC -fno-limit-debug-info  -fPIC -o CMakeFiles\\generator2.dir\\canvas.cpp.o -c D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\canvas.cpp",
+  "file": "D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\canvas.cpp"
+},
+{
+  "directory": "D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/4qy5l292/armeabi-v7a",
   "command": "C:\\Users\\user\\AppData\\Local\\Android\\Sdk\\ndk\\26.1.10909125\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=armv7-none-linux-androideabi24 --sysroot=C:/Users/user/AppData/Local/Android/Sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dgenerator2_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -Ofast -Wall -std=c++17 -fPIC -fno-limit-debug-info  -fPIC -o CMakeFiles\\generator2.dir\\generator2.cpp.o -c D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\generator2.cpp",
   "file": "D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\generator2.cpp"
 }

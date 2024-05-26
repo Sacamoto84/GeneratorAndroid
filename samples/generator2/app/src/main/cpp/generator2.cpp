@@ -112,3 +112,4 @@ Java_com_example_generator2_features_scope_NativeLib_copyFloatArrayJNI(JNIEnv *e
 }
 
 
+

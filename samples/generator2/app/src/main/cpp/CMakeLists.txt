@@ -26,18 +26,20 @@ project("generator2")
 # for GameActivity/NativeActivity derived applications, the same library name must be
 # used in the AndroidManifest.xml file.
 add_library(${CMAKE_PROJECT_NAME} SHARED
-    # List C/C++ source files with relative paths to this CMakeLists.txt.
-    generator2.cpp
-    canvas.cpp
+        # List C/C++ source files with relative paths to this CMakeLists.txt.
+        canvas.cpp
+        generator2.cpp
 )
 
 # Specifies libraries CMake should link to your target library. You
 # can link libraries from various origins, such as libraries defined in this
 # build script, prebuilt third-party libraries, or Android system libraries.
 target_link_libraries(${CMAKE_PROJECT_NAME}
-    # List libraries link to the target library
-    android
-    log)
+        # List libraries link to the target library
+        android
+        jnigraphics
+        log
+)
 
 
 # Укажите флаги компиляции для оптимизации на скорость
