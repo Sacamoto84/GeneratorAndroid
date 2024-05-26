@@ -17,9 +17,6 @@
 //    }
 
 
-float testfloat0[524288];
-float testfloat1[524288];
-
 #include <jni.h>
 #include <cstring>
 #include <memory>
@@ -97,14 +94,6 @@ Java_com_example_generator2_features_scope_NativeLib_destroyBuffer(JNIEnv *env, 
     delete ringBuffer;
 }
 
-
-
-
-
-
-
-
-
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_generator2_features_scope_NativeLib_copyFloatArrayJNI(JNIEnv *env, jobject thiz,
@@ -123,10 +112,3 @@ Java_com_example_generator2_features_scope_NativeLib_copyFloatArrayJNI(JNIEnv *e
 }
 
 
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_example_generator2_features_scope_NativeLib_testCopyJNI(JNIEnv *env, jobject thiz) {
-    // TODO: implement testCopyJNI()
-    std::memcpy(testfloat0, testfloat1, 524288 * sizeof(jfloat));
-}

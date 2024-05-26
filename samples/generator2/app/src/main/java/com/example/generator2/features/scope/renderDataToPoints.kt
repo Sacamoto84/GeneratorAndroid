@@ -70,6 +70,10 @@ fun renderDataToPoints(scope: Scope) {
 
     var pairFlatArray: Pair<FloatArray, FloatArray>
 
+    var sum = 0L
+    var avg = 0L
+
+
     GlobalScope.launch(Dispatchers.IO + CoroutineName("!!!RenderDataToPoints")) {
 
 
@@ -206,8 +210,6 @@ fun renderDataToPoints(scope: Scope) {
             val pixelBufL = FloatArray(4096)
             val pixelBufR = FloatArray(4096)
 
-
-
             if (hiRes) {
                 paintL.strokeWidth = 2f
                 paintR.strokeWidth = 2f
@@ -234,139 +236,163 @@ fun renderDataToPoints(scope: Scope) {
             }
 
 
-            var mapX: Int
-            var offset: Int
+            var mapX: Int = 1
+            var offset: Int = 0
+
+
+            //32  45.8   48k
+            //16  22.81
+            //8   5.7
+            //4   2.86
+            //2   1.42
+            //1   0.71
+            //0.5 0.35
+            val maxPixelBuffer = (bufRN.size / w).coerceIn(1f, 96f)
+                .toInt() //Размер буфера для одного пикселя
+
+            if (!drawLine) {
+
+                val len = maxPixelBuffer * w.toInt() * 2
+
+                if (bigPointnL.size != len)
+                    bigPointnL = FloatArray(len) { -1.0f }
+                else
+                    bigPointnL.fill(-1.0f)
+
+                if (bigPointnR.size != len)
+                    bigPointnR = FloatArray(len) { -1.0f }
+                else
+                    bigPointnR.fill(-1.0f)
+            }
+
+
+
+            val maxL: Float
+            val minL: Float
+            val maxR: Float
+            val minR: Float
+
+            //Пиксели
+            if (scope.isOneTwo.value) {
+                maxL = h - 1f
+                minL = 0f
+                maxR = h - 1f
+                minR = 0f
+            } else {
+                maxL = h / 2
+                minL = 0f
+                maxR = h - 1f
+                minR = h / 2
+            }
+
+            //val bigPathR = FloatArray(w.toInt() * 4) { -1.0f }
+            //val bigPathL = FloatArray(w.toInt() * 4) { -1.0f }
+
+            val temp1 = bufRN.size - 1
+            val temp2 = w - 1f
+            var temp3 = 0
 
             val nanos = measureNanoTime {
 
-                if (!drawLine) {
-
-                    bigPointnL.fill(-1.0f)
-                    bigPointnR.fill(-1.0f)
-
-                    val len = 96 * w.toInt() * 2
-
-                    if (bigPointnL.size != len)
-                        bigPointnL = FloatArray(96 * w.toInt() * 2) { -1.0f }
-
-                    if (bigPointnR.size != len)
-                        bigPointnR = FloatArray(96 * w.toInt() * 2) { -1.0f }
-                }
-
-                //32  45.8   48k
-                //16  22.81
-                //8   5.7
-                //4   2.86
-                //2   1.42
-                //1   0.71
-                //0.5 0.35
-                val maxPixelBuffer = (bufRN.size / w).coerceIn(1f, 96f)
-                    .toInt() //Размер буфера для одного пикселя
-
-                val maxL: Float
-                val minL: Float
-                val maxR: Float
-                val minR: Float
-
-                //Пиксели
-                if (scope.isOneTwo.value) {
-                    maxL = h - 1f
-                    minL = 0f
-                    maxR = h - 1f
-                    minR = 0f
-                } else {
-                    maxR = h - 1f
-                    minR = h / 2
-                    maxL = h / 2
-                    minL = 0f
-                }
-
-                //val bigPathR = FloatArray(w.toInt() * 4) { -1.0f }
-                //val bigPathL = FloatArray(w.toInt() * 4) { -1.0f }
-
                 for (x in 0 until w.toInt()) {
 
-                    //val t11 = measureNanoTime {
+//                    mapX = maping(
+//                        x.toFloat(),
+//                        0f,
+//                        temp2,
+//                        0f,
+//                        temp1.toFloat()
+//                    ).toInt()//.coerceIn(0, bufRN.size - 1)
 
-                    mapX = maping(
-                        x.toFloat(),
-                        0f,
-                        w - 1f,
-                        0f,
-                        (bufRN.size - 1f)
-                    ).toInt().coerceIn(0, bufRN.size - 1)
 
-                    for (pixelI in 0 until maxPixelBuffer) {
-                        offset = (mapX + pixelI).coerceAtMost(bufRN.size - 1)
-                        pixelBufL[pixelI] = bufLN[offset]
-                        pixelBufR[pixelI] = bufRN[offset]
-                    }
+//                    for (i in 0 until maxPixelBuffer) {
+//                        offset = (mapX + i)//.coerceAtMost(bufRN.size - 1)
+//                        if (offset > temp1)
+//                            offset = temp1
+//                        pixelBufL[i] = bufLN[offset]
+//                        pixelBufR[i] = bufRN[offset]
+//                    }
+
 
                     //}
                     //println("t1: ${t11/1000} ns")
 
+
+                    mapX = (x * temp1.toFloat() / temp2).toInt()
+                    if (mapX < 0) mapX = 0
+                    if (mapX > temp1) mapX = temp1
+
                     if (!drawLine) {
 
-                        for (pixelI in 0 until maxPixelBuffer) {
-                            bigPointnR[pixelI * 2 + x * maxPixelBuffer * 2] = x.toFloat()
-                            bigPointnL[pixelI * 2 + x * maxPixelBuffer * 2] = x.toFloat()
-                            bigPointnR[pixelI * 2 + 1 + x * maxPixelBuffer * 2] =
-                                (pixelBufR[pixelI] + 1.0f) * (maxR - minR) / (2f) + minR
-                            bigPointnL[pixelI * 2 + 1 + x * maxPixelBuffer * 2] =
-                                (pixelBufL[pixelI] + 1.0f) * (maxL - minL) / (2f) + minL
+                        for (i in 0 until maxPixelBuffer) {
+                            offset = (mapX + i)
+                            if (offset > temp1) offset = temp1
+                            temp3 = i * 2 + x * maxPixelBuffer * 2
+                            bigPointnR[temp3] = x.toFloat()
+                            bigPointnL[temp3] = x.toFloat()
+                            bigPointnR[temp3 + 1] = (bufRN[offset] + 1.0f) * (maxR - minR) / 2f + minR
+                            bigPointnL[temp3 + 1] = (bufLN[offset] + 1.0f) * maxL / 2f
                         }
 
                     } else {
 
-                        //Рисуем линии
-                        if (x == 0) {
-                            pathL.moveTo(pixelBufL[0], maping(0f, -1f, 1f, minL, maxL))
-                            pathR.moveTo(pixelBufR[0], maping(0f, -1f, 1f, minR, maxR))
-                        } else {
-
-                            pathL.lineTo(
-                                x.toFloat(),
-                                maping(pixelBufL[0], -1f, 1f, minL, maxL)
-                            )
-
-                            pathR.lineTo(
-                                x.toFloat(),
-                                maping(pixelBufR[0], -1f, 1f, minR, maxR)
-                            )
-
-                        }
+//                        //Рисуем линии
+//                        if (x == 0) {
+//                            pathL.moveTo(pixelBufL[0], maping(0f, -1f, 1f, minL, maxL))
+//                            pathR.moveTo(pixelBufR[0], maping(0f, -1f, 1f, minR, maxR))
+//                        } else {
+//
+////                            pathL.lineTo(
+////                                x.toFloat(),
+////                                maping(pixelBufL[0], -1f, 1f, minL, maxL)
+////                            )
+////
+////                            pathR.lineTo(
+////                                x.toFloat(),
+////                                maping(pixelBufR[0], -1f, 1f, minR, maxR)
+////                            )
+//
+//                        }
                     }
                 }
 
-                if (drawLine) {
-                    val tt1 = measureNanoTime {
-                        if (scope.isVisibleR.value)
-                            canvas.drawPath(pathR, paintR)
-                    }
-                    val tt2 = measureNanoTime {
-                        if (scope.isVisibleL.value)
-                            canvas.drawPath(pathL, paintL)
-                    }
-                    println("tt1 ${tt1 / 1000} us")
-                    println("tt2 ${tt2 / 1000} us")
 
-                } else {
-                    //16..256 Roll
+//                if (drawLine) {
+//                    val tt1 = measureNanoTime {
+//                        if (scope.isVisibleR.value)
+//                            canvas.drawPath(pathR, paintR)
+//                    }
+//                    val tt2 = measureNanoTime {
+//                        if (scope.isVisibleL.value)
+//                            canvas.drawPath(pathL, paintL)
+//                    }
+//                    println("tt1 ${tt1 / 1000} us")
+//                    println("tt2 ${tt2 / 1000} us")
+//
+//                } else {
+//                    //16..256 Roll
+//
+//
+//                   if (scope.isVisibleR.value)
+//                        canvas.drawPoints(bigPointnR, paintR)
+//
+//                    if (scope.isVisibleL.value)
+//                        canvas.drawPoints(bigPointnL, paintL)
+//
+//                }
 
 
-                    if (scope.isVisibleR.value)
-                        canvas.drawPoints(bigPointnR, paintR)
-
-                    if (scope.isVisibleL.value)
-                        canvas.drawPoints(bigPointnL, paintL)
-
-                }
             }
 
 
             scope.bitmapOscillIndex.value = frame.frame
 
-            //println("Calculate Pointer: " + nanos/1000 + "us")
+
+
+            sum += nanos / 1000
+            avg++
+
+            println("!!! Рендер кадра: " + nanos / 1000 + " us" + " avg: ${sum / avg} us count: $avg")
 
             //   val fps = 1000.0 / (nanos / 1000000.0)
             //   println("Полный кадр :${nanos / 1000000.0} ms FPS:${fps}}")

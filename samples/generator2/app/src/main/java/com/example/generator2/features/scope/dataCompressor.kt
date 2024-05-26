@@ -23,7 +23,7 @@ class NativeLib {
 
     external fun copyFloatArrayJNI(source: FloatArray, destination: FloatArray)
 
-    external fun testCopyJNI()
+
 
     external fun createBuffer(entrySize: Int, bufferSize: Int): Long
     external fun addEntry(bufferPtr: Long, entry: FloatArray)
@@ -152,7 +152,7 @@ var cnt1 :  Long = 0L
                         val timeJNI5 = measureNanoTime {
                             nativeLib.toExternalFloatArray(roll256JNI, resultArray.array)
                         }
-                        println("!!! > JNI toExternalFloatArray time: ${timeJNI5/1000} us")
+                    //    println("!!! > JNI toExternalFloatArray time: ${timeJNI5/1000} us")
 
 
                       //  sum0 += timeJNI1/1000
@@ -160,7 +160,7 @@ var cnt1 :  Long = 0L
                         cnt0++
                         cnt1++
                       //  println("!!! > Kotlin toExternalFloatArray avg: ${sum0/cnt0}")
-                        println("!!! > JNI toExternalFloatArray avg: ${sum1/cnt1}")
+                    //    println("!!! > JNI toExternalFloatArray avg: ${sum1/cnt1}")
 
 
 //                        val timeJava = measureNanoTime {

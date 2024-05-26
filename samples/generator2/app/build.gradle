@@ -161,6 +161,10 @@ android {
         }
     }
 
+    defaultConfig {
+        renderscriptTargetApi 24
+        renderscriptSupportModeEnabled true
+    }
 
 }
 

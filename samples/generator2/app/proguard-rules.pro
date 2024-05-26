@@ -24,7 +24,9 @@
 
 
 -optimizationpasses 5
--optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+#-optimizations !code/simplification/arithmetic
+#-optimizations !field/*
+#-optimizations !class/merging/*
 
 
 
