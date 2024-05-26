@@ -21,6 +21,13 @@
 #-renamesourcefileattribute SourceFile
 -dontobfuscate
 
+
+
+-optimizationpasses 5
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+
+
+
 -keep class com.yandex.metrica.** { *; }
 -dontwarn com.yandex.metrica.**
 

@@ -12,6 +12,28 @@ import timber.log.Timber
 import java.util.LinkedList
 import kotlin.system.measureNanoTime
 
+
+
+class NativeLib {
+    companion object {
+        init {
+            System.loadLibrary("generator2")
+        }
+    }
+
+    external fun copyFloatArrayJNI(source: FloatArray, destination: FloatArray)
+
+    external fun testCopyJNI()
+
+    external fun createBuffer(entrySize: Int, bufferSize: Int): Long
+    external fun addEntry(bufferPtr: Long, entry: FloatArray)
+    external fun toExternalFloatArray(bufferPtr: Long, result: FloatArray)
+    external fun destroyBuffer(bufferPtr: Long)
+
+}
+
+
+
 //            compressorCount
 //                  |
 // channelAudioOut  *     -> channelDataStreamOutCompressor
@@ -27,6 +49,21 @@ fun dataCompressor(scope: Scope) {
 
     var roll256 = FloatRingBuffer(2048)
 
+    val nativeLib = NativeLib()
+
+
+
+    var bufferSizeJNI = 4
+    var entitySizeJNI = 1024
+    var roll256JNI = nativeLib.createBuffer(entitySizeJNI, bufferSizeJNI)
+
+
+var sum0 : Long = 0L
+var sum1 : Long = 0L
+
+var cnt0  : Long = 0L
+var cnt1 :  Long = 0L
+
     GlobalScope.launch(Dispatchers.IO) {
 
         var lastCompressorCount = 0f
@@ -41,10 +78,25 @@ fun dataCompressor(scope: Scope) {
 
                 val nanos = measureNanoTime {
 
-                    if ((buf.size != roll256.entrySize) || (roll256.bufferSize != scope.compressorCount.floatValue.toInt()))
-                       roll256 = FloatRingBuffer(buf.size, scope.compressorCount.floatValue.toInt())
+                   // if ((buf.size != roll256.entrySize) || (roll256.bufferSize != scope.compressorCount.floatValue.toInt()))
+                   //    roll256 = FloatRingBuffer(buf.size, scope.compressorCount.floatValue.toInt())
 
-//
+
+
+                    if ((buf.size != entitySizeJNI) || (bufferSizeJNI != scope.compressorCount.floatValue.toInt())) {
+                        nativeLib.destroyBuffer(roll256JNI)
+                        bufferSizeJNI = scope.compressorCount.floatValue.toInt()
+                        entitySizeJNI = buf.size
+                        roll256JNI = nativeLib.createBuffer(entitySizeJNI, bufferSizeJNI)
+
+                        sum0 = 0L
+                        sum1 = 0L
+                        cnt0 = 0L
+                        cnt1 = 0L
+                    }
+
+
+
 //                    if (lastCompressorCount != scope.compressorCount.floatValue) {
 //                        roll64.clear()
 //                    }
@@ -56,7 +108,9 @@ fun dataCompressor(scope: Scope) {
 //                    }
 //                    roll64.add(buf)
 
-                    roll256.add(buf)
+                 //   roll256.add(buf)
+
+                    nativeLib.addEntry(roll256JNI, buf)
 
                     val samplerate = scope.audioSampleRate
                     val timeBuf  = buf.size / 2.0f / samplerate //44100 1152 26ms
@@ -83,18 +137,53 @@ fun dataCompressor(scope: Scope) {
 
                         //totalSize = roll64.sumOf { it.size }
 
-                        totalSize = roll256.buffer.size
+                        //totalSize = roll256.buffer.size
+
+                        totalSize = entitySizeJNI * bufferSizeJNI
 
                         resultArray =
                             scope.floatArrayPool.getFloatArrayFrame(totalSize)  //FloatArray(totalSize)
 
-                        roll256.toExternalFloatArray(resultArray.array)
+//                        val timeJNI1 = measureNanoTime {
+//                            roll256.toExternalFloatArray(resultArray.array)
+//                        }
+//                        println("!!!\n!!! > Kotlin toExternalFloatArray time: ${timeJNI1/1000} us")
+
+                        val timeJNI5 = measureNanoTime {
+                            nativeLib.toExternalFloatArray(roll256JNI, resultArray.array)
+                        }
+                        println("!!! > JNI toExternalFloatArray time: ${timeJNI5/1000} us")
+
+
+                      //  sum0 += timeJNI1/1000
+                        sum1 += timeJNI5/1000
+                        cnt0++
+                        cnt1++
+                      //  println("!!! > Kotlin toExternalFloatArray avg: ${sum0/cnt0}")
+                        println("!!! > JNI toExternalFloatArray avg: ${sum1/cnt1}")
+
+
+//                        val timeJava = measureNanoTime {
+//                            System.arraycopy(roll256.buffer, 0, resultArray.array, 0, roll256.buffer.size)
+//                        }
+//                        println("!!! System.arraycopy time: ${timeJava/1000} us")
 
 //                        var currentIndex = 0
 //                        for (floatArray in roll64) {
 //                            floatArray.copyInto(resultArray.array, currentIndex)
 //                            currentIndex += floatArray.size
 //                        }
+
+//                        val timeJNI = measureNanoTime {
+//                            nativeLib.copyFloatArrayJNI(roll256.buffer, resultArray.array)
+//                        }
+//                        println("!!! JNI copy time: ${timeJNI/1000} us")
+
+
+//                        val timeJNI2 = measureNanoTime {
+//                            nativeLib.testCopyJNI()
+//                        }
+//                        println("!!! JNI copy test speed time: ${timeJNI2/1000} us")
 
                         val s =
                             scope.channelDataStreamOutCompressorIndex.trySend(resultArray.frame).isSuccess
@@ -106,7 +195,7 @@ fun dataCompressor(scope: Scope) {
 
                 }
 
-                //println("Roll64: ${nanos / 1000} us totalSize $totalSize")
+                println("Roll64: ${nanos / 1000} us totalSize $totalSize")
 
             } else {
                 //compressorCount.floatValue < 1.0F
@@ -165,20 +254,6 @@ class FloatRingBuffer(val entrySize: Int, val bufferSize: Int = 256) {
         }
     }
 
-    fun toFloatArray(): FloatArray {
-        val result = FloatArray(if (isFull) bufferSize * entrySize else end * entrySize)
-        if (isFull) {
-            // Копируем данные из двух частей буфера
-            val part1Size = (bufferSize - start) * entrySize
-            buffer.copyInto(result, 0, start * entrySize, start * entrySize + part1Size)
-            buffer.copyInto(result, part1Size, 0, end * entrySize)
-        } else {
-            // Копируем данные из одной части буфера
-            buffer.copyInto(result, 0, 0, end * entrySize)
-        }
-        return result
-    }
-
     fun toExternalFloatArray(result : FloatArray){
         if (isFull) {
             // Копируем данные из двух частей буфера
@@ -190,6 +265,4 @@ class FloatRingBuffer(val entrySize: Int, val bufferSize: Int = 256) {
             System.arraycopy(buffer, 0, result, 0, end * entrySize)
         }
     }
-
-
 }

@@ -36,3 +36,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     # List libraries link to the target library
     android
     log)
+
+
+# Укажите флаги компиляции для оптимизации на скорость
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast -Wall -std=c++17 -fPIC")

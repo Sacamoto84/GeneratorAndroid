@@ -163,7 +163,7 @@ class Scope {
 
        dataCompressor(this)
 
-       renderDataToPoints(this)
+     //  renderDataToPoints(this)
 
         //lissaguToBitmap(this)
 
