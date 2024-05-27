@@ -8,9 +8,13 @@ import android.graphics.Path
 import com.example.generator2.features.audio.BufSplitFloat
 import com.example.generator2.features.mp3.OSCILLSYNC
 import com.example.generator2.features.mp3.oscillSync
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.coroutines.AbstractCoroutineContextElement
@@ -71,11 +75,15 @@ fun renderDataToPoints(scope: Scope) {
 
     var sum = 0L
     var avg = 0L
+    var sum1 = 0L
 
     val nativeCanvas = NativeCanvas()
 
+    // Определение двух отдельных CoroutineScope
+    val scope1 = CoroutineScope(Dispatchers.Default)
+    val scope2 = CoroutineScope(Dispatchers.Default)
 
-    GlobalScope.launch(Dispatchers.IO + CoroutineName("!!!RenderDataToPoints")) {
+    GlobalScope.launch(Dispatchers.Default) {
 
 
         while (true) {
@@ -292,7 +300,10 @@ fun renderDataToPoints(scope: Scope) {
             val temp2 = w - 1f
             var temp3 = 0
 
+            var nanosBitmap = 0L
+
             val nanos = measureNanoTime {
+
 
                 nativeCanvas.jniCanvas(
                     bigPointnL = bigPointnL,
@@ -304,8 +315,20 @@ fun renderDataToPoints(scope: Scope) {
                     maxPixelBuffer,
                     frame.bitmap,
                     isOneTwo = scope.isOneTwo.value,
+                    0, (w).toInt()
                 )
 
+                nanosBitmap = measureNanoTime {
+                    nativeCanvas.jniCanvasBitmap(
+                        bigPointnL = bigPointnL,
+                        bigPointnR = bigPointnR,
+                        frame.bitmap,
+                        enableL = true,
+                        enableR = true,
+                        start = 0,
+                        length = bigPointnL.size
+                    )
+                }
 
 //                for (x in 0 until w.toInt()) {
 //
@@ -403,9 +426,10 @@ fun renderDataToPoints(scope: Scope) {
 
 
             sum += nanos / 1000
+            sum1 += nanosBitmap / 1000
             avg++
 
-            println("!!! Рендер кадра: " + nanos / 1000 + " us" + " avg: ${sum / avg} us count: $avg")
+            println("!!! Рендер кадра: " + nanos / 1000 + " us" + " avg: ${sum / avg} us count: $avg ,bitmap :${sum1/ avg} us")
 
             //   val fps = 1000.0 / (nanos / 1000000.0)
             //   println("Полный кадр :${nanos / 1000000.0} ms FPS:${fps}}")
@@ -425,6 +449,7 @@ fun renderDataToPoints(scope: Scope) {
 
         }
     }
+
 }
 
 

@@ -17,11 +17,24 @@ class NativeCanvas {
         bufRN: FloatArray,
         bufLN: FloatArray,
         w: Int,
-        h : Int,
+        h: Int,
         maxPixelBuffer: Int,
         bitmap: Bitmap,
-        isOneTwo : Boolean,
-
+        isOneTwo: Boolean,
+        start: Int,
+        end: Int
     )
+
+
+    external fun jniCanvasBitmap(
+        bigPointnL: FloatArray,
+        bigPointnR: FloatArray,
+        bitmap: Bitmap,
+        enableL: Boolean,
+        enableR: Boolean,
+        start : Int,
+        length : Int
+    )
+
 
 }
