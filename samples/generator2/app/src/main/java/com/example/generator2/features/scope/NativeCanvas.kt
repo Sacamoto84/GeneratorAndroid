@@ -10,6 +10,13 @@ class NativeCanvas {
         }
     }
 
+    /**
+     * Создать экземпляр нативного скоупа
+     * @return адресс класса
+     */
+    external fun createNativeScope() : Long
+    external fun dectroyNativeScope(scope : Long)
+
 
     external fun jniCanvas(
         bigPointnL: FloatArray,
@@ -19,7 +26,6 @@ class NativeCanvas {
         w: Int,
         h: Int,
         maxPixelBuffer: Int,
-        bitmap: Bitmap,
         isOneTwo: Boolean,
         start: Int,
         end: Int
@@ -36,5 +42,9 @@ class NativeCanvas {
         length : Int
     )
 
+    external fun fill( array : FloatArray, len : Int )
+
+
+    external fun fillArrayWithZero(array : FloatArray, length : Int)
 
 }

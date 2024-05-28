@@ -141,7 +141,7 @@ class Scope {
 
      */
     /** Количество пакетов в которое будет упакован выходной канал */
-    val compressorCount = mutableFloatStateOf(16f)
+    val compressorCount = mutableFloatStateOf(256f)
 
     /** Выход аудиоданных -> compressor */
     val channelAudioOut = Channel<FloatArray>(capacity = 16, BufferOverflow.DROP_OLDEST)

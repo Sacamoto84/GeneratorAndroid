@@ -12,14 +12,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 import kotlin.system.measureNanoTime
+
 
 var hiRes: Boolean = false //Режим высокого разрешения
 
@@ -75,7 +73,8 @@ fun renderDataToPoints(scope: Scope) {
 
     var sum = 0L
     var avg = 0L
-    var sum1 = 0L
+    var sumNanoBitmap = 0L
+
 
     val nativeCanvas = NativeCanvas()
 
@@ -132,8 +131,8 @@ fun renderDataToPoints(scope: Scope) {
 //                Bitmap.Config.ARGB_8888
 //            )
 
-            canvas = Canvas()
-            canvas.setBitmap(frame.bitmap)
+            //canvas = Canvas()
+            //canvas.setBitmap(frame.bitmap)
 
 
             var indexStartSignal = 0
@@ -260,51 +259,24 @@ fun renderDataToPoints(scope: Scope) {
                 .toInt() //Размер буфера для одного пикселя
 
             if (!drawLine) {
-
                 val len = maxPixelBuffer * w.toInt() * 2
-
                 if (bigPointnL.size != len)
-                    bigPointnL = FloatArray(len) { -1.0f }
+                    bigPointnL = FloatArray(len)// { -1.0f }
                 else
-                    bigPointnL.fill(-1.0f)
+                    nativeCanvas.fillArrayWithZero(bigPointnL, bigPointnL.size)
 
                 if (bigPointnR.size != len)
-                    bigPointnR = FloatArray(len) { -1.0f }
+                    bigPointnR = FloatArray(len)// { -1.0f }
                 else
-                    bigPointnR.fill(-1.0f)
+                    nativeCanvas.fillArrayWithZero(bigPointnR, bigPointnR.size)
             }
 
-
-            val maxL: Float
-            val minL: Float
-            val maxR: Float
-            val minR: Float
-
-            //Пиксели
-            if (scope.isOneTwo.value) {
-                maxL = h - 1f
-                minL = 0f
-                maxR = h - 1f
-                minR = 0f
-            } else {
-                maxL = h / 2
-                minL = 0f
-                maxR = h - 1f
-                minR = h / 2
-            }
-
-            //val bigPathR = FloatArray(w.toInt() * 4) { -1.0f }
-            //val bigPathL = FloatArray(w.toInt() * 4) { -1.0f }
-
-            val temp1 = bufRN.size - 1
-            val temp2 = w - 1f
-            var temp3 = 0
 
             var nanosBitmap = 0L
 
             val nanos = measureNanoTime {
 
-
+                //Создаем координаты пикселей bufRN > bigPointR
                 nativeCanvas.jniCanvas(
                     bigPointnL = bigPointnL,
                     bigPointnR = bigPointnR,
@@ -313,22 +285,24 @@ fun renderDataToPoints(scope: Scope) {
                     w = w.toInt(),
                     h = h.toInt(),
                     maxPixelBuffer,
-                    frame.bitmap,
                     isOneTwo = scope.isOneTwo.value,
                     0, (w).toInt()
                 )
 
+
+                //Рисуем битмап
                 nanosBitmap = measureNanoTime {
                     nativeCanvas.jniCanvasBitmap(
                         bigPointnL = bigPointnL,
                         bigPointnR = bigPointnR,
                         frame.bitmap,
-                        enableL = true,
-                        enableR = true,
+                        enableL = scope.isVisibleL.value,
+                        enableR = scope.isVisibleR.value,
                         start = 0,
                         length = bigPointnL.size
                     )
                 }
+
 
 //                for (x in 0 until w.toInt()) {
 //
@@ -359,15 +333,6 @@ fun renderDataToPoints(scope: Scope) {
 //                    if (mapX > temp1) mapX = temp1
 //
 //                    if (!drawLine) {
-//
-//                        for (i in 0 until maxPixelBuffer) {
-//                            offset = (mapX + i)
-//                            if (offset > temp1) offset = temp1
-//                            temp3 = i * 2 + x * maxPixelBuffer * 2
-//                            bigPointnR[temp3] = x.toFloat()
-//                            bigPointnL[temp3] = x.toFloat()
-//                            bigPointnR[temp3 + 1] = (bufRN[offset] + 1.0f) * (maxR - minR) / 2f + minR
-//                            bigPointnL[temp3 + 1] = (bufLN[offset] + 1.0f) * maxL / 2f
 //                        }
 //
 //                    } else {
@@ -420,32 +385,13 @@ fun renderDataToPoints(scope: Scope) {
 
             }
 
-
             scope.bitmapOscillIndex.value = frame.frame
 
-
-
             sum += nanos / 1000
-            sum1 += nanosBitmap / 1000
+            sumNanoBitmap += nanosBitmap / 1000
             avg++
 
-            println("!!! Рендер кадра: " + nanos / 1000 + " us" + " avg: ${sum / avg} us count: $avg ,bitmap :${sum1/ avg} us")
-
-            //   val fps = 1000.0 / (nanos / 1000000.0)
-            //   println("Полный кадр :${nanos / 1000000.0} ms FPS:${fps}}")
-
-            //scope.bitmapOscill.value = frame.bitmap
-            //scope.inboxCanvasPixelDataFrames.send(frame.frame)
-
-
-//            scope.inboxCanvasPixelData.send(
-//                ChPixelData(
-//                    frame.bitmap,
-//                    hiRes,
-//                    (nanos / 1000000.0).toInt().toFloat()
-//                )
-//            )
-
+            println("!!! Рендер кадра: " + nanos / 1000 + " us" + " avg: ${sum / avg} us count: $avg,bitmap :${sumNanoBitmap / avg} us")
 
         }
     }
