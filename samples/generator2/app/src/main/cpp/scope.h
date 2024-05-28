@@ -6,23 +6,21 @@
 #define GENERATOR2_SCOPE_H
 
 
+class Scope {
 
-class Scope{
+    float *bigPointL;
+    float *bigPointR;
 
-    float* bigPointL;
-    float* bigPointR;
+    float *bufRN;
+    float *burnLN;
 
-    int w;
-    int h;
 
-    bool is_one_two;
-
-    void calculatePixel();
-
+public:
+    int sizeBufRf;
+//Буфер для split
+float * bufRf;
+    float * bufLf;
 };
-
-
-
 
 
 #endif //GENERATOR2_SCOPE_H

@@ -78,9 +78,12 @@ fun renderDataToPoints(scope: Scope) {
 
     val nativeCanvas = NativeCanvas()
 
-    // Определение двух отдельных CoroutineScope
-    val scope1 = CoroutineScope(Dispatchers.Default)
-    val scope2 = CoroutineScope(Dispatchers.Default)
+    /**
+     * Содержит экземплят класса Scope
+     */
+    val nativeScopeLong = nativeCanvas.createNativeScope()
+
+
 
     GlobalScope.launch(Dispatchers.Default) {
 
@@ -138,12 +141,15 @@ fun renderDataToPoints(scope: Scope) {
             var indexStartSignal = 0
 
             val frames = scope.channelDataStreamOutCompressorIndex.receive()
+
             val index = scope.floatArrayPool.findFrameIndex(frames)
 
             if (index == -1)
                 continue
 
             buf = scope.floatArrayPool.pool[index].array
+
+
 
             //buf = scope.channelDataStreamOutCompressor.receive()
 
@@ -154,8 +160,17 @@ fun renderDataToPoints(scope: Scope) {
             if (scope.compressorCount.floatValue <= 8f) {
 
                 if (buf.isEmpty()) continue
+                val nano0 = measureNanoTime {
+                    pairFlatArray = bufSplit0.split(buf)
+                }
 
-                pairFlatArray = bufSplit0.split(buf)
+                val nano1 = measureNanoTime {
+                    nativeCanvas.split(nativeScopeLong, buf, buf.size)
+                }
+
+                println("!!! kotlin ${nano0/1000} us | JNI ${nano1/1000} us ${nano0.toFloat()/nano1.toFloat()}X")
+
+
                 bufR = pairFlatArray.first
                 bufL = pairFlatArray.second
 
@@ -200,7 +215,17 @@ fun renderDataToPoints(scope: Scope) {
                 //buf = scope.channelDataStreamOutCompressor.receive()
                 if (buf.isEmpty()) continue
 
-                pairFlatArray = bufSplit1.split(buf)//BufSplitFloat().split(buf)
+                val nano0 = measureNanoTime {
+                    pairFlatArray = bufSplit1.split(buf)//BufSplitFloat().split(buf)
+                }
+
+                val nano1 = measureNanoTime {
+                    nativeCanvas.split(nativeScopeLong, buf, buf.size)
+                }
+
+                println("!!! kotlin ${nano0/1000} us | JNI ${nano1/1000} us ${nano0.toFloat()/nano1.toFloat()}X")
+
+
                 bufR = pairFlatArray.first
                 bufL = pairFlatArray.second
 

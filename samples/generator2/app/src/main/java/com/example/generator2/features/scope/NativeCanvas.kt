@@ -10,12 +10,7 @@ class NativeCanvas {
         }
     }
 
-    /**
-     * Создать экземпляр нативного скоупа
-     * @return адресс класса
-     */
-    external fun createNativeScope() : Long
-    external fun dectroyNativeScope(scope : Long)
+
 
 
     external fun jniCanvas(
@@ -46,5 +41,21 @@ class NativeCanvas {
 
 
     external fun fillArrayWithZero(array : FloatArray, length : Int)
+
+
+
+/////////////////////////////////////////////////////
+    /**
+     * Создать экземпляр нативного скоупа
+     * @return адресс класса
+     */
+    external fun createNativeScope() : Long
+    external fun dectroyNativeScope(scope : Long)
+
+    /**
+     * Разделить буффер на части и записать в Scope
+     */
+    external fun split(scope : Long, buf : FloatArray, length : Int)
+
 
 }
