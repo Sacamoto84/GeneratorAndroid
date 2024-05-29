@@ -36,9 +36,13 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import com.example.generator2.MyGLSurfaceView
+import com.example.generator2.SignalGraph
 import com.example.generator2.features.audio.AudioOut
 import com.example.generator2.features.scope.compose.OscilloscopeControl
 import kotlinx.coroutines.channels.BufferOverflow
@@ -81,10 +85,6 @@ class Scope {
     val bitmapPool = BitmapPool(4)
 
     val floatArrayPool = FloatArrayPool(4)
-
-
-
-
 
 
     var isLissagu = MutableStateFlow(true)
@@ -151,7 +151,6 @@ class Scope {
     val channelAudioOutLissagu = Channel<FloatArray>(capacity = 8, BufferOverflow.DROP_OLDEST)
 
 
-
     /** Сжатые данные после компрессора */
     val channelDataStreamOutCompressor = Channel<FloatArray>(capacity = Channel.RENDEZVOUS)
 
@@ -161,51 +160,71 @@ class Scope {
 
     init {
 
-       dataCompressor(this)
+        dataCompressor(this)
 
-       renderDataToPoints(this)
+        //renderDataToPoints(this)
 
         //lissaguToBitmap(this)
 
     }
 
 
-
-
-
+    lateinit var myGLSurface: MyGLSurfaceView
 
     @Composable
     fun Oscilloscope() {
 
+        var update by remember {
+            mutableIntStateOf(0)
+        }
 
+        val context = LocalContext.current
 
-//        LaunchedEffect(key1 = true)
-//        {
-//            while (true) {
-//                if (isPause.value) {
-//                    delay(1);continue
-//                }
-//                pairPointsLissagu = inboxLisagguPixelData.receive()
-//                if (isPause.value) {
-//                    delay(1);continue
-//                }
-//                updateLissagu++
-//            }
-//        }
+        var signalLevels = remember { // Исходные данные для графика
+            floatArrayOf(0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f, 0.15f, 0.18f)
+        }
 
+        val myGLSurfaceR = remember {
+            MyGLSurfaceView(context).apply {
+                updateVertices(signalLevels)
+            }
+        }
 
-        //if (isUse.collectAsState().value) {
+        LaunchedEffect(key1 = true) {
+
+            while (true) {
+                val frames = channelDataStreamOutCompressorIndex.receive()
+                val index = floatArrayPool.findFrameIndex(frames)
+                if (index == -1) continue
+                signalLevels = floatArrayPool.pool[index].array
+                myGLSurfaceR.updateVertices(signalLevels)
+                update++
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color(0xFF343633))
                 .border(1.dp, Color.White)
-        )
-        {
+        ) {
             Row {
-                CanvasOscill(Modifier.weight(1f))
+
+                //CanvasOscill(Modifier.weight(1f))
+                //SignalGraph(signalLevels, Modifier.weight(1f))
+
+                AndroidView(
+                    factory = {
+                        myGLSurfaceR
+                    }, modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .weight(1f)
+                )
+
+
                 PanelButton()
-                CanvasLissagu()
+                //CanvasLissagu()
             }
             OscilloscopeControl()
         }
@@ -227,8 +246,6 @@ class Scope {
 //                )
 //            }
     }
-
-
 
 
     val bitmapOscillIndex = MutableStateFlow(0L)
@@ -269,41 +286,35 @@ class Scope {
 
         val frames = bitmapPool.findFrameIndex(bitmapOscillIndex.collectAsState().value)
 
- if (frames == -1)
-     return
+        if (frames == -1) return
 
 
-        Canvas(
-            modifier = Modifier
-                .fillMaxWidth()
-                .then(modifier)
-                //.weight(1f)
-                .height(100.dp)
-                .pointerInput(Unit) {
-                    detectTapGestures { offset ->
-                        val x = offset.x
-                        isPause.value = (x in scopeW / 3..scopeW * 2 / 3) xor isPause.value
-                        compressorCount.floatValue = when {
-                            x < scopeW / 3 -> {
-                                isPause.value =
-                                    false; (compressorCount.floatValue * 2).coerceAtMost(
-                                    256f
-                                )
-                            }
-
-                            x > scopeW * 2 / 3 -> {
-                                isPause.value =
-                                    false; (compressorCount.floatValue / 2).coerceAtLeast(
-                                    0.125f
-                                )
-                            }
-
-                            else -> compressorCount.floatValue
+        Canvas(modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier)
+            //.weight(1f)
+            .height(100.dp)
+            .pointerInput(Unit) {
+                detectTapGestures { offset ->
+                    val x = offset.x
+                    isPause.value = (x in scopeW / 3..scopeW * 2 / 3) xor isPause.value
+                    compressorCount.floatValue = when {
+                        x < scopeW / 3 -> {
+                            isPause.value = false; (compressorCount.floatValue * 2).coerceAtMost(
+                                256f
+                            )
                         }
+
+                        x > scopeW * 2 / 3 -> {
+                            isPause.value = false; (compressorCount.floatValue / 2).coerceAtLeast(
+                                0.125f
+                            )
+                        }
+
+                        else -> compressorCount.floatValue
                     }
                 }
-        )
-        {
+            }) {
             update
             scopeW = size.width
             scopeH = size.height
@@ -322,17 +333,14 @@ class Scope {
 //                drawImage(image = scaledBitmap.asImageBitmap())
 //            } else
 
-                drawImage(
-                    image = bitmapPool.pool[frames].bitmap.asImageBitmap()//pairPoints.bitmap.asImageBitmap()
-                )
+            drawImage(
+                image = bitmapPool.pool[frames].bitmap.asImageBitmap()//pairPoints.bitmap.asImageBitmap()
+            )
 
             //Индекс компресии
             drawIntoCanvas {
                 it.nativeCanvas.drawText(
-                    compressorCount.floatValue.toString(),
-                    4f,
-                    24f,
-                    textPaint
+                    compressorCount.floatValue.toString(), 4f, 24f, textPaint
                 )
             }
 
@@ -340,22 +348,15 @@ class Scope {
 
             drawIntoCanvas {
                 it.nativeCanvas.drawText(
-                    pairPoints.fps.toString(),
-                    size.width / 2 - 40f,
-                    40f,
-                    textPaintPause
+                    pairPoints.fps.toString(), size.width / 2 - 40f, 40f, textPaintPause
                 )
             }
 
-            if (isPause.value)
-                drawIntoCanvas {
-                    it.nativeCanvas.drawText(
-                        "Pause",
-                        size.width / 2 - 40f,
-                        40f,
-                        textPaintPause
-                    )
-                }
+            if (isPause.value) drawIntoCanvas {
+                it.nativeCanvas.drawText(
+                    "Pause", size.width / 2 - 40f, 40f, textPaintPause
+                )
+            }
 
 
         }
@@ -374,11 +375,9 @@ class Scope {
             modifier = Modifier
                 .width(32.dp)
                 .height(100.dp)
-        )
-        {
+        ) {
             Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween
             ) {
 
                 Box(

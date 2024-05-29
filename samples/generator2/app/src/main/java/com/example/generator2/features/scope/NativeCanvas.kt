@@ -14,13 +14,12 @@ class NativeCanvas {
 
 
     external fun jniCanvas(
+        scope : Long,
         bigPointnL: FloatArray,
         bigPointnR: FloatArray,
-        bufRN: FloatArray,
-        bufLN: FloatArray,
         w: Int,
         h: Int,
-        maxPixelBuffer: Int,
+        //maxPixelBuffer: Int,
         isOneTwo: Boolean,
         start: Int,
         end: Int

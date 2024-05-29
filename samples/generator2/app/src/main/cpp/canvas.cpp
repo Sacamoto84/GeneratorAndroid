@@ -15,26 +15,37 @@
 #include "scope.h"
 
 
-
-
-
-
-
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_generator2_features_scope_NativeCanvas_jniCanvas(JNIEnv *env, jobject thiz,
+                                                                  jlong scope,
                                                                   jfloatArray big_pointn_l,
                                                                   jfloatArray big_pointn_r,
-                                                                  jfloatArray buf_rn,
-                                                                  jfloatArray buf_ln,
                                                                   jint w,
                                                                   jint h,
-                                                                  jint max_pixel_buffer,
+                                                                  //jint max_pixel_buffer,
                                                                   jboolean is_one_two,
                                                                   jint start,
                                                                   jint end
 
 ) {
+
+
+    auto *_scope = reinterpret_cast<Scope *>(scope);
+
+    //32  45.8   48k
+    //16  22.81
+    //8   5.7
+    //4   2.86
+    //2   1.42
+    //1   0.71
+    //0.5 0.35
+    int maxPixelBuffer = (int) (_scope->sizeBufRf / w);
+    if (maxPixelBuffer < 1)  maxPixelBuffer = 1;
+    if (maxPixelBuffer > 96) maxPixelBuffer = 96;
+
+
+
 
     float maxL;
     float maxR = h - 1.0f;
@@ -47,15 +58,14 @@ Java_com_example_generator2_features_scope_NativeCanvas_jniCanvas(JNIEnv *env, j
         minR = h / 2.0f;
     }
 
-    jsize temp1 = env->GetArrayLength(buf_rn) - 1;
+    jsize temp1 = _scope->sizeBufRf;
+    //jsize temp1 = env->GetArrayLength(buf_rn) - 1;
+
     int temp2 = w - 1;
     int temp3 = 0;
 
     jfloat *bigPointnL = env->GetFloatArrayElements(big_pointn_l, nullptr);
     jfloat *bigPointnR = env->GetFloatArrayElements(big_pointn_r, nullptr);
-
-    jfloat *bufRN = env->GetFloatArrayElements(buf_rn, nullptr);
-    jfloat *bufLN = env->GetFloatArrayElements(buf_ln, nullptr);
 
     for (int x = start; x < end; x++) {
         int mapX = (x * temp1 / temp2);
@@ -63,14 +73,14 @@ Java_com_example_generator2_features_scope_NativeCanvas_jniCanvas(JNIEnv *env, j
         if (mapX > temp1) mapX = temp1;
 
         ////////
-        for (int i = 0; i < max_pixel_buffer; i++) {
+        for (int i = 0; i < maxPixelBuffer; i++) {
             int offset = mapX + i;
             if (offset > temp1) offset = temp1;
-            temp3 = i * 2 + x * max_pixel_buffer * 2;
+            temp3 = i * 2 + x * maxPixelBuffer * 2;
             *(bigPointnR + temp3) = x;
             *(bigPointnL + temp3) = x;
-            *(bigPointnR + temp3 + 1) = (*(bufRN + offset) + 1.0f) * (maxR - minR) / 2.0f + minR;
-            *(bigPointnL + temp3 + 1) = (*(bufLN + offset) + 1.0f) * maxL / 2.0f;
+            *(bigPointnR + temp3 + 1) = (*(_scope->bufRN + offset) + 1.0f) * (maxR - minR) / 2.0f + minR;
+            *(bigPointnL + temp3 + 1) = (*(_scope->bufLN + offset) + 1.0f) * maxL / 2.0f;
         }
 
 
@@ -79,8 +89,8 @@ Java_com_example_generator2_features_scope_NativeCanvas_jniCanvas(JNIEnv *env, j
     env->ReleaseFloatArrayElements(big_pointn_l, bigPointnL, 0);
     env->ReleaseFloatArrayElements(big_pointn_r, bigPointnR, 0);
 
-    env->ReleaseFloatArrayElements(buf_rn, bufRN, 0);
-    env->ReleaseFloatArrayElements(buf_ln, bufLN, 0);
+    //env->ReleaseFloatArrayElements(buf_rn, bufRN, 0);
+    //env->ReleaseFloatArrayElements(buf_ln, bufLN, 0);
 
 }
 

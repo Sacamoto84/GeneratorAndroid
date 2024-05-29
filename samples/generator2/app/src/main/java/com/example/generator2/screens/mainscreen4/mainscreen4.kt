@@ -28,6 +28,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.generator2.SignalGraph
 import com.example.generator2.features.mp3.compose.MP3Control
 import com.example.generator2.features.presets.Presets
 import com.example.generator2.features.presets.ui.DialogPresetsNewFile
@@ -113,6 +115,18 @@ fun Mainsreen4(
 //                    .fillMaxWidth()
 //                    .weight(1f)
 //            )
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

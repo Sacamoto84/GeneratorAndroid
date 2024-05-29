@@ -215,22 +215,25 @@ fun renderDataToPoints(scope: Scope) {
                 //buf = scope.channelDataStreamOutCompressor.receive()
                 if (buf.isEmpty()) continue
 
-                val nano0 = measureNanoTime {
-                    pairFlatArray = bufSplit1.split(buf)//BufSplitFloat().split(buf)
-                }
+//                val nano0 = measureNanoTime {
+//                    pairFlatArray = bufSplit1.split(buf)//BufSplitFloat().split(buf)
+//                }
 
                 val nano1 = measureNanoTime {
-                    nativeCanvas.split(nativeScopeLong, buf, buf.size)
+
+                    repeat(100) {
+                        nativeCanvas.split(nativeScopeLong, buf, buf.size)
+                    }
                 }
+                println("!!! JNI ${nano1/1000} us")
+                //println("!!! kotlin ${nano0/1000} us | JNI ${nano1/1000} us ${nano0.toFloat()/nano1.toFloat()}X")
 
-                println("!!! kotlin ${nano0/1000} us | JNI ${nano1/1000} us ${nano0.toFloat()/nano1.toFloat()}X")
 
+                //bufR = pairFlatArray.first
+                //bufL = pairFlatArray.second
 
-                bufR = pairFlatArray.first
-                bufL = pairFlatArray.second
-
-                bufLN = bufL
-                bufRN = bufR
+                //bufLN = bufL
+                //bufRN = bufR
 
             }
 
@@ -239,22 +242,6 @@ fun renderDataToPoints(scope: Scope) {
             val pathL = Path()
             val pathR = Path()
 
-            var pixelBufSize: Float
-            val pixelBufL = FloatArray(4096)
-            val pixelBufR = FloatArray(4096)
-
-            if (hiRes) {
-                paintL.strokeWidth = 2f
-                paintR.strokeWidth = 2f
-            } else {
-                paintL.strokeWidth = 1f
-                paintR.strokeWidth = 1f
-            }
-
-            if (scope.compressorCount.floatValue == 8f) {
-                paintL.strokeWidth = 4f
-                paintR.strokeWidth = 4f
-            }
 
             val drawLine: Boolean
 
@@ -273,28 +260,28 @@ fun renderDataToPoints(scope: Scope) {
             var offset: Int = 0
 
 
-            //32  45.8   48k
-            //16  22.81
-            //8   5.7
-            //4   2.86
-            //2   1.42
-            //1   0.71
-            //0.5 0.35
-            val maxPixelBuffer = (bufRN.size / w).coerceIn(1f, 96f)
-                .toInt() //Размер буфера для одного пикселя
-
-            if (!drawLine) {
-                val len = maxPixelBuffer * w.toInt() * 2
-                if (bigPointnL.size != len)
-                    bigPointnL = FloatArray(len)// { -1.0f }
-                else
-                    nativeCanvas.fillArrayWithZero(bigPointnL, bigPointnL.size)
-
-                if (bigPointnR.size != len)
-                    bigPointnR = FloatArray(len)// { -1.0f }
-                else
-                    nativeCanvas.fillArrayWithZero(bigPointnR, bigPointnR.size)
-            }
+//            //32  45.8   48k
+//            //16  22.81
+//            //8   5.7
+//            //4   2.86
+//            //2   1.42
+//            //1   0.71
+//            //0.5 0.35
+//            val maxPixelBuffer = (bufRN.size / w).coerceIn(1f, 96f)
+//                .toInt() //Размер буфера для одного пикселя
+//
+//            if (!drawLine) {
+//                val len = maxPixelBuffer * w.toInt() * 2
+//                if (bigPointnL.size != len)
+//                    bigPointnL = FloatArray(len)// { -1.0f }
+//                else
+//                    nativeCanvas.fillArrayWithZero(bigPointnL, bigPointnL.size)
+//
+//                if (bigPointnR.size != len)
+//                    bigPointnR = FloatArray(len)// { -1.0f }
+//                else
+//                    nativeCanvas.fillArrayWithZero(bigPointnR, bigPointnR.size)
+//            }
 
 
             var nanosBitmap = 0L
@@ -302,31 +289,30 @@ fun renderDataToPoints(scope: Scope) {
             val nanos = measureNanoTime {
 
                 //Создаем координаты пикселей bufRN > bigPointR
-                nativeCanvas.jniCanvas(
-                    bigPointnL = bigPointnL,
-                    bigPointnR = bigPointnR,
-                    bufRN = bufRN,
-                    bufLN = bufLN,
-                    w = w.toInt(),
-                    h = h.toInt(),
-                    maxPixelBuffer,
-                    isOneTwo = scope.isOneTwo.value,
-                    0, (w).toInt()
-                )
+//                nativeCanvas.jniCanvas(
+//                    scope = nativeScopeLong,
+//                    bigPointnL = bigPointnL,
+//                    bigPointnR = bigPointnR,
+//                    w = w.toInt(),
+//                    h = h.toInt(),
+//                    //maxPixelBuffer,
+//                    isOneTwo = scope.isOneTwo.value,
+//                    0, (w).toInt()
+//                )
 
 
                 //Рисуем битмап
-                nanosBitmap = measureNanoTime {
-                    nativeCanvas.jniCanvasBitmap(
-                        bigPointnL = bigPointnL,
-                        bigPointnR = bigPointnR,
-                        frame.bitmap,
-                        enableL = scope.isVisibleL.value,
-                        enableR = scope.isVisibleR.value,
-                        start = 0,
-                        length = bigPointnL.size
-                    )
-                }
+//                nanosBitmap = measureNanoTime {
+//                    nativeCanvas.jniCanvasBitmap(
+//                        bigPointnL = bigPointnL,
+//                        bigPointnR = bigPointnR,
+//                        frame.bitmap,
+//                        enableL = scope.isVisibleL.value,
+//                        enableR = scope.isVisibleR.value,
+//                        start = 0,
+//                        length = bigPointnL.size
+//                    )
+//                }
 
 
 //                for (x in 0 until w.toInt()) {

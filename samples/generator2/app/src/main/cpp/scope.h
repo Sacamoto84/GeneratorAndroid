@@ -11,15 +11,17 @@ class Scope {
     float *bigPointL;
     float *bigPointR;
 
-    float *bufRN;
-    float *burnLN;
-
 
 public:
-    int sizeBufRf;
+
 //Буфер для split
-float * bufRf;
-    float * bufLf;
+    float * bufLN;
+    float * bufRN;
+    int sizeBufRf;
+
+
+
+
 };
 
 

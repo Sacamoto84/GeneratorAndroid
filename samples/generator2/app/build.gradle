@@ -73,7 +73,7 @@ android {
         signingConfig signingConfigs.release
         externalNativeBuild {
             cmake {
-                cppFlags ''
+                cppFlags ""//"-mfpu=neon -mfloat-abi=softfp"
             }
         }
 

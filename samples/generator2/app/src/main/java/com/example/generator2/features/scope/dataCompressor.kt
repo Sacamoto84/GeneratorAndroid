@@ -155,6 +155,11 @@ var cnt1 :  Long = 0L
                     //    println("!!! > JNI toExternalFloatArray time: ${timeJNI5/1000} us")
 
 
+                       // val max =  resultArray.array.max()
+                       // val min =  resultArray.array.min()
+
+                       // println("max $max min $min")
+
                       //  sum0 += timeJNI1/1000
                         sum1 += timeJNI5/1000
                         cnt0++
@@ -195,7 +200,7 @@ var cnt1 :  Long = 0L
 
                 }
 
-                println("Roll64: ${nanos / 1000} us totalSize $totalSize")
+                //println("Roll64: ${nanos / 1000} us totalSize $totalSize")
 
             } else {
                 //compressorCount.floatValue < 1.0F

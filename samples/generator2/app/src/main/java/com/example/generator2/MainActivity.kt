@@ -1,10 +1,26 @@
 package com.example.generator2
 
 import android.annotation.SuppressLint
+import android.opengl.GLSurfaceView
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.viewinterop.AndroidView
 import com.example.generator2.di.MainAudioMixerPump
 import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.generator.Generator
@@ -37,6 +53,56 @@ import javax.inject.Singleton
 //YandexMetrica.reportError(String groupIdentifier, String message)
 //YandexMetrica.reportError(String groupIdentifier, String message, Throwable error)
 
+
+ lateinit var glSurfaceView: GLSurfaceView
+ lateinit var renderer: MyGLRenderer
+private val handler = Handler(Looper.getMainLooper())
+
+@Composable
+fun OpenGLComposeView() {
+    Box(modifier = Modifier.fillMaxSize()) {
+        AndroidView(factory = { context ->
+            glSurfaceView = GLSurfaceView(context).apply {
+                setEGLContextClientVersion(3)
+                setRenderer(renderer)
+                renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
+            }
+            glSurfaceView
+        })
+    }
+}
+
+
+//@Composable
+//private fun startAnimation() {
+//    val duration = 3000L
+//    val infiniteTransition = rememberInfiniteTransition()
+//    val animatedValue by infiniteTransition.animateFloat(
+//        initialValue = -0.5f,
+//        targetValue = 0.5f,
+//        animationSpec = infiniteRepeatable(
+//            animation = tween(durationMillis = duration.toInt(), easing = LinearEasing),
+//            repeatMode = RepeatMode.Reverse
+//        ), label = ""
+//    )
+//
+//    handler.post(object : Runnable {
+//        override fun run() {
+//            val newVertices = floatArrayOf(
+//                animatedValue, -0.5f, 0.0f,
+//                0.5f,  animatedValue, 0.0f,
+//                -0.5f,  animatedValue, 0.0f,
+//                0.5f, -animatedValue, 0.0f
+//            )
+//            renderer.updateVertices(newVertices)
+//            glSurfaceView.requestRender()
+//            handler.postDelayed(this, 16) // 60 FPS
+//        }
+//    })
+//}
+
+
+
 @Singleton
 @AndroidEntryPoint
 @androidx.media3.common.util.UnstableApi
@@ -65,6 +131,8 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        renderer = MyGLRenderer()
 
         //Timber.plant(Timber.DebugTree())
         Timber.i("..................................onCreate.................................")
@@ -112,6 +180,16 @@ class MainActivity : ComponentActivity() {
                     .i("!!! MainActivity запуск Navigation он начала запуска App: ${System.currentTimeMillis() - startTimeAplication} мс!!!")
 
                 Navigation()
+
+                //OpenGLComposeView()
+                //startAnimation()
+
+//                val signalLevels = remember { // Исходные данные для графика
+//                    floatArrayOf(0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f, 0.15f,0.18f)
+//                }
+//                SignalGraph(signalLevels)
+
+
             }
         }
     }

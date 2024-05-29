@@ -5,8 +5,6 @@
 #include <jni.h>
 #include "scope.h"
 #include <cstring>
-
-
 /**
  * Разделить буфер на два массива и записать их в scope, замена pairFlatArray = bufSplit0.split(buf)
  */
@@ -22,31 +20,37 @@ Java_com_example_generator2_features_scope_NativeCanvas_split(JNIEnv *env, jobje
 
     if (_scope->sizeBufRf != halfSize) {
         //deallocateBuffers
-        delete[] _scope-> bufRf;
-        delete[] _scope-> bufLf;
-        _scope-> bufRf = nullptr;
-        _scope-> bufLf = nullptr;
-        _scope->sizeBufRf = 0;
+        delete[] _scope-> bufRN;
+        delete[] _scope-> bufLN;
+
         //allocateBuffers
         _scope->sizeBufRf = halfSize;
-        _scope-> bufRf = new float[halfSize];
-        _scope->bufLf = new float[halfSize];
+        _scope-> bufRN = new float[halfSize];
+        _scope->bufLN = new float[halfSize];
     }
 
-    std::memset(_scope->bufRf, 0, halfSize * sizeof(float));
-    std::memset(_scope->bufLf, 0, halfSize * sizeof(float));
+    //std::memset(_scope->bufRf, 0, halfSize * sizeof(float));
+    //std::memset(_scope->bufLf, 0, halfSize * sizeof(float));
 
     // Split the input buffer
-    size_t index1 = 0;
-    size_t index2 = 0;
-
-    for (int i = 0; i < length; ++i) {
-        if (i % 2 == 0) {
-            _scope->bufLf[index1++] = entryElements[i];
-        } else {
-            _scope->bufRf[index2++] = entryElements[i];
-        }
+//    size_t index1 = 0;
+//    size_t index2 = 0;
+//
+//    for (int i = 0; i < length; ++i) {
+//        if (i % 2 == 0) {
+//            _scope->bufLN[index1++] = entryElements[i];
+//        } else {
+//            _scope->bufRN[index2++] = entryElements[i];
+//        }
+//    }
+/////////////////////
+////    // Split the input buffer
+    for (int i = 0; i < halfSize; ++i) {
+        _scope->bufLN[i] = entryElements[2 * i];
+        _scope->bufRN[i] = entryElements[2 * i + 1];
     }
+//////////////////////
+
 
     env->ReleaseFloatArrayElements(buf, entryElements, 0);
 }
