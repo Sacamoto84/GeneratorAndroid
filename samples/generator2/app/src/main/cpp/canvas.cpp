@@ -30,7 +30,6 @@ Java_com_example_generator2_features_scope_NativeCanvas_jniCanvas(JNIEnv *env, j
 
 ) {
 
-
     auto *_scope = reinterpret_cast<Scope *>(scope);
 
     //32  45.8   48k
@@ -43,9 +42,6 @@ Java_com_example_generator2_features_scope_NativeCanvas_jniCanvas(JNIEnv *env, j
     int maxPixelBuffer = (int) (_scope->sizeBufRf / w);
     if (maxPixelBuffer < 1)  maxPixelBuffer = 1;
     if (maxPixelBuffer > 96) maxPixelBuffer = 96;
-
-
-
 
     float maxL;
     float maxR = h - 1.0f;

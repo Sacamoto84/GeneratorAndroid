@@ -8,6 +8,7 @@ import android.graphics.Path
 import com.example.generator2.features.audio.BufSplitFloat
 import com.example.generator2.features.mp3.OSCILLSYNC
 import com.example.generator2.features.mp3.oscillSync
+import com.example.libs.utils.maping
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -351,7 +352,7 @@ fun renderDataToPoints(scope: Scope) {
 ////                        //Рисуем линии
 ////                        if (x == 0) {
 ////                            pathL.moveTo(pixelBufL[0], maping(0f, -1f, 1f, minL, maxL))
-////                            pathR.moveTo(pixelBufR[0], maping(0f, -1f, 1f, minR, maxR))
+                       //     pathR.moveTo(pixelBufR[0], maping(0f, -1f, 1f, minR, maxR))
 ////                        } else {
 ////
 //////                            pathL.lineTo(

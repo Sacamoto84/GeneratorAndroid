@@ -78,11 +78,6 @@ var cnt1 :  Long = 0L
 
                 val nanos = measureNanoTime {
 
-                   // if ((buf.size != roll256.entrySize) || (roll256.bufferSize != scope.compressorCount.floatValue.toInt()))
-                   //    roll256 = FloatRingBuffer(buf.size, scope.compressorCount.floatValue.toInt())
-
-
-
                     if ((buf.size != entitySizeJNI) || (bufferSizeJNI != scope.compressorCount.floatValue.toInt())) {
                         nativeLib.destroyBuffer(roll256JNI)
                         bufferSizeJNI = scope.compressorCount.floatValue.toInt()
@@ -121,12 +116,9 @@ var cnt1 :  Long = 0L
 //                    println(herz)
                     //Количество кадров, которое нужно пропустить
 
-
-
-                    val framesSkip = findBestDivisor(herz.toInt(), if (scope.compressorCount.floatValue >= 32) 7.0 else 14.0)
+                    val framesSkip = findBestDivisor(herz.toInt(), if (scope.compressorCount.floatValue >= 32) 14.0 else 14.0)
 
                   //  println(framesSkip)
-
 
                     if (
                         frame % framesSkip == 0L
@@ -135,60 +127,19 @@ var cnt1 :  Long = 0L
                     //(scope.compressorCount.floatValue < 32)
                     ) {
 
-                        //totalSize = roll64.sumOf { it.size }
-
-                        //totalSize = roll256.buffer.size
-
                         totalSize = entitySizeJNI * bufferSizeJNI
 
                         resultArray =
                             scope.floatArrayPool.getFloatArrayFrame(totalSize)  //FloatArray(totalSize)
-
-//                        val timeJNI1 = measureNanoTime {
-//                            roll256.toExternalFloatArray(resultArray.array)
-//                        }
-//                        println("!!!\n!!! > Kotlin toExternalFloatArray time: ${timeJNI1/1000} us")
 
                         val timeJNI5 = measureNanoTime {
                             nativeLib.toExternalFloatArray(roll256JNI, resultArray.array)
                         }
                     //    println("!!! > JNI toExternalFloatArray time: ${timeJNI5/1000} us")
 
-
-                       // val max =  resultArray.array.max()
-                       // val min =  resultArray.array.min()
-
-                       // println("max $max min $min")
-
-                      //  sum0 += timeJNI1/1000
                         sum1 += timeJNI5/1000
                         cnt0++
                         cnt1++
-                      //  println("!!! > Kotlin toExternalFloatArray avg: ${sum0/cnt0}")
-                    //    println("!!! > JNI toExternalFloatArray avg: ${sum1/cnt1}")
-
-
-//                        val timeJava = measureNanoTime {
-//                            System.arraycopy(roll256.buffer, 0, resultArray.array, 0, roll256.buffer.size)
-//                        }
-//                        println("!!! System.arraycopy time: ${timeJava/1000} us")
-
-//                        var currentIndex = 0
-//                        for (floatArray in roll64) {
-//                            floatArray.copyInto(resultArray.array, currentIndex)
-//                            currentIndex += floatArray.size
-//                        }
-
-//                        val timeJNI = measureNanoTime {
-//                            nativeLib.copyFloatArrayJNI(roll256.buffer, resultArray.array)
-//                        }
-//                        println("!!! JNI copy time: ${timeJNI/1000} us")
-
-
-//                        val timeJNI2 = measureNanoTime {
-//                            nativeLib.testCopyJNI()
-//                        }
-//                        println("!!! JNI copy test speed time: ${timeJNI2/1000} us")
 
                         val s =
                             scope.channelDataStreamOutCompressorIndex.trySend(resultArray.frame).isSuccess
