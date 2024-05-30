@@ -98,7 +98,7 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
                 modifier = Modifier.weight(1f),
                 enable = fmSelectMode.value == 0,
                 items = listOf(
-                    "100", "600", "800", "1000", "1500", "2000", "2500", "3000", "3500", "4000"
+                    "100", "600", "800", "1000", "1500", "2000", "2500", "3000", "3500", "4000", "6000", "9600", "12000", "20000", "24000", "26000"
                 ),
                 value = carrierFr.value,
                 onChange = {
@@ -115,7 +115,7 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
             InfinitySlider(
                 value = carrierFr.value,
                 sensing = LiveConstrain.sensetingSliderCr.floatValue / 4,
-                range = 50f..10000f,
+                range = 50f..100000f,
                 onValueChange = {
                     if (fmSelectMode.value == 0) if (str == "CH0") gen.liveData.ch1_Carrier_Fr.value =
                         it else gen.liveData.ch2_Carrier_Fr.value = it

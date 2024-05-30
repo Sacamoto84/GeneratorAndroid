@@ -1,10 +1,10 @@
 package com.example.generator2
 
 import android.content.Context
+import android.graphics.PixelFormat
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,9 +17,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
+import java.util.Random
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
-import kotlin.system.measureNanoTime
 
 class MyGLRenderer : GLSurfaceView.Renderer {
 
@@ -37,21 +37,34 @@ class MyGLRenderer : GLSurfaceView.Renderer {
     
     void main() {
   
- 
-        float x = float(gl_VertexID) * 2.0 / (len) - 1.0 ;
+        
              
-        if (gl_VertexID % 2 == 0) 
-        {
+//        if (gl_VertexID % 2 == 0) {
+//        // Для четных gl_VertexID не создаем вершину
+//        discard;
+//    }     
+//             
+            
+       if (gl_VertexID % 2 == 0) 
+       {
             ourColor = vec4(1.0, 0.0, 1.0, 0.00001);
-        }
+       }
        else
        {
             ourColor = vec4(1.0, 1.0, 0.0, 0.00001);
        }
        
-        float y = signalLevel;
-        gl_Position = vec4(x, y, 0.0, 1.0);
-        gl_PointSize = 0.01;
+        // Игнорируем вершины с индексами, которые не равны 0, 1, 16, 17, 32, 33 и т.д.
+//        if (gl_VertexID % 4 > 1) {
+//            // Помещаем игнорируемые вершины за пределы видимой области, сохраняя их положение
+//            gl_Position = vec4(2.0, 2.0, 0.0, 1.0);
+//            ourColor = vec4(0.0, 0.0, 0.0, 0.0);   // Устанавливаем цвет в прозрачный
+//        } else {
+            float x = float(gl_VertexID) * 2.0 / len - 1.0;     
+            gl_Position = vec4(x, signalLevel, 0.0, 1.0);
+//        }
+        
+        gl_PointSize = 1.0;
     }
         
 """.trimIndent()
@@ -183,11 +196,47 @@ void main() {
     }
 
     fun updateVertices(newVertices: FloatArray) {
+
+//        // Получаем массив случайных значений шума
+//        val noise = generateNoise(newVertices.size, 0.1f)
+//
+//        // Добавляем шум к каждому элементу новых вершин
+//        for (i in newVertices.indices) {
+//            newVertices[i] += noise[i]
+//        }
+
+
+
+
+
         vertexBuffer = ByteBuffer.allocateDirect(newVertices.size * 4)
             .order(ByteOrder.nativeOrder())
             .asFloatBuffer()
             .put(newVertices)
         vertexBuffer.position(0)
+    }
+
+
+    class LowPassFilter(private val alpha: Float) {
+        private var lastFilteredValue: Float = 0f
+
+        fun filter(input: Float): Float {
+            lastFilteredValue = alpha * input + (1 - alpha) * lastFilteredValue
+            return lastFilteredValue
+        }
+    }
+
+
+    // Функция для генерации шума в заданном диапазоне
+    fun generateNoise(length: Int, range: Float): FloatArray {
+        val random = Random()
+        val noise = FloatArray(length)
+        val halfRange = range / 2.0f
+        for (i in 0 until length) {
+            // Генерируем случайное значение шума в заданном диапазоне
+            noise[i] = (random.nextFloat() * range) - halfRange
+        }
+        return noise
     }
 
 
@@ -199,6 +248,11 @@ class MyGLSurfaceView(context: Context) : GLSurfaceView(context) {
 
     init {
         setEGLContextClientVersion(3)
+
+        // Включение мультисемплинга
+        //setEGLConfigChooser(8, 8, 8, 8, 16, 8)
+        //holder.setFormat(PixelFormat.TRANSLUCENT)
+
         setRenderer(renderer)
         renderMode = RENDERMODE_WHEN_DIRTY
     }

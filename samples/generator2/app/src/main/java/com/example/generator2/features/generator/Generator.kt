@@ -19,7 +19,7 @@ class Generator {
     val ch1: StructureCh = StructureCh(ch = 0)
     val ch2: StructureCh = StructureCh(ch = 1)
 
-    var sampleRate: Int = 48000
+    var sampleRate: Int = 44100
 
     private val renderChanelL = RenderChannel(liveData)
     private val renderChanelR = RenderChannel(liveData)
