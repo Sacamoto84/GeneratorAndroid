@@ -8,8 +8,6 @@ import android.graphics.Path
 import com.example.generator2.features.audio.BufSplitFloat
 import com.example.generator2.features.mp3.OSCILLSYNC
 import com.example.generator2.features.mp3.oscillSync
-import com.example.libs.utils.maping
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -108,23 +106,25 @@ fun renderDataToPoints(scope: Scope) {
 
             hiRes = true
 
-            var w: Float
-            var h: Float
-            if (hiRes) {
-                w = scope.scopeW
-                h = scope.scopeH
-            } else {
-                w = scope.scopeW / 2
-                h = scope.scopeH / 2
-            }
+            var w: Float = 100.0f
+            var h: Float = 100.0f
+
+//            if (hiRes) {
+//                w = scope.scopeW
+//                h = scope.scopeH
+//            } else {
+//                w = scope.scopeW / 2
+//                h = scope.scopeH / 2
+//            }
 
 
             val bufRN: FloatArray
             val bufLN: FloatArray
 
-            if ((w == 0f) or (h == 0f)) continue
+        ////    if ((w == 0f) or (h == 0f)) continue
 
-
+            w  = 100.0f
+            h  = 100.0f
             //
 
             frame = scope.bitmapPool.getBitmap(w.toInt(), h.toInt(), Bitmap.Config.ARGB_8888)
@@ -222,11 +222,12 @@ fun renderDataToPoints(scope: Scope) {
 
                 val nano1 = measureNanoTime {
 
-                    repeat(100) {
+                    repeat(1000) {
                         nativeCanvas.split(nativeScopeLong, buf, buf.size)
                     }
                 }
-                println("!!! JNI ${nano1/1000} us")
+                println("!!! JNI ${nano1/1000/1000} us")
+
                 //println("!!! kotlin ${nano0/1000} us | JNI ${nano1/1000} us ${nano0.toFloat()/nano1.toFloat()}X")
 
 

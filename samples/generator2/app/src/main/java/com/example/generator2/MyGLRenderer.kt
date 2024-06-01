@@ -2,11 +2,16 @@ package com.example.generator2
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.opengl.GLES10.GL_LIGHT0
 import android.opengl.GLES10.GL_LIGHT2
 import android.opengl.GLES10.GL_LIGHTING
 import android.opengl.GLES32
 import android.opengl.GLSurfaceView
+import android.opengl.GLUtils
 import com.example.generator2.features.audio.BufSplitFloat
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -19,11 +24,12 @@ import javax.microedition.khronos.opengles.GL10.GL_LIGHT1
 class MyGLRenderer : GLSurfaceView.Renderer {
 
     private var program: Int = 0
+    private var programText: Int = 0
 
     var vertexShader: Int = 0
     var fragmentShader: Int = 0
 
-    private lateinit var vertexBuffer: FloatBuffer
+    private var vertexBuffer: FloatBuffer
 
     private val vertexShaderCode =
         """
@@ -102,12 +108,12 @@ void main() {
 }
 """.trimIndent()
 
+
     private var vertices = floatArrayOf(
         -0.5f, 0.5f, 0.0f,
     )
 
     init {
-
         println("!!! init MyGLRenderer")
         //vertexBuffer = ByteBuffer.allocateDirect(0).order(ByteOrder.nativeOrder()).asFloatBuffer()
 
@@ -134,18 +140,10 @@ void main() {
             GLES32.glLinkProgram(it)
         }
 
-
-
-
-
-
-        GLES32.glDisable(GL_LIGHT0)
-        GLES32.glDisable(GL_LIGHT1)
-        GLES32.glDisable(GL_LIGHT2)
-
         GLES32.glDisable(GL_LIGHTING)
 
         GLES32.glUseProgram(program)
+
 
     }
 
@@ -155,6 +153,8 @@ void main() {
 
         //Эта строка очищает буфер цвета, заполняя его цветом, установленным в glClearColor
         GLES32.glClear(GLES32.GL_COLOR_BUFFER_BIT)
+
+        GLES32.glUseProgram(program)
 
         val positionHandle = GLES32.glGetAttribLocation(program, "signalLevel")
         // Включаем массив вершинных атрибутов
@@ -170,11 +170,11 @@ void main() {
         )
 //
         val stepXHandle = GLES32.glGetUniformLocation(program, "len")
-        val len = vertexBuffer.limit()/1 - 1
+        val len = vertexBuffer.limit() / 1 - 1
         GLES32.glUniform1f(stepXHandle, len.toFloat())
 
         // Рендерим объект
-        GLES32.glDrawArrays(GLES32.GL_POINTS, 0, vertexBuffer.limit()/1)
+        GLES32.glDrawArrays(GLES32.GL_POINTS, 0, vertexBuffer.limit() / 1)
 //
 //        //GLES30.glDrawElements(GLES30.GL_POINTS, vertexBuffer.limit(), GLES30.GL_FLOAT, vertexBuffer)
 //
@@ -187,6 +187,7 @@ void main() {
         // }
         // println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ${nanos / 1000} us")
     }
+
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         //Установить размер отображаемого окна
@@ -233,12 +234,19 @@ void main() {
 
     fun updateVertices(newVertices: FloatArray) {
 
-        pairFlatArray = bufSplit.split(newVertices)
+        //pairFlatArray = bufSplit.split(newVertices)
 
-        vertexBuffer = ByteBuffer.allocateDirect(pairFlatArray.second.size * 4)
-            .order(ByteOrder.nativeOrder())
-            .asFloatBuffer()
-            .put(pairFlatArray.second)
+        val len = vertexBuffer.limit()
+
+        if (len != newVertices.size) {
+            vertexBuffer = ByteBuffer.allocateDirect(newVertices.size * 4)
+                .order(ByteOrder.nativeOrder())
+                .asFloatBuffer()
+                .put(newVertices)
+        } else {
+            vertexBuffer.position(0)
+            vertexBuffer.put(newVertices)
+        }
         vertexBuffer.position(0)
     }
 

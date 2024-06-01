@@ -120,31 +120,6 @@ fun Mainsreen4(
 //                    .weight(1f)
 //            )
 
-  var tt by remember { mutableIntStateOf(0) }
-
-  LaunchedEffect(key1 = true) {
-      while (true)
-      {
-          delay(1)
-           //tt++
-           //if (tt > 2) tt = 0
-      }
-
-  }
-
-
-            Box(modifier = Modifier.size(16.dp + tt.dp).background(Color.Cyan))
-
-
-
-
-
-
-
-
-
-
-
             //Выбор Аудио Источников MP3 Gen Oscill
             TopBarAudioSource(vm)
 
@@ -157,13 +132,15 @@ fun Mainsreen4(
 //                shrinkVertically(), //+ fadeOut()
 //            )
 //            {
-                //Осциллограф
-                vm.audioMixerPump.scope.Oscilloscope()
+            //Осциллограф
+            vm.audioMixerPump.scope.Oscilloscope()
             //}
+
 
             MP3Control(vm)
 
-            //Mp3Library(vm.exoplayer)
+
+
 
             Column()
             {
@@ -204,12 +181,14 @@ fun Mainsreen4(
                 )
             }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()
-                    .weight(1f)
-            )
+
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxHeight()
+//                    .fillMaxWidth()
+//                    .weight(1f)
+//            )
+
 
         }
 

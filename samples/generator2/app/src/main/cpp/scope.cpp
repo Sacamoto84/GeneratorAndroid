@@ -32,25 +32,11 @@ Java_com_example_generator2_features_scope_NativeCanvas_split(JNIEnv *env, jobje
     //std::memset(_scope->bufRf, 0, halfSize * sizeof(float));
     //std::memset(_scope->bufLf, 0, halfSize * sizeof(float));
 
-    // Split the input buffer
-//    size_t index1 = 0;
-//    size_t index2 = 0;
-//
-//    for (int i = 0; i < length; ++i) {
-//        if (i % 2 == 0) {
-//            _scope->bufLN[index1++] = entryElements[i];
-//        } else {
-//            _scope->bufRN[index2++] = entryElements[i];
-//        }
-//    }
-/////////////////////
-////    // Split the input buffer
+    //#pragma omp parallel for
     for (int i = 0; i < halfSize; ++i) {
         _scope->bufLN[i] = entryElements[2 * i];
         _scope->bufRN[i] = entryElements[2 * i + 1];
     }
-//////////////////////
-
 
     env->ReleaseFloatArrayElements(buf, entryElements, 0);
 }
