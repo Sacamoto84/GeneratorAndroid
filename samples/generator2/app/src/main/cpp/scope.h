@@ -8,8 +8,8 @@
 
 class Scope {
 
-    float *bigPointL;
-    float *bigPointR;
+    //float *bigPointL;
+    //float *bigPointR;
 
 
 public:

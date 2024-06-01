@@ -31,6 +31,9 @@
     <uses-sdk tools:overrideLibrary="androidx.security" />
 
     <application
+
+        android:enableOnBackInvokedCallback="true"
+
         android:hardwareAccelerated="true"
         android:largeHeap="true"
         android:name=".App"
@@ -42,7 +45,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Generator2"
         android:usesCleartextTraffic="true"
-        tools:targetApi="m"
+        tools:targetApi="tiramisu"
         tools:replace="android:allowBackup">
         <profileable
             android:shell="true"

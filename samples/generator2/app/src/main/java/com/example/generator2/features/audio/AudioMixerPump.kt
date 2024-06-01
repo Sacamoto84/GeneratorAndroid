@@ -48,7 +48,7 @@ class AudioMixerPump
     //DI
 
     //Звуковая аудиовыхода
-    var audioOut: AudioOut = AudioOut(44100, 200, AudioFormat.ENCODING_PCM_FLOAT)
+    var audioOut: AudioOut = AudioOut(48000, 200, AudioFormat.ENCODING_PCM_FLOAT)
 
     val scope = Scope()
 

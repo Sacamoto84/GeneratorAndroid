@@ -21,14 +21,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,15 +41,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.generator2.SignalGraph
 import com.example.generator2.features.mp3.compose.MP3Control
 import com.example.generator2.features.presets.Presets
 import com.example.generator2.features.presets.ui.DialogPresetsNewFile
+import com.example.generator2.features.update.ui.WidgetUpdate
 import com.example.generator2.screens.mainscreen4.bottom.M4BottomAppBarComponent
 import com.example.generator2.screens.mainscreen4.card.CardCard
 import com.example.generator2.screens.mainscreen4.top.TopBarAudioSource
 import com.example.generator2.theme.colorDarkBackground
-import com.example.generator2.features.update.ui.WidgetUpdate
+import kotlinx.coroutines.delay
 import timber.log.Timber
 
 @androidx.media3.common.util.UnstableApi
@@ -116,10 +120,20 @@ fun Mainsreen4(
 //                    .weight(1f)
 //            )
 
+  var tt by remember { mutableIntStateOf(0) }
+
+  LaunchedEffect(key1 = true) {
+      while (true)
+      {
+          delay(1)
+           //tt++
+           //if (tt > 2) tt = 0
+      }
+
+  }
 
 
-
-
+            Box(modifier = Modifier.size(16.dp + tt.dp).background(Color.Cyan))
 
 
 
@@ -134,18 +148,18 @@ fun Mainsreen4(
             //Выбор Аудио Источников MP3 Gen Oscill
             TopBarAudioSource(vm)
 
-            AnimatedVisibility(
-                visible = vm.audioMixerPump.scope.isUse.collectAsState().value,
-                enter =
-                //slideInVertically() +
-                expandVertically(expandFrom = Alignment.Bottom),// + fadeIn(),
-                exit = //slideOutVertically(targetOffsetY = { fullHeight -> fullHeight })// +
-                shrinkVertically(), //+ fadeOut()
-            )
-            {
+//            AnimatedVisibility(
+//                visible = vm.audioMixerPump.scope.isUse.collectAsState().value,
+//                enter =
+//                //slideInVertically() +
+//                expandVertically(expandFrom = Alignment.Bottom),// + fadeIn(),
+//                exit = //slideOutVertically(targetOffsetY = { fullHeight -> fullHeight })// +
+//                shrinkVertically(), //+ fadeOut()
+//            )
+//            {
                 //Осциллограф
                 vm.audioMixerPump.scope.Oscilloscope()
-            }
+            //}
 
             MP3Control(vm)
 

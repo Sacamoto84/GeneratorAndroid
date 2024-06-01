@@ -1,59 +1,55 @@
 package com.example.generator2
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.PixelFormat
-import android.opengl.GLES30
+import android.opengl.GLES10.GL_LIGHT0
+import android.opengl.GLES10.GL_LIGHT2
+import android.opengl.GLES10.GL_LIGHTING
+import android.opengl.GLES32
 import android.opengl.GLSurfaceView
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
+import com.example.generator2.features.audio.BufSplitFloat
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
-import java.util.Random
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
+import javax.microedition.khronos.opengles.GL10.GL_LIGHT1
+
 
 class MyGLRenderer : GLSurfaceView.Renderer {
 
     private var program: Int = 0
+
+    var vertexShader: Int = 0
+    var fragmentShader: Int = 0
+
     private lateinit var vertexBuffer: FloatBuffer
 
     private val vertexShaderCode =
         """
     #version 300 es
-    in float signalLevel;
     
+    in float signalLevel;
+
     uniform float len;
     
     out vec4 ourColor; // Передаем цвет во фрагментный шейдер
     
     void main() {
-  
-        
-             
-//        if (gl_VertexID % 2 == 0) {
-//        // Для четных gl_VertexID не создаем вершину
-//        discard;
-//    }     
-//             
-            
-       if (gl_VertexID % 2 == 0) 
-       {
-            ourColor = vec4(1.0, 0.0, 1.0, 0.00001);
-       }
-       else
-       {
-            ourColor = vec4(1.0, 1.0, 0.0, 0.00001);
-       }
+
+//       if (gl_VertexID % 2 == 0) 
+//       {
+//            ourColor = vec4(1.0, 0.0, 1.0, 0.00001);
+//       }
+//       else
+//       {
+//            ourColor = vec4(1.0, 1.0, 0.0, 0.00001);
+//       }
        
+       ourColor = vec4(1.0, 1.0, 0.0, 0.00001);
+       
+             
+    
         // Игнорируем вершины с индексами, которые не равны 0, 1, 16, 17, 32, 33 и т.д.
 //        if (gl_VertexID % 4 > 1) {
 //            // Помещаем игнорируемые вершины за пределы видимой области, сохраняя их положение
@@ -112,6 +108,7 @@ void main() {
 
     init {
 
+        println("!!! init MyGLRenderer")
         //vertexBuffer = ByteBuffer.allocateDirect(0).order(ByteOrder.nativeOrder()).asFloatBuffer()
 
         val bb = ByteBuffer.allocateDirect(vertices.size * 4)
@@ -122,49 +119,69 @@ void main() {
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
+        println("!!! init onSurfaceCreated")
+        //Устанавливаем цвет, который будет очищен
+        GLES32.glClearColor(0.5f, 0.0f, 0.0f, 1.0f)
 
-        GLES30.glClearColor(0.1f, 0.0f, 0.0f, 1.0f)
+        vertexShader = loadShader(GLES32.GL_VERTEX_SHADER, vertexShaderCode)
+        fragmentShader = loadShader(GLES32.GL_FRAGMENT_SHADER, fragmentShaderCode)
 
-        val vertexShader = loadShader(GLES30.GL_VERTEX_SHADER, vertexShaderCode)
-        val fragmentShader = loadShader(GLES30.GL_FRAGMENT_SHADER, fragmentShaderCode)
-
-        program = GLES30.glCreateProgram().also {
-            GLES30.glAttachShader(it, vertexShader)
-            GLES30.glAttachShader(it, fragmentShader)
-            GLES30.glLinkProgram(it)
+        program = GLES32.glCreateProgram().also {
+            //Подключить шейдеры к программе
+            GLES32.glAttachShader(it, vertexShader)
+            GLES32.glAttachShader(it, fragmentShader)
+            //Скомпоновать программу
+            GLES32.glLinkProgram(it)
         }
+
+
+
+
+
+
+        GLES32.glDisable(GL_LIGHT0)
+        GLES32.glDisable(GL_LIGHT1)
+        GLES32.glDisable(GL_LIGHT2)
+
+        GLES32.glDisable(GL_LIGHTING)
+
+        GLES32.glUseProgram(program)
+
     }
 
     override fun onDrawFrame(gl: GL10?) {
+        //println("!!! init onDrawFrame")
         // val nanos = measureNanoTime {
 
         //Эта строка очищает буфер цвета, заполняя его цветом, установленным в glClearColor
-        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT)
+        GLES32.glClear(GLES32.GL_COLOR_BUFFER_BIT)
 
-        GLES30.glUseProgram(program)
-
-        val positionHandle = GLES30.glGetAttribLocation(program, "signalLevel")
-        GLES30.glEnableVertexAttribArray(positionHandle)
-
-        GLES30.glVertexAttribPointer(
-            positionHandle,
+        val positionHandle = GLES32.glGetAttribLocation(program, "signalLevel")
+        // Включаем массив вершинных атрибутов
+        GLES32.glEnableVertexAttribArray(positionHandle)
+//
+        GLES32.glVertexAttribPointer(
+            positionHandle, //index Указывает индекс универсального атрибута вершины, который должен быть изменен.
             1,
-            GLES30.GL_FLOAT,
+            GLES32.GL_FLOAT, //Определяет тип данных каждого компонента в массиве.
             false,
-            0,
+            4 * 0,
             vertexBuffer
         )
+//
+        val stepXHandle = GLES32.glGetUniformLocation(program, "len")
+        val len = vertexBuffer.limit()/1 - 1
+        GLES32.glUniform1f(stepXHandle, len.toFloat())
 
-        val stepXHandle = GLES30.glGetUniformLocation(program, "len")
-        val len = vertexBuffer.limit() - 1
-        GLES30.glUniform1f(stepXHandle, len.toFloat())
+        // Рендерим объект
+        GLES32.glDrawArrays(GLES32.GL_POINTS, 0, vertexBuffer.limit()/1)
+//
+//        //GLES30.glDrawElements(GLES30.GL_POINTS, vertexBuffer.limit(), GLES30.GL_FLOAT, vertexBuffer)
+//
 
+        // Отключаем массивы вершинных атрибутов по завершении
+        GLES32.glDisableVertexAttribArray(positionHandle)
 
-        GLES30.glDrawArrays(GLES30.GL_POINTS, 0, vertexBuffer.limit())
-
-        //GLES30.glDrawElements(GLES30.GL_POINTS, vertexBuffer.limit(), GLES30.GL_FLOAT, vertexBuffer)
-
-        GLES30.glDisableVertexAttribArray(positionHandle)
 
         // println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! t1 ${t1 / 1000} us")
         // }
@@ -173,20 +190,34 @@ void main() {
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         //Установить размер отображаемого окна
-        GLES30.glViewport(0, 0, width, height)
+        GLES32.glViewport(0, 0, width, height)
     }
 
     private fun loadShader(type: Int, shaderCode: String): Int {
-        return GLES30.glCreateShader(type).also { shader ->
-            GLES30.glShaderSource(shader, shaderCode)
-            GLES30.glCompileShader(shader)
+        return GLES32.glCreateShader(type).also { shader ->
+
+//            if (shader == 0) throw RuntimeException(
+//                "Could not create shader $type: ${
+//                    GLES30.glGetShaderInfoLog(
+//                        shader
+//                    )
+//                }"
+//            )
+
+            //Загрузка кода шейдера
+            GLES32.glShaderSource(shader, shaderCode)
+            //Компиляция шейдера
+            GLES32.glCompileShader(shader)
+
             val compiled = IntArray(1)
-            GLES30.glGetShaderiv(shader, GLES30.GL_COMPILE_STATUS, compiled, 0)
+            //Проверка результата компиляции
+            GLES32.glGetShaderiv(shader, GLES32.GL_COMPILE_STATUS, compiled, 0)
             if (compiled[0] == 0) {
-                GLES30.glDeleteShader(shader)
+                //Если не получилось, то удаляем шейдер
+                GLES32.glDeleteShader(shader)
                 throw RuntimeException(
                     "Could not compile shader $type: ${
-                        GLES30.glGetShaderInfoLog(
+                        GLES32.glGetShaderInfoLog(
                             shader
                         )
                     }"
@@ -195,64 +226,42 @@ void main() {
         }
     }
 
+
+    private val bufSplit = BufSplitFloat()
+
+    private lateinit var pairFlatArray: Pair<FloatArray, FloatArray>
+
     fun updateVertices(newVertices: FloatArray) {
 
-//        // Получаем массив случайных значений шума
-//        val noise = generateNoise(newVertices.size, 0.1f)
-//
-//        // Добавляем шум к каждому элементу новых вершин
-//        for (i in newVertices.indices) {
-//            newVertices[i] += noise[i]
-//        }
+        pairFlatArray = bufSplit.split(newVertices)
 
-
-
-
-
-        vertexBuffer = ByteBuffer.allocateDirect(newVertices.size * 4)
+        vertexBuffer = ByteBuffer.allocateDirect(pairFlatArray.second.size * 4)
             .order(ByteOrder.nativeOrder())
             .asFloatBuffer()
-            .put(newVertices)
+            .put(pairFlatArray.second)
         vertexBuffer.position(0)
     }
 
+    fun deleteProgram() {
 
-    class LowPassFilter(private val alpha: Float) {
-        private var lastFilteredValue: Float = 0f
+        println("!!! init deleteProgram")
 
-        fun filter(input: Float): Float {
-            lastFilteredValue = alpha * input + (1 - alpha) * lastFilteredValue
-            return lastFilteredValue
+        if (program != 0) {
+            GLES32.glDeleteProgram(program)
+            //GLES20.glDeleteShader(vertexShader)
+            //GLES20.glDeleteShader(fragmentShader)
+            program = 0
         }
     }
-
-
-    // Функция для генерации шума в заданном диапазоне
-    fun generateNoise(length: Int, range: Float): FloatArray {
-        val random = Random()
-        val noise = FloatArray(length)
-        val halfRange = range / 2.0f
-        for (i in 0 until length) {
-            // Генерируем случайное значение шума в заданном диапазоне
-            noise[i] = (random.nextFloat() * range) - halfRange
-        }
-        return noise
-    }
-
 
 }
 
+@SuppressLint("ViewConstructor")
 class MyGLSurfaceView(context: Context) : GLSurfaceView(context) {
-
-    private val renderer: MyGLRenderer = MyGLRenderer()
+    private val renderer = MyGLRenderer()
 
     init {
         setEGLContextClientVersion(3)
-
-        // Включение мультисемплинга
-        //setEGLConfigChooser(8, 8, 8, 8, 16, 8)
-        //holder.setFormat(PixelFormat.TRANSLUCENT)
-
         setRenderer(renderer)
         renderMode = RENDERMODE_WHEN_DIRTY
     }
@@ -261,42 +270,10 @@ class MyGLSurfaceView(context: Context) : GLSurfaceView(context) {
         renderer.updateVertices(vertices)
         requestRender()
     }
-}
 
-@Composable
-fun MyGLSurfaceViewContainer(signalLevels: FloatArray, modifier: Modifier = Modifier) {
-    AndroidView(
-        factory = { context ->
-            MyGLSurfaceView(context).apply {
-                updateVertices(signalLevels)
-            }
-        },
-        modifier = modifier
-    )
-}
-
-@Composable
-fun SignalGraph(signalLevels: FloatArray, modifier: Modifier = Modifier) {
-
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .then(modifier)) {
-        val width = LocalConfiguration.current.screenWidthDp
-        val height = LocalConfiguration.current.screenHeightDp
-
-        val vertices = remember(signalLevels) {
-            prepareVertices(signalLevels)
-        }
-
-        MyGLSurfaceViewContainer(
-            vertices,
-            Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-        )
+    fun deleteProgram() {
+        renderer.deleteProgram()
     }
+
 }
 
-fun prepareVertices(signalLevels: FloatArray): FloatArray {
-    return signalLevels
-}

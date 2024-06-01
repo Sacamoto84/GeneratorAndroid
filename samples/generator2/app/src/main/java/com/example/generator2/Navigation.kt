@@ -11,13 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.generator2.features.playlist.compose.PlaylistUI
 import com.example.generator2.features.explorer.presenter.compose.ScreenExplorer
+import com.example.generator2.features.playlist.compose.PlaylistUI
 import com.example.generator2.features.presets.ui.DialogPresets
 import com.example.generator2.screens.config.ScreenConfig
 import com.example.generator2.screens.editor.ScreenEditor
@@ -25,7 +24,7 @@ import com.example.generator2.screens.html.Html
 import com.example.generator2.screens.mainscreen4.Mainsreen4
 import com.example.generator2.screens.scripting.ScreenScriptCommon
 import com.example.generator2.screens.scripting.ScreenScriptInfo
-import com.google.accompanist.navigation.animation.composable
+
 
 enum class NavigationRoute(val value: String) {
     HOME("home"),
@@ -51,79 +50,67 @@ fun Navigation() {
     NavHost(
         navController = navController,
         startDestination = NavigationRoute.HOME.value,
+
+        enterTransition = { fadeIn(animationSpec = tween(100)) },
+        exitTransition = { fadeOut(animationSpec = tween(100)) },
+        popEnterTransition = { fadeIn(animationSpec = tween(100)) },
+        popExitTransition = { fadeOut(animationSpec = tween(100)) },
+
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
-            .semantics {
-                testTagsAsResourceId = true
-            }
+//            .semantics {
+//                testTagsAsResourceId = true
+//            }
     ) {
 
-
-        composable(NavigationRoute.HOME.value,
-            enterTransition = { fadeIn(animationSpec = tween(0)) },
-            exitTransition = { fadeOut(animationSpec = tween(0)) })
+        composable(
+            NavigationRoute.HOME.value,
+        )
         {
             Mainsreen4()
         }
 
-        composable("script",
-            enterTransition = { fadeIn(animationSpec = tween(0)) },
-            exitTransition = { fadeOut(animationSpec = tween(0)) }
+        composable("script"
         ) {
-
             ScreenScriptCommon()
         }
 
-        composable("editor",
-            enterTransition = { fadeIn(animationSpec = tween(0)) },
-            exitTransition = { fadeOut(animationSpec = tween(0)) }
+        composable("editor"
         ) {
             ScreenEditor()
         }
 
-        composable("scriptinfo",
-            enterTransition = { fadeIn(animationSpec = tween(0)) },
-            exitTransition = { fadeOut(animationSpec = tween(0)) }
+        composable("scriptinfo"
         ) {
             ScreenScriptInfo()
         }
 
         //Экран настройки программы
-        composable("config",
-            enterTransition = { fadeIn(animationSpec = tween(0)) },
-            exitTransition = { fadeOut(animationSpec = tween(0)) }
+        composable("config"
         ) {
             ScreenConfig()
         }
 
         //Экран настройки программы
-        composable("presets",
-            enterTransition = { fadeIn(animationSpec = tween(0)) },
-            exitTransition = { fadeOut(animationSpec = tween(0)) }
+        composable("presets"
         ) {
             DialogPresets()
         }
 
 
         //Экран настройки программы
-        composable("html",
-            enterTransition = { fadeIn(animationSpec = tween(0)) },
-            exitTransition = { fadeOut(animationSpec = tween(0)) }
+        composable("html"
         ) {
             Html()
         }
 
-        composable(NavigationRoute.EXPLORER.value,
-            enterTransition = { fadeIn(animationSpec = tween(0)) },
-            exitTransition = { fadeOut(animationSpec = tween(0)) })
+        composable(NavigationRoute.EXPLORER.value)
         {
             ScreenExplorer()
         }
 
-        composable(NavigationRoute.PLAYLIST.value,
-            enterTransition = { fadeIn(animationSpec = tween(0)) },
-            exitTransition = { fadeOut(animationSpec = tween(0)) })
+        composable(NavigationRoute.PLAYLIST.value)
         {
             PlaylistUI()
         }
