@@ -14,18 +14,31 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidView
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.rememberScreenModel
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.core.screen.ScreenKey
+import cafe.adriel.voyager.core.screen.uniqueScreenKey
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.generator2.di.MainAudioMixerPump
 import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.presets.presetsSaveFile
 import com.example.generator2.features.scope.Scope
+import com.example.generator2.screens.mainscreen4.Mainsreen4
 import com.example.generator2.theme.Generator2Theme
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.util.Utils
@@ -84,6 +97,55 @@ import javax.inject.Singleton
 //    })
 //}
 
+
+class HomeScreenModel @Inject constructor() : ScreenModel {
+    // ...
+}
+
+class HomeScreen : Screen {
+
+    override val key: ScreenKey = uniqueScreenKey
+
+    @Composable
+    override fun Content() {
+        val screenModel = rememberScreenModel { HomeScreenModel() }
+
+        val navigator = LocalNavigator.currentOrThrow
+        Column {
+            Text("Hello, World!", color = Color.White)
+
+            Button(onClick = { navigator.push(HomeScreen2()) }) {
+
+            }
+
+        }
+
+    }
+}
+
+class HomeScreen2 : Screen {
+
+    override val key: ScreenKey = uniqueScreenKey
+
+    @Composable
+    override fun Content() {
+        val screenModel = rememberScreenModel { HomeScreenModel() }
+
+        val navigator = LocalNavigator.currentOrThrow
+
+        Column {
+
+            Text("2!", color = Color.White)
+
+            Button(onClick = { navigator.pop() }) {
+
+            }
+
+        }
+
+
+    }
+}
 
 
 @Singleton
@@ -157,12 +219,15 @@ class MainActivity : ComponentActivity() {
 
 
                 Timber.tag("Время работы")
-                        .i("!!! MainActivity запуск Navigation он начала запуска Splash: ${System.currentTimeMillis() - startTimeSplashScreenActivity} мс!!!")
+                    .i("!!! MainActivity запуск Navigation он начала запуска Splash: ${System.currentTimeMillis() - startTimeSplashScreenActivity} мс!!!")
 
                 Timber.tag("Время работы")
                     .i("!!! MainActivity запуск Navigation он начала запуска App: ${System.currentTimeMillis() - startTimeAplication} мс!!!")
 
-                Navigation()
+                //   Navigation()
+
+                Navigator(AppScreen.Home)
+
 
                 //OpenGLComposeView()
                 //startAnimation()

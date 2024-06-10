@@ -27,10 +27,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.generator2.NavigationRoute
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.generator2.R
-import com.example.generator2.navController
 import com.example.generator2.screens.config.molecule.ConfigConstrain
 import com.example.generator2.screens.config.molecule.ConfigLanguage
 import com.example.generator2.screens.config.molecule.ConfigUpdate
@@ -43,49 +44,54 @@ val modifierGreenButton = Modifier
     .fillMaxWidth()
     .height(40.dp)
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnrememberedMutableState")
-@Composable
-fun ScreenConfig(
-    vm: VMConfig = hiltViewModel()
-) {
 
-    vm.recompose.value
 
-    val focusManager = LocalFocusManager.current
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+    @Composable
+    fun ScreenConfig(vm: VMConfig) {
 
-    Scaffold(backgroundColor = colorLightBackground, bottomBar = { BottomBar() })
-    {
+        //val vm: VMConfig = getViewModel()
+        val navigator = LocalNavigator.currentOrThrow
 
-        Column(
-            Modifier
-                .fillMaxSize()
-                .background(colorLightBackground)
-                .verticalScroll(rememberScrollState())
-                .pointerInput(Unit)
-                { detectTapGestures(onTap = { focusManager.clearFocus() }) }
-        ) {
-            vm.recompose
-            Divider()
-            //Config_header(Update.currentVersion)
-            ConfigUpdate(vm)
-            Divider()
-            ConfigLanguage(vm)
-            Divider()
-            Divider()
-            Divider()
-            Divider()
-            ConfigConstrain(vm)
-            Divider()
-            ConfigVolume(vm)
-            Divider()
+        vm.recompose.value
 
-            Divider()
-            Spacer(modifier = Modifier.height(400.dp))
+        val focusManager = LocalFocusManager.current
+
+        Scaffold(backgroundColor = colorLightBackground, bottomBar =
+        { BottomBar(onClickBack = { navigator.pop() }) })
+        {
+
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .background(colorLightBackground)
+                    .verticalScroll(rememberScrollState())
+                    .pointerInput(Unit)
+                    { detectTapGestures(onTap = { focusManager.clearFocus() }) }
+            ) {
+                vm.recompose
+                Divider()
+                //Config_header(Update.currentVersion)
+                ConfigUpdate(vm)
+                Divider()
+                ConfigLanguage(vm)
+                Divider()
+                Divider()
+                Divider()
+                Divider()
+                ConfigConstrain(vm)
+                Divider()
+                ConfigVolume(vm)
+                Divider()
+
+                Divider()
+                Spacer(modifier = Modifier.height(400.dp))
+            }
+
         }
-
     }
 
-}
+
 
 @Composable
 fun Config_header(str: String) {
@@ -99,18 +105,17 @@ fun Config_header(str: String) {
 }
 
 @Composable
-fun BottomBar() {
+fun BottomBar(onClickBack: () -> Unit = {}) {
     BottomAppBar(
         backgroundColor = colorLightBackground,
         contentColor = Color.White,
     ) {
 
         //Кнопка назад
-        IconButton(modifier = Modifier.testTag("buttonM4ScriptGoBack"),
-            onClick = { navController.popBackStack(
-                route = NavigationRoute.HOME.value,
-                inclusive = false
-            ) }) {
+        IconButton(
+            modifier = Modifier.testTag("buttonM4ScriptGoBack"),
+            onClick = onClickBack
+        ) {
 
             Icon(painter = painterResource(R.drawable.back4), contentDescription = null)
 

@@ -1,8 +1,28 @@
 package com.example.generator2.screens.editor
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.BottomAppBar
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
@@ -16,13 +36,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.example.generator2.R
-import com.example.generator2.navController
 import com.example.generator2.screens.editor.dialog.DialogNew
-import com.example.generator2.screens.editor.ui.*
-import com.example.generator2.theme.colorLightBackground
+import com.example.generator2.screens.editor.ui.ButtonLine
+import com.example.generator2.screens.editor.ui.ButtonPoint
+import com.example.generator2.screens.editor.ui.EditorCanvas
+import com.example.generator2.screens.editor.ui.EditorCanvasLoop
+import com.example.generator2.screens.editor.ui.EditorLinkButtons
+import com.example.generator2.screens.editor.ui.EditorPreviewCarrier
+import com.example.generator2.screens.editor.ui.EditorPreviewFM
+import com.example.generator2.screens.editor.ui.model
 import com.example.generator2.screens.mainscreen4.VMMain4
+import com.example.generator2.theme.colorLightBackground
 
 private val sizeCanvaChar = 8f
 private val strokeWidth = 6f
@@ -154,7 +179,12 @@ private fun BottomBar(global: VMMain4) {
 
 
         //Кнопка назад
-        IconButton(onClick = { navController.popBackStack() }) {
+        IconButton(onClick = {
+
+          //  navController.popBackStack()
+
+
+        }) {
             Icon(painter = painterResource(R.drawable.back4), contentDescription = null)
         }
 

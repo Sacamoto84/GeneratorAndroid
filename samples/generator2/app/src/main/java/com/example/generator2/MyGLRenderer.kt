@@ -7,6 +7,7 @@ import android.opengl.GLES30.*
 import android.opengl.GLSurfaceView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -129,7 +130,7 @@ void main() {
     override fun onDrawFrame(gl: GL10?) {
 
         if (shouldPlay.get()) {
-            println("!!! init onDrawFrame")
+            //println("!!! init onDrawFrame")
 
             glViewport(0, 0, width, height)
 
@@ -256,9 +257,11 @@ class MyGLSurfaceView(context: Context) : GLSurfaceView(context) {
     init {
         setEGLContextClientVersion(3)
         //setRenderer(renderer)
-        // renderMode = RENDERMODE_WHEN_DIRTY
+         //renderMode = RENDERMODE_WHEN_DIRTY
         preserveEGLContextOnPause = true
     }
+
+
 
 
     fun setShaderRenderer(
@@ -270,17 +273,17 @@ class MyGLSurfaceView(context: Context) : GLSurfaceView(context) {
                 renderer
             )
            this.renderer = renderer
+
+           renderMode = RENDERMODE_WHEN_DIRTY
         }
         hasSetShader = true
     }
 
 
-    fun updateVertices(vertices: FloatArray) {
-
-        //renderer.updateVertices(vertices)
-        requestRender()
-
-    }
+//    fun requestRender() {
+//        //renderer.updateVertices(vertices)
+//        super.requestRender()
+//    }
 
 //    fun deleteProgram() {
 //        renderer.deleteProgram()
@@ -306,12 +309,19 @@ class MyGLSurfaceView(context: Context) : GLSurfaceView(context) {
 @Composable
 fun GLShader(
     renderer: MyGLRenderer,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    update : (MyGLSurfaceView?) ->  Unit
 ) {
 
     var view: MyGLSurfaceView? = remember {
         null
     }
+
+//    LaunchedEffect(key1 = update) {
+//        view?.requestRender()
+//    }
+
+
 
     val lifeCycleState = LocalLifecycleOwner.current.lifecycle
 
@@ -352,5 +362,9 @@ fun GLShader(
             renderer
         )
 
+        update.invoke(view)
     }
+
+
+
 }

@@ -3,7 +3,6 @@ package com.example.generator2.features.presets
 import androidx.lifecycle.ViewModel
 import com.example.generator2.AppPath
 import com.example.generator2.features.generator.Generator
-import com.example.generator2.navController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -19,7 +18,7 @@ class presetsVM @Inject constructor(
      */
     fun onClickPresetsRead(name: String) {
         presetsToLiveData(presetsReadFile(name, appPath.presets), gen)
-        navController.popBackStack()
+        //navController.popBackStack()
     }
 
 

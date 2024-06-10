@@ -19,7 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.generator2.R
 import com.example.generator2.features.explorer.presenter.ScreenExplorerViewModel
-import com.example.generator2.navController
+
 
 @androidx.media3.common.util.UnstableApi
 @Composable
@@ -52,7 +52,11 @@ fun ScreenExplorerBottomBar(vm: ScreenExplorerViewModel) {
                 .background(Color(0xFF2D353D))
         ) {
 
-            IconButton(onClick = { navController.popBackStack() }) {
+            IconButton(onClick = {
+
+              //  navController.popBackStack()
+
+            }) {
                 Icon(
                     painter = painterResource(R.drawable.back4),
                     contentDescription = null,

@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -42,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.R
-import com.example.generator2.navController
 import com.example.generator2.features.presets.Presets
 import com.example.generator2.features.presets.presetsGetListName
 import com.example.generator2.features.presets.presetsVM
@@ -81,7 +79,7 @@ fun DialogPresets(vm: presetsVM = hiltViewModel()) {
 
         Scaffold(
             topBar = { TopBar() },
-            bottomBar = { BottomBar() }
+            bottomBar = { BottomBar(onClickBack = {}) }
         )
         {
             Box(
@@ -237,7 +235,7 @@ private fun TopBar() {
 }
 
 @Composable
-private fun BottomBar() {
+private fun BottomBar(onClickBack: () -> Unit) {
     Row(
         modifier = Modifier
             .height(48.dp)
@@ -248,7 +246,7 @@ private fun BottomBar() {
     ) {
 
         OutlinedButton(
-            onClick = { navController.popBackStack() },
+            onClick = onClickBack,
             colors = ButtonDefaults.buttonColors(
                 contentColor = Color.Black,
                 containerColor = Color.White

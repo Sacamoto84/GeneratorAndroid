@@ -25,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -112,7 +113,8 @@ class Scope {
     private var pairPointsLissagu: ChPixelData =
         ChPixelData(Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888), true)
 
-    var update by mutableIntStateOf(0)
+
+
     var updateLissagu by mutableIntStateOf(0)
 
 
@@ -182,10 +184,24 @@ class Scope {
         floatArrayOf(0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f, 0.15f, 0.18f)
 
 
+    var update : Int = 0
+
     @Composable
     fun Oscilloscope() {
 
-        val context = LocalContext.current
+
+
+        var view : MyGLSurfaceView? = remember {
+            null
+        }
+
+
+
+//        var update by remember {
+//            mutableIntStateOf(0)
+//        }
+
+
 
 //        if (myGLSurfaceST == null) {
 //            println("!!! new myGLSurfaceST == null")
@@ -209,7 +225,6 @@ class Scope {
 
 
         LaunchedEffect(key1 = true) {
-
             withContext(Dispatchers.IO) {
                 while (true) {
                     //delay(1)
@@ -219,8 +234,8 @@ class Scope {
                     signalLevels = floatArrayPool.pool[index].array
                     //myGLSurfaceST?.updateVertices(signalLevels)
                     shaderRenderer.updateVertices(signalLevels)
-
                     //update++
+                    view?.requestRender()
                 }
             }
         }
@@ -246,13 +261,9 @@ class Scope {
                         .height(200.dp)
                         .weight(1f), contentAlignment = Alignment.BottomCenter,
                 ) {
-
-                    GLShader(renderer = shaderRenderer)
-
-
-
-
-                    //Text(text = "3w3333333333", color = Color.White)
+                    GLShader(renderer = shaderRenderer, update = {
+                        view = it
+                    })
                 }
 
 
@@ -352,7 +363,7 @@ class Scope {
                     }
                 }
             }) {
-            update
+            //update
             scopeW = size.width
             scopeH = size.height
 
@@ -417,6 +428,7 @@ class Scope {
                 modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween
             ) {
 
+
                 Box(
                     modifier = m
                         .clickable(onClick = { isVisibleL.value = isVisibleL.value.not() })
@@ -430,6 +442,7 @@ class Scope {
                         fontWeight = FontWeight.Bold
                     )
                 }
+
                 Box(
                     modifier = m
                         .clickable(onClick = { isVisibleR.value = isVisibleR.value.not() })
