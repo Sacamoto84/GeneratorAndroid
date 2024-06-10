@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.generator2.NavigationRoute
 import com.example.generator2.R
 import com.example.generator2.navController
 import com.example.generator2.screens.config.molecule.ConfigConstrain
@@ -103,10 +104,16 @@ fun BottomBar() {
         backgroundColor = colorLightBackground,
         contentColor = Color.White,
     ) {
+
         //Кнопка назад
         IconButton(modifier = Modifier.testTag("buttonM4ScriptGoBack"),
-            onClick = { navController.popBackStack() }) {
+            onClick = { navController.popBackStack(
+                route = NavigationRoute.HOME.value,
+                inclusive = false
+            ) }) {
+
             Icon(painter = painterResource(R.drawable.back4), contentDescription = null)
+
         }
         Spacer(modifier = Modifier.weight(1f))
     }

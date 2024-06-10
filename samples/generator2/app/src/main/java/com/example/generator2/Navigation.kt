@@ -42,7 +42,6 @@ enum class NavigationRoute(val value: String) {
 lateinit var navController: NavHostController
 
 @androidx.media3.common.util.UnstableApi
-@OptIn(ExperimentalAnimationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun Navigation() {
     navController = rememberNavController()
@@ -51,10 +50,10 @@ fun Navigation() {
         navController = navController,
         startDestination = NavigationRoute.HOME.value,
 
-        enterTransition = { fadeIn(animationSpec = tween(100)) },
-        exitTransition = { fadeOut(animationSpec = tween(100)) },
-        popEnterTransition = { fadeIn(animationSpec = tween(100)) },
-        popExitTransition = { fadeOut(animationSpec = tween(100)) },
+        enterTransition = { fadeIn(animationSpec = tween(0)) },
+        exitTransition = { fadeOut(animationSpec = tween(0)) },
+        popEnterTransition = { fadeIn(animationSpec = tween(0)) },
+        popExitTransition = { fadeOut(animationSpec = tween(0)) },
 
         modifier = Modifier
             .fillMaxSize()
