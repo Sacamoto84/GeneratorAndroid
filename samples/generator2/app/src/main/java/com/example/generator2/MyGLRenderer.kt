@@ -2,34 +2,36 @@ package com.example.generator2
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.opengl.GLES10.GL_LIGHT0
-import android.opengl.GLES10.GL_LIGHT2
 import android.opengl.GLES10.GL_LIGHTING
-import android.opengl.GLES32
+import android.opengl.GLES30.*
 import android.opengl.GLSurfaceView
-import android.opengl.GLUtils
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.example.generator2.features.audio.BufSplitFloat
+import timber.log.Timber
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
-import javax.microedition.khronos.opengles.GL10.GL_LIGHT1
 
 
 class MyGLRenderer : GLSurfaceView.Renderer {
 
     private var program: Int = 0
-    private var programText: Int = 0
 
-    var vertexShader: Int = 0
-    var fragmentShader: Int = 0
+    private var vertexShader: Int = 0
+    private var fragmentShader: Int = 0
 
-    private var vertexBuffer: FloatBuffer
+    private lateinit var vertexBuffer: FloatBuffer
+    private lateinit var indexBuffer: FloatBuffer
 
     private val vertexShaderCode =
         """
@@ -71,30 +73,6 @@ class MyGLRenderer : GLSurfaceView.Renderer {
         
 """.trimIndent()
 
-
-    //(x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin
-    // inmin = 0
-    // inmax = len
-    // outmin = -1
-    // outmax = 1f
-
-    // (x - 0) * (1f + 1f) / (len - 1 - 0) -1
-    // x * 2f / (len - 1) - 1
-
-
-    // float x = offsetX + float(gl_VertexID) * stepX;
-//    #version 300 es
-//    in float signalLevel;
-//    uniform float stepX;
-//    uniform float offsetX;
-//    uniform float scaleY;
-//    void main() {
-//        float x = offsetX + gl_VertexID * stepX;
-//        float y = signalLevel * scaleY * 2.0 - 1.0;
-//        gl_Position = vec4(x, y, 0.0, 1.0);
-//        gl_PointSize = 4.0;
-//    }
-
     private val fragmentShaderCode =
         """
 #version 300 es
@@ -108,117 +86,110 @@ void main() {
 }
 """.trimIndent()
 
-
     private var vertices = floatArrayOf(
         -0.5f, 0.5f, 0.0f,
     )
 
     init {
-        println("!!! init MyGLRenderer")
-        //vertexBuffer = ByteBuffer.allocateDirect(0).order(ByteOrder.nativeOrder()).asFloatBuffer()
 
+        println("!!! init MyGLRenderer")
+
+        // Инициализация для OpenGL ES 3.0
         val bb = ByteBuffer.allocateDirect(vertices.size * 4)
         bb.order(ByteOrder.nativeOrder())
         vertexBuffer = bb.asFloatBuffer()
         vertexBuffer.put(vertices)
         vertexBuffer.position(0)
+
+        //vertexBuffer = ByteBuffer.allocateDirect(0).order(ByteOrder.nativeOrder()).asFloatBuffer()
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         println("!!! init onSurfaceCreated")
+
         //Устанавливаем цвет, который будет очищен
-        GLES32.glClearColor(0.5f, 0.0f, 0.0f, 1.0f)
+        glClearColor(0.5f, 0.5f, 0.5f, 1.0f)
 
-        vertexShader = loadShader(GLES32.GL_VERTEX_SHADER, vertexShaderCode)
-        fragmentShader = loadShader(GLES32.GL_FRAGMENT_SHADER, fragmentShaderCode)
+        vertexShader = loadShader(GL_VERTEX_SHADER, vertexShaderCode)
+        fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragmentShaderCode)
 
-        program = GLES32.glCreateProgram().also {
+        program = glCreateProgram().also {
             //Подключить шейдеры к программе
-            GLES32.glAttachShader(it, vertexShader)
-            GLES32.glAttachShader(it, fragmentShader)
+            glAttachShader(it, vertexShader)
+            glAttachShader(it, fragmentShader)
             //Скомпоновать программу
-            GLES32.glLinkProgram(it)
+            glLinkProgram(it)
         }
 
-        GLES32.glDisable(GL_LIGHTING)
-
-        GLES32.glUseProgram(program)
-
+        glDisable(GL_LIGHTING)
+        glUseProgram(program)
 
     }
 
     override fun onDrawFrame(gl: GL10?) {
-        //println("!!! init onDrawFrame")
-        // val nanos = measureNanoTime {
 
-        //Эта строка очищает буфер цвета, заполняя его цветом, установленным в glClearColor
-        GLES32.glClear(GLES32.GL_COLOR_BUFFER_BIT)
+        if (shouldPlay.get()) {
+            println("!!! init onDrawFrame")
 
-        GLES32.glUseProgram(program)
+            glViewport(0, 0, width, height)
 
-        val positionHandle = GLES32.glGetAttribLocation(program, "signalLevel")
-        // Включаем массив вершинных атрибутов
-        GLES32.glEnableVertexAttribArray(positionHandle)
-//
-        GLES32.glVertexAttribPointer(
-            positionHandle, //index Указывает индекс универсального атрибута вершины, который должен быть изменен.
-            1,
-            GLES32.GL_FLOAT, //Определяет тип данных каждого компонента в массиве.
-            false,
-            4 * 0,
-            vertexBuffer
-        )
-//
-        val stepXHandle = GLES32.glGetUniformLocation(program, "len")
-        val len = vertexBuffer.limit() / 1 - 1
-        GLES32.glUniform1f(stepXHandle, len.toFloat())
+            //Эта строка очищает буфер цвета, заполняя его цветом, установленным в glClearColor
+            glClear(GL_COLOR_BUFFER_BIT)
 
-        // Рендерим объект
-        GLES32.glDrawArrays(GLES32.GL_POINTS, 0, vertexBuffer.limit() / 1)
-//
-//        //GLES30.glDrawElements(GLES30.GL_POINTS, vertexBuffer.limit(), GLES30.GL_FLOAT, vertexBuffer)
-//
+            val positionHandle = glGetAttribLocation(program, "signalLevel")
+            // Включаем массив вершинных атрибутов
+            glEnableVertexAttribArray(positionHandle)
 
-        // Отключаем массивы вершинных атрибутов по завершении
-        GLES32.glDisableVertexAttribArray(positionHandle)
+            glVertexAttribPointer(
+                positionHandle, //index Указывает индекс универсального атрибута вершины, который должен быть изменен.
+                1,
+                GL_FLOAT, //Определяет тип данных каждого компонента в массиве.
+                false,
+                4 * 0,
+                vertexBuffer
+            )
 
+            val stepXHandle = glGetUniformLocation(program, "len")
+            val len = vertexBuffer.limit() / 1 - 1
+            glUniform1f(stepXHandle, len.toFloat())
 
-        // println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! t1 ${t1 / 1000} us")
-        // }
-        // println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ${nanos / 1000} us")
+            // Рендерим объект
+            glDrawArrays(GL_POINTS, 0, vertexBuffer.limit() / 1)
+
+            // Отключаем массивы вершинных атрибутов по завершении
+            glDisableVertexAttribArray(positionHandle)
+
+        }
+
     }
 
+    var width: Int = 1
+    var height: Int = 1
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
+        this.width = width
+        this.height = height
+
         //Установить размер отображаемого окна
-        GLES32.glViewport(0, 0, width, height)
+        glViewport(0, 0, width, height)
     }
 
     private fun loadShader(type: Int, shaderCode: String): Int {
-        return GLES32.glCreateShader(type).also { shader ->
-
-//            if (shader == 0) throw RuntimeException(
-//                "Could not create shader $type: ${
-//                    GLES30.glGetShaderInfoLog(
-//                        shader
-//                    )
-//                }"
-//            )
-
+        return glCreateShader(type).also { shader ->
             //Загрузка кода шейдера
-            GLES32.glShaderSource(shader, shaderCode)
+            glShaderSource(shader, shaderCode)
             //Компиляция шейдера
-            GLES32.glCompileShader(shader)
+            glCompileShader(shader)
 
             val compiled = IntArray(1)
             //Проверка результата компиляции
-            GLES32.glGetShaderiv(shader, GLES32.GL_COMPILE_STATUS, compiled, 0)
+            glGetShaderiv(shader, GL_COMPILE_STATUS, compiled, 0)
             if (compiled[0] == 0) {
                 //Если не получилось, то удаляем шейдер
-                GLES32.glDeleteShader(shader)
+                glDeleteShader(shader)
                 throw RuntimeException(
                     "Could not compile shader $type: ${
-                        GLES32.glGetShaderInfoLog(
+                        glGetShaderInfoLog(
                             shader
                         )
                     }"
@@ -232,22 +203,17 @@ void main() {
 
     private lateinit var pairFlatArray: Pair<FloatArray, FloatArray>
 
+
     fun updateVertices(newVertices: FloatArray) {
 
-        //pairFlatArray = bufSplit.split(newVertices)
+        pairFlatArray = bufSplit.split(newVertices)
 
-        val len = vertexBuffer.limit()
-
-        if (len != newVertices.size) {
-            vertexBuffer = ByteBuffer.allocateDirect(newVertices.size * 4)
-                .order(ByteOrder.nativeOrder())
-                .asFloatBuffer()
-                .put(newVertices)
-        } else {
-            vertexBuffer.position(0)
-            vertexBuffer.put(newVertices)
-        }
+        vertexBuffer = ByteBuffer.allocateDirect(pairFlatArray.second.size * 4)
+            .order(ByteOrder.nativeOrder())
+            .asFloatBuffer()
+            .put(pairFlatArray.second)
         vertexBuffer.position(0)
+
     }
 
     fun deleteProgram() {
@@ -255,33 +221,136 @@ void main() {
         println("!!! init deleteProgram")
 
         if (program != 0) {
-            GLES32.glDeleteProgram(program)
+            glDeleteProgram(program)
             //GLES20.glDeleteShader(vertexShader)
             //GLES20.glDeleteShader(fragmentShader)
             program = 0
         }
     }
 
+    private val shouldPlay = AtomicBoolean(false)
+
+    fun onResume() {
+        shouldPlay.compareAndSet(false,true)
+    }
+
+    fun onPause() {
+        shouldPlay.compareAndSet(true, false)
+    }
+
 }
 
 @SuppressLint("ViewConstructor")
 class MyGLSurfaceView(context: Context) : GLSurfaceView(context) {
-    private val renderer = MyGLRenderer()
+
+    private var renderer : Renderer? = null //= MyGLRenderer()
+
+    private var hasSetShader = false
+
+
+    init {
+        id = generateViewId()
+    }
+
 
     init {
         setEGLContextClientVersion(3)
-        setRenderer(renderer)
-        renderMode = RENDERMODE_WHEN_DIRTY
+        //setRenderer(renderer)
+        // renderMode = RENDERMODE_WHEN_DIRTY
+        preserveEGLContextOnPause = true
     }
+
+
+    fun setShaderRenderer(
+        renderer: Renderer
+    ) {
+
+        if (hasSetShader.not()) {
+            setRenderer(
+                renderer
+            )
+           this.renderer = renderer
+        }
+        hasSetShader = true
+    }
+
 
     fun updateVertices(vertices: FloatArray) {
-        renderer.updateVertices(vertices)
+
+        //renderer.updateVertices(vertices)
         requestRender()
+
     }
 
-    fun deleteProgram() {
-        renderer.deleteProgram()
+//    fun deleteProgram() {
+//        renderer.deleteProgram()
+//    }
+
+    fun onDestroy() {
+        super.onDetachedFromWindow()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Timber.d("!!! MyGLSurfaceView onResume")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Timber.d("!!! MyGLSurfaceView onPause")
     }
 
 }
 
+
+@Composable
+fun GLShader(
+    renderer: MyGLRenderer,
+    modifier: Modifier = Modifier
+) {
+
+    var view: MyGLSurfaceView? = remember {
+        null
+    }
+
+    val lifeCycleState = LocalLifecycleOwner.current.lifecycle
+
+    DisposableEffect(key1 = lifeCycleState) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> {
+                    view?.onResume()
+                    renderer.onResume()
+                }
+                Lifecycle.Event.ON_PAUSE -> {
+                    view?.onPause()
+                    renderer.onPause()
+                }
+                else -> {
+                }
+            }
+        }
+        lifeCycleState.addObserver(observer)
+
+        onDispose {
+            Timber.d("View Disposed ${view.hashCode()}")
+            lifeCycleState.removeObserver(observer)
+            view?.onPause()
+            view = null
+        }
+    }
+
+    AndroidView(modifier = modifier,
+        factory = {
+            MyGLSurfaceView(it)
+        }) { glSurfaceView ->
+        view = glSurfaceView
+
+        glSurfaceView.debugFlags = GLSurfaceView.DEBUG_CHECK_GL_ERROR or GLSurfaceView.DEBUG_LOG_GL_CALLS
+
+        glSurfaceView.setShaderRenderer(
+            renderer
+        )
+
+    }
+}

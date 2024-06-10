@@ -42,6 +42,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.generator2.GLShader
+import com.example.generator2.MyGLRenderer
 import com.example.generator2.MyGLSurfaceView
 import com.example.generator2.application
 import com.example.generator2.features.scope.compose.OscilloscopeControl
@@ -183,21 +185,28 @@ class Scope {
     @Composable
     fun Oscilloscope() {
 
-        if (myGLSurfaceST == null) {
-            val context = LocalContext.current
-            println("!!! new myGLSurfaceST == null")
-            myGLSurfaceST = MyGLSurfaceView(context).apply {
-                updateVertices(signalLevels)
+        val context = LocalContext.current
+
+//        if (myGLSurfaceST == null) {
+//            println("!!! new myGLSurfaceST == null")
+//            myGLSurfaceST = MyGLSurfaceView(context).apply {
+//                updateVertices(signalLevels)
+//            }
+//        }
+
+        val shaderRenderer = remember {
+
+            MyGLRenderer().apply {
+//                setShaders(
+//                    shader.fragmentShader,
+//                    shader.vertexShader,
+//                    "MainListing ${shader.title}"
+//                )
             }
+
         }
 
-//        var update by remember {
-//            mutableIntStateOf(0)
-//        }
 
-//        val myGLSurfaceR = remember {
-//            myGLSurfaceST
-//        }
 
         LaunchedEffect(key1 = true) {
 
@@ -208,36 +217,45 @@ class Scope {
                     val index = floatArrayPool.findFrameIndex(frames)
                     if (index == -1) continue
                     signalLevels = floatArrayPool.pool[index].array
-                    myGLSurfaceST?.updateVertices(signalLevels)
+                    //myGLSurfaceST?.updateVertices(signalLevels)
+                    shaderRenderer.updateVertices(signalLevels)
+
                     //update++
                 }
             }
         }
 
-        DisposableEffect(Unit) {
-            myGLSurfaceST!!.onResume()
-            onDispose {
-                myGLSurfaceST!!.onPause()
-                myGLSurfaceST!!.deleteProgram()
-            }
-        }
+//        DisposableEffect(Unit) {
+//            myGLSurfaceST?.onResume()
+//            onDispose {
+//                println("!!! onDispose")
+//                myGLSurfaceST?.onPause()
+//                myGLSurfaceST?.deleteProgram()
+//                myGLSurfaceST?.onDestroy()
+//                myGLSurfaceST = null
+//            }
+//        }
 
         Column {
             Row {
+
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
-                        .weight(1f)
+                        .weight(1f), contentAlignment = Alignment.BottomCenter,
                 ) {
-                    AndroidView(
-                        factory = {
-                            myGLSurfaceST!!
-                        },
-                        modifier = Modifier.fillMaxSize()
-                    )
+
+                    GLShader(renderer = shaderRenderer)
+
+
+
+
                     //Text(text = "3w3333333333", color = Color.White)
                 }
+
+
                 PanelButton()
             }
             OscilloscopeControl()

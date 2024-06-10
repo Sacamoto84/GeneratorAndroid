@@ -54,24 +54,7 @@ import javax.inject.Singleton
 //YandexMetrica.reportError(String groupIdentifier, String message, Throwable error)
 
 
- lateinit var glSurfaceView: GLSurfaceView
- lateinit var renderer: MyGLRenderer
-private val handler = Handler(Looper.getMainLooper())
-
-@Composable
-fun OpenGLComposeView() {
-    Box(modifier = Modifier.fillMaxSize()) {
-        AndroidView(factory = { context ->
-            glSurfaceView = GLSurfaceView(context).apply {
-                setEGLContextClientVersion(3)
-                setRenderer(renderer)
-                renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
-            }
-            glSurfaceView
-        })
-    }
-}
-
+//private val handler = Handler(Looper.getMainLooper())
 
 //@Composable
 //private fun startAnimation() {
@@ -132,7 +115,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        renderer = MyGLRenderer()
+        //renderer = MyGLRenderer()
 
         //Timber.plant(Timber.DebugTree())
         Timber.i("..................................onCreate.................................")
