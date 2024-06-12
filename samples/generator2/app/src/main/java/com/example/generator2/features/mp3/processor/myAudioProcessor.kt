@@ -100,10 +100,10 @@ class MyAudioProcessor(private var isPlayingD: MutableStateFlow<Boolean>, privat
         processBuffer.flip()
         outputBuffer = this.processBuffer
 
-//        if (buf.isNotEmpty()) {
-//            val s = streamOut.trySend(buf).isSuccess
-//            if (!s) Timber.e("Места в канале из процессора нет")
-//        }
+        if (buf.isNotEmpty()) {
+            val s = streamOut.trySend(buf).isSuccess
+            if (!s) Timber.e("Места в канале из процессора нет")
+        }
 
     }
 

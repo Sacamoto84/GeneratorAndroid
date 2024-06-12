@@ -23,6 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import com.example.generator2.AppScreen
 import com.example.generator2.R
 import com.example.generator2.features.audio.AudioSampleRate
 import com.example.generator2.features.mp3.formatMinSec
@@ -33,6 +36,9 @@ import com.example.generator2.theme.colorLightBackground
 
 @Composable
 fun MP3Control(vm: VMMain4) {
+
+    val navigator = LocalNavigator.currentOrThrow
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -69,12 +75,7 @@ fun MP3Control(vm: VMMain4) {
             IconButton(
                 modifier = Modifier.size(40.dp),
                 onClick = {
-
-
-                   // navController.navigate(NavigationRoute.EXPLORER.value)
-
-
-
+                    navigator.push(AppScreen.Explorer)
                 }) {
                 Icon(
                     modifier = Modifier.size(28.dp),

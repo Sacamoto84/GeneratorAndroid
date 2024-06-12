@@ -11,6 +11,7 @@ import com.example.generator2.features.mp3.processor.audioProcessorInputFormat
 import com.example.generator2.features.scope.Scope
 import com.example.generator2.model.itemList
 import com.example.generator2.util.BufMenge
+import com.example.generator2.util.MeasureMicroAvg
 import com.example.generator2.util.bufMerge
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -89,6 +90,9 @@ class AudioMixerPump
         val bufMerge2 = BufMenge()
         val bufMerge3 = BufMenge()
 
+        val measureMicroAvg = MeasureMicroAvg()
+
+
         GlobalScope.launch(Dispatchers.IO) {
 
             var init = false
@@ -132,18 +136,18 @@ class AudioMixerPump
                         continue
 
                     //println("bigBufMp3.size ${bigBufMp3.size}")
-                    if (start) {
-                        Timber.e("1 start $volume $delay")
-                        if (delay > 0) {
-                            delay--; volume = 0.01f
-                        } else {
-                            volume += 0.05f
-                        }
-                        if (volume >= 1f) {
-                            volume = 1f; start = false
-                        }
-                    }
 
+//                    if (start) {
+//                        Timber.e("1 start $volume $delay")
+//                        if (delay > 0) {
+//                            delay--; volume = 0.01f
+//                        } else {
+//                            volume += 0.05f
+//                        }
+//                        if (volume >= 1f) {
+//                            volume = 1f; start = false
+//                        }
+//                    }
 
 
                     if ((audioProcessorInputFormat.value.sampleRate != audioOut.sampleRate)) {
@@ -159,7 +163,10 @@ class AudioMixerPump
                     val bufGenR: FloatArray
                     if ((routeL.value == ROUTESTREAM.GEN) or (routeR.value == ROUTESTREAM.GEN)) {
                         gen.sampleRate = audioProcessorInputFormat.value.sampleRate
+
+
                         val p = gen.renderAudio(bufferSize)
+
                         bufGenL = p.first
                         bufGenR = p.second
                     } else {
@@ -167,9 +174,9 @@ class AudioMixerPump
                         bufGenR = FloatArray(bufferSize)
                     }
 //
-                    for (i in bigBufMp3.indices) {
-                        bigBufMp3[i] = bigBufMp3[i] * volume
-                    }
+//                    for (i in bigBufMp3.indices) {
+//                        bigBufMp3[i] = bigBufMp3[i] * volume
+//                    }
 
                     val (bufMp3L, bufMp3R) = BufSplitFloat().split(bigBufMp3)
 //
@@ -245,7 +252,16 @@ class AudioMixerPump
                     //mi8  2220us release 192k 8192
                     //9060 3940us release 192k 8192
                     val nanos = measureNanoTime {
-                        buf = gen.renderAudio(bufferSize)
+
+                       val t = measureMicroAvg.measureNanoTime{//measureNanoTime {
+
+
+                            //measureMicroAvg.measureNanoTime {
+                           buf = gen.renderAudio(bufferSize)
+                           //}
+                       }
+                        println("!!! renderAudio ${measureMicroAvg.avgUs.toInt()} us ${measureMicroAvg.count} t : ${t} us")
+
                     }
 
                     calculator.update(nanos / 1000.0)

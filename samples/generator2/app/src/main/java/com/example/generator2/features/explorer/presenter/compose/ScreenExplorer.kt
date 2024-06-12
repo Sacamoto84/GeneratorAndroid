@@ -17,12 +17,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.generator2.features.explorer.presenter.ScreenExplorerViewModel
 
 @androidx.media3.common.util.UnstableApi
 @Composable
-fun ScreenExplorer(vm: ScreenExplorerViewModel = hiltViewModel()) {
+fun ScreenExplorer(vm: ScreenExplorerViewModel) {
 
     LaunchedEffect(key1 = vm.currentNode.collectAsState().value) {
         vm.scanNode()

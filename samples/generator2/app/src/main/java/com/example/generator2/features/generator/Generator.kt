@@ -7,8 +7,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
+import kotlin.system.measureNanoTime
 
 class Generator {
+
 
     val liveData: DataLiveData = DataLiveData()
 
@@ -25,40 +27,23 @@ class Generator {
     private val renderChanelR = RenderChannel(liveData)
 
 
-    suspend fun renderAudio(numFrames: Int = 1024): Pair<FloatArray, FloatArray> {
-
+    fun renderAudio(numFrames: Int = 1024): Pair<FloatArray, FloatArray> {
         if (numFrames == 0) Timber.e("numFrames == 0")
 
         val l: FloatArray
         val r: FloatArray
 
         if (!liveData.mono.value) {
-
-            val job1 = CoroutineScope(Dispatchers.IO).async {
-                renderChanelL.renderChanel(ch1, numFrames / 2, sampleRate)
-            }
-
-            val job2 = CoroutineScope(Dispatchers.IO).async {
-                renderChanelR.renderChanel(ch2, numFrames / 2, sampleRate)
-            }
-
-            val results = awaitAll(job1, job2)
-
-            l = results[0]
-            r = results[1]
-
-//           l = renderChanelL.renderChanel(ch1, numFrames / 2, sampleRate)
-//           r = renderChanelR.renderChanel(ch2, numFrames / 2, sampleRate)
-
+            l = renderChanelL.renderChanel2(ch1, numFrames / 2, sampleRate)
+            r = renderChanelR.renderChanel2(ch2, numFrames / 2, sampleRate)
         } else {
             //Mono
-            val m = renderChanelL.renderChanel(ch1, numFrames / 2, sampleRate)
+            val m = renderChanelL.renderChanel2(ch1, numFrames / 2, sampleRate)
             l = m
             r = m
         }
 
         return Pair(l, r)
-
     }
 
     fun createFm(ch: String) {

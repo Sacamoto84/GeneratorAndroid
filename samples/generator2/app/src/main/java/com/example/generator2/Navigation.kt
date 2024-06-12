@@ -1,17 +1,22 @@
 package com.example.generator2
 
+import androidx.annotation.OptIn
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.media3.common.util.UnstableApi
 import cafe.adriel.voyager.core.screen.Screen
+import com.example.generator2.features.explorer.presenter.ScreenExplorerViewModel
+import com.example.generator2.features.explorer.presenter.compose.ScreenExplorer
 import com.example.generator2.screens.config.ScreenConfig
 import com.example.generator2.screens.config.vm.VMConfig
 import com.example.generator2.screens.mainscreen4.Mainsreen4
 import com.example.generator2.screens.mainscreen4.VMMain4
 
-
 sealed class AppScreen : Screen {
 
     data object Home : AppScreen() {
+        private fun readResolve(): Any = Home
+
         @Composable
         override fun Content() {
             val viewModel: VMMain4 = hiltViewModel()
@@ -20,10 +25,24 @@ sealed class AppScreen : Screen {
     }
 
     data object Config :  AppScreen() {
+        private fun readResolve(): Any = Config
+
         @Composable
         override fun Content() {
             val viewModel: VMConfig = hiltViewModel()
             ScreenConfig(viewModel)
+        }
+    }
+
+
+    data object Explorer :  AppScreen() {
+        private fun readResolve(): Any = Explorer
+
+        @OptIn(UnstableApi::class)
+        @Composable
+        override fun Content() {
+            val viewModel: ScreenExplorerViewModel = hiltViewModel()
+            ScreenExplorer(viewModel)
         }
     }
 
@@ -76,12 +95,6 @@ sealed class AppScreen : Screen {
 ////            }
 //    ) {
 //
-//        composable(
-//            NavigationRoute.HOME.value,
-//        )
-//        {
-//            Mainsreen4()
-//        }
 //
 //        composable("script"
 //        ) {
@@ -98,11 +111,6 @@ sealed class AppScreen : Screen {
 //            ScreenScriptInfo()
 //        }
 //
-////        //Экран настройки программы
-////        composable("config"
-////        ) {
-////            ScreenConfig()
-////        }
 //
 //        //Экран настройки программы
 //        composable("presets"

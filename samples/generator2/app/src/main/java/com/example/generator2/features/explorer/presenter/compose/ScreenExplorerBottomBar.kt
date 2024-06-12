@@ -17,6 +17,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.generator2.R
 import com.example.generator2.features.explorer.presenter.ScreenExplorerViewModel
 
@@ -24,6 +26,8 @@ import com.example.generator2.features.explorer.presenter.ScreenExplorerViewMode
 @androidx.media3.common.util.UnstableApi
 @Composable
 fun ScreenExplorerBottomBar(vm: ScreenExplorerViewModel) {
+
+    val navigator = LocalNavigator.currentOrThrow
 
     Column {
 
@@ -55,6 +59,8 @@ fun ScreenExplorerBottomBar(vm: ScreenExplorerViewModel) {
             IconButton(onClick = {
 
               //  navController.popBackStack()
+
+                navigator.pop()
 
             }) {
                 Icon(

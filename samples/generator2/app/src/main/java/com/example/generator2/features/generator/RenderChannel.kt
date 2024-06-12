@@ -2,11 +2,102 @@ package com.example.generator2.features.generator
 
 class RenderChannel(val liveData: DataLiveData) {
 
-    private var mBuffer = FloatArray(0)
+    companion object {
+        init {
+            System.loadLibrary("generator2")
+        }
+    }
+
+
+    private var mBuffer = FloatArray(1025)
 
     var o: Float = 0f
 
     var sampleRate: Int = 48000
+
+
+    external fun jniRenderChannel(
+        CH: StructureCh,
+        numFrames: Int,
+        sampleRate: Int,
+        mBuffer: FloatArray,
+
+        rC: Int,
+        rAM: Int,
+        rFM: Int,
+
+        enCH: Boolean,
+        enAM: Boolean,
+        enFM: Boolean,
+
+        volume: Float,
+        amDepth: Float,
+    )
+
+
+    fun renderChanel2(CH: StructureCh, numFrames: Int, sampleRate: Int): FloatArray {
+
+        this.sampleRate = sampleRate
+
+        val rC: UInt
+        val rAM: UInt
+        val rFM: UInt
+
+        val enCH: Boolean
+        val enAM: Boolean
+        val enFM: Boolean
+
+        val volume: Float
+        val amDepth: Float
+
+        if (CH.ch == 0) {
+            rC = convertHzToR(liveData.ch1_Carrier_Fr.value).toUInt()
+            rAM = convertHzToR(liveData.ch1_AM_Fr.value).toUInt()
+            rFM = convertHzToR(liveData.ch1_FM_Fr.value).toUInt()
+            enCH = liveData.ch1_EN.value
+            enAM = liveData.ch1_AM_EN.value
+            enFM = liveData.ch1_FM_EN.value
+            volume = liveData.volume0.value
+            amDepth = liveData.ch1AmDepth.value
+        } else {
+            rC = convertHzToR(liveData.ch2_Carrier_Fr.value).toUInt()
+            rAM = convertHzToR(liveData.ch2_AM_Fr.value).toUInt()
+            rFM = convertHzToR(liveData.ch1_FM_Fr.value).toUInt()
+            enCH = liveData.ch2_EN.value
+            enAM = liveData.ch2_AM_EN.value
+            enFM = liveData.ch2_FM_EN.value
+            volume = liveData.volume1.value
+            amDepth = liveData.ch2AmDepth.value
+        }
+
+
+
+         if (mBuffer.size != numFrames) {
+         mBuffer = FloatArray(numFrames)
+         }
+
+        jniRenderChannel(
+            CH,
+            numFrames,
+            sampleRate,
+            mBuffer,
+
+            rC.toInt(),
+            rAM.toInt(),
+            rFM.toInt(),
+
+            enCH,
+            enAM,
+            enFM,
+
+            volume,
+            amDepth,
+        )
+
+        return mBuffer
+
+    }
+
 
     fun renderChanel(CH: StructureCh, numFrames: Int, sampleRate: Int): FloatArray {
 
@@ -74,7 +165,8 @@ class RenderChannel(val liveData: DataLiveData) {
                                 1.0F
                             )
                 } else
-                    o = volume * (CH.buffer_carrier[CH.phase_accumulator_carrier.shr(22).toInt()].toFloat() - 2048.0F) / 2048.0F
+                    o = volume * (CH.buffer_carrier[CH.phase_accumulator_carrier.shr(22)
+                        .toInt()].toFloat() - 2048.0F) / 2048.0F
 
             } else
                 o = 0F
