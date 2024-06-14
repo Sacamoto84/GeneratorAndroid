@@ -1,21 +1,12 @@
 package com.example.generator2.features.audio
 
 import android.media.AudioFormat
-import android.media.AudioManager
 import android.media.AudioTrack
 import android.media.AudioTrack.MODE_STREAM
-import android.os.Build
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-
-
-
-
-
-
 
 @OptIn(DelicateCoroutinesApi::class)
 class AudioOut(
@@ -49,18 +40,12 @@ class AudioOut(
                 encoding
             )
 
-            out = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            out =
                 AudioTrack.Builder()
                     .setAudioFormat(audioFormat)
                     .setBufferSizeInBytes(minBuffer.coerceAtLeast(minBufferInBytes))
                     .setTransferMode(MODE_STREAM)
                     .build()
-            } else {
-                AudioTrack(
-                    AudioManager.STREAM_MUSIC, sampleRate, AudioFormat.CHANNEL_OUT_STEREO,
-                    encoding, minBuffer.coerceAtLeast(minBufferInBytes), MODE_STREAM
-                )
-            }
 
             out!!.play()
 

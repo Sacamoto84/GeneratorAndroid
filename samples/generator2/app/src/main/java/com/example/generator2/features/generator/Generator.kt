@@ -23,27 +23,36 @@ class Generator {
 
     var sampleRate: Int = 48000
 
-    private val renderChanelL = RenderChannel(liveData)
-    private val renderChanelR = RenderChannel(liveData)
-
-
     fun renderAudio(numFrames: Int = 1024): Pair<FloatArray, FloatArray> {
-        if (numFrames == 0) Timber.e("numFrames == 0")
+       // if (numFrames == 0) Timber.e("numFrames == 0")
 
-        val l: FloatArray
-        val r: FloatArray
+       // val startTime = System.nanoTime()
+      //  val l = FloatArray(numFrames / 2)
+      //  val r = FloatArray(numFrames / 2)
 
-        if (!liveData.mono.value) {
-            l = renderChanelL.renderChanel2(ch1, numFrames / 2, sampleRate)
-            r = renderChanelR.renderChanel2(ch2, numFrames / 2, sampleRate)
-        } else {
-            //Mono
-            val m = renderChanelL.renderChanel2(ch1, numFrames / 2, sampleRate)
-            l = m
-            r = m
-        }
+        //val startTime = System.nanoTime()
 
-        return Pair(l, r)
+        //ret
+        //val endTime = System.nanoTime()
+        //val duration = endTime - startTime
+        //println("Time taken to allocate ret: ${duration/1000} us")
+
+//        if (!liveData.mono.value) {
+
+       val l = RenderChannel().renderChanel2(liveData, ch1, numFrames / 2, sampleRate)
+       val r = RenderChannel().renderChanel2(liveData, ch2, numFrames / 2, sampleRate)
+
+//            l = renderChanelL.mBuffer//renderChanelL.renderChanel2(ch1, numFrames / 2, sampleRate)
+//            r = renderChanelR.mBuffer//renderChanelR.renderChanel2(ch2, numFrames / 2, sampleRate)
+//        } else {
+//            //Mono
+//            val m = renderChanelL.renderChanel2(ch1, numFrames / 2, sampleRate)
+//            l = m
+//            r = m
+//        }
+//l r
+        val ret = Pair(l, r)
+        return ret
     }
 
     fun createFm(ch: String) {
@@ -58,16 +67,18 @@ class Generator {
         //    CH1.buffer_fm[i] = x + (y * CH1.source_buffer_fm[i] / 4095.0F);
         //}
 
-        val carrierFr =
-            if (ch == "CH0") liveData.ch1_Carrier_Fr.value else liveData.ch2_Carrier_Fr.value
-        val fmDevFr = if (ch == "CH0") liveData.ch1_FM_Dev.value else liveData.ch2_FM_Dev.value
-        val x: Int = (carrierFr - fmDevFr).toInt()
-        val y: Int = (fmDevFr * 2.0F).toInt()
-        val buf = if (ch == "CH0") ch1.buffer_fm else ch2.buffer_fm
-        val source = if (ch == "CH0") ch1.source_buffer_fm else ch2.source_buffer_fm
-        for (i in 0..1023) {
-            buf[i] = (x + (y * source[i] / 4095.0F)).toInt().toShort()
-        }
+
+//        val carrierFr =
+//            if (ch == "CH0") liveData.ch1_Carrier_Fr.value else liveData.ch2_Carrier_Fr.value
+//        val fmDevFr = if (ch == "CH0") liveData.ch1_FM_Dev.value else liveData.ch2_FM_Dev.value
+//        val x: Int = (carrierFr - fmDevFr).toInt()
+//        val y: Int = (fmDevFr * 2.0F).toInt()
+//        val buf = if (ch == "CH0") ch1.buffer_fm else ch2.buffer_fm
+//        val source = if (ch == "CH0") ch1.source_buffer_fm else ch2.source_buffer_fm
+//        for (i in 0..1023) {
+//            buf[i] = (x + (y * source[i] / 4095.0F)).toInt().toShort()
+//        }
+
     }
 
 
@@ -95,6 +106,7 @@ data class DataLiveData(
     var ch2_FM_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),          //PR PS PC
     var ch2_FM_Filename: MutableStateFlow<String> = MutableStateFlow("06_CHIRP"),//PR PS PC
     var ch2_FM_Dev: MutableStateFlow<Float> = MutableStateFlow(1100f),           //PR PS PC Частота базы
+
     var ch2_FM_Fr: MutableStateFlow<Float> = MutableStateFlow(5.1f),             //PR PS PC
 
     var volume0: MutableStateFlow<Float> = MutableStateFlow(1f),              //PR PS PC Используется для AudioDevice = maxVolume0 * currentVolume0
@@ -133,16 +145,19 @@ data class DataLiveData(
     val parameterInt0: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс
     val parameterInt1: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CH2 режим выбора частот FM модуляции 0-обычный 1-минимум макс
 
+    var count : Int = 0
+
 )
 
 data class StructureCh(
     var ch: Int = 0, //Номер канала 0 1
-    //Буфферы
-    var buffer_carrier: ShortArray = ShortArray(1024),
-    var buffer_am: ShortArray = ShortArray(1024),
-    var buffer_fm: ShortArray = ShortArray(1024),
 
-    var source_buffer_fm: ShortArray = ShortArray(1024), //Используется для перерасчета модуляции
+    //Буфферы
+    var buffer_carrier: FloatArray = FloatArray(1024),
+    var buffer_am: FloatArray = FloatArray(1024), //-1..1
+    var buffer_fm: FloatArray = FloatArray(1024),
+
+    var source_buffer_fm: FloatArray = FloatArray(1024), //Используется для перерасчета модуляции
 
     //Аккумуляторы
     var phase_accumulator_carrier: UInt = 0u,

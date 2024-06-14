@@ -47,6 +47,8 @@ object ArrayUtils {
         return shorts
     }
 
+
+
     /** Convert a short array to the byte array using little-endian ordering.<BR>
      * In the android sound subsystem and most of native 16-bit audio formats audio samples
      * in the form of signed short values stored and processed by hardware as little-endian byte
