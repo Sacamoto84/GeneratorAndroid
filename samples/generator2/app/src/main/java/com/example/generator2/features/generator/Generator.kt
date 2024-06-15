@@ -150,6 +150,7 @@ data class DataLiveData(
     var currentVolume1: MutableStateFlow<Float> = MutableStateFlow(1.0f),     //PR PS PC
 
     var ch1AmDepth: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC Глубина AM модуляции
+
     var ch2AmDepth: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC Глубина AM модуляции
 
     //Количество звезд
