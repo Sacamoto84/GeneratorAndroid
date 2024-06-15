@@ -24,10 +24,23 @@ class RenderChannel {
 
         volume: Float,
         amDepth: Float,
+
+        channel : Int,// 0 1 номер канала
+
     ): FloatArray
 
 
-    fun renderChanel(liveData: DataLiveData, ch: StructureCh, numFrames: Int, sampleRate: Int): FloatArray {
+    external fun sendBuffer(ch : Int, modulation: Int, data : FloatArray )
+
+    fun renderChanel(
+        liveData: DataLiveData,
+        ch: StructureCh,
+        numFrames: Int,
+        sampleRate: Int,
+        mBuffer: FloatArray = FloatArray(0)
+    ): FloatArray {
+
+        //val startTime1 = System.nanoTime()
 
         val rC: UInt
         val rAM: UInt
@@ -39,12 +52,8 @@ class RenderChannel {
 
         val volume: Float
         val amDepth: Float
-//
 
         if (ch.ch == 0) {
-
-            val startTime = System.nanoTime()
-
             rC = convertHzToR(liveData.ch1_Carrier_Fr.value, sampleRate).toUInt()
             rAM = convertHzToR(liveData.ch1_AM_Fr.value, sampleRate).toUInt()
             rFM = convertHzToR(liveData.ch1_FM_Fr.value, sampleRate).toUInt()
@@ -53,11 +62,6 @@ class RenderChannel {
             enFM = liveData.ch1_FM_EN.value
             volume = liveData.volume0.value
             amDepth = liveData.ch1AmDepth.value
-
-            val endTime = System.nanoTime()
-            val duration = endTime - startTime
-            //println("Time >>>: ${duration/1000 - 3} us")
-
         } else {
             rC = convertHzToR(liveData.ch2_Carrier_Fr.value, sampleRate).toUInt()
             rAM = convertHzToR(liveData.ch2_AM_Fr.value, sampleRate).toUInt()
@@ -69,6 +73,11 @@ class RenderChannel {
             amDepth = liveData.ch2AmDepth.value
         }
 
+        //val endTime1 = System.nanoTime()
+        //val duration1 = endTime1 - startTime1
+        //println("Time 1 >>>: ${duration1/1000 - 3} us")
+
+        val startTime = System.nanoTime()
         val ret = jniRenderChannel(
             ch,
             numFrames,
@@ -84,7 +93,12 @@ class RenderChannel {
 
             volume,
             amDepth,
+            ch.ch //номер канала
         )
+
+        val endTime = System.nanoTime()
+        val duration = endTime - startTime
+        //println("Time JNI>>>: ${duration / 1000 - 3} us")
 
         return ret
 

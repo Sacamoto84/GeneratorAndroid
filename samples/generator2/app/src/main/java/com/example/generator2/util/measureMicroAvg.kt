@@ -25,6 +25,7 @@ class MeasureMicroAvg {
         val t = (System.nanoTime() - start)/1000
         sum += t
         count++
+        if (count > 10000) clear()
         return t
     }
 

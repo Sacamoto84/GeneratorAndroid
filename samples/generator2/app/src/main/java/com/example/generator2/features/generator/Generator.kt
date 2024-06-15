@@ -179,11 +179,11 @@ data class StructureCh(
     var buffer_am: FloatArray = FloatArray(1024), //-1..1
     var buffer_fm: FloatArray = FloatArray(1024),
 
-    var source_buffer_fm: FloatArray = FloatArray(1024), //Используется для перерасчета модуляции
+    //var source_buffer_fm: FloatArray = FloatArray(1024), //Используется для перерасчета модуляции
 
-    var buffer_carrier_direct: FloatBuffer = ByteBuffer.allocateDirect(4096).order(ByteOrder.nativeOrder()).asFloatBuffer(),
-    var buffer_am_direct: FloatBuffer = ByteBuffer.allocateDirect(4096).order(ByteOrder.nativeOrder()).asFloatBuffer(),
-    var buffer_fm_direct: FloatBuffer = ByteBuffer.allocateDirect(4096).order(ByteOrder.nativeOrder()).asFloatBuffer(),
+    //var buffer_carrier_direct: FloatBuffer = ByteBuffer.allocateDirect(4096).order(ByteOrder.nativeOrder()).asFloatBuffer(),
+    //var buffer_am_direct: FloatBuffer = ByteBuffer.allocateDirect(4096).order(ByteOrder.nativeOrder()).asFloatBuffer(),
+    //var buffer_fm_direct: FloatBuffer = ByteBuffer.allocateDirect(4096).order(ByteOrder.nativeOrder()).asFloatBuffer(),
 
     //Аккумуляторы
     var phase_accumulator_carrier: UInt = 0u,

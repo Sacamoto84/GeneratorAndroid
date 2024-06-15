@@ -38,8 +38,8 @@ class AudioMixerPump
 ) {
 
     //PUBLIC
-    val routeR = MutableStateFlow(ROUTESTREAM.MP3) //Выбор источника для вывода сигнала
-    val routeL = MutableStateFlow(ROUTESTREAM.MP3)
+    val routeR = MutableStateFlow(ROUTESTREAM.GEN) //Выбор источника для вывода сигнала
+    val routeL = MutableStateFlow(ROUTESTREAM.GEN)
 
     val invertL = MutableStateFlow(false)
     val invertR = MutableStateFlow(false)
@@ -80,7 +80,7 @@ class AudioMixerPump
         var delay = 50
         //
 
-        var bufferSize = 2050 //R+L
+        var bufferSize = 2048 //R+L
 
         val calculator = Calculator()
 
@@ -93,7 +93,7 @@ class AudioMixerPump
         val measureMicroAvg = MeasureMicroAvg()
 
 
-        GlobalScope.launch(Dispatchers.IO) {
+        GlobalScope.launch(Dispatchers.Default) {
 
             var init = false
 
