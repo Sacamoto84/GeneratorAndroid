@@ -7,6 +7,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.nio.FloatBuffer
 import kotlin.system.measureNanoTime
 
 class Generator {
@@ -23,12 +26,16 @@ class Generator {
 
     var sampleRate: Int = 48000
 
-    fun renderAudio(numFrames: Int = 1024): Pair<FloatArray, FloatArray> {
-       // if (numFrames == 0) Timber.e("numFrames == 0")
+    var zeroBufferSize = 1024
+    var zeroBuffer = FloatArray(zeroBufferSize)
 
-       // val startTime = System.nanoTime()
-      //  val l = FloatArray(numFrames / 2)
-      //  val r = FloatArray(numFrames / 2)
+    fun renderAudio(numFrames: Int = 1024): Pair<FloatArray, FloatArray> {
+
+        if (numFrames == 0) Timber.e("numFrames == 0")
+
+        // val startTime = System.nanoTime()
+        //  val l = FloatArray(numFrames / 2)
+        //  val r = FloatArray(numFrames / 2)
 
         //val startTime = System.nanoTime()
 
@@ -36,23 +43,38 @@ class Generator {
         //val endTime = System.nanoTime()
         //val duration = endTime - startTime
         //println("Time taken to allocate ret: ${duration/1000} us")
+        val l: FloatArray
+        val r: FloatArray
 
-//        if (!liveData.mono.value) {
+        if (!liveData.mono.value) {
 
-       val l = RenderChannel().renderChanel2(liveData, ch1, numFrames / 2, sampleRate)
-       val r = RenderChannel().renderChanel2(liveData, ch2, numFrames / 2, sampleRate)
-
-//            l = renderChanelL.mBuffer//renderChanelL.renderChanel2(ch1, numFrames / 2, sampleRate)
-//            r = renderChanelR.mBuffer//renderChanelR.renderChanel2(ch2, numFrames / 2, sampleRate)
-//        } else {
-//            //Mono
-//            val m = renderChanelL.renderChanel2(ch1, numFrames / 2, sampleRate)
-//            l = m
-//            r = m
-//        }
-//l r
-        val ret = Pair(l, r)
-        return ret
+            l = if (liveData.ch1_EN.value)
+                RenderChannel().renderChanel(liveData, ch1, numFrames / 2, sampleRate)
+            else {
+                if (numFrames / 2 != zeroBufferSize)
+                {
+                    zeroBufferSize = numFrames / 2
+                    zeroBuffer = FloatArray(zeroBufferSize)
+                }
+                zeroBuffer
+            }
+            r = if (liveData.ch2_EN.value)
+                RenderChannel().renderChanel(liveData, ch2, numFrames / 2, sampleRate)
+            else {
+                if (numFrames / 2 != zeroBufferSize)
+                {
+                    zeroBufferSize = numFrames / 2
+                    zeroBuffer = FloatArray(zeroBufferSize)
+                }
+                zeroBuffer
+            }
+        } else {
+            //Mono
+            val m = RenderChannel().renderChanel(liveData, ch1, numFrames / 2, sampleRate)
+            l = m
+            r = m
+        }
+        return Pair(l, r)
     }
 
     fun createFm(ch: String) {
@@ -145,7 +167,7 @@ data class DataLiveData(
     val parameterInt0: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс
     val parameterInt1: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CH2 режим выбора частот FM модуляции 0-обычный 1-минимум макс
 
-    var count : Int = 0
+    var count: Int = 0
 
 )
 
@@ -158,6 +180,10 @@ data class StructureCh(
     var buffer_fm: FloatArray = FloatArray(1024),
 
     var source_buffer_fm: FloatArray = FloatArray(1024), //Используется для перерасчета модуляции
+
+    var buffer_carrier_direct: FloatBuffer = ByteBuffer.allocateDirect(4096).order(ByteOrder.nativeOrder()).asFloatBuffer(),
+    var buffer_am_direct: FloatBuffer = ByteBuffer.allocateDirect(4096).order(ByteOrder.nativeOrder()).asFloatBuffer(),
+    var buffer_fm_direct: FloatBuffer = ByteBuffer.allocateDirect(4096).order(ByteOrder.nativeOrder()).asFloatBuffer(),
 
     //Аккумуляторы
     var phase_accumulator_carrier: UInt = 0u,

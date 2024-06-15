@@ -27,18 +27,18 @@ class RenderChannel {
     ): FloatArray
 
 
-    fun renderChanel2(liveData: DataLiveData, ch: StructureCh, numFrames: Int, sampleRate: Int): FloatArray {
+    fun renderChanel(liveData: DataLiveData, ch: StructureCh, numFrames: Int, sampleRate: Int): FloatArray {
 
-        var rC: UInt
-        var rAM: UInt
-        var rFM: UInt
+        val rC: UInt
+        val rAM: UInt
+        val rFM: UInt
 
-        var enCH: Boolean
-        var enAM: Boolean
-        var enFM: Boolean
+        val enCH: Boolean
+        val enAM: Boolean
+        val enFM: Boolean
 
-        var volume: Float
-        var amDepth: Float
+        val volume: Float
+        val amDepth: Float
 //
 
         if (ch.ch == 0) {

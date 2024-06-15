@@ -38,7 +38,12 @@ fun Spinner_Send_Buffer(
 
     if (CH == GeneratorCH.CH0) {
         when (Mod) {
-            GeneratorMOD.AM -> gen.ch1.buffer_am = byteToFloatArrayLittleEndianAM(buf)
+            GeneratorMOD.AM -> {
+                gen.ch1.buffer_am = byteToFloatArrayLittleEndianAM(buf)
+                gen.ch1.buffer_am_direct.rewind()
+                gen.ch1.buffer_am_direct.put(gen.ch1.buffer_am)
+                gen.ch1.buffer_am_direct.flip() // Готовим буфер к чтению
+            }
             GeneratorMOD.FM -> gen.ch1.buffer_fm = byteToFloatArrayLittleEndian4096(buf)
             else -> gen.ch1.buffer_carrier = byteToFloatArrayLittleEndian4096(buf)
         }

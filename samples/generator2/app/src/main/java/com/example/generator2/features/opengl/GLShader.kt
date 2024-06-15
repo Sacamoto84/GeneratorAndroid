@@ -9,8 +9,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import com.example.generator2.features.scope.opengl.MyGLRenderer
-import com.example.generator2.features.scope.opengl.MyGLSurfaceView
+import com.example.generator2.features.scope.opengl.render.MyGLRenderer
 import timber.log.Timber
 
 

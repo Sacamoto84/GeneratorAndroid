@@ -129,7 +129,9 @@ fun Mainsreen4(vm: VMMain4) {
 //            )
 //            {
             //Осциллограф
-            vm.audioMixerPump.scope.Oscilloscope()
+
+        //    vm.audioMixerPump.scope.Oscilloscope()
+
             //}
 
 

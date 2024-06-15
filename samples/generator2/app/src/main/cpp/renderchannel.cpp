@@ -24,7 +24,7 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
                                                                               jobject ch,
                                                                               jint num_frames,
                                                                               jint sample_rate,
-                                                                              //jfloatArray m_buffer,
+        //jfloatArray m_buffer,
                                                                               jint r_c,
                                                                               jint r_am,
                                                                               jint r_fm,
@@ -34,7 +34,7 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
                                                                               jfloat volume,
                                                                               jfloat am_depth) {
 
-    if (!en_ch){
+    if (!en_ch) {
         // Создание нового массива jfloatArray
         jfloatArray floatArray = env->NewFloatArray(num_frames);
         if (floatArray == nullptr) {
@@ -43,7 +43,6 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
         return floatArray;
     }
 
-
     jclass cls = env->GetObjectClass(ch);
 
     jfieldID fid = env->GetFieldID(cls, "ch", "I");
@@ -51,7 +50,9 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
     int channel = env->GetIntField(ch, fid);
 
     // buffer_carrier
-    auto buffer_carrier = (jfloatArray) env->GetObjectField(ch, env->GetFieldID(cls, "buffer_carrier", "[F"));
+    auto buffer_carrier = (jfloatArray) env->GetObjectField(ch,
+                                                            env->GetFieldID(cls, "buffer_carrier",
+                                                                            "[F"));
 
     // buffer_am
     auto buffer_am = (jfloatArray) env->GetObjectField(ch, env->GetFieldID(cls, "buffer_am", "[F"));
@@ -60,11 +61,14 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
     auto buffer_fm = (jfloatArray) env->GetObjectField(ch, env->GetFieldID(cls, "buffer_fm", "[F"));
 
     // source_buffer_fm
-    auto source_buffer_fm = (jfloatArray) env->GetObjectField(ch,  env->GetFieldID(cls, "source_buffer_fm", "[F"));
+    auto source_buffer_fm = (jfloatArray) env->GetObjectField(ch, env->GetFieldID(cls,
+                                                                                  "source_buffer_fm",
+                                                                                  "[F"));
 
     // phase_accumulator_carrier
     jfieldID phase_accumulator_carrierFid = env->GetFieldID(cls, "phase_accumulator_carrier", "I");
-    auto phase_accumulator_carrier = static_cast<unsigned int>(env->GetIntField(ch,phase_accumulator_carrierFid));
+    auto phase_accumulator_carrier = static_cast<unsigned int>(env->GetIntField(ch,
+                                                                                phase_accumulator_carrierFid));
 
     // phase_accumulator_am
     jfieldID phase_accumulator_amFid = env->GetFieldID(cls, "phase_accumulator_am", "I");
@@ -76,22 +80,13 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
     auto phase_accumulator_fm = static_cast<unsigned int>(env->GetIntField(ch,
                                                                            phase_accumulator_fmFid));
 
-
-
-
-
-
-
-
-
     // Создание нового массива jfloatArray
     jfloatArray floatArray = env->NewFloatArray(num_frames);
     if (floatArray == nullptr) {
         return nullptr; // Ошибка выделения памяти
     }
-     // Создание временного массива для заполнения
-    auto* tempArray = new jfloat[num_frames]();
-
+    // Создание временного массива для заполнения
+    auto *tempArray = new jfloat[num_frames]();
 
     //short *mBufferCarrierElements = env->GetShortArrayElements(buffer_carrier, nullptr);
     //short *mBufferAmElements = env->GetShortArrayElements(buffer_am, nullptr);
@@ -109,41 +104,57 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
     jfloat tempBuffer_carrier[1024];
     env->GetFloatArrayRegion(buffer_carrier, 0, 1024, tempBuffer_carrier);
 
-    if (!en_fm && !en_am){
+    if (!en_fm && !en_am) {
         for (int i = 0; i < num_frames; i++) {
             phase_accumulator_carrier += r_c32;
             tempArray[i] = volume * tempBuffer_carrier[phase_accumulator_carrier >> 22];
         }
     }
 
-    if (!en_fm && en_am){
+    if (!en_fm && en_am) {
         jfloat tempBuffer_am[1024];
         env->GetFloatArrayRegion(buffer_am, 0, 1024, tempBuffer_am);
 
         for (int i = 0; i < num_frames; i++) {
             phase_accumulator_carrier += r_c32;
+
             phase_accumulator_am += r_am32;
             tempArray[i] = volume * tempBuffer_carrier[phase_accumulator_carrier >> 22]
-                    *
-                    ( tempBuffer_am[phase_accumulator_am >> 22]  * am_depth + 1.0f - am_depth);
+                           *
+                           (tempBuffer_am[phase_accumulator_am >> 22] * am_depth + 1.0f - am_depth);
         }
     }
 
     if (en_fm && !en_am) {
-        jfloat tempBuffer_fm [1024];
+        jfloat tempBuffer_fm[1024];
         env->GetFloatArrayRegion(buffer_fm, 0, 1024, tempBuffer_fm);
 
+        for (int i = 0; i < num_frames; i++) {
+            phase_accumulator_fm += r_fm32;
+            phase_accumulator_carrier += static_cast<unsigned int>(convertHzToR(
+                    tempBuffer_fm[phase_accumulator_fm >> 22], sample_rate));
+
+            tempArray[i] = volume * tempBuffer_carrier[phase_accumulator_carrier >> 22];
+        }
     }
 
     if (en_fm && en_am) {
         jfloat tempBuffer_am[1024];
         env->GetFloatArrayRegion(buffer_am, 0, 1024, tempBuffer_am);
 
-        jfloat tempBuffer_fm [1024];
+        jfloat tempBuffer_fm[1024];
         env->GetFloatArrayRegion(buffer_fm, 0, 1024, tempBuffer_fm);
 
+        for (int i = 0; i < num_frames; i++) {
+            phase_accumulator_fm += r_fm32;
+            phase_accumulator_carrier += static_cast<unsigned int>(convertHzToR(
+                    tempBuffer_fm[phase_accumulator_fm >> 22], sample_rate));
 
-
+            phase_accumulator_am += r_am32;
+            tempArray[i] = volume * tempBuffer_carrier[phase_accumulator_carrier >> 22]
+                           *
+                           (tempBuffer_am[phase_accumulator_am >> 22] * am_depth + 1.0f - am_depth);
+        }
 
     }
 
@@ -202,7 +213,6 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
 
     // Очистка временного массива
     delete[] tempArray;
-
 
 //    delete[] tempBuffer_carrier;
 //    delete[] tempBuffer_am;

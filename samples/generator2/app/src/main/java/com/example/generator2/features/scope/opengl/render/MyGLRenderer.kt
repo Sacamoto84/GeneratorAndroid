@@ -1,20 +1,36 @@
-package com.example.generator2.features.scope.opengl
+package com.example.generator2.features.scope.opengl.render
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.opengl.GLES10.GL_LIGHTING
-import android.opengl.GLES30.*
+import android.opengl.GLES30.GL_COLOR_BUFFER_BIT
+import android.opengl.GLES30.GL_COMPILE_STATUS
+import android.opengl.GLES30.GL_FLOAT
+import android.opengl.GLES30.GL_FRAGMENT_SHADER
+import android.opengl.GLES30.GL_POINTS
+import android.opengl.GLES30.GL_VERTEX_SHADER
+import android.opengl.GLES30.glAttachShader
+import android.opengl.GLES30.glClear
+import android.opengl.GLES30.glClearColor
+import android.opengl.GLES30.glCompileShader
+import android.opengl.GLES30.glCreateProgram
+import android.opengl.GLES30.glCreateShader
+import android.opengl.GLES30.glDeleteProgram
+import android.opengl.GLES30.glDeleteShader
+import android.opengl.GLES30.glDisable
+import android.opengl.GLES30.glDisableVertexAttribArray
+import android.opengl.GLES30.glDrawArrays
+import android.opengl.GLES30.glEnableVertexAttribArray
+import android.opengl.GLES30.glGetAttribLocation
+import android.opengl.GLES30.glGetShaderInfoLog
+import android.opengl.GLES30.glGetShaderiv
+import android.opengl.GLES30.glGetUniformLocation
+import android.opengl.GLES30.glLinkProgram
+import android.opengl.GLES30.glShaderSource
+import android.opengl.GLES30.glUniform1f
+import android.opengl.GLES30.glUseProgram
+import android.opengl.GLES30.glVertexAttribPointer
+import android.opengl.GLES30.glViewport
 import android.opengl.GLSurfaceView
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import com.example.generator2.features.audio.BufSplitFloat
-import timber.log.Timber
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -30,8 +46,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
     private var vertexShader: Int = 0
     private var fragmentShader: Int = 0
 
-    private lateinit var vertexBuffer: FloatBuffer
-    private lateinit var indexBuffer: FloatBuffer
+    private var vertexBuffer: FloatBuffer
 
     private val vertexShaderCode =
         """
@@ -203,7 +218,6 @@ void main() {
 
     private lateinit var pairFlatArray: Pair<FloatArray, FloatArray>
 
-
     fun updateVertices(newVertices: FloatArray) {
 
         pairFlatArray = bufSplit.split(newVertices)
@@ -240,63 +254,3 @@ void main() {
 
 }
 
-@SuppressLint("ViewConstructor")
-class MyGLSurfaceView(context: Context) : GLSurfaceView(context) {
-
-    private var renderer : Renderer? = null //= MyGLRenderer()
-
-    private var hasSetShader = false
-
-
-    init {
-        id = generateViewId()
-    }
-
-    init {
-        setEGLContextClientVersion(3)
-        //setRenderer(renderer)
-         //renderMode = RENDERMODE_WHEN_DIRTY
-        preserveEGLContextOnPause = true
-    }
-
-
-    fun setShaderRenderer(
-        renderer: Renderer
-    ) {
-
-        if (hasSetShader.not()) {
-            setRenderer(
-                renderer
-            )
-           this.renderer = renderer
-
-           renderMode = RENDERMODE_WHEN_DIRTY
-        }
-        hasSetShader = true
-    }
-
-
-//    fun requestRender() {
-//        //renderer.updateVertices(vertices)
-//        super.requestRender()
-//    }
-
-//    fun deleteProgram() {
-//        renderer.deleteProgram()
-//    }
-
-    fun onDestroy() {
-        super.onDetachedFromWindow()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Timber.d("!!! MyGLSurfaceView onResume")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Timber.d("!!! MyGLSurfaceView onPause")
-    }
-
-}

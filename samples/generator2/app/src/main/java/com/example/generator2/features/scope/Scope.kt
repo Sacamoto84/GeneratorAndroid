@@ -39,8 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.generator2.features.opengl.GLShader
-import com.example.generator2.features.scope.opengl.MyGLRenderer
-import com.example.generator2.features.scope.opengl.MyGLSurfaceView
+import com.example.generator2.features.opengl.MyGLSurfaceView
+import com.example.generator2.features.scope.opengl.render.MyGLRenderer
 import com.example.generator2.features.scope.compose.OscilloscopeControl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
@@ -156,7 +156,7 @@ class Scope {
     val channelDataStreamOutCompressorIndex = Channel<Long>(capacity = 3)
 
 
-    var myGLSurfaceST: MyGLSurfaceView? = null
+    //var myGLSurfaceST: MyGLSurfaceView? = null
 
     init {
 
@@ -182,13 +182,9 @@ class Scope {
     @Composable
     fun Oscilloscope() {
 
-
-
         var view : MyGLSurfaceView? = remember {
             null
         }
-
-
 
 //        var update by remember {
 //            mutableIntStateOf(0)
