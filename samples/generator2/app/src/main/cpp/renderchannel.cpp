@@ -45,25 +45,43 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
 
     jclass cls = env->GetObjectClass(ch);
 
-    jfieldID fid = env->GetFieldID(cls, "ch", "I");
+//    jfieldID fid = env->GetFieldID(cls, "ch", "I");
 
-    int channel = env->GetIntField(ch, fid);
+//    int channel = env->GetIntField(ch, fid);
 
-    // buffer_carrier
-    auto buffer_carrier = (jfloatArray) env->GetObjectField(ch,
-                                                            env->GetFieldID(cls, "buffer_carrier",
-                                                                            "[F"));
+//    // buffer_carrier
+//    auto buffer_carrier = (jfloatArray) env->GetObjectField(ch,
+//                                                            env->GetFieldID(cls, "buffer_carrier",
+//                                                                            "[F"));
 
-    // buffer_am
-    auto buffer_am = (jfloatArray) env->GetObjectField(ch, env->GetFieldID(cls, "buffer_am", "[F"));
+//    // buffer_am
+//    auto buffer_am = (jfloatArray) env->GetObjectField(ch, env->GetFieldID(cls, "buffer_am", "[F"));
+//
+//    // buffer_fm
+//    auto buffer_fm = (jfloatArray) env->GetObjectField(ch, env->GetFieldID(cls, "buffer_fm", "[F"));
+//
+//    // source_buffer_fm
+//    auto source_buffer_fm = (jfloatArray) env->GetObjectField(ch, env->GetFieldID(cls,
+//                                                                                  "source_buffer_fm",
+//                                                                                  "[F"));
 
-    // buffer_fm
-    auto buffer_fm = (jfloatArray) env->GetObjectField(ch, env->GetFieldID(cls, "buffer_fm", "[F"));
 
-    // source_buffer_fm
-    auto source_buffer_fm = (jfloatArray) env->GetObjectField(ch, env->GetFieldID(cls,
-                                                                                  "source_buffer_fm",
-                                                                                  "[F"));
+    // Получаем ID поля bufferAmDirect
+    jfieldID bufferCarrierDirectFieldID = env->GetFieldID(cls, "buffer_carrier_direct", "Ljava/nio/FloatBuffer;");
+    jfieldID bufferAmDirectFieldID = env->GetFieldID(cls, "buffer_am_direct", "Ljava/nio/FloatBuffer;");
+    jfieldID bufferFmDirectFieldID = env->GetFieldID(cls, "buffer_fm_direct", "Ljava/nio/FloatBuffer;");
+
+    // Получаем объект FloatBuffer
+    jobject bufferCarrierObject = env->GetObjectField(ch, bufferCarrierDirectFieldID);
+    jobject bufferAmObject = env->GetObjectField(ch, bufferAmDirectFieldID);
+    jobject bufferFmObject = env->GetObjectField(ch, bufferFmDirectFieldID);
+
+    // Получаем указатель на данные в прямом буфере
+    auto* tempBuffer_carrier = static_cast<float*>(env->GetDirectBufferAddress(bufferAmObject));
+    auto* tempBuffer_am = static_cast<float*>(env->GetDirectBufferAddress(bufferAmObject));
+    auto* tempBuffer_fm = static_cast<float*>(env->GetDirectBufferAddress(bufferFmObject));
+
+
 
     // phase_accumulator_carrier
     jfieldID phase_accumulator_carrierFid = env->GetFieldID(cls, "phase_accumulator_carrier", "I");
@@ -85,8 +103,13 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
     if (floatArray == nullptr) {
         return nullptr; // Ошибка выделения памяти
     }
+
+    float *tempArrayElements = env->GetFloatArrayElements(floatArray, nullptr);
+
     // Создание временного массива для заполнения
-    auto *tempArray = new jfloat[num_frames]();
+    //auto *tempArray = new jfloat[num_frames]();
+
+    //float tempArray[num_frames];
 
     //short *mBufferCarrierElements = env->GetShortArrayElements(buffer_carrier, nullptr);
     //short *mBufferAmElements = env->GetShortArrayElements(buffer_am, nullptr);
@@ -94,56 +117,58 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
 
     //float *mBufferElements = env->GetFloatArrayElements(floatArray, nullptr);
 
-    float o;
+    //float o;
 
     auto r_fm32 = (uint32_t) r_fm;
     auto r_am32 = (uint32_t) r_am;
     auto r_c32 = (uint32_t) r_c;
 
 
-    jfloat tempBuffer_carrier[1024];
-    env->GetFloatArrayRegion(buffer_carrier, 0, 1024, tempBuffer_carrier);
+//    jfloat tempBuffer_carrier[1024];
+//    env->GetFloatArrayRegion(buffer_carrier, 0, 1024, tempBuffer_carrier);
 
     if (!en_fm && !en_am) {
         for (int i = 0; i < num_frames; i++) {
             phase_accumulator_carrier += r_c32;
-            tempArray[i] = volume * tempBuffer_carrier[phase_accumulator_carrier >> 22];
+            tempArrayElements[i] = volume * tempBuffer_carrier[phase_accumulator_carrier >> 22];
         }
     }
 
     if (!en_fm && en_am) {
-        jfloat tempBuffer_am[1024];
-        env->GetFloatArrayRegion(buffer_am, 0, 1024, tempBuffer_am);
+        //jfloat tempBuffer_am[1024];
+        //env->GetFloatArrayRegion(buffer_am, 0, 1024, tempBuffer_am);
 
         for (int i = 0; i < num_frames; i++) {
             phase_accumulator_carrier += r_c32;
 
             phase_accumulator_am += r_am32;
-            tempArray[i] = volume * tempBuffer_carrier[phase_accumulator_carrier >> 22]
+            tempArrayElements[i] = volume * tempBuffer_carrier[phase_accumulator_carrier >> 22]
                            *
                            (tempBuffer_am[phase_accumulator_am >> 22] * am_depth + 1.0f - am_depth);
         }
     }
 
     if (en_fm && !en_am) {
-        jfloat tempBuffer_fm[1024];
-        env->GetFloatArrayRegion(buffer_fm, 0, 1024, tempBuffer_fm);
+        //jfloat tempBuffer_fm[1024];
+        //env->GetFloatArrayRegion(buffer_fm, 0, 1024, tempBuffer_fm);
 
         for (int i = 0; i < num_frames; i++) {
             phase_accumulator_fm += r_fm32;
             phase_accumulator_carrier += static_cast<unsigned int>(convertHzToR(
                     tempBuffer_fm[phase_accumulator_fm >> 22], sample_rate));
 
-            tempArray[i] = volume * tempBuffer_carrier[phase_accumulator_carrier >> 22];
+            tempArrayElements[i] = volume * tempBuffer_carrier[phase_accumulator_carrier >> 22];
         }
     }
 
-    if (en_fm && en_am) {
-        jfloat tempBuffer_am[1024];
-        env->GetFloatArrayRegion(buffer_am, 0, 1024, tempBuffer_am);
+    //auto *p = reinterpret_cast<jfloat *>(&floatArray);
 
-        jfloat tempBuffer_fm[1024];
-        env->GetFloatArrayRegion(buffer_fm, 0, 1024, tempBuffer_fm);
+    if (en_fm && en_am) {
+        //jfloat tempBuffer_am[1024];
+        //env->GetFloatArrayRegion(buffer_am, 0, 1024, tempBuffer_am);
+
+        //jfloat tempBuffer_fm[1024];
+        //env->GetFloatArrayRegion(buffer_fm, 0, 1024, tempBuffer_fm);
 
         for (int i = 0; i < num_frames; i++) {
             phase_accumulator_fm += r_fm32;
@@ -151,7 +176,7 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
                     tempBuffer_fm[phase_accumulator_fm >> 22], sample_rate));
 
             phase_accumulator_am += r_am32;
-            tempArray[i] = volume * tempBuffer_carrier[phase_accumulator_carrier >> 22]
+            tempArrayElements[i] = volume * tempBuffer_carrier[phase_accumulator_carrier >> 22]
                            *
                            (tempBuffer_am[phase_accumulator_am >> 22] * am_depth + 1.0f - am_depth);
         }
@@ -202,6 +227,7 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
     env->SetIntField(ch, phase_accumulator_amFid, phase_accumulator_am);
     env->SetIntField(ch, phase_accumulator_fmFid, phase_accumulator_fm);
 
+    env->ReleaseFloatArrayElements(floatArray, tempArrayElements, 0);
     //env->ReleaseShortArrayElements(buffer_carrier, mBufferCarrierElements, 0);
     //env->ReleaseShortArrayElements(buffer_am, mBufferAmElements, 0);
     //env->ReleaseShortArrayElements(buffer_fm, mBufferFmElements, 0);
@@ -209,10 +235,10 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
     //env->ReleaseFloatArrayElements(floatArray, mBufferElements, 0);
 
     // Заполнение jfloatArray данными из tempArray
-    env->SetFloatArrayRegion(floatArray, 0, num_frames, tempArray);
+  //  env->SetFloatArrayRegion(floatArray, 0, num_frames, tempArray);
 
     // Очистка временного массива
-    delete[] tempArray;
+    //delete[] tempArray;
 
 //    delete[] tempBuffer_carrier;
 //    delete[] tempBuffer_am;

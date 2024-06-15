@@ -40,16 +40,34 @@ fun Spinner_Send_Buffer(
         when (Mod) {
             GeneratorMOD.AM -> {
                 gen.ch1.buffer_am = byteToFloatArrayLittleEndianAM(buf)
-                gen.ch1.buffer_am_direct.rewind()
+                gen.ch1.buffer_am_direct.position(0)
                 gen.ch1.buffer_am_direct.put(gen.ch1.buffer_am)
                 gen.ch1.buffer_am_direct.flip() // Готовим буфер к чтению
             }
-            GeneratorMOD.FM -> gen.ch1.buffer_fm = byteToFloatArrayLittleEndian4096(buf)
-            else -> gen.ch1.buffer_carrier = byteToFloatArrayLittleEndian4096(buf)
+            GeneratorMOD.FM -> {
+                gen.ch1.buffer_fm = byteToFloatArrayLittleEndian4096(buf)
+                gen.ch1.buffer_fm_direct.position(0)
+                gen.ch1.buffer_fm_direct.put(gen.ch1.buffer_am)
+                gen.ch1.buffer_fm_direct.flip() // Готовим буфер к чтению
+            }
+
+            else -> {
+                gen.ch1.buffer_carrier = byteToFloatArrayLittleEndian4096(buf)
+                gen.ch1.buffer_carrier_direct.position(0)
+                gen.ch1.buffer_carrier_direct.put(gen.ch1.buffer_am)
+                gen.ch1.buffer_carrier_direct.flip() // Готовим буфер к чтению
+
+            }
+
         }
     } else {
         when (Mod) {
-            GeneratorMOD.AM -> gen.ch2.buffer_am = byteToFloatArrayLittleEndianAM(buf)
+            GeneratorMOD.AM -> {
+                gen.ch2.buffer_am = byteToFloatArrayLittleEndianAM(buf)
+                gen.ch2.buffer_am_direct.rewind()
+                gen.ch2.buffer_am_direct.put(gen.ch1.buffer_am)
+                gen.ch2.buffer_am_direct.flip() // Готовим буфер к чтению
+            }
             //ArrayUtils.byteToShortArrayLittleEndian(buf)
             GeneratorMOD.FM -> gen.ch2.buffer_fm = byteToFloatArrayLittleEndian4096(buf)
             else -> gen.ch2.buffer_carrier = byteToFloatArrayLittleEndian4096(buf)
