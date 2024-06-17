@@ -80,7 +80,7 @@ class AudioMixerPump
         var delay = 50
         //
 
-        var bufferSize = 2048 //R+L
+        var bufferSize = 8192 //R+L
 
         val calculator = Calculator()
 
@@ -230,7 +230,7 @@ class AudioMixerPump
                         println("Очистка канала")
                     }
 
-                    //8192 LR-4096    192k -> 21.3ms    48k->85.4ms
+                    //8192 LR-4096    192k -> 21.3ms 48k->85.4ms
 
                     //Перевод на 192k только если есть поддержка устройтвом
                     if ((routeL.value == ROUTESTREAM.GEN) and (routeR.value == ROUTESTREAM.GEN)) {
@@ -248,6 +248,18 @@ class AudioMixerPump
                     scope.audioSampleRate = audioOut.sampleRate
 
                     val buf: Pair<FloatArray, FloatArray>
+
+
+                    //8192 LR-4096    192k -> 21.3ms 48k->85.4ms
+                    //8192
+
+                    // S7         1200us   5.6% | 192K   21.3ms
+                    //                     1.4% |  48k   85.4ms
+                    // X6 Pro      350us   1.6% | 192k
+                    //                     0.4% |  48k
+                    // 23 Ultra     70us
+                    // 22 Ultra    750us
+                    // Pixel8 Pro  990us
 
                     //mi8  2220us release 192k 8192
                     //9060 3940us release 192k 8192

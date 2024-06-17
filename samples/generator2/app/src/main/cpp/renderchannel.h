@@ -16,6 +16,9 @@ struct StructureCh {
     float buffer_am[1024] = {0.0f};
     float buffer_fm[1024] = {0.0f};
 
+    float buffer_normalised_Fm[1024] = {0.0f};
+
+
     uint32_t phase_accumulator_carrier = 0;
     uint32_t phase_accumulator_am = 0;
     uint32_t phase_accumulator_fm = 0;

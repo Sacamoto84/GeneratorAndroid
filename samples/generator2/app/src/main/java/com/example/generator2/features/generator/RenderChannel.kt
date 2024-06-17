@@ -1,5 +1,7 @@
 package com.example.generator2.features.generator
 
+import kotlin.system.measureNanoTime
+
 class RenderChannel {
 
     companion object {
@@ -25,22 +27,20 @@ class RenderChannel {
         volume: Float,
         amDepth: Float,
 
-        channel : Int,// 0 1 номер канала
+        channel: Int,// 0 1 номер канала
 
-    ): FloatArray
+        mBuffer: FloatArray
 
+    )
 
-    external fun sendBuffer(ch : Int, modulation: Int, data : FloatArray )
+    external fun sendBuffer(ch: Int, modulation: Int, data: FloatArray)
 
     fun renderChanel(
         liveData: DataLiveData,
         ch: StructureCh,
         numFrames: Int,
         sampleRate: Int,
-        mBuffer: FloatArray = FloatArray(0)
     ): FloatArray {
-
-        //val startTime1 = System.nanoTime()
 
         val rC: UInt
         val rAM: UInt
@@ -52,6 +52,16 @@ class RenderChannel {
 
         val volume: Float
         val amDepth: Float
+
+//        val startTime1 = System.nanoTime()
+//        enCH = liveData.ch2_EN.value
+//        enAM = liveData.ch2_AM_EN.value
+//        enFM = liveData.ch2_FM_EN.value
+//        volume = liveData.volume1.value
+//        amDepth = liveData.ch2AmDepth.value
+//        val endTime1 = System.nanoTime()
+//        val duration1 = endTime1 - startTime1
+//        println("Time 1 >>>: ${duration1 / 1000} us")
 
         if (ch.ch == 0) {
             rC = convertHzToR(liveData.ch1_Carrier_Fr.value, sampleRate).toUInt()
@@ -73,12 +83,15 @@ class RenderChannel {
             amDepth = liveData.ch2AmDepth.value
         }
 
+        val mBuffer = FloatArray(numFrames)
+
         //val endTime1 = System.nanoTime()
         //val duration1 = endTime1 - startTime1
-        //println("Time 1 >>>: ${duration1/1000 - 3} us")
+        //println("Time 1 >>>: ${duration1 / 1000 - 3} us")
 
-        val startTime = System.nanoTime()
-        val ret = jniRenderChannel(
+        //val startTime = System.nanoTime()
+
+        jniRenderChannel(
             ch,
             numFrames,
             sampleRate,
@@ -93,14 +106,15 @@ class RenderChannel {
 
             volume,
             amDepth,
-            ch.ch //номер канала
+            ch.ch, //номер канала
+            mBuffer
         )
 
-        val endTime = System.nanoTime()
-        val duration = endTime - startTime
+        //val endTime = System.nanoTime()
+        //val duration = endTime - startTime
         //println("Time JNI>>>: ${duration / 1000 - 3} us")
 
-        return ret
+        return mBuffer
 
     }
 
@@ -184,7 +198,8 @@ class RenderChannel {
 //    }
 
     private fun convertHzToR(hz: Float, sampleRate: Int): Float {
-        return (48000.0F / sampleRate) * (hz * 16384.0f / 3.798f * 2.0f * 1000.0 / 48.8 / 2.0 * 1000.0 / 988.0).toFloat()
+        //return (48000.0F / sampleRate) * (hz * 16384.0f / 3.798f * 2.0f * 1000.0 / 48.8 / 2.0 * 1000.0 / 988.0).toFloat()
+        return (4294967296L / sampleRate) * hz
     }
 
 //    private fun map(x: Float, in_min: Float, in_max: Float, out_min: Float, out_max: Float): Float {

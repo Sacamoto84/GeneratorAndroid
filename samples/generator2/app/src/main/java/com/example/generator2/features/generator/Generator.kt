@@ -1,16 +1,8 @@
 package com.example.generator2.features.generator
 
 import com.example.generator2.model.itemList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.nio.FloatBuffer
-import kotlin.system.measureNanoTime
 
 class Generator {
 
@@ -79,6 +71,9 @@ class Generator {
 
     fun createFm(ch: String) {
 
+
+
+
         //void CreateFM_CH1(void) {
         //    int x, y;
         //    int i = 0;
@@ -90,16 +85,18 @@ class Generator {
         //}
 
 
-//        val carrierFr =
-//            if (ch == "CH0") liveData.ch1_Carrier_Fr.value else liveData.ch2_Carrier_Fr.value
-//        val fmDevFr = if (ch == "CH0") liveData.ch1_FM_Dev.value else liveData.ch2_FM_Dev.value
-//        val x: Int = (carrierFr - fmDevFr).toInt()
-//        val y: Int = (fmDevFr * 2.0F).toInt()
-//        val buf = if (ch == "CH0") ch1.buffer_fm else ch2.buffer_fm
-//        val source = if (ch == "CH0") ch1.source_buffer_fm else ch2.source_buffer_fm
-//        for (i in 0..1023) {
-//            buf[i] = (x + (y * source[i] / 4095.0F)).toInt().toShort()
-//        }
+        val carrierFr = if (ch == "CH0") liveData.ch1_Carrier_Fr.value else liveData.ch2_Carrier_Fr.value
+        val fmDevFr = if (ch == "CH0") liveData.ch1_FM_Dev.value else liveData.ch2_FM_Dev.value
+
+        val x: Int = (carrierFr - fmDevFr).toInt()
+        val y: Int = (fmDevFr * 2.0F).toInt()
+        val buf = if (ch == "CH0") ch1.buffer_fm else ch2.buffer_fm
+
+        val source = if (ch == "CH0") ch1.source_buffer_fm else ch2.source_buffer_fm
+
+        for (i in 0..1023) {
+            buf[i] = (x + (y * source[i] / 4095.0F)).toInt().toShort()
+        }
 
     }
 
@@ -176,11 +173,11 @@ data class StructureCh(
     var ch: Int = 0, //Номер канала 0 1
 
     //Буфферы
-    var buffer_carrier: FloatArray = FloatArray(1024),
-    var buffer_am: FloatArray = FloatArray(1024), //-1..1
-    var buffer_fm: FloatArray = FloatArray(1024),
+    var buffer_carrier: FloatArray = FloatArray(1024), //-1..1
+    var buffer_am: FloatArray = FloatArray(1024),      //0..1
+    var buffer_fm: FloatArray = FloatArray(1024),      //-1..1
 
-    //var source_buffer_fm: FloatArray = FloatArray(1024), //Используется для перерасчета модуляции
+    var calculate_buffer_fm: FloatArray = FloatArray(1024), //Используется для перерасчета модуляции
 
     //var buffer_carrier_direct: FloatBuffer = ByteBuffer.allocateDirect(4096).order(ByteOrder.nativeOrder()).asFloatBuffer(),
     //var buffer_am_direct: FloatBuffer = ByteBuffer.allocateDirect(4096).order(ByteOrder.nativeOrder()).asFloatBuffer(),
