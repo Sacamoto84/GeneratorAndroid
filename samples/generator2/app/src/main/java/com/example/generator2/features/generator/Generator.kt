@@ -69,35 +69,15 @@ class Generator {
         return Pair(l, r)
     }
 
-    fun createFm(ch: String) {
-
-
-
-
-        //void CreateFM_CH1(void) {
-        //    int x, y;
-        //    int i = 0;
-        //    x = CH1.Carrier_fr - CH1.FM_Dev;
-        //    y = CH1.FM_Dev * 2;
-
-        //    for (i = 0; i < 1024; i++)
-        //    CH1.buffer_fm[i] = x + (y * CH1.source_buffer_fm[i] / 4095.0F);
-        //}
-
-
-        val carrierFr = if (ch == "CH0") liveData.ch1_Carrier_Fr.value else liveData.ch2_Carrier_Fr.value
-        val fmDevFr = if (ch == "CH0") liveData.ch1_FM_Dev.value else liveData.ch2_FM_Dev.value
-
-        val x: Int = (carrierFr - fmDevFr).toInt()
-        val y: Int = (fmDevFr * 2.0F).toInt()
-        val buf = if (ch == "CH0") ch1.buffer_fm else ch2.buffer_fm
-
-        val source = if (ch == "CH0") ch1.source_buffer_fm else ch2.source_buffer_fm
+    fun createFm(ch: Int) {
+        val carrierFr = if (ch == 0) liveData.ch1_Carrier_Fr.value else liveData.ch2_Carrier_Fr.value
+        val fmDevFr = if (ch == 0) liveData.ch1_FM_Dev.value else liveData.ch2_FM_Dev.value
+        val buf = if (ch == 0) ch1.calculate_buffer_fm else ch2.calculate_buffer_fm
+        val source = if (ch == 0) ch1.buffer_fm else ch2.buffer_fm
 
         for (i in 0..1023) {
-            buf[i] = (x + (y * source[i] / 4095.0F)).toInt().toShort()
+            buf[i] = (carrierFr + (fmDevFr * source[i]))
         }
-
     }
 
 
@@ -173,11 +153,16 @@ data class StructureCh(
     var ch: Int = 0, //Номер канала 0 1
 
     //Буфферы
+
     var buffer_carrier: FloatArray = FloatArray(1024), //-1..1
+
+    //0..4095 -> 0..1
     var buffer_am: FloatArray = FloatArray(1024),      //0..1
+
     var buffer_fm: FloatArray = FloatArray(1024),      //-1..1
 
-    var calculate_buffer_fm: FloatArray = FloatArray(1024), //Используется для перерасчета модуляции
+    //Содержит частоты которые уже промодулированы
+    var calculate_buffer_fm: FloatArray = FloatArray(1024), //100..10000//Используется для перерасчета модуляции
 
     //var buffer_carrier_direct: FloatBuffer = ByteBuffer.allocateDirect(4096).order(ByteOrder.nativeOrder()).asFloatBuffer(),
     //var buffer_am_direct: FloatBuffer = ByteBuffer.allocateDirect(4096).order(ByteOrder.nativeOrder()).asFloatBuffer(),
