@@ -1,17 +1,11 @@
 package com.example.generator2.features.scope
 
-import kotlinx.coroutines.Deferred
+import com.paramsen.noise.Noise
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.util.LinkedList
 import kotlin.system.measureNanoTime
-
 
 
 class NativeLib {
@@ -24,14 +18,12 @@ class NativeLib {
     external fun copyFloatArrayJNI(source: FloatArray, destination: FloatArray)
 
 
-
     external fun createBuffer(entrySize: Int, bufferSize: Int): Long
     external fun addEntry(bufferPtr: Long, entry: FloatArray)
     external fun toExternalFloatArray(bufferPtr: Long, result: FloatArray)
     external fun destroyBuffer(bufferPtr: Long)
 
 }
-
 
 
 //            compressorCount
@@ -52,17 +44,19 @@ fun dataCompressor(scope: Scope) {
     val nativeLib = NativeLib()
 
 
-
     var bufferSizeJNI = 4
     var entitySizeJNI = 1024
     var roll256JNI = nativeLib.createBuffer(entitySizeJNI, bufferSizeJNI)
 
 
-var sum0 : Long = 0L
-var sum1 : Long = 0L
+    var sum0: Long = 0L
+    var sum1: Long = 0L
 
-var cnt0  : Long = 0L
-var cnt1 :  Long = 0L
+    var cnt0: Long = 0L
+    var cnt1: Long = 0L
+
+    val noise = Noise.real(4096)
+        
 
     GlobalScope.launch(Dispatchers.IO) {
 
@@ -75,6 +69,13 @@ var cnt1 :  Long = 0L
             if (scope.compressorCount.floatValue >= 1.0F) {
 
                 val buf = scope.channelAudioOut.receive()
+
+
+                val src = FloatArray(4096)
+                val dst = FloatArray(4096 + 2) //real output length equals src+2
+                val fft = noise.fft(src, dst)
+
+
 
                 val nanos = measureNanoTime {
 
@@ -90,25 +91,10 @@ var cnt1 :  Long = 0L
                         cnt1 = 0L
                     }
 
-
-
-//                    if (lastCompressorCount != scope.compressorCount.floatValue) {
-//                        roll64.clear()
-//                    }
-//                    while (roll64.size < scope.compressorCount.floatValue) {
-//                        roll64.add(FloatArray(buf.size))
-//                    }
-//                    while (roll64.size >= scope.compressorCount.floatValue) {
-//                        roll64.removeAt(0)
-//                    }
-//                    roll64.add(buf)
-
-                 //   roll256.add(buf)
-
                     nativeLib.addEntry(roll256JNI, buf)
 
                     val samplerate = scope.audioSampleRate
-                    val timeBuf  = buf.size / 2.0f / samplerate //44100 1152 26ms
+                    val timeBuf = buf.size / 2.0f / samplerate //44100 1152 26ms
                     val herz = 1.0f / timeBuf                   //44100 1152 38.28Hz
 
 //                    println(samplerate)
@@ -116,9 +102,12 @@ var cnt1 :  Long = 0L
 //                    println(herz)
                     //Количество кадров, которое нужно пропустить
 
-                    val framesSkip = findBestDivisor(herz.toInt(), if (scope.compressorCount.floatValue >= 32) 14.0 else 14.0)
+                    val framesSkip = findBestDivisor(
+                        herz.toInt(),
+                        if (scope.compressorCount.floatValue >= 32) 14.0 else 14.0
+                    )
 
-                  //  println(framesSkip)
+                    //  println(framesSkip)
 
                     if (
                         frame % framesSkip == 0L
@@ -135,9 +124,9 @@ var cnt1 :  Long = 0L
                         val timeJNI5 = measureNanoTime {
                             nativeLib.toExternalFloatArray(roll256JNI, resultArray.array)
                         }
-                    //    println("!!! > JNI toExternalFloatArray time: ${timeJNI5/1000} us")
+                        //    println("!!! > JNI toExternalFloatArray time: ${timeJNI5/1000} us")
 
-                        sum1 += timeJNI5/1000
+                        sum1 += timeJNI5 / 1000
                         cnt0++
                         cnt1++
 
@@ -210,7 +199,7 @@ class FloatRingBuffer(val entrySize: Int, val bufferSize: Int = 256) {
         }
     }
 
-    fun toExternalFloatArray(result : FloatArray){
+    fun toExternalFloatArray(result: FloatArray) {
         if (isFull) {
             // Копируем данные из двух частей буфера
             val part1Size = (bufferSize - start) * entrySize
