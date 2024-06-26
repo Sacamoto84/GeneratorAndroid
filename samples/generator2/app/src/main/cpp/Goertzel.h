@@ -7,7 +7,7 @@
 #include <assert.h>
 #include "auformat.h"
 
-double goertzelFilter(float *input, int length, float frequency, float sampleRate)
+static double goertzelFilter(float *input, int length, float frequency, float sampleRate)
 {
     float omega = 2 * M_PI * frequency / sampleRate;
     float cr = cos(omega);
@@ -27,13 +27,13 @@ double goertzelFilter(float *input, int length, float frequency, float sampleRat
     return power;
 }
 
-double NoteToFreq(int note)
+static double NoteToFreq(int note)
 {
     float exponent = ((float) note - 49.0f) / 12.0f;
     return 440.0*pow(2, exponent);
 }
 
-int FreqToNote(double freq)
+static int FreqToNote(double freq)
 {
     return (int)floor((log(freq/440.0)/log(2))*12+49);
 }

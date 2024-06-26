@@ -27,6 +27,7 @@
  *
  */
 #include "minidsp.h"
+#include "api/fftw3.h"
 
 static unsigned      _N = 0;        /**< size of input vector */
 static double* siga_loc = NULL;     /**< local copy of input A */
@@ -45,7 +46,7 @@ static fftw_plan px = NULL; /**< FFTW plan for IFFT(xspec) */
  * Free up memory allocated for doing GCC
  * @ingroup GCC
  */
-void _xcorr_free() {
+void xcorr_free() {
   if (xspec)  fftw_free(xspec);
   if (fftb)   fftw_free(fftb);
   if (ffta)   fftw_free(ffta);
@@ -79,7 +80,7 @@ void _xcorr_teardown() {
   if (pa) fftw_destroy_plan(pa);
   if (pb) fftw_destroy_plan(pb);
   if (px) fftw_destroy_plan(px);
-  _xcorr_free();
+  xcorr_free();
   fftw_cleanup();
 }
 

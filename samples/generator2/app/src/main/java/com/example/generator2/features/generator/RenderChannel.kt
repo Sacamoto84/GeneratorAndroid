@@ -1,7 +1,5 @@
 package com.example.generator2.features.generator
 
-import kotlin.system.measureNanoTime
-
 class RenderChannel {
 
     companion object {

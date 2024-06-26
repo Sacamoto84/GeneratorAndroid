@@ -4,6 +4,9 @@
 #include "ChunkerProcessor.h"
 #include "auformat.h"
 
+/**
+ *  Инициализирует переменные и устанавливает m_started в true
+ */
 void ChunkerProcessor::begin()
 {
     assert(m_started == false);
@@ -16,6 +19,7 @@ void ChunkerProcessor::begin()
 
 /**
  * Завершает работу процессора, освобождая все чанки из recQueue и перемещая их в freeQueue.
+ * затем устанавливает  m_started в false
  */
 void ChunkerProcessor::end()
 {
@@ -43,6 +47,10 @@ bool ChunkerProcessor::pushAudioChunk(sample_buf *buf)
     return res;
 }
 
+/**
+ * Освобождает использованные чанки из recQueue и перемещает их в freeQueue.
+ * @return
+ */
 bool ChunkerProcessor::releaseUsedAudioChunks()
 {
     sample_buf *front = nullptr;
@@ -62,6 +70,11 @@ bool ChunkerProcessor::releaseUsedAudioChunks()
     return false;
 }
 
+/**
+ *  Извлекает чанк из freeQueue.
+ * @param buf
+ * @return
+ */
 bool ChunkerProcessor::getFreeBufferFrontAndPop(sample_buf **buf)
 {
     if (freeQueue.front(buf))
@@ -79,7 +92,7 @@ void ChunkerProcessor::Reset()
 }
 
 /**
- * Подготовка буфера
+ * Подготавливает буфер для обработки данных. Перемещает данные из чанков recQueue в процессор pSpectrum
  * @param pSpectrum
  * @return
  */

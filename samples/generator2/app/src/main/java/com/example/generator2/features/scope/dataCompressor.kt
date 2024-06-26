@@ -9,9 +9,10 @@ import kotlin.system.measureNanoTime
 
 
 class NativeLib {
+
     companion object {
         init {
-            System.loadLibrary("generator2")
+            System.loadLibrary("plasma")
         }
     }
 

@@ -33,9 +33,6 @@ class myFFT : public Processor {
      */
     fftwf_plan m_plan;
 
-    float m_sampleRate;
-
-
     void init(int length) {
         m_length = length;
 
@@ -126,13 +123,29 @@ public:
         }
     }
 
+    /**
+    * Заполнение входного буфера m_in данными
+    * @param input
+    * @param offsetDest
+    * @param length
+    */
+    void convertFloatToFFT(const float *input, int length) {
+        for (int i = 0; i < length; i++) {
+            float val = input[i];
+            val *= hamming(i);
+            m_in[i][REAL] = val;
+            m_in[i][IMAG] = 0;
+        }
+    }
+
+
 
     void computePower(float decay)  {
 
         // Выполнение преобразования Фурье
         fftwf_execute(m_plan);
 
-        float totalPower = 0;
+        //float totalPower = 0;
 
         //Заполнение bins
         float *m_rout = m_pOutput->GetData();
@@ -142,7 +155,7 @@ public:
             power *= (2 / m_fftScaling);
             m_rout[i] = m_rout[i] * decay + power * (1.0f - decay);
 
-            totalPower += power;
+            //totalPower += power;
         }
     }
 

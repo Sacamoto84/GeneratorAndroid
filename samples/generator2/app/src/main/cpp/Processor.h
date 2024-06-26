@@ -18,6 +18,7 @@ public:
     virtual int getProcessedLength() const = 0;
     virtual int getBins() const = 0;
     virtual void convertShortToFFT(const AU_FORMAT *input, int offsetDest, int length) = 0;
+    virtual void convertFloatToFFT(const float *input, int length) = 0;
     virtual void computePower(float decay) = 0;
     virtual float bin2Freq(int bin) const = 0;
     virtual float freq2Bin(float freq) const = 0;
@@ -26,6 +27,9 @@ public:
     {
         return m_pOutput;
     }
+
+    float m_sampleRate;
+
 };
 
 #endif

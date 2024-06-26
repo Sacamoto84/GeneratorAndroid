@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.util.UnstableApi
 import com.example.generator2.AppPath
+import com.example.generator2.Spectrogram
 import com.example.generator2.di.MainAudioMixerPump
 import com.example.generator2.element.Console2
 import com.example.generator2.features.audio.AudioMixerPump
@@ -51,6 +52,9 @@ class VMMain4 @OptIn(UnstableApi::class) @Inject constructor(
 //        }
 
         Timber.i("VMMain4 init{} end")
+
+        Spectrogram.setProcessorFFT(4096)
+
     }
 
 

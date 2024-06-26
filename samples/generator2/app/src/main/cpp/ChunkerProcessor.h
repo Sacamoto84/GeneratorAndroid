@@ -6,11 +6,11 @@
 
 class ChunkerProcessor
 {
-    bool m_started = false;
-    int m_offset = 0;
-    int m_srcOffset = 0;
-    int m_destOffset = 0;
-    int m_bufferIndex = 0;
+    bool m_started = false; //указывает, началась ли обработка
+    int m_offset = 0;       //общий смещение для обработанных данных.
+    int m_srcOffset = 0;    //смещение для текущего чанка источника.
+    int m_destOffset = 0;   //смещение для данных, записываемых в буфер.
+    int m_bufferIndex = 0;  //индекс текущего чанка в очереди.
 
     /**
      * Очередь, содержащая чанки аудио, которые нужно обработать.

@@ -12,6 +12,10 @@ option(DISABLE_FORTRAN "Disable Fortran wrapper routines" ON)
 add_subdirectory(fftw-3.3.9)
 INCLUDE_DIRECTORIES(fftw-3.3.9/api)
 
+#add_subdirectory(route)
+#INCLUDE_DIRECTORIES(route)
+
+
 add_library(${CMAKE_PROJECT_NAME} SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
         canvas.cpp
@@ -26,6 +30,11 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         auformat.cpp
         ChunkerProcessor.cpp
         Processor.cpp
+
+        route/global.cpp
+        route/jniFFT.cpp
+
+
 )
 
 # Specifies libraries CMake should link to your target library. You

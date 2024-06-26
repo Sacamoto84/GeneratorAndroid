@@ -1,5 +1,6 @@
-#define _USE_MATH_DEFINES#include <cmath>
+#define _USE_MATH_DEFINES
 
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include "colormaps.h"
@@ -14,7 +15,7 @@
 
 //--------------------------------Draw spectrum--------------------------------
 inline uint16_t GetColor(float x) {
-    return GetMagma(x * 255);
+    return GetMagma(static_cast<int>(x * 255));
 }
 
 void

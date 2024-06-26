@@ -7,8 +7,6 @@ float lerp( float t, float min, float max);
 float unlerp( float min, float max, float x);
 float clamp(float v, float min, float max);
 
-
-
 /**
  * bLogarithmic - определяет тип преобразования, true - логарифмическое, false - линейное
  * @tparam bLogarithmic
