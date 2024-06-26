@@ -54,10 +54,14 @@ object Spectrogram {
     external fun Unlock(bitmap: Bitmap?)
     external fun GetDroppedFrames(): Int
     external fun GetDebugInfo(): String?
-
+//////////////////////////////////////////////
     /**
      * Запуск потока для работы с FFT, запускается один раз
      */
     external fun startFFTLoop()
 
+    /**
+     * Отправить порцию данных в буфер FloatRingBufferFFT
+     */
+    external fun sentToFloatRingBufferFFT(buf : FloatArray, len : Int)
 }

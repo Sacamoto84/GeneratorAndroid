@@ -4,7 +4,7 @@ class RenderChannel {
 
     companion object {
         init {
-            System.loadLibrary("generator2")
+            System.loadLibrary("plasma")
         }
     }
 

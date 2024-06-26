@@ -268,7 +268,7 @@ class AudioMixerPump
                        val t = measureMicroAvg.measureNanoTime{//measureNanoTime {
                            buf = gen.renderAudio(bufferSize)
                        }
-                        println("!!! renderAudio ${measureMicroAvg.avgUs.toInt()} us ${measureMicroAvg.count} t : ${t} us")
+                        //println("!!! renderAudio ${measureMicroAvg.avgUs.toInt()} us ${measureMicroAvg.count} t : ${t} us")
 
                     }
 

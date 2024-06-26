@@ -200,6 +200,8 @@ class MainActivity : ComponentActivity() {
         //var a = 5
         //a = a/0
 
+        Spectrogram.startFFTLoop()
+
         setContent {
 
             val systemUiController = rememberSystemUiController()

@@ -60,8 +60,11 @@ bool isInitialized = false;
 
 void initFTTLoop() {
 
+    LOGE("!!! initFTTLoop");
+
     if (isInitialized)
         return;
+
     pProcessorL->init(LENPOINT, sampleRate);
     pProcessorR->init(LENPOINT, sampleRate);
 
@@ -70,11 +73,11 @@ void initFTTLoop() {
     pthread_attr_init(&context1.attr);
     pthread_create(&context1.worker, &context1.attr, loop1, nullptr);
     isInitialized = true;
-
+    LOGE("!!! initFTTLoop isInitialized = true");
 }
 
 void *loop1(void *init) {
-    LOGE("loop()");
+    LOGE("!!! loop()");
 
     for (;;) {
         // wait for buffer
@@ -92,6 +95,9 @@ void *loop1(void *init) {
 
         context1.millisecondsWaitingInLoopSemaphore = sem_stop - sem_start;
         context1.millisecondsProcessingChunk = chunk_stop - chunk_start;
+
+        LOGD("!!! time %f ms", context1.millisecondsProcessingChunk);
+
     }
 
     return nullptr;
@@ -99,6 +105,9 @@ void *loop1(void *init) {
 };
 
 void ProcessChunk1() {
+
+    LOGD("!!! ProcessChunk1()");
+
     int iterationsPerChunk = 0;
 
     //В буфере нет нужного количества данных
@@ -164,6 +173,21 @@ void ProcessChunk1() {
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_generator2_Spectrogram_startFFTLoop(JNIEnv *env, jobject) {
-    // TODO: implement StartFFTLoop()
     initFTTLoop();
+}
+
+/**
+ * Отправить порцию данных в буфер FloatRingBufferFFT
+ */
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_generator2_Spectrogram_sentToFloatRingBufferFFT(JNIEnv *env, jobject thiz,
+                                                                 jfloatArray buf, jint len) {
+
+    LOGD("!!! sentToFloatRingBufferFFT..start");
+    jfloat *point = env->GetFloatArrayElements(buf, nullptr);
+    ringBufferFft.add(point, len);
+    env->ReleaseFloatArrayElements(buf, point, 0);
+    sem_post(&context1.headwriteprotect);
+    //LOGE("!!! sentToFloatRingBufferFFT..end");
 }

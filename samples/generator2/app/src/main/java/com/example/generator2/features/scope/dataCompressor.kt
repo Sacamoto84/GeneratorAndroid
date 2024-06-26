@@ -1,5 +1,6 @@
 package com.example.generator2.features.scope
 
+import com.example.generator2.Spectrogram
 import com.paramsen.noise.Noise
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -71,12 +72,7 @@ fun dataCompressor(scope: Scope) {
 
                 val buf = scope.channelAudioOut.receive()
 
-
-                val src = FloatArray(4096)
-                val dst = FloatArray(4096 + 2) //real output length equals src+2
-                val fft = noise.fft(src, dst)
-
-
+                Spectrogram.sentToFloatRingBufferFFT(buf, buf.size)
 
                 val nanos = measureNanoTime {
 
