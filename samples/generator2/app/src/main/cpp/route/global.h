@@ -25,7 +25,7 @@ struct Context {
 
     bool exit = false;
 
-    float volume = 1;
+    float volume = 2;
 
     PerfCounters perfCounters;
 
@@ -36,7 +36,7 @@ struct Context {
     AudioQueue *pRecQueue = nullptr;        // user
 
     float fractionOverlap = .5f; // 0 to 1
-    float decay = .5f;
+    float decay = .005f;
     int barsHeight = 500;
     int waterFallRaw = barsHeight;
 

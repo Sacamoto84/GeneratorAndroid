@@ -39,7 +39,7 @@ class AudioMixerPump
 
     //PUBLIC
     val routeR = MutableStateFlow(ROUTESTREAM.GEN) //Выбор источника для вывода сигнала
-    val routeL = MutableStateFlow(ROUTESTREAM.GEN)
+    val routeL = MutableStateFlow(ROUTESTREAM.OFF)
 
     val invertL = MutableStateFlow(false)
     val invertR = MutableStateFlow(false)

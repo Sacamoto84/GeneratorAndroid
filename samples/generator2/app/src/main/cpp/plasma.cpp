@@ -129,6 +129,8 @@ void ProcessChunk() {
 void *loop(void *init) {
     LOGE("loop()");
 
+    return nullptr;
+
     for (;;) {
         // wait for buffer
         double sem_start = now_ms();
@@ -150,18 +152,7 @@ void *loop(void *init) {
     return nullptr;
 }
 
-ScaleBufferBase *GetScale(bool logX, bool logY) {
-    if (logX && logY)
-        return new ScaleBufferLogLog();
-    if (!logX && !logY)
-        return new ScaleBufferLinLin();
-    if (logX)
-        return new ScaleBufferLogLin();
-    if (logY)
-        return new ScaleBufferLinLog();
 
-    return nullptr;
-}
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_example_generator2_Spectrogram_setProcessorFFT(JNIEnv *env, jobject, jint length) {
@@ -204,7 +195,8 @@ Java_com_example_generator2_Spectrogram_setSampleRate(JNIEnv *env, jobject, jint
  */
 extern "C" JNIEXPORT jint JNICALL
 Java_com_example_generator2_Spectrogram_getFftLength(JNIEnv *env, jobject) {
-    return pProcessor->getProcessedLength();
+    return 8192;
+    //pProcessor->getProcessedLength();
 }
 
 /////////////////////////////////////////////////// get/sets ///////////////////////////////////////////////////////
@@ -298,30 +290,7 @@ Java_com_example_generator2_Spectrogram_ResetScanline(JNIEnv *env, jobject) {
 
 /////////////////////////////////////////////////// Perf counter ///////////////////////////////////////////////////////
 
-extern "C" JNIEXPORT void JNICALL
-Java_com_example_generator2_Spectrogram_SetScaler(JNIEnv *env, jobject,
-                                                  jint screenWidth,
-                                                  jdouble minFreq,
-                                                  jdouble maxFreq,
-                                                  jboolean bLogX,
-                                                  jboolean bLogY
-) {
-    pthread_mutex_lock(&context.scaleLock);
-    LOGE("Begin SetScaler");
 
-    delete (pScale);
-
-    //Создать новый pScale
-    pScale = GetScale(bLogX, bLogY);
-
-    //Настроить на ширину картинки и маминимальную и максимальную частоту
-    pScale->setOutputWidth(screenWidth, static_cast<float>(minFreq), static_cast<float>(maxFreq));
-
-    pScale->PreBuild(pProcessor);
-
-    LOGE("End   SetScaler");
-    pthread_mutex_unlock(&context.scaleLock);
-}
 
 extern "C" JNIEXPORT jint JNICALL
 Java_com_example_generator2_Spectrogram_GetIterationsPerChunk(JNIEnv *env, jobject) {
@@ -333,31 +302,6 @@ Java_com_example_generator2_Spectrogram_GetMillisecondsPerChunk(JNIEnv *env, job
     return context.millisecondsProcessingChunk;
 }
 
-extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_generator2_Spectrogram_GetDebugInfo(JNIEnv *env, jobject) {
-    char sout[1024];
-    char *pOut = sout;
-    static double last_time = now_ms();
-
-    PerfCounters *pC = &context.perfCounters;
-    pOut += sprintf(pOut, "Buffers:\n");
-    pOut += sprintf(pOut, " - Recorded %i\n", pC->recordedChunks);
-    pOut += sprintf(pOut, " - Dropped %i\n", pC->droppedBuffers);
-    pOut += sprintf(pOut, "FFTs %i\n", pC->processedChunks);
-    pOut += sprintf(pOut, "iterations Per Chunk %i\n", pC->iterationsPerChunk);
-    pOut += sprintf(pOut, "Queue sizes:\n");
-    pOut += sprintf(pOut, "- Recorded %i\n",
-                    (context.pRecQueue != nullptr) ? context.pRecQueue->size() : 0);
-    pOut += sprintf(pOut, "- Free %i\n",
-                    (context.pFreeQueue != nullptr) ? context.pFreeQueue->size() : 0);
-    pOut += sprintf(pOut, "Timings:\n");
-    pOut += sprintf(pOut, " - Waiting for audio %.1f ms\n",
-                    context.millisecondsWaitingInLoopSemaphore);
-    pOut += sprintf(pOut, " - Processing chunk %.2fms\n", context.millisecondsProcessingChunk);
-    pOut += sprintf(pOut, "Progress: %i %%\n", bufferAverage.getProgress());
-
-    return env->NewStringUTF(sout);
-}
 
 
 extern "C" JNIEXPORT int JNICALL
@@ -427,58 +371,10 @@ Java_com_example_generator2_Spectrogram_Disconnect(JNIEnv *env, jobject) {
     m_pHoldedData = nullptr;
 }
 
-extern "C" JNIEXPORT void JNICALL
-Java_com_example_generator2_Spectrogram_Init(JNIEnv *env, jobject, jobject bitmap) {
-    pthread_mutex_lock(&context.scaleLock);
-
-    int ret;
-    if ((ret = AndroidBitmap_getInfo(env, bitmap, &context.info)) < 0) {
-        LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
-        return;
-    }
-
-    if ((ret = AndroidBitmap_lockPixels(env, bitmap, &context.pixels)) < 0) {
-        LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
-    }
-
-    pthread_mutex_unlock(&context.scaleLock);
-}
 
 
-extern "C" JNIEXPORT jint JNICALL
-Java_com_example_generator2_Spectrogram_Lock(JNIEnv *env, jobject, jobject bitmap) {
-    pthread_mutex_lock(&context.scaleLock);
-//    LOGE("Begin Lock");
 
-    if (pScale != nullptr) {
-        drawSpectrumBars(&context.info, context.pixels, context.barsHeight, pScale->GetBuffer());
 
-        if (m_pHoldedData != nullptr) {
-            drawHeldData(&context.info, context.pixels, context.barsHeight, m_pHoldedData);
-        }
-    }
-
-    AndroidBitmap_unlockPixels(env, bitmap);
-//    LOGE("End   Lock");
-
-    return context.waterFallRaw;
-}
-
-extern "C" JNIEXPORT void JNICALL
-Java_com_example_generator2_Spectrogram_Unlock(JNIEnv *env, jobject, jobject bitmap) {
-//    LOGE("Begin Unlock");
-    int ret;
-    if ((ret = AndroidBitmap_getInfo(env, bitmap, &context.info)) < 0) {
-        LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
-    }
-
-    if ((ret = AndroidBitmap_lockPixels(env, bitmap, &context.pixels)) < 0) {
-        LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
-    }
-
-//    LOGE("End   Unlock");
-    pthread_mutex_unlock(&context.scaleLock);
-}
 
 
 

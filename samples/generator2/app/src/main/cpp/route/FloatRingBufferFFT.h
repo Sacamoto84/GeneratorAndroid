@@ -46,6 +46,37 @@ public:
         }
     }
 
+    // Прочитать блок данных из буфера не изменяя положения указателей
+    bool peek(float* dest, size_t block_size) {
+
+        if (block_size > size()) {
+            return false;
+        }
+
+        size_t _head = head;
+        size_t _tail = tail;
+
+        for (size_t i = 0; i < block_size; ++i) {
+            dest[i] = buffer[_head];
+            _head = (_head + 1) % bufferSize;
+        }
+
+        return true;
+    }
+
+    /**
+     * Переместить указатели на step
+     * @param step
+     * @return
+     */
+    bool gotoNext(int step){
+        if (step > size()) {
+            return false;
+        }
+        head = (head + step) % bufferSize;
+        return true;
+    }
+
     // Получить текущее количество элементов в буфере
    [[nodiscard]] size_t size() const {
         if (is_full) {

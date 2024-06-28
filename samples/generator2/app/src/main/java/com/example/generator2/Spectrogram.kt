@@ -64,4 +64,6 @@ object Spectrogram {
      * Отправить порцию данных в буфер FloatRingBufferFFT
      */
     external fun sentToFloatRingBufferFFT(buf : FloatArray, len : Int)
+
+
 }

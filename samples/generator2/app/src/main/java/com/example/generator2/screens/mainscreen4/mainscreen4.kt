@@ -36,6 +36,7 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.generator2.AppScreen
+import com.example.generator2.WaterfallComposeView
 import com.example.generator2.features.mp3.compose.MP3Control
 import com.example.generator2.features.presets.Presets
 import com.example.generator2.features.presets.ui.DialogPresetsNewFile
@@ -134,6 +135,8 @@ fun Mainsreen4(vm: VMMain4) {
 
             //}
 
+
+            WaterfallComposeView()
 
             MP3Control(vm)
 
