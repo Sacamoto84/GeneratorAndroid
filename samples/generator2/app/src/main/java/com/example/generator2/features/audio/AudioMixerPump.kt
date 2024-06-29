@@ -80,7 +80,7 @@ class AudioMixerPump
         var delay = 50
         //
 
-        var bufferSize = 8192 //R+L
+        var bufferSize = 1024 //R+L
 
         val calculator = Calculator()
 

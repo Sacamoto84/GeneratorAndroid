@@ -112,7 +112,7 @@ void *loop1(void *init) {
         context1.millisecondsWaitingInLoopSemaphore = sem_stop - sem_start;
         context1.millisecondsProcessingChunk = chunk_stop - chunk_start;
 
-        LOGD("!!! time %f ms", context1.millisecondsProcessingChunk);
+        //LOGD("!!! time %f ms", context1.millisecondsProcessingChunk);
 
     }
 
@@ -127,8 +127,8 @@ void ProcessChunk1() {
     int iterationsPerChunk = 0;
 
     //В буфере нет нужного количества данных
-    if (ringBufferFft.size() < (LENPOINT * 8)) {
-        LOGE("!!! ProcessChunk1() ringBufferFft.size() < LENPOINT * 2");
+    if (ringBufferFft.size() < (LENPOINT * 2)) {
+        //LOGE("!!! ProcessChunk1() ringBufferFft.size() < LENPOINT * 2");
         return;
     }
 
@@ -137,8 +137,7 @@ void ProcessChunk1() {
         float buf[LENPOINT * 2] = {};
         ringBufferFft.peek(buf, LENPOINT * 2);
 
-        if(!ringBufferFft.gotoNext(LENPOINT/16))
-        {
+        if (!ringBufferFft.gotoNext(LENPOINT / 16)) {
             break;
         }
 
@@ -166,6 +165,7 @@ void ProcessChunk1() {
                 pScaleL->Build(bufferIO_L, context1.volume);
 
                 context1.waterFallRaw -= 1;
+
                 if (context1.waterFallRaw < context1.barsHeight) {
                     context1.waterFallRaw = static_cast<int>(context1.info.height - 1);
                 }
@@ -268,14 +268,9 @@ Java_com_example_generator2_Spectrogram_Lock(JNIEnv *env, jobject, jobject bitma
     pthread_mutex_lock(&context1.scaleLock);
 //    LOGE("Begin Lock");
 
-//    if (pScaleL != nullptr) {
-    drawSpectrumBars(&context1.info, context1.pixels, context1.barsHeight, pScaleL->GetBuffer());
-//
-////        if (m_pHoldedData != nullptr) {
-////            drawHeldData(&context1.info, context1.pixels, context1.barsHeight, m_pHoldedData);
-////        }
-//
-//    }
+    if (pScaleL != nullptr) {
+        drawSpectrumBars(&context1.info, context1.pixels, context1.barsHeight, pScaleL->GetBuffer());
+    }
 
     AndroidBitmap_unlockPixels(env, bitmap);
 //    LOGE("End   Lock");
@@ -312,10 +307,10 @@ Java_com_example_generator2_Spectrogram_GetDebugInfo(JNIEnv *env, jobject) {
     pOut += sprintf(pOut, "FFTs %i\n", pC->processedChunks);
     pOut += sprintf(pOut, "iterations Per Chunk %i\n", pC->iterationsPerChunk);
     pOut += sprintf(pOut, "Queue sizes:\n");
-    pOut += sprintf(pOut, "- Recorded %i\n",
-                    (context1.pRecQueue != nullptr) ? context1.pRecQueue->size() : 0);
-    pOut += sprintf(pOut, "- Free %i\n",
-                    (context1.pFreeQueue != nullptr) ? context1.pFreeQueue->size() : 0);
+//    pOut += sprintf(pOut, "- Recorded %i\n",
+//                    (context1.pRecQueue != nullptr) ? context1.pRecQueue->size() : 0);
+//    pOut += sprintf(pOut, "- Free %i\n",
+//                    (context1.pFreeQueue != nullptr) ? context1.pFreeQueue->size() : 0);
     pOut += sprintf(pOut, "Timings:\n");
     pOut += sprintf(pOut, " - Waiting for audio %.1f ms\n",
                     context1.millisecondsWaitingInLoopSemaphore);

@@ -68,15 +68,16 @@ void ProcessChunk() {
 
     //если у нас достаточно данных в очереди, обработайте FFT
     while (chunker.Process(pProcessor, context.decay, context.fractionOverlap)) {
+
         //Готовые данные после FTT
         BufferIODouble *bufferIO = pProcessor->getBufferIO();
 
-        bufferIO = bufferAverage.Do(bufferIO);
+        //bufferIO = bufferAverage.Do(bufferIO);
 
         if (bufferIO != nullptr) {
             context.perfCounters.processedChunks++;
 
-            if (pScale) {
+            if ((pScale != nullptr) && (context.pixels != nullptr)) {
                 pthread_mutex_lock(&context.scaleLock);
                 //LOGE("Begin DrawLine");
 
@@ -126,31 +127,31 @@ void ProcessChunk() {
     }
 }
 
-void *loop(void *init) {
-    LOGE("loop()");
-
-    return nullptr;
-
-    for (;;) {
-        // wait for buffer
-        double sem_start = now_ms();
-        sem_wait(&context.headwriteprotect);
-        double sem_stop = now_ms();
-
-        //Выход если Disconect
-        if (context.exit)
-            break;
-
-        double chunk_start = now_ms();
-        ProcessChunk();
-        double chunk_stop = now_ms();
-
-        context.millisecondsWaitingInLoopSemaphore = sem_stop - sem_start;
-        context.millisecondsProcessingChunk = chunk_stop - chunk_start;
-    }
-
-    return nullptr;
-}
+//void *loop(void *init) {
+//    LOGE("loop()");
+//
+//    return nullptr;
+//
+//    for (;;) {
+//        // wait for buffer
+//        double sem_start = now_ms();
+//        sem_wait(&context.headwriteprotect);
+//        double sem_stop = now_ms();
+//
+//        //Выход если Disconect
+//        if (context.exit)
+//            break;
+//
+//        double chunk_start = now_ms();
+//        ProcessChunk();
+//        double chunk_stop = now_ms();
+//
+//        context.millisecondsWaitingInLoopSemaphore = sem_stop - sem_start;
+//        context.millisecondsProcessingChunk = chunk_stop - chunk_start;
+//    }
+//
+//    return nullptr;
+//}
 
 
 
@@ -317,25 +318,25 @@ Java_com_example_generator2_Spectrogram_GetDroppedFrames(JNIEnv *env, jobject) {
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_example_generator2_Spectrogram_ConnectWithAudioMT(JNIEnv *env, jobject) {
-    LOGE("chunker.begin();");
-
-    chunker.begin();
-
-    SetRecorderCallback([](void *pCTX, uint32_t msg, void *pData) -> bool {
-        assert(msg == ENGINE_SERVICE_MSG_RECORDED_AUDIO_AVAILABLE);
-
-        context.perfCounters.recordedChunks++;
-
-        GetBufferQueues(&sampleRate, &context.pFreeQueue, &context.pRecQueue);
-
-        sem_post(&context.headwriteprotect);
-        return true;
-    });
-
-    context.exit = false;
-    sem_init(&context.headwriteprotect, 0, 0);
-    pthread_attr_init(&context.attr);
-    pthread_create(&context.worker, &context.attr, loop, nullptr);
+//    LOGE("chunker.begin();");
+//
+//    chunker.begin();
+//
+//    SetRecorderCallback([](void *pCTX, uint32_t msg, void *pData) -> bool {
+//        assert(msg == ENGINE_SERVICE_MSG_RECORDED_AUDIO_AVAILABLE);
+//
+//        context.perfCounters.recordedChunks++;
+//
+//        GetBufferQueues(&sampleRate, &context.pFreeQueue, &context.pRecQueue);
+//
+//        sem_post(&context.headwriteprotect);
+//        return true;
+//    });
+//
+//    context.exit = false;
+//    sem_init(&context.headwriteprotect, 0, 0);
+//    pthread_attr_init(&context.attr);
+//    pthread_create(&context.worker, &context.attr, loop, nullptr);
 }
 
 //Уничтожаем loop

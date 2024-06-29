@@ -51,5 +51,5 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-# Укажите флаги компиляции для оптимизации на скорость
+# Укажите флаги компиляции для оптимизации на скорость -Ofast
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast -Wall -static-openmp -std=c++17 -fPIC")

@@ -25,7 +25,7 @@ struct Context {
 
     bool exit = false;
 
-    float volume = 2;
+    float volume = 30;
 
     PerfCounters perfCounters;
 
@@ -37,7 +37,8 @@ struct Context {
 
     float fractionOverlap = .5f; // 0 to 1
     float decay = .005f;
-    int barsHeight = 500;
+
+    int barsHeight = 150;
     int waterFallRaw = barsHeight;
 
 

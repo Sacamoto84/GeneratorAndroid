@@ -18,13 +18,13 @@ public class Viewport {
     private PointF mTranslate = new PointF();
     private PointF mScale  = new PointF(1,1);
 
-    private PointF mGnome = new PointF(0,0);
+    //private PointF mGnome = new PointF(0,0);
 
-    RectF mRect = new RectF();
+    //RectF mRect = new RectF();
 
     void Init(View view_) {
         mView = view_;
-        Context context = mView.getContext();
+        //Context context = mView.getContext();
     }
 
     PointF GetPos() {
@@ -69,17 +69,20 @@ public class Viewport {
         switch (maskedAction) {
 
             case MotionEvent.ACTION_DOWN:
+
             case MotionEvent.ACTION_POINTER_DOWN: {
                 // We have a new pointer. Lets add it to the list of pointers
 
                 PointF f = new PointF();
                 f.x = event.getX(pointerIndex);
                 f.y = event.getY(pointerIndex);
+
                 mActivePointers.put(pointerId, f);
 
                 if (mActivePointers.size()==2) {
                     // average
                     PointF midPoint = new PointF();
+
                     for (int i = 0; i < 2; i++) {
                         PointF point = mActivePointers.get(event.getPointerId(i));
                         if (point != null) {
@@ -87,6 +90,7 @@ public class Viewport {
                             midPoint.y += event.getY(i) / 2.0f;
                         }
                     }
+
                     lastPoint = midPoint;
 
                     //distance
