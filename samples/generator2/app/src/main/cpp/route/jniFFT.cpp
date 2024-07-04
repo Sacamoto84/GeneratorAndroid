@@ -9,14 +9,12 @@
 #include <cstdio>
 #include <cstdlib>
 #include "../fft.h"
-#include "../Goertzel.h"
 #include "../colormaps.h"
 #include "../waterfall.h"
 #include "../scale.h"
 #include "../auformat.h"
 #include "../ScaleBufferBase.h"
 #include "../ScaleBuffer.h"
-#include "../ChunkerProcessor.h"
 #include "../BufferAverage.h"
 #include "audio_common.h"
 #include <jni.h>
@@ -41,14 +39,14 @@ FloatRingBufferFFT ringBufferFft = FloatRingBufferFFT(262144);
 ScaleBufferBase *pScaleL = nullptr;
 ScaleBufferBase *pScaleR = nullptr;
 
+
+//Частота дискретизации для все процов
 static float sampleRate = 48000.0f;
 
-auto *pFFTL = new myFFT();
-auto *pFFTR = new myFFT();
+myFFT *pProcessorL = new myFFT();
+myFFT *pProcessorR = new myFFT();
 
-Processor *pProcessorL = pFFTL;
-Processor *pProcessorR = pFFTR;
-
+float buf[LENPOINT * 2] = {};
 float bufL[LENPOINT];
 float bufR[LENPOINT];
 
@@ -134,7 +132,6 @@ void ProcessChunk1() {
 
     while (ringBufferFft.size() >= (LENPOINT * 2)) {
 
-        float buf[LENPOINT * 2] = {};
         ringBufferFft.peek(buf, LENPOINT * 2);
 
         if (!ringBufferFft.gotoNext(LENPOINT / 16)) {
@@ -187,8 +184,6 @@ void ProcessChunk1() {
     context1.perfCounters.iterationsPerChunk = iterationsPerChunk;
 
 }
-
-
 
 ////////////////////////////////////////////////////////////
 /**
@@ -320,6 +315,31 @@ Java_com_example_generator2_Spectrogram_GetDebugInfo(JNIEnv *env, jobject) {
     return env->NewStringUTF(sout);
 }
 
+
+/**
+ * Задать высоту в пикселях бара падающей волны, по умолчанию 500
+ */
+extern "C" JNIEXPORT void JNICALL
+Java_com_example_generator2_Spectrogram_setBarsHeight(JNIEnv *env, jobject,
+                                                      jint barsHeight_) {
+    context1.barsHeight = barsHeight_;
+    context1.waterFallRaw = barsHeight_;
+}
+
+/**
+ * Задать частоту дискретизации для процессора
+ */
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_generator2_Spectrogram_setSampleRate(JNIEnv *env, jobject, jint samplerate) {
+    if (pProcessorL != nullptr){
+        pProcessorL->m_sampleRate = static_cast<float >(samplerate);
+    }
+
+    if (pProcessorR != nullptr){
+        pProcessorR->m_sampleRate = static_cast<float >(samplerate);
+    }
+}
 
 ScaleBufferBase *GetScale(bool logX, bool logY) {
     if (logX && logY)

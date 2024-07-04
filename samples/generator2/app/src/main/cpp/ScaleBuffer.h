@@ -4,7 +4,6 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <algorithm>
-#include "Processor.h"
 #include "scale.h"
 #include "BufferIO.h"
 #include "ScaleBufferBase.h"
@@ -52,7 +51,7 @@ public:
         return scaleXtoFreq.backward(freq);
     }
 
-    void PreBuild(Processor *pProc) override
+    void PreBuild(myFFT *pProc) override
     {
         int *pBins = m_pBins->GetData();
         for(int x=0; x < m_pBins->GetSize(); x++)

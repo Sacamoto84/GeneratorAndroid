@@ -3,14 +3,17 @@
 
 #include <cmath>
 #include <cassert>
-#include "Processor.h"
 #include "fftw3.h"
 #include "auformat.h"
+#include "BufferIO.h"
 
 #define REAL 0
 #define IMAG 1
 
-class myFFT : public Processor {
+class myFFT {
+
+    BufferIODouble *m_pOutput = nullptr;
+
     /**
      * Указатель на входной массив комплексных чисел (типа fftwf_complex), которые будут подвергнуты преобразованию.
      */
@@ -74,6 +77,14 @@ public:
         deinit();
     }
 
+    float m_sampleRate;
+
+    [[nodiscard]] BufferIODouble *getBufferIO() const
+    {
+        return m_pOutput;
+    }
+
+
     virtual const char *GetName() const { return "FFT"; };
 
     void init(int length, float sampleRate) {
@@ -87,7 +98,7 @@ public:
      */
     [[nodiscard]] int getProcessedLength() const { return m_length; }
 
-    [[nodiscard]] int getBins() const override { return m_length / 2; }
+    [[nodiscard]] int getBins() const { return m_length / 2; }
 
     float hanning(int i) const {
         return static_cast<float>(0.50 - 0.50 * cos((2 * M_PI * i) / (m_length - 1.0)));

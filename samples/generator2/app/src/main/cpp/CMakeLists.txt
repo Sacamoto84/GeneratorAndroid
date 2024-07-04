@@ -28,8 +28,6 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         scale.cpp
         waterfall.cpp
         auformat.cpp
-        ChunkerProcessor.cpp
-        Processor.cpp
 
         route/global.cpp
         route/jniFFT.cpp

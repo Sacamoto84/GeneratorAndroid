@@ -1,7 +1,6 @@
 package com.example.generator2.features.scope
 
 import com.example.generator2.Spectrogram
-import com.paramsen.noise.Noise
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -57,7 +56,7 @@ fun dataCompressor(scope: Scope) {
     var cnt0: Long = 0L
     var cnt1: Long = 0L
 
-    val noise = Noise.real(4096)
+    //val noise = Noise.real(4096)
         
 
     GlobalScope.launch(Dispatchers.IO) {

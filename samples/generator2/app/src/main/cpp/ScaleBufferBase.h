@@ -5,7 +5,6 @@
 #include <cmath>
 #include <algorithm>
 #include "fft.h"
-#include "Processor.h"
 #include "scale.h"
 #include "BufferIO.h"
 
@@ -22,7 +21,7 @@ public:
     virtual void setOutputWidth(int outputWidth, float minFreq, float maxFreq) = 0;
     [[nodiscard]] virtual float XtoFreq(float x) const = 0;
     [[nodiscard]] virtual float FreqToX(float freq) const = 0;
-    virtual void PreBuild(Processor *pProc) = 0;
+    virtual void PreBuild(myFFT *pProc) = 0;
     virtual void Build(BufferIODouble *bufferIO, float volume) = 0;
 
     [[nodiscard]] BufferIODouble *GetBuffer() const

@@ -160,9 +160,10 @@ class WaterfallView(context: Context?, attrs: AttributeSet?) :
             xxx = event.getX(0)
             yyy = event.getY(0)
 
-            if (yyy <= mBarsHeight) {
-                Spectrogram.HoldData()
-            }
+//            if (yyy <= mBarsHeight) {
+//                Spectrogram.HoldData()
+//            }
+
         } else {
             viewport.onTouchEvent(event)
         }
@@ -418,7 +419,8 @@ class WaterfallView(context: Context?, attrs: AttributeSet?) :
     }
 
     private fun linesPerSecond(): Float {
-        val delta = (48000.0f / (Spectrogram.getFftLength() * (1.0f - Spectrogram.GetOverlap())))
+        val delta = 1f
+        //val delta = (48000.0f / (Spectrogram.getFftLength() * (1.0f - Spectrogram.GetOverlap())))
         //delta /= Spectrogram.GetAverageCount().toFloat()
         return delta
     }

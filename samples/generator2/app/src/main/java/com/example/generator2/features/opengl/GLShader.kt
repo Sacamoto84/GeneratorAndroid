@@ -12,7 +12,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.example.generator2.features.scope.opengl.render.MyGLRenderer
 import timber.log.Timber
 
-
+@Suppress("NonSkippableComposable")
 @Composable
 fun GLShader(
     renderer: MyGLRenderer,

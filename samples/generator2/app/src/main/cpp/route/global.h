@@ -32,17 +32,11 @@ struct Context {
     double millisecondsWaitingInLoopSemaphore = 0;
     double millisecondsProcessingChunk = 0;
 
-    AudioQueue *pFreeQueue = nullptr;       // user
-    AudioQueue *pRecQueue = nullptr;        // user
-
-    float fractionOverlap = .5f; // 0 to 1
     float decay = .005f;
 
     int barsHeight = 150;
     int waterFallRaw = barsHeight;
 
-
-    bool redoScale = false;
 };
 
 extern double now_ms();

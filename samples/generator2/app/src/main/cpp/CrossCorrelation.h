@@ -4,7 +4,6 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <complex>
-#include "Processor.h"
 #include "fftw3.h"
 #include "auformat.h"
 

@@ -177,8 +177,7 @@ dependencies {
     //implementation("com.android.tools.lint:lint-gradle:31.0.2")
 
 
-    //https://developer.android.com/studio/preview/features
-    implementation 'androidx.compose.runtime:runtime-tracing:1.0.0-beta01'
+
 
     implementation 'androidx.core:core-ktx:1.13.1'
 
@@ -514,11 +513,14 @@ dependencies {
 //
 //    androidTestImplementation "androidx.room:room-testing:2.6.1"
 
-    implementation ("com.github.paramsen:noise:2.0.0")
-
-    //implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-debug:1.6.0")
+   // implementation ("com.github.paramsen:noise:2.0.0")
     
     implementation 'com.github.wendykierp:JTransforms:3.1'
+
+    //implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-debug:1.6.0")
+
+    //https://developer.android.com/studio/preview/features
+    debugImplementation "androidx.compose.runtime:runtime-tracing:1.0.0-beta01"
 
 }
 

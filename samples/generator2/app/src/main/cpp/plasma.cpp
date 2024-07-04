@@ -6,14 +6,12 @@
 #include <cstdio>
 #include <cstdlib>
 #include "fft.h"
-#include "Goertzel.h"
 #include "colormaps.h"
 #include "waterfall.h"
 #include "scale.h"
 #include "auformat.h"
 #include "ScaleBufferBase.h"
 #include "ScaleBuffer.h"
-#include "ChunkerProcessor.h"
 #include "BufferAverage.h"
 #include "audio_common.h"
 #include <jni.h>
@@ -25,14 +23,13 @@
 #include <semaphore.h>
 #include "route/global.h"
 
-Processor *pProcessorDeferred = nullptr;
-Processor *pProcessor = nullptr;
+myFFT *pProcessorDeferred = nullptr;
+myFFT *pProcessor = nullptr;
 
 ScaleBufferBase *pScale = nullptr;
 
 BufferIODouble *m_pHoldedData = nullptr;
 
-ChunkerProcessor chunker;
 
 BufferAverage bufferAverage;
 
@@ -46,86 +43,86 @@ void GetBufferQueues(float *pSampleRate, AudioQueue **pFreeQ, AudioQueue **pRecQ
 //    return tv.tv_sec * 1000. + tv.tv_usec / 1000.;
 //}
 
-Context context;
+//Context context;
 
-void ProcessChunk() {
-    int iterationsPerChunk = 0;
-
-    //Из context.pRecQueue читаем данные которые будем помещять в  ChunkerProcessor.recQueue отдельными кусками
-
-    // pass available buffers to processor
-    {
-        sample_buf *buf = nullptr;
-        while (context.pRecQueue->front(&buf)) {
-            context.pRecQueue->pop();
-            //Помещаем в буфер данных        ChunkerProcessor::recQueue
-            if (!chunker.pushAudioChunk(buf)) {
-                //если нет места в буфере то увеличим счетчик пропущенных кусков
-                context.perfCounters.droppedBuffers++;
-            }
-        }
-    }
-
-    //если у нас достаточно данных в очереди, обработайте FFT
-    while (chunker.Process(pProcessor, context.decay, context.fractionOverlap)) {
-
-        //Готовые данные после FTT
-        BufferIODouble *bufferIO = pProcessor->getBufferIO();
-
-        //bufferIO = bufferAverage.Do(bufferIO);
-
-        if (bufferIO != nullptr) {
-            context.perfCounters.processedChunks++;
-
-            if ((pScale != nullptr) && (context.pixels != nullptr)) {
-                pthread_mutex_lock(&context.scaleLock);
-                //LOGE("Begin DrawLine");
-
-                pScale->Build(bufferIO, context.volume);
-
-                // advance waterfall
-                context.waterFallRaw -= 1;
-                if (context.waterFallRaw < context.barsHeight) {
-                    context.waterFallRaw = static_cast<int>(context.info.height - 1);
-                }
-
-                // draw line
-                if (context.pixels != nullptr) {
-                    drawWaterFallLine(&context.info, context.waterFallRaw, context.pixels,
-                                      pScale->GetBuffer());
-                }
-
-                //LOGE("End   DrawLine");
-                pthread_mutex_unlock(&context.scaleLock);
-            }
-        }
-
-        iterationsPerChunk++;
-    }
-
-    context.perfCounters.iterationsPerChunk = iterationsPerChunk;
-
-    // return processed buffers
-    {
-        sample_buf *buf = nullptr;
-        while (chunker.getFreeBufferFrontAndPop(&buf)) {
-            context.pFreeQueue->push(buf);
-        }
-    }
-
-    // если процессор изменился, замените его сейчас
-    if (pProcessorDeferred != nullptr) {
-        pthread_mutex_lock(&context.scaleLock);
-        delete pProcessor;
-        pProcessor = pProcessorDeferred;
-        pProcessorDeferred = nullptr;
-
-        chunker.Reset();
-
-        pScale->PreBuild(pProcessor);
-        pthread_mutex_unlock(&context.scaleLock);
-    }
-}
+//void ProcessChunk() {
+//    int iterationsPerChunk = 0;
+//
+//    //Из context.pRecQueue читаем данные которые будем помещять в  ChunkerProcessor.recQueue отдельными кусками
+//
+//    // pass available buffers to processor
+//    {
+//        sample_buf *buf = nullptr;
+//        while (context.pRecQueue->front(&buf)) {
+//            context.pRecQueue->pop();
+//            //Помещаем в буфер данных        ChunkerProcessor::recQueue
+//            if (!chunker.pushAudioChunk(buf)) {
+//                //если нет места в буфере то увеличим счетчик пропущенных кусков
+//                context.perfCounters.droppedBuffers++;
+//            }
+//        }
+//    }
+//
+//    //если у нас достаточно данных в очереди, обработайте FFT
+//    while (chunker.Process(pProcessor, context.decay, context.fractionOverlap)) {
+//
+//        //Готовые данные после FTT
+//        BufferIODouble *bufferIO = pProcessor->getBufferIO();
+//
+//        //bufferIO = bufferAverage.Do(bufferIO);
+//
+//        if (bufferIO != nullptr) {
+//            context.perfCounters.processedChunks++;
+//
+//            if ((pScale != nullptr) && (context.pixels != nullptr)) {
+//                pthread_mutex_lock(&context.scaleLock);
+//                //LOGE("Begin DrawLine");
+//
+//                pScale->Build(bufferIO, context.volume);
+//
+//                // advance waterfall
+//                context.waterFallRaw -= 1;
+//                if (context.waterFallRaw < context.barsHeight) {
+//                    context.waterFallRaw = static_cast<int>(context.info.height - 1);
+//                }
+//
+//                // draw line
+//                if (context.pixels != nullptr) {
+//                    drawWaterFallLine(&context.info, context.waterFallRaw, context.pixels,
+//                                      pScale->GetBuffer());
+//                }
+//
+//                //LOGE("End   DrawLine");
+//                pthread_mutex_unlock(&context.scaleLock);
+//            }
+//        }
+//
+//        iterationsPerChunk++;
+//    }
+//
+//    context.perfCounters.iterationsPerChunk = iterationsPerChunk;
+//
+//    // return processed buffers
+//    {
+//        sample_buf *buf = nullptr;
+//        while (chunker.getFreeBufferFrontAndPop(&buf)) {
+//            context.pFreeQueue->push(buf);
+//        }
+//    }
+//
+//    // если процессор изменился, замените его сейчас
+//    if (pProcessorDeferred != nullptr) {
+//        pthread_mutex_lock(&context.scaleLock);
+//        delete pProcessor;
+//        pProcessor = pProcessorDeferred;
+//        pProcessorDeferred = nullptr;
+//
+//        chunker.Reset();
+//
+//        pScale->PreBuild(pProcessor);
+//        pthread_mutex_unlock(&context.scaleLock);
+//    }
+//}
 
 //void *loop(void *init) {
 //    LOGE("loop()");
@@ -155,27 +152,18 @@ void ProcessChunk() {
 
 
 
-extern "C" JNIEXPORT void JNICALL
-Java_com_example_generator2_Spectrogram_setProcessorFFT(JNIEnv *env, jobject, jint length) {
-    auto *pFFT = new myFFT();
-    pFFT->init(length, sampleRate);
+//extern "C" JNIEXPORT void JNICALL
+//Java_com_example_generator2_Spectrogram_setProcessorFFT(JNIEnv *env, jobject, jint length) {
+//    auto *pFFT = new myFFT();
+//    pFFT->init(length, sampleRate);
+//
+//    if (pProcessor == nullptr)
+//        pProcessor = pFFT;
+//    else
+//        pProcessorDeferred = pFFT;
+//}
 
-    if (pProcessor == nullptr)
-        pProcessor = pFFT;
-    else
-        pProcessorDeferred = pFFT;
-}
 
-/**
- * Задать частоту дискретизации для процессора
- */
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_example_generator2_Spectrogram_setSampleRate(JNIEnv *env, jobject, jint samplerate) {
-    if (pProcessor != nullptr){
-        pProcessor->m_sampleRate = static_cast<float >(samplerate);
-    }
-}
 
 //extern "C" JNIEXPORT void JNICALL
 //Java_com_example_generator2_Spectrogram_SetProcessorGoertzel(JNIEnv *env, jobject,
@@ -202,53 +190,31 @@ Java_com_example_generator2_Spectrogram_getFftLength(JNIEnv *env, jobject) {
 
 /////////////////////////////////////////////////// get/sets ///////////////////////////////////////////////////////
 
-/**
- * Задать высоту в пикселях бара падающей волны, по умолчанию 500
- */
-extern "C" JNIEXPORT void JNICALL
-Java_com_example_generator2_Spectrogram_setBarsHeight(JNIEnv *env, jobject,
-                                                      jint barsHeight_) {
-    context.barsHeight = barsHeight_;
-    context.waterFallRaw = barsHeight_;
-}
-
-extern "C" JNIEXPORT void JNICALL
-Java_com_example_generator2_Spectrogram_SetOverlap(JNIEnv *env, jobject,
-                                                   jfloat timeOverlap_) {
-    if (timeOverlap_ > 0.98f)
-        timeOverlap_ = 0.98f;
-
-    context.fractionOverlap = timeOverlap_;
-}
-
-extern "C" JNIEXPORT jfloat JNICALL
-Java_com_example_generator2_Spectrogram_GetOverlap(JNIEnv *env, jobject) {
-    return context.fractionOverlap;
-}
-
 extern "C" JNIEXPORT void JNICALL
 Java_com_example_generator2_Spectrogram_SetDecay(JNIEnv *env, jobject, jfloat decay_) {
-    context.decay = decay_;
+    //context.decay = decay_;
 }
 
 extern "C" JNIEXPORT jfloat JNICALL
 Java_com_example_generator2_Spectrogram_GetDecay(JNIEnv *env, jobject) {
-    return context.decay;
+    //return context.decay;
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_example_generator2_Spectrogram_SetVolume(JNIEnv *env, jobject obj, jfloat volume_) {
-    context.volume = volume_;
+    //context.volume = volume_;
 }
 extern "C" JNIEXPORT jfloat JNICALL
 Java_com_example_generator2_Spectrogram_GetVolume(JNIEnv *env, jobject obj) {
-    return context.volume;
+    //return context.volume;
+    return 1.0f;
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_example_generator2_Spectrogram_SetAverageCount(JNIEnv *env, jobject, jint c) {
     bufferAverage.setAverageCount(c);
 }
+
 extern "C" JNIEXPORT jint JNICALL
 Java_com_example_generator2_Spectrogram_GetAverageCount(JNIEnv *env, jobject) {
     return bufferAverage.getAverageCount();
@@ -264,29 +230,15 @@ Java_com_example_generator2_Spectrogram_XToFreq(JNIEnv *env, jobject, jdouble x)
     return pScale->XtoFreq(static_cast<float>(x));
 }
 
-extern "C" JNIEXPORT void JNICALL
-Java_com_example_generator2_Spectrogram_HoldData(JNIEnv *env, jobject) {
-    pthread_mutex_lock(&context.scaleLock);
-    if (m_pHoldedData == nullptr)
-        m_pHoldedData = new BufferIODouble(pScale->GetBuffer()->GetSize());
 
-    m_pHoldedData->copy(pScale->GetBuffer());
-    pthread_mutex_unlock(&context.scaleLock);
-}
 
-extern "C" JNIEXPORT void JNICALL
-Java_com_example_generator2_Spectrogram_ClearHeldData(JNIEnv *env, jobject) {
-    pthread_mutex_lock(&context.scaleLock);
-    free(m_pHoldedData);
-    m_pHoldedData = nullptr;
-    pthread_mutex_unlock(&context.scaleLock);
-}
+
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_example_generator2_Spectrogram_ResetScanline(JNIEnv *env, jobject) {
-    pthread_mutex_lock(&context.scaleLock);
-    context.waterFallRaw = context.info.height;
-    pthread_mutex_unlock(&context.scaleLock);
+    //pthread_mutex_lock(&context.scaleLock);
+    //context.waterFallRaw = context.info.height;
+    //pthread_mutex_unlock(&context.scaleLock);
 }
 
 /////////////////////////////////////////////////// Perf counter ///////////////////////////////////////////////////////
@@ -295,29 +247,31 @@ Java_com_example_generator2_Spectrogram_ResetScanline(JNIEnv *env, jobject) {
 
 extern "C" JNIEXPORT jint JNICALL
 Java_com_example_generator2_Spectrogram_GetIterationsPerChunk(JNIEnv *env, jobject) {
-    return context.perfCounters.iterationsPerChunk;
+    //return context.perfCounters.iterationsPerChunk;
+    return 1;
 }
 
 extern "C" JNIEXPORT double JNICALL
 Java_com_example_generator2_Spectrogram_GetMillisecondsPerChunk(JNIEnv *env, jobject) {
-    return context.millisecondsProcessingChunk;
+   //return context.millisecondsProcessingChunk;
+   return 0.0;
 }
 
 
 
-extern "C" JNIEXPORT int JNICALL
-Java_com_example_generator2_Spectrogram_GetDroppedFrames(JNIEnv *env, jobject) {
-    static int lastDroppedFrames = 0;
-    int dp = context.perfCounters.droppedBuffers;
-    int res = dp - lastDroppedFrames;
-    lastDroppedFrames = dp;
-    return res;
-}
+//extern "C" JNIEXPORT int JNICALL
+//Java_com_example_generator2_Spectrogram_GetDroppedFrames(JNIEnv *env, jobject) {
+//    static int lastDroppedFrames = 0;
+//    int dp = context.perfCounters.droppedBuffers;
+//    int res = dp - lastDroppedFrames;
+//    lastDroppedFrames = dp;
+//    return res;
+//}
 
 /////////////////////////////////////////////////// Connect/disconnect ///////////////////////////////////////////////////////
 
-extern "C" JNIEXPORT void JNICALL
-Java_com_example_generator2_Spectrogram_ConnectWithAudioMT(JNIEnv *env, jobject) {
+//extern "C" JNIEXPORT void JNICALL
+//Java_com_example_generator2_Spectrogram_ConnectWithAudioMT(JNIEnv *env, jobject) {
 //    LOGE("chunker.begin();");
 //
 //    chunker.begin();
@@ -337,40 +291,40 @@ Java_com_example_generator2_Spectrogram_ConnectWithAudioMT(JNIEnv *env, jobject)
 //    sem_init(&context.headwriteprotect, 0, 0);
 //    pthread_attr_init(&context.attr);
 //    pthread_create(&context.worker, &context.attr, loop, nullptr);
-}
+//}
 
 //Уничтожаем loop
-extern "C" JNIEXPORT void JNICALL
-Java_com_example_generator2_Spectrogram_Disconnect(JNIEnv *env, jobject) {
-
-    context.exit = true;
-    sem_post(&context.headwriteprotect);
-    pthread_join(context.worker, nullptr); // ждем завершения потока thread
-    pthread_attr_destroy(&context.attr);
-    sem_destroy(&context.headwriteprotect);
-
-    LOGE("chunker.end();");
-    chunker.end();
-
-    AudioQueue *pFreeQueue = nullptr;
-    AudioQueue *pRecQueue = nullptr;
-
-    GetBufferQueues(&sampleRate, &pFreeQueue, &pRecQueue);
-
-    sample_buf *buf = nullptr;
-    while (chunker.getFreeBufferFrontAndPop(&buf)) {
-        pFreeQueue->push(buf);
-    }
-
-    delete pProcessor;
-    pProcessor = nullptr;
-
-    delete pScale;
-    pScale = nullptr;
-
-    delete m_pHoldedData;
-    m_pHoldedData = nullptr;
-}
+//extern "C" JNIEXPORT void JNICALL
+//Java_com_example_generator2_Spectrogram_Disconnect(JNIEnv *env, jobject) {
+//
+//    context.exit = true;
+//    sem_post(&context.headwriteprotect);
+//    pthread_join(context.worker, nullptr); // ждем завершения потока thread
+//    pthread_attr_destroy(&context.attr);
+//    sem_destroy(&context.headwriteprotect);
+//
+//    LOGE("chunker.end();");
+//    chunker.end();
+//
+//    AudioQueue *pFreeQueue = nullptr;
+//    AudioQueue *pRecQueue = nullptr;
+//
+//    GetBufferQueues(&sampleRate, &pFreeQueue, &pRecQueue);
+//
+//    sample_buf *buf = nullptr;
+//    while (chunker.getFreeBufferFrontAndPop(&buf)) {
+//        pFreeQueue->push(buf);
+//    }
+//
+//    delete pProcessor;
+//    pProcessor = nullptr;
+//
+//    delete pScale;
+//    pScale = nullptr;
+//
+//    delete m_pHoldedData;
+//    m_pHoldedData = nullptr;
+//}
 
 
 

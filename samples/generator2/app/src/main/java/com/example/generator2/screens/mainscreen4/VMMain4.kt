@@ -53,7 +53,7 @@ class VMMain4 @OptIn(UnstableApi::class) @Inject constructor(
 
         Timber.i("VMMain4 init{} end")
 
-        Spectrogram.setProcessorFFT(4096)
+        //Spectrogram.setProcessorFFT(4096)
 
     }
 
