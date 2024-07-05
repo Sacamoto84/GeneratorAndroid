@@ -67,7 +67,7 @@ class AudioMixerPump
 
     @OptIn(DelicateCoroutinesApi::class)
     @androidx.media3.common.util.UnstableApi
-    fun run() {
+    suspend fun run() {
 
         //Имеется два источника синхронизации, это наличие пакетов в chDataStreamOutAudioProcessor и он является главным и запись иет в неблокирующем режиме,
         //И когда только генератор, и запись в блокирующем режиме
@@ -80,7 +80,7 @@ class AudioMixerPump
         var delay = 50
         //
 
-        var bufferSize = 1024 //R+L
+        var bufferSize = 1152*2 //R+L
 
         val calculator = Calculator()
 
@@ -93,7 +93,7 @@ class AudioMixerPump
         val measureMicroAvg = MeasureMicroAvg()
 
 
-        GlobalScope.launch(Dispatchers.Default) {
+        //GlobalScope.launch(Dispatchers.Default) {
 
             var init = false
 
@@ -213,7 +213,7 @@ class AudioMixerPump
                     //Отравили в scope
                     if (scope.isUse.value) {
                         scope.channelAudioOut.send(v)
-                        scope.channelAudioOutLissagu.send(v)
+                        //scope.channelAudioOutLissagu.send(v)
                     }
 
                     //LRLRLR
@@ -234,14 +234,19 @@ class AudioMixerPump
 
                     //Перевод на 192k только если есть поддержка устройтвом
                     if ((routeL.value == ROUTESTREAM.GEN) and (routeR.value == ROUTESTREAM.GEN)) {
-
                         if ((audioOut.out!!.sampleRate != 192000) and audioOut.isDeviceSupport192k) {
                             Timber.w("Меняем частоту на 192k")
                             audioOut.destroy()
                             audioOut =
                                 AudioOut(192000, 200, encoding = AudioFormat.ENCODING_PCM_FLOAT)
                         }
-
+                    }
+                    else{
+                        if ((audioOut.out!!.sampleRate == 192000) and audioOut.isDeviceSupport192k) {
+                            Timber.w("Меняем частоту на 48k")
+                            audioOut.destroy()
+                            audioOut = AudioOut(48000, 200, AudioFormat.ENCODING_PCM_FLOAT)
+                        }
                     }
 
                     gen.sampleRate = audioOut.sampleRate
@@ -272,7 +277,7 @@ class AudioMixerPump
 
                     }
 
-                    calculator.update(nanos / 1000.0)
+                    //calculator.update(nanos / 1000.0)
 
                     //println("measure :${nanos / 1000.0} us bufferSize: $bufferSize среднее ${calculator.getAvg()}")
 
@@ -309,7 +314,7 @@ class AudioMixerPump
                     //Отравили в scope
                     if (scope.isUse.value) {
                         scope.channelAudioOut.send(v)
-                        scope.channelAudioOutLissagu.send(v)
+                        //scope.channelAudioOutLissagu.send(v)
                     }
 
                     audioOut.out?.write(v, 0, v.size, WRITE_BLOCKING)
@@ -318,7 +323,8 @@ class AudioMixerPump
 
 
             }
-        }
+
+        //}
 
     }
 

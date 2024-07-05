@@ -48,7 +48,7 @@ object Spectrogram {
     /**
      * Отправить порцию данных в буфер FloatRingBufferFFT
      */
-    external fun sentToFloatRingBufferFFT(buf : FloatArray, len : Int)
+    external fun sentToFloatRingBufferFFT(buf : FloatArray, len : Int, samplerate : Int)
 
     /**
      * Задать высоту в пикселях бара падающей волны, по умолчанию 500

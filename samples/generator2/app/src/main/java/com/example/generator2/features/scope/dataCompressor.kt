@@ -5,6 +5,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import kotlin.system.measureNanoTime
 
 
@@ -17,7 +18,6 @@ class NativeLib {
     }
 
     external fun copyFloatArrayJNI(source: FloatArray, destination: FloatArray)
-
 
     external fun createBuffer(entrySize: Int, bufferSize: Int): Long
     external fun addEntry(bufferPtr: Long, entry: FloatArray)
@@ -44,11 +44,9 @@ fun dataCompressor(scope: Scope) {
 
     val nativeLib = NativeLib()
 
-
     var bufferSizeJNI = 4
     var entitySizeJNI = 1024
     var roll256JNI = nativeLib.createBuffer(entitySizeJNI, bufferSizeJNI)
-
 
     var sum0: Long = 0L
     var sum1: Long = 0L
@@ -71,7 +69,8 @@ fun dataCompressor(scope: Scope) {
 
                 val buf = scope.channelAudioOut.receive()
 
-                Spectrogram.sentToFloatRingBufferFFT(buf, buf.size)
+                //Передаем FFT порцию данных
+                Spectrogram.sentToFloatRingBufferFFT(buf, buf.size, scope.audioSampleRate)
 
                 val nanos = measureNanoTime {
 
@@ -93,9 +92,10 @@ fun dataCompressor(scope: Scope) {
                     val timeBuf = buf.size / 2.0f / samplerate //44100 1152 26ms
                     val herz = 1.0f / timeBuf                   //44100 1152 38.28Hz
 
-//                    println(samplerate)
-//                    println(timeBuf)
-//                    println(herz)
+                    //println(samplerate)
+                    //println(timeBuf)
+                    //println(herz)
+
                     //Количество кадров, которое нужно пропустить
 
                     val framesSkip = findBestDivisor(
@@ -120,7 +120,7 @@ fun dataCompressor(scope: Scope) {
                         val timeJNI5 = measureNanoTime {
                             nativeLib.toExternalFloatArray(roll256JNI, resultArray.array)
                         }
-                        //    println("!!! > JNI toExternalFloatArray time: ${timeJNI5/1000} us")
+                            //println("!!! > JNI toExternalFloatArray time: ${timeJNI5/1000} us")
 
                         sum1 += timeJNI5 / 1000
                         cnt0++
@@ -129,8 +129,8 @@ fun dataCompressor(scope: Scope) {
                         val s =
                             scope.channelDataStreamOutCompressorIndex.trySend(resultArray.frame).isSuccess
 
-                        //if (!s)
-                        //    Timber.e("Нет места в channelDataOutRoll")
+                        if (!s)
+                            Timber.e("Нет места в channelDataOutRoll")
 
                     }
 

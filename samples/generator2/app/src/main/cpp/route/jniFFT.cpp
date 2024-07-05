@@ -144,13 +144,12 @@ void ProcessChunk1() {
         }
 
         pProcessorL->convertFloatToFFT(&bufL[0], LENPOINT);
-        pProcessorR->convertFloatToFFT(&bufR[0], LENPOINT);
-
         pProcessorL->computePower(static_cast<float>(context1.decay));
-        pProcessorR->computePower(static_cast<float>(context1.decay));
-
         //Готовые данные после FTT
         BufferIODouble *bufferIO_L = pProcessorL->getBufferIO();
+
+        pProcessorR->convertFloatToFFT(&bufR[0], LENPOINT);
+        pProcessorR->computePower(static_cast<float>(context1.decay));
         BufferIODouble *bufferIO_R = pProcessorR->getBufferIO();
 
         if (bufferIO_L != nullptr) {
@@ -201,7 +200,17 @@ Java_com_example_generator2_Spectrogram_startFFTLoop(JNIEnv *env, jobject) {
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_generator2_Spectrogram_sentToFloatRingBufferFFT(JNIEnv *env, jobject thiz,
-                                                                 jfloatArray buf, jint len) {
+                                                                 jfloatArray buf, jint len, jint samplerate) {
+
+    if (pProcessorL->m_sampleRate != samplerate) {
+        pProcessorL->m_sampleRate = samplerate;
+        pScaleL->PreBuild(pProcessorL);
+    }
+
+    if (pProcessorR->m_sampleRate != samplerate) {
+        pProcessorR->m_sampleRate = samplerate;
+        pScaleR->PreBuild(pProcessorR);
+    }
 
     ///LOGD("!!! sentToFloatRingBufferFFT..start");
     jfloat *point = env->GetFloatArrayElements(buf, nullptr);

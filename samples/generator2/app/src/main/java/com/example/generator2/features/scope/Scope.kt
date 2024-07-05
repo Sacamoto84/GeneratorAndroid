@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -141,12 +142,10 @@ class Scope {
     /** Количество пакетов в которое будет упакован выходной канал */
     val compressorCount = mutableFloatStateOf(256f)
 
-    /** Выход аудиоданных -> compressor */
+    /** ## Выход аудиоданных -> compressor */
     val channelAudioOut = Channel<FloatArray>(capacity = 16, BufferOverflow.DROP_OLDEST)
 
 
-    /** Выход аудиоданных -> compressor */
-    val channelAudioOutLissagu = Channel<FloatArray>(capacity = 8, BufferOverflow.DROP_OLDEST)
 
 
     /** Сжатые данные после компрессора */
@@ -179,6 +178,7 @@ class Scope {
 
     var update : Int = 0
 
+    @Suppress("NonSkippableComposable")
     @Composable
     fun Oscilloscope() {
 
@@ -189,8 +189,6 @@ class Scope {
 //        var update by remember {
 //            mutableIntStateOf(0)
 //        }
-
-
 
 //        if (myGLSurfaceST == null) {
 //            println("!!! new myGLSurfaceST == null")
@@ -211,38 +209,38 @@ class Scope {
 
         }
 
-
-
         LaunchedEffect(key1 = true) {
             withContext(Dispatchers.IO) {
                 while (true) {
                     //delay(1)
                     val frames = channelDataStreamOutCompressorIndex.receive()
+                    //println("frames "+frames)
                     val index = floatArrayPool.findFrameIndex(frames)
                     if (index == -1) continue
+                    //println("index "+index)
                     signalLevels = floatArrayPool.pool[index].array
                     //myGLSurfaceST?.updateVertices(signalLevels)
                     shaderRenderer.updateVertices(signalLevels)
-                    //update++
                     view?.requestRender()
                 }
             }
         }
 
-//        DisposableEffect(Unit) {
-//            myGLSurfaceST?.onResume()
-//            onDispose {
-//                println("!!! onDispose")
-//                myGLSurfaceST?.onPause()
-//                myGLSurfaceST?.deleteProgram()
-//                myGLSurfaceST?.onDestroy()
-//                myGLSurfaceST = null
-//            }
-//        }
+        DisposableEffect(Unit) {
+            view?.onResume()
+            onDispose {
+                println("!!! onDispose")
+                view?.onPause()
+                shaderRenderer?.deleteProgram()
+                view?.onDestroy()
+                view = null
+            }
+        }
+
+
 
         Column {
             Row {
-
 
                 Box(
                     modifier = Modifier
@@ -268,6 +266,7 @@ class Scope {
         //}
     }
 
+    @Suppress("NonSkippableComposable")
     @Composable
     fun CanvasLissagu() {
 //        if (isLissagu.collectAsState().value)
@@ -288,6 +287,7 @@ class Scope {
     val bitmapOscillIndex = MutableStateFlow(0L)
 
 
+    @Suppress("NonSkippableComposable")
     @SuppressLint("SuspiciousIndentation")
     @Composable
     fun CanvasOscill(modifier: Modifier) {
@@ -399,6 +399,7 @@ class Scope {
         }
     }
 
+    @Suppress("NonSkippableComposable")
     @Composable
     fun PanelButton() {
 

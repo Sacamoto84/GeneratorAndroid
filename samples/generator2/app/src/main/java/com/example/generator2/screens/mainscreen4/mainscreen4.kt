@@ -30,9 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.generator2.AppScreen
@@ -41,7 +38,6 @@ import com.example.generator2.features.mp3.compose.MP3Control
 import com.example.generator2.features.presets.Presets
 import com.example.generator2.features.presets.ui.DialogPresetsNewFile
 import com.example.generator2.features.update.ui.WidgetUpdate
-import com.example.generator2.screens.config.ScreenConfig
 import com.example.generator2.screens.mainscreen4.bottom.M4BottomAppBarComponent
 import com.example.generator2.screens.mainscreen4.card.CardCard
 import com.example.generator2.screens.mainscreen4.top.TopBarAudioSource
@@ -49,6 +45,7 @@ import com.example.generator2.theme.colorDarkBackground
 import timber.log.Timber
 
 
+@Suppress("NonSkippableComposable")
 @Composable
 fun Mainsreen4(vm: VMMain4) {
 
@@ -131,7 +128,7 @@ fun Mainsreen4(vm: VMMain4) {
 //            {
             //Осциллограф
 
-        //    vm.audioMixerPump.scope.Oscilloscope()
+            vm.audioMixerPump.scope.Oscilloscope()
 
             //}
 

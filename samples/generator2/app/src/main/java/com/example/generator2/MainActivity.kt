@@ -45,6 +45,9 @@ import com.example.generator2.util.Utils
 import com.example.generator2.util.UtilsKT
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -184,8 +187,18 @@ class MainActivity : ComponentActivity() {
 
         Utils.ContextMainActivity = applicationContext
 
+        // Запускаем корутину в потоке с высоким приоритетом
+        val highPriorityThread = Thread {
+            runBlocking {
+                val highPriorityCoroutine = launch(Dispatchers.Default) {
+                    android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO)
+                    audioMixerPump.run()
+                }
+                highPriorityCoroutine.join()
+            }
+        }
+        highPriorityThread.start()
 
-        audioMixerPump.run()
 
         //play()
 
