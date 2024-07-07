@@ -30,6 +30,8 @@ enum class ROUTESTREAM {
     OFF,
 }
 
+val a48 = 44100
+
 @androidx.media3.common.util.UnstableApi
 class AudioMixerPump
     (
@@ -49,7 +51,8 @@ class AudioMixerPump
     //DI
 
     //Звуковая аудиовыхода
-    var audioOut: AudioOut = AudioOut(48000, 200, AudioFormat.ENCODING_PCM_FLOAT)
+    var audioOut: AudioOut = AudioOut(a48, 200, AudioFormat.ENCODING_PCM_FLOAT)
+    private val isDeviceSupport192k = audioOut.isDeviceSupport192k.or(true)
 
     val scope = Scope()
 
@@ -234,18 +237,19 @@ class AudioMixerPump
 
                     //Перевод на 192k только если есть поддержка устройтвом
                     if ((routeL.value == ROUTESTREAM.GEN) and (routeR.value == ROUTESTREAM.GEN)) {
-                        if ((audioOut.out!!.sampleRate != 192000) and audioOut.isDeviceSupport192k) {
+                        if ((audioOut.out!!.sampleRate != 192000) and isDeviceSupport192k) {
                             Timber.w("Меняем частоту на 192k")
                             audioOut.destroy()
                             audioOut =
                                 AudioOut(192000, 200, encoding = AudioFormat.ENCODING_PCM_FLOAT)
                         }
                     }
-                    else{
-                        if ((audioOut.out!!.sampleRate == 192000) and audioOut.isDeviceSupport192k) {
+                    else
+                    {
+                        if (audioOut.out!!.sampleRate == 192000) {
                             Timber.w("Меняем частоту на 48k")
                             audioOut.destroy()
-                            audioOut = AudioOut(48000, 200, AudioFormat.ENCODING_PCM_FLOAT)
+                            audioOut = AudioOut(a48, 200, AudioFormat.ENCODING_PCM_FLOAT)
                         }
                     }
 
@@ -253,7 +257,6 @@ class AudioMixerPump
                     scope.audioSampleRate = audioOut.sampleRate
 
                     val buf: Pair<FloatArray, FloatArray>
-
 
                     //8192 LR-4096    192k -> 21.3ms 48k->85.4ms
                     //8192
