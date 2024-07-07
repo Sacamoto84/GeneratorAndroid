@@ -70,71 +70,75 @@ fun dataCompressor(scope: Scope) {
                 val buf = scope.channelAudioOut.receive()
 
                 //Передаем FFT порцию данных
-                Spectrogram.sentToFloatRingBufferFFT(buf, buf.size, scope.audioSampleRate)
+                //Spectrogram.sentToFloatRingBufferFFT(buf, buf.size, scope.audioSampleRate)
 
-                val nanos = measureNanoTime {
+                NativeFloatDirectBuffer.add(buf, buf.size, scope.compressorCount.floatValue.toInt())
 
-                    if ((buf.size != entitySizeJNI) || (bufferSizeJNI != scope.compressorCount.floatValue.toInt())) {
-                        nativeLib.destroyBuffer(roll256JNI)
-                        bufferSizeJNI = scope.compressorCount.floatValue.toInt()
-                        entitySizeJNI = buf.size
-                        roll256JNI = nativeLib.createBuffer(entitySizeJNI, bufferSizeJNI)
+                scope.channelDataStreamOutCompressorIndex.trySend(0).isSuccess
 
-                        sum0 = 0L
-                        sum1 = 0L
-                        cnt0 = 0L
-                        cnt1 = 0L
-                    }
-
-                    nativeLib.addEntry(roll256JNI, buf)
-
-                    val samplerate = scope.audioSampleRate
-                    val timeBuf = buf.size / 2.0f / samplerate //44100 1152 26ms
-                    val herz = 1.0f / timeBuf                   //44100 1152 38.28Hz
-
-                    //println(samplerate)
-                    //println(timeBuf)
-                    //println(herz)
-
-                    //Количество кадров, которое нужно пропустить
-
-                    val framesSkip = findBestDivisor(
-                        herz.toInt(),
-                        if (scope.compressorCount.floatValue >= 32) 14.0 else 14.0
-                    )
-
-                    //  println(framesSkip)
-
-                    if (
-                        frame % framesSkip == 0L
-                    //((scope.compressorCount.floatValue >= 32) && (frame % 6 == 0L))
-                    //||
-                    //(scope.compressorCount.floatValue < 32)
-                    ) {
-
-                        totalSize = entitySizeJNI * bufferSizeJNI
-
-                        resultArray =
-                            scope.floatArrayPool.getFloatArrayFrame(totalSize)  //FloatArray(totalSize)
-
-                        val timeJNI5 = measureNanoTime {
-                            nativeLib.toExternalFloatArray(roll256JNI, resultArray.array)
-                        }
-                            //println("!!! > JNI toExternalFloatArray time: ${timeJNI5/1000} us")
-
-                        sum1 += timeJNI5 / 1000
-                        cnt0++
-                        cnt1++
-
-                        val s =
-                            scope.channelDataStreamOutCompressorIndex.trySend(resultArray.frame).isSuccess
-
-                        if (!s)
-                            Timber.e("Нет места в channelDataOutRoll")
-
-                    }
-
-                }
+//                val nanos = measureNanoTime {
+//
+//                    if ((buf.size != entitySizeJNI) || (bufferSizeJNI != scope.compressorCount.floatValue.toInt())) {
+//                        nativeLib.destroyBuffer(roll256JNI)
+//                        bufferSizeJNI = scope.compressorCount.floatValue.toInt()
+//                        entitySizeJNI = buf.size
+//                        roll256JNI = nativeLib.createBuffer(entitySizeJNI, bufferSizeJNI)
+//
+//                        sum0 = 0L
+//                        sum1 = 0L
+//                        cnt0 = 0L
+//                        cnt1 = 0L
+//                    }
+//
+//                    nativeLib.addEntry(roll256JNI, buf)
+//
+//                    val samplerate = scope.audioSampleRate
+//                    val timeBuf = buf.size / 2.0f / samplerate //44100 1152 26ms
+//                    val herz = 1.0f / timeBuf                   //44100 1152 38.28Hz
+//
+//                    //println(samplerate)
+//                    //println(timeBuf)
+//                    //println(herz)
+//
+//                    //Количество кадров, которое нужно пропустить
+//
+//                    val framesSkip = findBestDivisor(
+//                        herz.toInt(),
+//                        if (scope.compressorCount.floatValue >= 32) 14.0 else 14.0
+//                    )
+//
+//                    //  println(framesSkip)
+//
+//                    if (
+//                        frame % framesSkip == 0L
+//                    //((scope.compressorCount.floatValue >= 32) && (frame % 6 == 0L))
+//                    //||
+//                    //(scope.compressorCount.floatValue < 32)
+//                    ) {
+//
+//                        totalSize = entitySizeJNI * bufferSizeJNI
+//
+//                        resultArray =
+//                            scope.floatArrayPool.getFloatArrayFrame(totalSize)  //FloatArray(totalSize)
+//
+//                        val timeJNI5 = measureNanoTime {
+//                            //nativeLib.toExternalFloatArray(roll256JNI, resultArray.array)
+//                        }
+//                            //println("!!! > JNI toExternalFloatArray time: ${timeJNI5/1000} us")
+//
+//                        sum1 += timeJNI5 / 1000
+//                        cnt0++
+//                        cnt1++
+//
+//                        val s =
+//                            scope.channelDataStreamOutCompressorIndex.trySend(resultArray.frame).isSuccess
+//
+//                        if (!s)
+//                            Timber.e("Нет места в channelDataOutRoll")
+//
+//                    }
+//
+//                }
 
                 //println("Roll64: ${nanos / 1000} us totalSize $totalSize")
 

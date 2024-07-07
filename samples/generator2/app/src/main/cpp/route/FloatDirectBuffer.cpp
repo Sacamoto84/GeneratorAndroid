@@ -4,8 +4,6 @@
 
 #include "FloatDirectBuffer.h"
 
-
-
 FloatDirectBuffer floatDirectBuffer;
 
 
@@ -36,4 +34,33 @@ Java_JniFloatBuffer_addToBuffer(JNIEnv *env, jobject obj, jlong bufferPtr, jfloa
 
 
 
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_generator2_features_scope_NativeFloatDirectBuffer_add(JNIEnv *env, jobject thiz,
+                                                                       jfloatArray data, jint len,
+                                                                       jint item_count) {
+    jfloat *elements = env->GetFloatArrayElements(data, nullptr);
+    floatDirectBuffer.add(elements, len, item_count);
+    env->ReleaseFloatArrayElements(data, elements, 0);
+}
+
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_com_example_generator2_features_scope_NativeFloatDirectBuffer_getByteBuffer(JNIEnv *env,
+                                                                                 jobject thiz,
+                                                                                 jint len) {
+    float *buffer = reinterpret_cast<float *>(floatDirectBuffer.read());
+
+
+
+    // Create a direct ByteBuffer that shares the memory with the C++ buffer
+    jobject byteBuffer = env->NewDirectByteBuffer(buffer, floatDirectBuffer.window() * sizeof(float));
+
+    if (byteBuffer == nullptr) {
+        LOGE ("Failed to create ByteBuffer");
+        return nullptr;
+    }
+
+    return byteBuffer;
 }

@@ -31,6 +31,7 @@ import android.opengl.GLES30.glVertexAttribPointer
 import android.opengl.GLES30.glViewport
 import android.opengl.GLSurfaceView
 import com.example.generator2.features.audio.BufSplitFloat
+import com.example.generator2.features.scope.NativeFloatDirectBuffer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -217,6 +218,17 @@ void main() {
     private val bufSplit = BufSplitFloat()
 
     private lateinit var pairFlatArray: Pair<FloatArray, FloatArray>
+
+
+    fun updateVerticesDirect() {
+
+        vertexBuffer = NativeFloatDirectBuffer.getByteBuffer(0)
+            //.order(ByteOrder.nativeOrder())
+            .asFloatBuffer()
+
+        vertexBuffer.position(0)
+
+    }
 
     fun updateVertices(newVertices: FloatArray) {
 

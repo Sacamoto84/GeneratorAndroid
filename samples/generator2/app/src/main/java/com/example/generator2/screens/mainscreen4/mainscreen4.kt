@@ -133,12 +133,9 @@ fun Mainsreen4(vm: VMMain4) {
             //}
 
 
-            WaterfallComposeView()
+            //WaterfallComposeView()
 
             MP3Control(vm)
-
-
-
 
             Column()
             {

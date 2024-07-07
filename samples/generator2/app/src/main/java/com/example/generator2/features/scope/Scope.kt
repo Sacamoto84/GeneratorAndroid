@@ -218,9 +218,9 @@ class Scope {
                     val index = floatArrayPool.findFrameIndex(frames)
                     if (index == -1) continue
                     //println("index "+index)
-                    signalLevels = floatArrayPool.pool[index].array
+                    //signalLevels = floatArrayPool.pool[index].array
                     //myGLSurfaceST?.updateVertices(signalLevels)
-                    shaderRenderer.updateVertices(signalLevels)
+                    shaderRenderer.updateVerticesDirect()
                     view?.requestRender()
                 }
             }

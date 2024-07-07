@@ -1,16 +1,16 @@
 package com.example.generator2.features.scope
 
-class NativeFloatDirectBuffer {
+import java.nio.ByteBuffer
 
-    companion object {
+object NativeFloatDirectBuffer {
+
         init {
             System.loadLibrary("plasma")
         }
-    }
 
 
+    external fun add(data: FloatArray, len : Int, itemCount : Int)
 
-
-
+    external fun getByteBuffer(len : Int):ByteBuffer
 
 }
