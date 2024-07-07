@@ -56,6 +56,11 @@
 },
 {
   "directory": "D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/2k3o5y5j/x86_64",
+  "command": "C:\\Users\\user\\AppData\\Local\\Android\\Sdk\\ndk\\26.1.10909125\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=x86_64-none-linux-android26 --sysroot=C:/Users/user/AppData/Local/Android/Sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dplasma_EXPORTS -ID:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/src/main/cpp/audio -ID:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/src/main/cpp/fftw-3.3.9/api -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -Ofast -Wall -static-openmp -std=c++17 -fPIC -fno-limit-debug-info  -fPIC -o CMakeFiles\\plasma.dir\\route\\FloatDirectBuffer.cpp.o -c D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\route\\FloatDirectBuffer.cpp",
+  "file": "D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\route\\FloatDirectBuffer.cpp"
+},
+{
+  "directory": "D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/Debug/2k3o5y5j/x86_64",
   "command": "C:\\Users\\user\\AppData\\Local\\Android\\Sdk\\ndk\\26.1.10909125\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=x86_64-none-linux-android26 --sysroot=C:/Users/user/AppData/Local/Android/Sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Daudio_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o audio\\CMakeFiles\\audio.dir\\audio_main.cpp.o -c D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\audio\\audio_main.cpp",
   "file": "D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\audio\\audio_main.cpp"
 },

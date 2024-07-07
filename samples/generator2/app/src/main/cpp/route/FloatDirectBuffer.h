@@ -1,5 +1,5 @@
 //
-// Created by user on 06.07.2024.
+// Created by user on 07.07.2024.
 //
 
 #ifndef GENERATOR2_FLOATDIRECTBUFFER_H
@@ -9,35 +9,50 @@
 #include <iostream>
 #include <cstring>
 
-#define BUFFER_SIZE 1000000
+#define BUFFER_SIZE 3000000
 
-static float bigBuffer [BUFFER_SIZE];
+class FloatDirectBuffer {
+public:
+    float bigBuffer[BUFFER_SIZE];
 
-extern "C" {
-
-JNIEXPORT void JNICALL
-Java_JniFloatBuffer_addToBuffer(JNIEnv *env, jobject obj, jlong bufferPtr, jfloatArray data, jint offset, jint length) {
-
-    float *buffer = reinterpret_cast<float *>(bufferPtr);
-    jsize dataLength = env->GetArrayLength(data);
-    if (offset + length > dataLength) {
-        std::cerr << "Offset and length exceed array size" << std::endl;
-        return;
+    /**
+     * Сброс поинтеров
+     * @param _itemSize  размер одного пакета 1152*2
+     * @param _itemCount текущий делитель 1..256
+     */
+    void clear(int _itemSize, int _itemCount) {
+        // Заполняем массив нулями
+        memset(bigBuffer, 0, BUFFER_SIZE * sizeof(float));
+        rP = 0;
+        wP = _itemCount * _itemSize;
+        itemSize = _itemSize;
+        itemCount = _itemCount;
     }
 
-    jfloat *elements = env->GetFloatArrayElements(data, nullptr);
 
-    if (offset + length <= BUFFER_SIZE) {
-        memcpy(buffer + offset, elements, length * sizeof(float));
-    } else {
-        std::cerr << "Buffer overflow" << std::endl;
+    void add(jfloat *data, jint len) {
+        memcpy(bigBuffer + wP, data, len * sizeof(float));
+        wP += len;
+        if (wP > static_cast<int>(0.8f * BUFFER_SIZE)) {
+            wP = itemCount * itemSize;
+        }
     }
 
-    env->ReleaseFloatArrayElements(data, elements, 0);
-}
+    float * read() {
+        float * p = &bigBuffer[0] + wP;
+        wP += itemSize;
+        return p;
+    }
 
 
+private:
 
+    int wP = 524288;
+    int rP = 0;
 
-}
+    int itemSize = 0;  //Размер одного итема 1152*2, 2048, получаем в блоке add
+    int itemCount = 0; //Количество итемов, 1..256
+
+};
+
 #endif //GENERATOR2_FLOATDIRECTBUFFER_H
