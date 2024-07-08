@@ -9,22 +9,22 @@ import timber.log.Timber
 import kotlin.system.measureNanoTime
 
 
-class NativeLib {
-
-    companion object {
-        init {
-            System.loadLibrary("plasma")
-        }
-    }
-
-    external fun copyFloatArrayJNI(source: FloatArray, destination: FloatArray)
-
-    external fun createBuffer(entrySize: Int, bufferSize: Int): Long
-    external fun addEntry(bufferPtr: Long, entry: FloatArray)
-    external fun toExternalFloatArray(bufferPtr: Long, result: FloatArray)
-    external fun destroyBuffer(bufferPtr: Long)
-
-}
+//class NativeLib {
+//
+//    companion object {
+//        init {
+//            System.loadLibrary("plasma")
+//        }
+//    }
+//
+//    external fun copyFloatArrayJNI(source: FloatArray, destination: FloatArray)
+//
+//    external fun createBuffer(entrySize: Int, bufferSize: Int): Long
+//    external fun addEntry(bufferPtr: Long, entry: FloatArray)
+//    external fun toExternalFloatArray(bufferPtr: Long, result: FloatArray)
+//    external fun destroyBuffer(bufferPtr: Long)
+//
+//}
 
 
 //            compressorCount
@@ -34,19 +34,19 @@ class NativeLib {
 @OptIn(DelicateCoroutinesApi::class)
 fun dataCompressor(scope: Scope) {
 
-    val roll64 = ArrayList<FloatArray>()
-    var totalSize = 0
-    var resultArray: FloatArrayFrame
+    //val roll64 = ArrayList<FloatArray>()
+    //var totalSize = 0
+    //var resultArray: FloatArrayFrame
 
     var frame = 0L
 
     var roll256 = FloatRingBuffer(2048)
 
-    val nativeLib = NativeLib()
+    //val nativeLib = NativeLib()
 
-    var bufferSizeJNI = 4
-    var entitySizeJNI = 1024
-    var roll256JNI = nativeLib.createBuffer(entitySizeJNI, bufferSizeJNI)
+    //var bufferSizeJNI = 4
+    //var entitySizeJNI = 1024
+    //var roll256JNI = nativeLib.createBuffer(entitySizeJNI, bufferSizeJNI)
 
     var sum0: Long = 0L
     var sum1: Long = 0L

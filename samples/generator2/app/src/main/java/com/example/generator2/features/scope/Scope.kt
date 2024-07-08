@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
@@ -36,6 +37,8 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -76,7 +79,7 @@ class Scope {
 
     var isPause = MutableStateFlow(false)
 
-    var scopeW: Float = 0f
+
     var scopeH: Float = 0f
 
 
@@ -106,7 +109,6 @@ class Scope {
 
     private var pairPointsLissagu: ChPixelData =
         ChPixelData(Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888), true)
-
 
 
     var updateLissagu by mutableIntStateOf(0)
@@ -146,8 +148,6 @@ class Scope {
     val channelAudioOut = Channel<FloatArray>(capacity = 16, BufferOverflow.DROP_OLDEST)
 
 
-
-
     /** Сжатые данные после компрессора */
     val channelDataStreamOutCompressor = Channel<FloatArray>(capacity = Channel.RENDEZVOUS)
 
@@ -176,13 +176,15 @@ class Scope {
         floatArrayOf(0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f, 0.15f, 0.18f)
 
 
-    var update : Int = 0
+    var update: Int = 0
 
     @Suppress("NonSkippableComposable")
     @Composable
     fun Oscilloscope() {
 
-        var view : MyGLSurfaceView? = remember {
+        var scopeW by remember { mutableFloatStateOf(0f) }
+
+        var view: MyGLSurfaceView? = remember {
             null
         }
 
@@ -221,6 +223,7 @@ class Scope {
                     //signalLevels = floatArrayPool.pool[index].array
                     //myGLSurfaceST?.updateVertices(signalLevels)
                     shaderRenderer.updateVerticesDirect()
+                    shaderRenderer.compressorCount = compressorCount.floatValue
                     view?.requestRender()
                 }
             }
@@ -237,20 +240,49 @@ class Scope {
             }
         }
 
+        Column(modifier = Modifier.border(1.dp, color = Color.Gray)) {
 
-
-        Column {
             Row {
 
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
-                        .weight(1f), contentAlignment = Alignment.BottomCenter,
+                        .weight(1f)
+                        .onGloballyPositioned { coordinates ->
+                            scopeW = coordinates.size.width.toFloat()
+                        }
+                        .pointerInput(Unit) {
+                            detectTapGestures { offset ->
+
+                                val x = offset.x
+
+                                isPause.value = (x in scopeW / 3..scopeW * 2 / 3) xor isPause.value
+
+                                compressorCount.floatValue = when {
+                                    x < scopeW / 3 -> {
+                                        isPause.value =
+                                            false; (compressorCount.floatValue * 2).coerceAtMost(
+                                            256f
+                                        )
+                                    }
+
+                                    x > scopeW * 2 / 3 -> {
+                                        isPause.value =
+                                            false; (compressorCount.floatValue / 2).coerceAtLeast(
+                                            0.125f
+                                        )
+                                    }
+
+                                    else -> compressorCount.floatValue
+                                }
+                            }
+                        },
+                    contentAlignment = Alignment.TopStart,
                 ) {
-                    GLShader(renderer = shaderRenderer, update = {
-                        view = it
-                    })
+                    GLShader(renderer = shaderRenderer, update = { view = it })
+
+                    Text(text = compressorCount.floatValue.toString(), color= Color.LightGray, fontSize = 12.sp)
                 }
 
 
@@ -287,117 +319,117 @@ class Scope {
     val bitmapOscillIndex = MutableStateFlow(0L)
 
 
-    @Suppress("NonSkippableComposable")
-    @SuppressLint("SuspiciousIndentation")
-    @Composable
-    fun CanvasOscill(modifier: Modifier) {
-
-//        var index by remember {
-//            mutableIntStateOf(0)
-//        }
-
-//        LaunchedEffect(key1 = true)
-//        {
-//            while (true) {
-//                if (isPause.value) {
-//                    delay(1);continue
+//    @Suppress("NonSkippableComposable")
+//    @SuppressLint("SuspiciousIndentation")
+//    @Composable
+//    fun CanvasOscill(modifier: Modifier) {
+//
+////        var index by remember {
+////            mutableIntStateOf(0)
+////        }
+//
+////        LaunchedEffect(key1 = true)
+////        {
+////            while (true) {
+////                if (isPause.value) {
+////                    delay(1);continue
+////                }
+////
+////                //pairPoints = inboxCanvasPixelData.receive()
+////
+////
+////
+////               val frames = inboxCanvasPixelDataFrames.receive() //Текущий кадр
+////               index = bitmapPool.findFrameIndex(frames)
+////
+////                if (index == -1)
+////                    continue
+////
+////                if (isPause.value) {
+////                    delay(1);continue
+////                }
+////                update++
+////            }
+////        }
+//
+//
+//        val frames = bitmapPool.findFrameIndex(bitmapOscillIndex.collectAsState().value)
+//
+//        if (frames == -1) return
+//
+//
+//        Canvas(modifier = Modifier
+//            .fillMaxWidth()
+//            .then(modifier)
+//            //.weight(1f)
+//            .height(100.dp)
+//            .pointerInput(Unit) {
+//                detectTapGestures { offset ->
+//                    val x = offset.x
+//                    isPause.value = (x in scopeW / 3..scopeW * 2 / 3) xor isPause.value
+//                    compressorCount.floatValue = when {
+//                        x < scopeW / 3 -> {
+//                            isPause.value = false; (compressorCount.floatValue * 2).coerceAtMost(
+//                                256f
+//                            )
+//                        }
+//
+//                        x > scopeW * 2 / 3 -> {
+//                            isPause.value = false; (compressorCount.floatValue / 2).coerceAtLeast(
+//                                0.125f
+//                            )
+//                        }
+//
+//                        else -> compressorCount.floatValue
+//                    }
 //                }
+//            }) {
+//            //update
+//            scopeW = size.width
+//            scopeH = size.height
 //
-//                //pairPoints = inboxCanvasPixelData.receive()
+////            if (!pairPoints.hiRes) {
+////
+////                val scaledWidth = pairPoints.bitmap.width * 2
+////                val scaledHeight = pairPoints.bitmap.height * 2
+////                val scaledBitmap: Bitmap =
+////                    Bitmap.createScaledBitmap(
+////                        bitmapPool.pool[index].bitmap,
+////                        scaledWidth,
+////                        scaledHeight,
+////                        false
+////                    )
+////                drawImage(image = scaledBitmap.asImageBitmap())
+////            } else
 //
+//            drawImage(
+//                image = bitmapPool.pool[frames].bitmap.asImageBitmap()//pairPoints.bitmap.asImageBitmap()
+//            )
 //
-//
-//               val frames = inboxCanvasPixelDataFrames.receive() //Текущий кадр
-//               index = bitmapPool.findFrameIndex(frames)
-//
-//                if (index == -1)
-//                    continue
-//
-//                if (isPause.value) {
-//                    delay(1);continue
-//                }
-//                update++
+//            //Индекс компресии
+//            drawIntoCanvas {
+//                it.nativeCanvas.drawText(
+//                    compressorCount.floatValue.toString(), 4f, 24f, textPaint
+//                )
 //            }
-//        }
-
-
-        val frames = bitmapPool.findFrameIndex(bitmapOscillIndex.collectAsState().value)
-
-        if (frames == -1) return
-
-
-        Canvas(modifier = Modifier
-            .fillMaxWidth()
-            .then(modifier)
-            //.weight(1f)
-            .height(100.dp)
-            .pointerInput(Unit) {
-                detectTapGestures { offset ->
-                    val x = offset.x
-                    isPause.value = (x in scopeW / 3..scopeW * 2 / 3) xor isPause.value
-                    compressorCount.floatValue = when {
-                        x < scopeW / 3 -> {
-                            isPause.value = false; (compressorCount.floatValue * 2).coerceAtMost(
-                                256f
-                            )
-                        }
-
-                        x > scopeW * 2 / 3 -> {
-                            isPause.value = false; (compressorCount.floatValue / 2).coerceAtLeast(
-                                0.125f
-                            )
-                        }
-
-                        else -> compressorCount.floatValue
-                    }
-                }
-            }) {
-            //update
-            scopeW = size.width
-            scopeH = size.height
-
-//            if (!pairPoints.hiRes) {
 //
-//                val scaledWidth = pairPoints.bitmap.width * 2
-//                val scaledHeight = pairPoints.bitmap.height * 2
-//                val scaledBitmap: Bitmap =
-//                    Bitmap.createScaledBitmap(
-//                        bitmapPool.pool[index].bitmap,
-//                        scaledWidth,
-//                        scaledHeight,
-//                        false
-//                    )
-//                drawImage(image = scaledBitmap.asImageBitmap())
-//            } else
-
-            drawImage(
-                image = bitmapPool.pool[frames].bitmap.asImageBitmap()//pairPoints.bitmap.asImageBitmap()
-            )
-
-            //Индекс компресии
-            drawIntoCanvas {
-                it.nativeCanvas.drawText(
-                    compressorCount.floatValue.toString(), 4f, 24f, textPaint
-                )
-            }
-
-
-
-            drawIntoCanvas {
-                it.nativeCanvas.drawText(
-                    pairPoints.fps.toString(), size.width / 2 - 40f, 40f, textPaintPause
-                )
-            }
-
-            if (isPause.value) drawIntoCanvas {
-                it.nativeCanvas.drawText(
-                    "Pause", size.width / 2 - 40f, 40f, textPaintPause
-                )
-            }
-
-
-        }
-    }
+//
+//
+//            drawIntoCanvas {
+//                it.nativeCanvas.drawText(
+//                    pairPoints.fps.toString(), size.width / 2 - 40f, 40f, textPaintPause
+//                )
+//            }
+//
+//            if (isPause.value) drawIntoCanvas {
+//                it.nativeCanvas.drawText(
+//                    "Pause", size.width / 2 - 40f, 40f, textPaintPause
+//                )
+//            }
+//
+//
+//        }
+//    }
 
     @Suppress("NonSkippableComposable")
     @Composable

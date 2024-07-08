@@ -49,42 +49,42 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
     private var vertexBuffer: FloatBuffer
 
+    var compressorCount : Float = 0f
+
+
     private val vertexShaderCode =
         """
     #version 300 es
     
     in float signalLevel;
-
     uniform float len;
+    uniform float compressorCount;
+    
+    uniform vec3 oneTwo;
     
     out vec4 ourColor; // Передаем цвет во фрагментный шейдер
     
     void main() {
 
-//       if (gl_VertexID % 2 == 0) 
-//       {
-//            ourColor = vec4(1.0, 0.0, 1.0, 0.00001);
-//       }
-//       else
-//       {
-//            ourColor = vec4(1.0, 1.0, 0.0, 0.00001);
-//       }
-       
-       ourColor = vec4(1.0, 1.0, 0.0, 0.00001);
-       
-             
-    
-        // Игнорируем вершины с индексами, которые не равны 0, 1, 16, 17, 32, 33 и т.д.
-//        if (gl_VertexID % 4 > 1) {
-//            // Помещаем игнорируемые вершины за пределы видимой области, сохраняя их положение
-//            gl_Position = vec4(2.0, 2.0, 0.0, 1.0);
-//            ourColor = vec4(0.0, 0.0, 0.0, 0.0);   // Устанавливаем цвет в прозрачный
-//        } else {
-            float x = float(gl_VertexID) * 2.0 / len - 1.0;     
-            gl_Position = vec4(x, signalLevel, 0.0, 1.0);
-//        }
-        
-        gl_PointSize = 1.0;
+       if (gl_VertexID % 2 == 0) 
+       {
+            ourColor = vec4(1.0, 0.0, 1.0, 0.90001);
+       }
+       else
+       {
+            ourColor = vec4(1.0, 1.0, 0.0, 0.90001);
+       }   
+     
+        float x = float(gl_VertexID) * 2.0 / len - 1.0;     
+        gl_Position = vec4(x, signalLevel, 0.0, 1.0);
+        if (compressorCount >= 16.0)
+        {
+            gl_PointSize = 1.0;
+        }
+        else
+        {
+            gl_PointSize = 5.0;
+        }
     }
         
 """.trimIndent()
@@ -124,7 +124,7 @@ void main() {
         println("!!! init onSurfaceCreated")
 
         //Устанавливаем цвет, который будет очищен
-        glClearColor(0.5f, 0.5f, 0.5f, 1.0f)
+        glClearColor(0.0f, 0.15f, 0.0f, 1f)
 
         vertexShader = loadShader(GL_VERTEX_SHADER, vertexShaderCode)
         fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragmentShaderCode)
@@ -156,6 +156,7 @@ void main() {
             // Включаем массив вершинных атрибутов
             glEnableVertexAttribArray(positionHandle)
 
+
             glVertexAttribPointer(
                 positionHandle, //index Указывает индекс универсального атрибута вершины, который должен быть изменен.
                 1,
@@ -165,9 +166,14 @@ void main() {
                 vertexBuffer
             )
 
+            //==========================================================================
             val stepXHandle = glGetUniformLocation(program, "len")
             val len = vertexBuffer.limit() / 1 - 1
             glUniform1f(stepXHandle, len.toFloat())
+
+            val compressorCountHandle = glGetUniformLocation(program, "compressorCount")
+            glUniform1f(compressorCountHandle, compressorCount)
+            //==========================================================================
 
             // Рендерим объект
             glDrawArrays(GL_POINTS, 0, vertexBuffer.limit() / 1)
@@ -219,7 +225,6 @@ void main() {
 
     private lateinit var pairFlatArray: Pair<FloatArray, FloatArray>
 
-
     fun updateVerticesDirect() {
 
         vertexBuffer = NativeFloatDirectBuffer.getByteBuffer(0)
@@ -227,25 +232,19 @@ void main() {
             .asFloatBuffer()
 
         vertexBuffer.position(0)
-
     }
 
     fun updateVertices(newVertices: FloatArray) {
-
         pairFlatArray = bufSplit.split(newVertices)
-
         vertexBuffer = ByteBuffer.allocateDirect(pairFlatArray.second.size * 4)
             .order(ByteOrder.nativeOrder())
             .asFloatBuffer()
             .put(pairFlatArray.second)
         vertexBuffer.position(0)
-
     }
 
     fun deleteProgram() {
-
         println("!!! init deleteProgram")
-
         if (program != 0) {
             glDeleteProgram(program)
             //GLES20.glDeleteShader(vertexShader)
@@ -257,7 +256,7 @@ void main() {
     private val shouldPlay = AtomicBoolean(false)
 
     fun onResume() {
-        shouldPlay.compareAndSet(false,true)
+        shouldPlay.compareAndSet(false, true)
     }
 
     fun onPause() {

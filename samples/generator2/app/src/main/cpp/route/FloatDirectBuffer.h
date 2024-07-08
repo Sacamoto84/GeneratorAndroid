@@ -16,7 +16,6 @@
 #define LOGE(...) \
   __android_log_print(ANDROID_LOG_ERROR, MODULE_NAME, __VA_ARGS__)
 
-
 #define BUFFER_SIZE 3000000
 #define THRESHOLD   2000000
 
@@ -35,6 +34,7 @@ public:
         memset(bigBuffer, 0, BUFFER_SIZE * sizeof(float));
 
         wP = window();
+        wPMirror = 0;
 
         itemSize = _itemSize;
         itemCount = _itemCount;
