@@ -1,6 +1,7 @@
 package com.example.generator2.features.scope.opengl.render
 
 import android.opengl.GLES10.GL_LIGHTING
+import android.opengl.GLES20.glUniform3iv
 import android.opengl.GLES30.GL_COLOR_BUFFER_BIT
 import android.opengl.GLES30.GL_COMPILE_STATUS
 import android.opengl.GLES30.GL_FLOAT
@@ -40,7 +41,7 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 
-class MyGLRenderer : GLSurfaceView.Renderer {
+class MyGLRendererOscill : GLSurfaceView.Renderer {
 
     private var program: Int = 0
 
@@ -51,6 +52,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
     var compressorCount : Float = 0f
 
+    val bools = intArrayOf(0, 1, 1) //oneTwo 0-one 1-two, L 1-true, R
 
     private val vertexShaderCode =
         """
@@ -60,7 +62,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
     uniform float len;
     uniform float compressorCount;
     
-    uniform vec3 oneTwo;
+    uniform ivec3 oneTwo;
     
     out vec4 ourColor; // Передаем цвет во фрагментный шейдер
     
@@ -147,7 +149,7 @@ void main() {
         if (shouldPlay.get()) {
             //println("!!! init onDrawFrame")
 
-            glViewport(0, 0, width, height)
+            //glViewport(0, 0, width, height)
 
             //Эта строка очищает буфер цвета, заполняя его цветом, установленным в glClearColor
             glClear(GL_COLOR_BUFFER_BIT)
@@ -173,6 +175,9 @@ void main() {
 
             val compressorCountHandle = glGetUniformLocation(program, "compressorCount")
             glUniform1f(compressorCountHandle, compressorCount)
+
+            val oneTwoHandle = glGetUniformLocation(program, "oneTwo")
+            glUniform3iv(oneTwoHandle, 1, bools, 0)
             //==========================================================================
 
             // Рендерим объект

@@ -40,7 +40,7 @@ fun dataCompressor(scope: Scope) {
 
     var frame = 0L
 
-    var roll256 = FloatRingBuffer(2048)
+    //var roll256 = FloatRingBuffer(2048)
 
     //val nativeLib = NativeLib()
 
@@ -48,11 +48,11 @@ fun dataCompressor(scope: Scope) {
     //var entitySizeJNI = 1024
     //var roll256JNI = nativeLib.createBuffer(entitySizeJNI, bufferSizeJNI)
 
-    var sum0: Long = 0L
-    var sum1: Long = 0L
-
-    var cnt0: Long = 0L
-    var cnt1: Long = 0L
+//    var sum0: Long = 0L
+//    var sum1: Long = 0L
+//
+//    var cnt0: Long = 0L
+//    var cnt1: Long = 0L
 
     //val noise = Noise.real(4096)
         

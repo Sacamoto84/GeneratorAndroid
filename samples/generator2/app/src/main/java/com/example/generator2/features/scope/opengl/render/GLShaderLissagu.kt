@@ -1,4 +1,4 @@
-package com.example.generator2.features.opengl
+package com.example.generator2.features.scope.opengl.render
 
 import android.opengl.GLSurfaceView
 import androidx.compose.runtime.Composable
@@ -9,13 +9,13 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import com.example.generator2.features.scope.opengl.render.MyGLRenderer
+import com.example.generator2.features.opengl.MyGLSurfaceView
 import timber.log.Timber
 
 @Suppress("NonSkippableComposable")
 @Composable
-fun GLShader(
-    renderer: MyGLRenderer,
+fun GLShaderLissagu(
+    renderer: MyGLRendererLissagu,
     modifier: Modifier = Modifier,
     update: (MyGLSurfaceView?) -> Unit
 ) {

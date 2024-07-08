@@ -1,9 +1,7 @@
 package com.example.generator2.features.scope
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Typeface
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,23 +26,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.generator2.features.opengl.GLShader
+import com.example.generator2.features.scope.opengl.render.GLShaderOscill
 import com.example.generator2.features.opengl.MyGLSurfaceView
-import com.example.generator2.features.scope.opengl.render.MyGLRenderer
+import com.example.generator2.features.scope.opengl.render.MyGLRendererOscill
 import com.example.generator2.features.scope.compose.OscilloscopeControl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
@@ -75,43 +68,19 @@ class Scope {
     //Режимы отображения каналов на осцилографе
     val isVisibleL = MutableStateFlow(true) //Отобразить Левый канал
     val isVisibleR = MutableStateFlow(true) //Отобразить Правый канал
-    val isOneTwo = MutableStateFlow(true)   //Комбинация двух каналов или раздельно
+    val isOneTwo = MutableStateFlow(false)   //Комбинация двух каналов или раздельно
 
     var isPause = MutableStateFlow(false)
 
 
-    var scopeH: Float = 0f
+    //val bitmapPool = BitmapPool(4)
+    //val floatArrayPool = FloatArrayPool(4)
+
+    //============== Lissagu ===================
+    var isUseLissagu = MutableStateFlow(true)
 
 
-    val bitmapPool = BitmapPool(4)
 
-    val floatArrayPool = FloatArrayPool(4)
-
-
-    var isLissagu = MutableStateFlow(true)
-    var scopeWLissagu: Float = 0f
-    var scopeHLissagu: Float = 0f
-
-
-    /** Приемный канал для кадра осцилографа */
-    val inboxCanvasPixelData = Channel<ChPixelData>(1, BufferOverflow.DROP_OLDEST)
-
-    /** Приемный канал для кадра лиссажу */
-    val inboxLisagguPixelData = Channel<ChPixelData>(1, BufferOverflow.DROP_OLDEST)
-
-
-    /** Приемный канал для кадра осцилографа */
-    val inboxCanvasPixelDataFrames = Channel<Long>(1, BufferOverflow.DROP_OLDEST)
-
-
-    private var pairPoints: ChPixelData =
-        ChPixelData(Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888), true)
-
-    private var pairPointsLissagu: ChPixelData =
-        ChPixelData(Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888), true)
-
-
-    var updateLissagu by mutableIntStateOf(0)
 
 
     private val textPaint = Paint().asFrameworkPaint().apply {
@@ -152,7 +121,7 @@ class Scope {
     val channelDataStreamOutCompressor = Channel<FloatArray>(capacity = Channel.RENDEZVOUS)
 
     /** Сжатые данные после компрессора */
-    val channelDataStreamOutCompressorIndex = Channel<Long>(capacity = 3)
+    val channelDataStreamOutCompressorIndex = Channel<Long>(capacity = 1)
 
 
     //var myGLSurfaceST: MyGLSurfaceView? = null
@@ -184,24 +153,11 @@ class Scope {
 
         var scopeW by remember { mutableFloatStateOf(0f) }
 
-        var view: MyGLSurfaceView? = remember {
-            null
-        }
-
-//        var update by remember {
-//            mutableIntStateOf(0)
-//        }
-
-//        if (myGLSurfaceST == null) {
-//            println("!!! new myGLSurfaceST == null")
-//            myGLSurfaceST = MyGLSurfaceView(context).apply {
-//                updateVertices(signalLevels)
-//            }
-//        }
+        var view: MyGLSurfaceView? = remember { null }
 
         val shaderRenderer = remember {
 
-            MyGLRenderer().apply {
+            MyGLRendererOscill().apply {
 //                setShaders(
 //                    shader.fragmentShader,
 //                    shader.vertexShader,
@@ -217,13 +173,16 @@ class Scope {
                     //delay(1)
                     val frames = channelDataStreamOutCompressorIndex.receive()
                     //println("frames "+frames)
-                    val index = floatArrayPool.findFrameIndex(frames)
-                    if (index == -1) continue
+                    //val index = floatArrayPool.findFrameIndex(frames)
+                    //if (index == -1) continue
                     //println("index "+index)
                     //signalLevels = floatArrayPool.pool[index].array
                     //myGLSurfaceST?.updateVertices(signalLevels)
                     shaderRenderer.updateVerticesDirect()
                     shaderRenderer.compressorCount = compressorCount.floatValue
+                    shaderRenderer.bools[0] = if (isOneTwo.value) 1 else 0
+                    shaderRenderer.bools[1] = if (isVisibleL.value) 1 else 0
+                    shaderRenderer.bools[2] = if (isVisibleR.value) 1 else 0
                     view?.requestRender()
                 }
             }
@@ -280,9 +239,13 @@ class Scope {
                         },
                     contentAlignment = Alignment.TopStart,
                 ) {
-                    GLShader(renderer = shaderRenderer, update = { view = it })
+                    GLShaderOscill(renderer = shaderRenderer, update = { view = it })
 
-                    Text(text = compressorCount.floatValue.toString(), color= Color.LightGray, fontSize = 12.sp)
+                    Text(
+                        text = compressorCount.floatValue.toString(),
+                        color = Color.LightGray,
+                        fontSize = 12.sp
+                    )
                 }
 
 
