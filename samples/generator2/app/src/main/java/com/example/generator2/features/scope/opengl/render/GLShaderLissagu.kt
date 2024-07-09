@@ -59,5 +59,4 @@ fun GLShaderLissagu(
         update.invoke(view)
     }
 
-
 }

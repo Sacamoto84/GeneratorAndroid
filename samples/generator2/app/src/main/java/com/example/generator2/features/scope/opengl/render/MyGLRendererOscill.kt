@@ -70,15 +70,36 @@ class MyGLRendererOscill : GLSurfaceView.Renderer {
 
        if (gl_VertexID % 2 == 0) 
        {
-            ourColor = vec4(1.0, 0.0, 1.0, 0.90001);
+            ourColor = vec4(1.0, 0.0, 1.0, 0.10001);
        }
        else
        {
-            ourColor = vec4(1.0, 1.0, 0.0, 0.90001);
+            ourColor = vec4(1.0, 1.0, 0.0, 0.10001);
        }   
      
-        float x = float(gl_VertexID) * 2.0 / len - 1.0;     
-        gl_Position = vec4(x, signalLevel, 0.0, 1.0);
+     
+       float y;
+       
+       if (oneTwo[0] == 0){
+             y = signalLevel;
+       }
+       else
+       {
+            y = signalLevel * 0.5;
+            if (gl_VertexID % 2 == 0) 
+            {
+                y = y - 0.5;
+            }
+            else
+            {
+                y = y + 0.5;
+            }
+       }
+     
+        float x = float(gl_VertexID) * 2.0 / len - 1.0;   
+          
+        gl_Position = vec4(x, y, 0.0, 1.0);
+        
         if (compressorCount >= 16.0)
         {
             gl_PointSize = 1.0;

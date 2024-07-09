@@ -84,6 +84,21 @@ public:
         return p;
     }
 
+    float *readSmall(int len) {
+        //LOGD("!!! read");
+        int rP = wP - len;
+        //auto mod = rP % itemSize;
+        //LOGD("!!! read rP:%i, mod: %i", rP, mod);
+        if (rP < 0) {
+            rP = 0;
+            LOGD("!!! readSmall rP<0");
+        }
+        float *p = &bigBuffer[0] + rP;
+        return p;
+    }
+
+
+
     int window() {
         return itemSize * itemCount;
     }

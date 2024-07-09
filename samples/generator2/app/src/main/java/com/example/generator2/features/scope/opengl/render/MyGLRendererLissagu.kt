@@ -50,43 +50,20 @@ class MyGLRendererLissagu: GLSurfaceView.Renderer {
 
     private var vertexBuffer: FloatBuffer
 
-    var compressorCount : Float = 0f
-
     val bools = intArrayOf(0, 1, 1) //oneTwo 0-one 1-two, L 1-true, R
 
     private val vertexShaderCode =
         """
     #version 300 es
     
-    in float signalLevel;
-    uniform float len;
-    uniform float compressorCount;
-    
-    uniform ivec3 oneTwo;
-    
+    layout(location = 0) in vec2 aPosition;
+   
     out vec4 ourColor; // Передаем цвет во фрагментный шейдер
     
     void main() {
-
-       if (gl_VertexID % 2 == 0) 
-       {
-            ourColor = vec4(1.0, 0.0, 1.0, 0.90001);
-       }
-       else
-       {
-            ourColor = vec4(1.0, 1.0, 0.0, 0.90001);
-       }   
-     
-        float x = float(gl_VertexID) * 2.0 / len - 1.0;     
-        gl_Position = vec4(x, signalLevel, 0.0, 1.0);
-        if (compressorCount >= 16.0)
-        {
-            gl_PointSize = 1.0;
-        }
-        else
-        {
-            gl_PointSize = 5.0;
-        }
+        ourColor = vec4(1.0, 1.0, 1.0, 0.90001);
+        gl_Position = vec4(aPosition, 0.0, 1.0);
+        gl_PointSize = 5.0;
     }
         
 """.trimIndent()
@@ -154,49 +131,34 @@ void main() {
             //Эта строка очищает буфер цвета, заполняя его цветом, установленным в glClearColor
             glClear(GL_COLOR_BUFFER_BIT)
 
-            val positionHandle = glGetAttribLocation(program, "signalLevel")
+            val positionHandle = 0//glGetAttribLocation(program, "aPosition")
             // Включаем массив вершинных атрибутов
             glEnableVertexAttribArray(positionHandle)
 
-
             glVertexAttribPointer(
                 positionHandle, //index Указывает индекс универсального атрибута вершины, который должен быть изменен.
-                1,
+                2,
                 GL_FLOAT, //Определяет тип данных каждого компонента в массиве.
                 false,
-                4 * 0,
+                 0,
                 vertexBuffer
             )
-
-            //==========================================================================
-            val stepXHandle = glGetUniformLocation(program, "len")
-            val len = vertexBuffer.limit() / 1 - 1
-            glUniform1f(stepXHandle, len.toFloat())
-
-            val compressorCountHandle = glGetUniformLocation(program, "compressorCount")
-            glUniform1f(compressorCountHandle, compressorCount)
-
-            val oneTwoHandle = glGetUniformLocation(program, "oneTwo")
-            glUniform3iv(oneTwoHandle, 1, bools, 0)
-            //==========================================================================
-
-            // Рендерим объект
-            glDrawArrays(GL_POINTS, 0, vertexBuffer.limit() / 1)
-
-            // Отключаем массивы вершинных атрибутов по завершении
+//
+//            //==========================================================================
+//
+//            //==========================================================================
+//            // Рендерим объект
+            glDrawArrays(GL_POINTS, 0, vertexBuffer.limit() / 2)
+//            // Отключаем массивы вершинных атрибутов по завершении
             glDisableVertexAttribArray(positionHandle)
 
         }
 
     }
 
-    var width: Int = 1
-    var height: Int = 1
+
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
-        this.width = width
-        this.height = height
-
         //Установить размер отображаемого окна
         glViewport(0, 0, width, height)
     }
@@ -225,26 +187,12 @@ void main() {
         }
     }
 
-
     private val bufSplit = BufSplitFloat()
 
     private lateinit var pairFlatArray: Pair<FloatArray, FloatArray>
 
     fun updateVerticesDirect() {
-
-        vertexBuffer = NativeFloatDirectBuffer.getByteBuffer(0)
-            //.order(ByteOrder.nativeOrder())
-            .asFloatBuffer()
-
-        vertexBuffer.position(0)
-    }
-
-    fun updateVertices(newVertices: FloatArray) {
-        pairFlatArray = bufSplit.split(newVertices)
-        vertexBuffer = ByteBuffer.allocateDirect(pairFlatArray.second.size * 4)
-            .order(ByteOrder.nativeOrder())
-            .asFloatBuffer()
-            .put(pairFlatArray.second)
+        vertexBuffer = NativeFloatDirectBuffer.getByteBufferSmallLissagu(4096).asFloatBuffer()
         vertexBuffer.position(0)
     }
 

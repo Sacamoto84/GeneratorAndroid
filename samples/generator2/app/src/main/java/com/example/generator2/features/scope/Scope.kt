@@ -1,6 +1,5 @@
 package com.example.generator2.features.scope
 
-import android.graphics.Bitmap
 import android.graphics.Typeface
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,7 +20,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -35,10 +33,13 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.generator2.features.scope.opengl.render.GLShaderOscill
 import com.example.generator2.features.opengl.MyGLSurfaceView
-import com.example.generator2.features.scope.opengl.render.MyGLRendererOscill
 import com.example.generator2.features.scope.compose.OscilloscopeControl
+import com.example.generator2.features.scope.opengl.render.GLShaderLissagu
+import com.example.generator2.features.scope.opengl.render.GLShaderOscill
+import com.example.generator2.features.scope.opengl.render.MyGLRendererLissagu
+import com.example.generator2.features.scope.opengl.render.MyGLRendererOscill
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
@@ -52,8 +53,6 @@ private val m = Modifier
     .width(32.dp)
     .border(1.dp, Color.Gray)
     .background(Color.Black)
-
-data class ChPixelData(val bitmap: Bitmap, val hiRes: Boolean, val fps: Float = 0f)
 
 class Scope {
 
@@ -78,9 +77,6 @@ class Scope {
 
     //============== Lissagu ===================
     var isUseLissagu = MutableStateFlow(true)
-
-
-
 
 
     private val textPaint = Paint().asFrameworkPaint().apply {
@@ -121,10 +117,10 @@ class Scope {
     val channelDataStreamOutCompressor = Channel<FloatArray>(capacity = Channel.RENDEZVOUS)
 
     /** Сжатые данные после компрессора */
-    val channelDataStreamOutCompressorIndex = Channel<Long>(capacity = 1)
 
 
-    //var myGLSurfaceST: MyGLSurfaceView? = null
+
+    val deferred = CompletableDeferred<Long>()
 
     init {
 
@@ -140,10 +136,8 @@ class Scope {
 
     }
 
-
     var signalLevels =
         floatArrayOf(0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f, 0.15f, 0.18f)
-
 
     var update: Int = 0
 
@@ -171,13 +165,7 @@ class Scope {
             withContext(Dispatchers.IO) {
                 while (true) {
                     //delay(1)
-                    val frames = channelDataStreamOutCompressorIndex.receive()
-                    //println("frames "+frames)
-                    //val index = floatArrayPool.findFrameIndex(frames)
-                    //if (index == -1) continue
-                    //println("index "+index)
-                    //signalLevels = floatArrayPool.pool[index].array
-                    //myGLSurfaceST?.updateVertices(signalLevels)
+                    deferred.await()//channelDataStreamOutCompressorIndex.receive()
                     shaderRenderer.updateVerticesDirect()
                     shaderRenderer.compressorCount = compressorCount.floatValue
                     shaderRenderer.bools[0] = if (isOneTwo.value) 1 else 0
@@ -201,7 +189,7 @@ class Scope {
 
         Column(modifier = Modifier.border(1.dp, color = Color.Gray)) {
 
-            Row {
+            Row(modifier = Modifier.fillMaxWidth()) {
 
                 Box(
                     modifier = Modifier
@@ -248,151 +236,47 @@ class Scope {
                     )
                 }
 
-
                 PanelButton()
+
             }
             OscilloscopeControl()
         }
 
-        //CanvasLissagu()
-        //}
-
-
-        //}
     }
 
     @Suppress("NonSkippableComposable")
     @Composable
-    fun CanvasLissagu() {
-//        if (isLissagu.collectAsState().value)
-//            Canvas(
-//                modifier = Modifier.size(100.dp)
-//            )
-//            {
-//                updateLissagu
-//                scopeWLissagu = size.width
-//                scopeHLissagu = size.height
-//                drawImage(
-//                    image = pairPointsLissagu.bitmap.asImageBitmap()
-//                )
-//            }
+    fun Lissagu() {
+
+        var view: MyGLSurfaceView? = remember { null }
+        val shaderRenderer = remember { MyGLRendererLissagu() }
+
+        LaunchedEffect(key1 = true) {
+            withContext(Dispatchers.IO) {
+                while (true) {
+                    deferred.await()
+                    //channelDataStreamOutCompressorIndexLissagu.receive()
+                    shaderRenderer.updateVerticesDirect()
+                    view?.requestRender()
+                }
+            }
+        }
+
+        DisposableEffect(Unit) {
+            view?.onResume()
+            onDispose {
+                println("!!! onDispose")
+                view?.onPause()
+                shaderRenderer.deleteProgram()
+                view?.onDestroy()
+                view = null
+            }
+        }
+
+        GLShaderLissagu(renderer = shaderRenderer, update = { view = it }, modifier = Modifier.height(200.dp).width(200.dp))
+
     }
 
-
-    val bitmapOscillIndex = MutableStateFlow(0L)
-
-
-//    @Suppress("NonSkippableComposable")
-//    @SuppressLint("SuspiciousIndentation")
-//    @Composable
-//    fun CanvasOscill(modifier: Modifier) {
-//
-////        var index by remember {
-////            mutableIntStateOf(0)
-////        }
-//
-////        LaunchedEffect(key1 = true)
-////        {
-////            while (true) {
-////                if (isPause.value) {
-////                    delay(1);continue
-////                }
-////
-////                //pairPoints = inboxCanvasPixelData.receive()
-////
-////
-////
-////               val frames = inboxCanvasPixelDataFrames.receive() //Текущий кадр
-////               index = bitmapPool.findFrameIndex(frames)
-////
-////                if (index == -1)
-////                    continue
-////
-////                if (isPause.value) {
-////                    delay(1);continue
-////                }
-////                update++
-////            }
-////        }
-//
-//
-//        val frames = bitmapPool.findFrameIndex(bitmapOscillIndex.collectAsState().value)
-//
-//        if (frames == -1) return
-//
-//
-//        Canvas(modifier = Modifier
-//            .fillMaxWidth()
-//            .then(modifier)
-//            //.weight(1f)
-//            .height(100.dp)
-//            .pointerInput(Unit) {
-//                detectTapGestures { offset ->
-//                    val x = offset.x
-//                    isPause.value = (x in scopeW / 3..scopeW * 2 / 3) xor isPause.value
-//                    compressorCount.floatValue = when {
-//                        x < scopeW / 3 -> {
-//                            isPause.value = false; (compressorCount.floatValue * 2).coerceAtMost(
-//                                256f
-//                            )
-//                        }
-//
-//                        x > scopeW * 2 / 3 -> {
-//                            isPause.value = false; (compressorCount.floatValue / 2).coerceAtLeast(
-//                                0.125f
-//                            )
-//                        }
-//
-//                        else -> compressorCount.floatValue
-//                    }
-//                }
-//            }) {
-//            //update
-//            scopeW = size.width
-//            scopeH = size.height
-//
-////            if (!pairPoints.hiRes) {
-////
-////                val scaledWidth = pairPoints.bitmap.width * 2
-////                val scaledHeight = pairPoints.bitmap.height * 2
-////                val scaledBitmap: Bitmap =
-////                    Bitmap.createScaledBitmap(
-////                        bitmapPool.pool[index].bitmap,
-////                        scaledWidth,
-////                        scaledHeight,
-////                        false
-////                    )
-////                drawImage(image = scaledBitmap.asImageBitmap())
-////            } else
-//
-//            drawImage(
-//                image = bitmapPool.pool[frames].bitmap.asImageBitmap()//pairPoints.bitmap.asImageBitmap()
-//            )
-//
-//            //Индекс компресии
-//            drawIntoCanvas {
-//                it.nativeCanvas.drawText(
-//                    compressorCount.floatValue.toString(), 4f, 24f, textPaint
-//                )
-//            }
-//
-//
-//
-//            drawIntoCanvas {
-//                it.nativeCanvas.drawText(
-//                    pairPoints.fps.toString(), size.width / 2 - 40f, 40f, textPaintPause
-//                )
-//            }
-//
-//            if (isPause.value) drawIntoCanvas {
-//                it.nativeCanvas.drawText(
-//                    "Pause", size.width / 2 - 40f, 40f, textPaintPause
-//                )
-//            }
-//
-//
-//        }
-//    }
 
     @Suppress("NonSkippableComposable")
     @Composable
@@ -459,6 +343,8 @@ class Scope {
 
 
     }
+
+
 
 }
 
