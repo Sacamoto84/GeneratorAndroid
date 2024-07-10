@@ -7,3 +7,5 @@ import com.example.generator2.model.TreeNode
  * Дерево всех аудиофайлов на устройстве
  */
 var treeAllAudio: TreeNode<ExploreNodeItem> = TreeNode(ExploreNodeItem("/", "/"))
+
+var treeAllAudioS3: TreeNode<ExploreNodeItem> = TreeNode(ExploreNodeItem("/", "/"))

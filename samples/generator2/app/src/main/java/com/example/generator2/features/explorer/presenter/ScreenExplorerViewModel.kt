@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.transformer.EditedMediaItem
 import com.example.generator2.AppPath
@@ -19,9 +20,17 @@ import com.example.generator2.features.explorer.domen.explorerMediaFormat
 import com.example.generator2.features.explorer.domen.tagInItemMp3
 import com.example.generator2.features.explorer.model.ExplorerItem
 import com.example.generator2.model.traverseTree
+import com.kdownloader.httpclient.HttpClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONObject
+import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -42,6 +51,15 @@ class ScreenExplorerViewModel @Inject constructor(
    val audioMixerPump: AudioMixerPump
 
 ) : ViewModel() {
+
+
+
+
+
+
+
+
+
 
 
     val startNode = treeAllAudio
@@ -151,106 +169,6 @@ class ScreenExplorerViewModel @Inject constructor(
         audioMixerPump.exoplayer.player.prepare()
         audioMixerPump.exoplayer.player.playWhenReady = true
     }
-
-//    fun scan() {
-//
-//        listItems.clear()
-//
-//        listItems.add(ExplorerItem(true, name = """..."""))
-//
-//        try {
-//
-//            val directory = File(currentDir.value)
-//
-//            if (directory.exists() && directory.isDirectory) {
-//                val files = directory.listFiles()
-//                if (files != null) {
-//                    for (file in files) {
-//
-//                        if (file.isDirectory) {
-//                            if (file.name[0] != '.') {
-//                                listItems.add(
-//                                    ExplorerItem(
-//                                        isDirectory = true,
-//                                        name = file.name,
-//                                        fullPatch = file.path
-//                                    )
-//                                )
-//                            }
-//                            println("${file.name} - это папка")
-//
-//                        } else {
-//                            listItems.add(
-//                                ExplorerItem(
-//                                    isDirectory = false,
-//                                    name = file.name,
-//                                    fullPatch = file.path
-//                                )
-//                            )
-//                            println("${file.name} - это файл")
-//                        }
-//                    }
-//                } else {
-//                    println("Ошибка при получении списка файлов")
-//                }
-//            } else {
-//                println("Папка не существует или это не папка")
-//            }
-//
-//        } catch (e: Exception) {
-//            Timber.e(e.localizedMessage)
-//        }
-//
-//        listItems.forEach {
-//            mediaFind(it)
-//            tagInItemMp3(it)
-//        }
-//
-//        //Сортировка
-//        val l = listItems.filter { it.isDirectory or it.isMedia }.sortedBy { it.name }
-//            .sortedByDescending { it.isDirectory }
-//        listItems = l.toMutableList()
-//
-//        update++
-//
-//    }
-
-    /**
-     *
-     */
-//    private fun tagInItemMp3(item: ExplorerItem) {
-//        try {
-//            if ((item.isDirectory) or (item.isFormat == "")) return
-//
-//            println("----------------------------------------------")
-//            println(item.fullPatch)
-//
-//            val audioFile = AudioFileIO.read(File(item.fullPatch))
-//            val tag = audioFile.tag
-//
-//
-//            val header = audioFile.audioHeader
-//            header.toString()
-//
-//            item.lengthInSeconds = header.trackLength.toLong().formatSecondsToTime()
-//            item.sampleRate = header.sampleRate
-//            item.bitRate = header.bitRate + "kbps "// + if (header.isVariableBitRate) "VBR" else ""
-//            item.channelMode = header.channels.toString()
-//
-//            val title = tag.getFirst(FieldKey.TITLE)
-//            val artist = tag.getFirst(FieldKey.ARTIST)
-//            val album = tag.getFirst(FieldKey.ALBUM)
-//
-//            println("Title: $title")
-//            println("Artist: $artist")
-//            println("Album: $album")
-//
-//
-//        } catch (e: Exception) {
-//            Timber.e(e.localizedMessage)
-//        }
-//
-//    }
 
 
     private fun Long.formatSecondsToTime(): String {

@@ -17,10 +17,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.generator2.features.explorer.presenter.ScreenExplorerViewModel
 
+@Suppress("NonSkippableComposable")
 @androidx.media3.common.util.UnstableApi
 @Composable
 fun ScreenExplorer(vm: ScreenExplorerViewModel) {
