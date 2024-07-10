@@ -13,11 +13,12 @@ import org.jaudiotagger.audio.AudioFileIO
 import timber.log.Timber
 import java.io.File
 
+private const val server = "https://ru-spb-s3.hexcore.cloud"
 
 /**
  * Запрос на S3 для получения списка всех файлов
  */
-fun readS3List(urlS3 : String= "https://ru-spb-s3.hexcore.cloud/rabbit/list.txt"):List<String>{
+fun readS3List(urlS3 : String= "$server/rabbit/list.txt"):List<String>{
 
     Timber.d("!!! readS3List()")
 
@@ -52,13 +53,13 @@ fun explorerInitialization(context: Context) {
     val aa = explorerFilterMediaType(listAllFiles)
 
     //Убрали https://ru-spb-s3.hexcore.cloud
-    val bb = explorerFilterMediaType(listAllS3url).map { it.substringAfter("https://ru-spb-s3.hexcore.cloud") }
+    val bb = listAllS3url.map { it.substringAfter(server) }
 
     //Получить дерево всех аудиофайлов на телефоне
-    treeAllAudio = explorerTreeBuild(listAllFiles)
+    treeAllAudio = explorerTreeBuild(listAllFiles, isS3 = false, listAllFiles)
 
     //Получить дерево всех аудиофайлов на S3
-    treeAllAudioS3 = explorerTreeBuild(bb)
+    treeAllAudioS3 = explorerTreeBuild(bb, isS3 = true, listAllS3url)
 
 
     //В каждый элемент дерева добавить поле path
@@ -69,7 +70,8 @@ fun explorerInitialization(context: Context) {
             s += if (pp.name != "/") "/${pp.name}" else ""
         }
         node.value.path = s
-        println(node.value.toString())
+        //node.value.isS3 = false
+        println("!!! >"+node.value.toString())
     }
 
     //В каждый элемент дерева добавить поле path
@@ -80,6 +82,14 @@ fun explorerInitialization(context: Context) {
             s += if (pp.name != "/") "/${pp.name}" else ""
         }
         node.value.path = s
+
+        node.value.uri = server + s
+
+        if (node.children.isEmpty())
+            node.value.isDirectory = false
+        else
+            node.value.isDirectory = true
+
         println("!!! S3> "+node.value.toString())
     }
 
@@ -123,6 +133,8 @@ fun explorerInitialization(context: Context) {
 
         println(node.value.toString())
     }
+
+
 
     treeAllAudio.add(treeAllAudioS3)
 

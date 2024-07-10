@@ -2,7 +2,11 @@ package com.example.generator2.features.explorer.model
 
 data class ExploreNodeItem (
     val name : String,
-    var path : String,
+    var path : String, //Полный путь к файлу, но для S3 без пути к серверу
+
+
+    var isS3 : Boolean = false, //Признак того что источник S3
+    var uri : String = "",      //если S3 то полный URL
 
     //Часть для сканера
     var lengthInSeconds: String = "",
@@ -23,7 +27,7 @@ data class ExploreNodeItem (
     /* */
     var isInit: Boolean = false, //Флаг инициализации, если true то можно использовать эти данные
 
-    var counterItems: Int = 0 //Только для директорий, показ количества и темов которые есть в директории
+    var counterItems: Int = 0 //Только для директорий, показ количества итемов которые есть в директории
 
 )
 
