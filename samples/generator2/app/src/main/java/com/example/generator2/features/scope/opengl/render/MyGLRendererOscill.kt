@@ -67,35 +67,48 @@ class MyGLRendererOscill : GLSurfaceView.Renderer {
     out vec4 ourColor; // Передаем цвет во фрагментный шейдер
     
     void main() {
-
-       if (gl_VertexID % 2 == 0) 
-       {
-            ourColor = vec4(1.0, 0.0, 1.0, 0.10001);
-       }
-       else
-       {
-            ourColor = vec4(1.0, 1.0, 0.0, 0.10001);
-       }   
-     
-     
-       float y;
+    
+       float y = 0.0;
        
-       if (oneTwo[0] == 0){
-             y = signalLevel;
-       }
-       else
-       {
-            y = signalLevel * 0.5;
-            if (gl_VertexID % 2 == 0) 
-            {
-                y = y - 0.5;
+       if (gl_VertexID % 2 == 0) {
+         if (oneTwo[0] == 0){
+         
+            if (oneTwo[2] == 1){
+                y = signalLevel;
+            }
+         }
+         else
+         {
+            if (oneTwo[2] == 1){
+              y = signalLevel * 0.5 - 0.5;
             }
             else
             {
-                y = y + 0.5;
+              y = -0.5;
             }
+         }
+         ourColor = vec4(1.0, 0.0, 1.0, 0.10001);
        }
-     
+       else
+       {
+         if (oneTwo[0] == 0){
+            if (oneTwo[1] == 1){
+                y = signalLevel;
+            }
+         }
+         else
+          {
+             if (oneTwo[1] == 1){
+               y = signalLevel * 0.5 + 0.5;
+             }
+             else
+             {
+               y = 0.5;
+             }
+          }
+         ourColor = vec4(1.0, 1.0, 0.0, 0.10001);
+       }
+
         float x = float(gl_VertexID) * 2.0 / len - 1.0;   
           
         gl_Position = vec4(x, y, 0.0, 1.0);

@@ -50,15 +50,19 @@ class Generator {
                 }
                 zeroBuffer
             }
+
             r = if (liveData.ch2_EN.value)
                 RenderChannel().renderChanel(liveData, ch2, numFrames / 2, sampleRate)
+
             else {
+
                 if (numFrames / 2 != zeroBufferSize)
                 {
                     zeroBufferSize = numFrames / 2
                     zeroBuffer = FloatArray(zeroBufferSize)
                 }
                 zeroBuffer
+
             }
         } else {
             //Mono

@@ -57,16 +57,12 @@ fun Spinner_Send_Buffer(
     } else {
         when (Mod) {
             GeneratorMOD.AM -> {
-                gen.ch2.buffer_am = byteToFloatArrayLittleEndianMap(buf, 0f, 2095f, 0f, 1f) //byteToFloatArrayLittleEndianAM(buf)
+                gen.ch2.buffer_am = byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, 0f, 1f) //byteToFloatArrayLittleEndianAM(buf)
                 RenderChannel().sendBuffer(1, 1, gen.ch2.buffer_am)
-//                gen.ch2.buffer_am_direct.rewind()
-//                gen.ch2.buffer_am_direct.put(gen.ch1.buffer_am)
-//                gen.ch2.buffer_am_direct.flip() // Готовим буфер к чтению
             }
             //ArrayUtils.byteToShortArrayLittleEndian(buf)
             GeneratorMOD.FM -> {
                 gen.ch2.buffer_fm = byteToFloatArrayLittleEndian4096(buf)
-
                 RenderChannel().sendBuffer(1, 2, gen.ch2.calculate_buffer_fm)
             }
             else -> {gen.ch2.buffer_carrier = byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, -1f, 1f)//byteToFloatArrayLittleEndian4096(buf)
