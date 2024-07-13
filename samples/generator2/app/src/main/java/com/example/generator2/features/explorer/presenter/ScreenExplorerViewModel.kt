@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
@@ -37,7 +38,7 @@ import javax.inject.Inject
 /**
  * Строка кнопки назад ...
  */
-val NODE_UP = """..."""
+val NODE_UP = """<...>"""
 
 @androidx.media3.common.util.UnstableApi
 @SuppressLint("StaticFieldLeak")
@@ -70,7 +71,7 @@ class ScreenExplorerViewModel @Inject constructor(
         listItems.clear()
 
         if (currentNode.value.parent != null) {
-            listItems.add(ExplorerItem(node = currentNode.value.parent!!, name = NODE_UP))
+            listItems.add(ExplorerItem(node = currentNode.value.parent!!, name = NODE_UP, spec = true))
         }
 
         childs.forEach {
@@ -88,7 +89,7 @@ class ScreenExplorerViewModel @Inject constructor(
                 }
                 else
                 {
-                    if (nod.value.isDirectory)
+                    if (!nod.value.isDirectory)
                         count++
                 }
 
@@ -120,12 +121,28 @@ class ScreenExplorerViewModel @Inject constructor(
             // tagInItemMp3(it)
         }
 
+            val _spec = listItems.filter { it.spec && it.name == NODE_UP }
+            val _folder = listItems.filter { it.node.value.isDirectory && !it.spec && it.name != NODE_UP }.sortedBy { it.name }
+            val _files = listItems.filter { !it.node.value.isDirectory && !it.spec && it.name != NODE_UP }.sortedBy { it.name }
+            listItems.clear()
+            listItems.addAll(_spec)
+            listItems.addAll(_folder)
+            listItems.addAll(_files)
+
+    //.filter { it.node.value.isDirectory }
+            //.sortedBy { it.name }
+            //.sortedByDescending { it.node.value.isDirectory }
+
+
+            //listItems.clear()
+            //listItems.addAll(l)
+
 //        //Сортировка
 //        val l = listItems.filter { it.isDirectory or it.isMedia }.sortedBy { it.name }
 //            .sortedByDescending { it.isDirectory }
 //        listItems = l.toMutableList()
 
-        update++
+        //update++
     }
 
 
@@ -158,9 +175,9 @@ class ScreenExplorerViewModel @Inject constructor(
     val currentDir = MutableStateFlow(appPath.music)
 
 
-    var update by mutableIntStateOf(0)
+    //var update by mutableIntStateOf(0)
 
-    var listItems = mutableListOf<ExplorerItem>()
+    val listItems = SnapshotStateList<ExplorerItem>()
 
 
     @androidx.media3.common.util.UnstableApi

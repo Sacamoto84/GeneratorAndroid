@@ -19,11 +19,13 @@ import com.example.generator2.R
 import com.example.generator2.features.explorer.model.ExplorerItem
 import com.example.generator2.features.explorer.presenter.NODE_UP
 
+@Suppress("NonSkippableComposable")
 @Composable
 fun ScreenExplorerDrawItemIcon(item: ExplorerItem) {
 
-    if (item.node.value.isDirectory) {
+    if (item.node.value.isDirectory || item.node.value.name == "/") {
 
+        //Иконка папки
         if (item.name != NODE_UP) {
             Icon(
                 painter = painterResource(R.drawable.folder_open2),
@@ -34,8 +36,11 @@ fun ScreenExplorerDrawItemIcon(item: ExplorerItem) {
                 tint = Color.Yellow
             )
         }
+
     }
     else {
+
+        //Файлы
 
         Box(
             modifier = Modifier

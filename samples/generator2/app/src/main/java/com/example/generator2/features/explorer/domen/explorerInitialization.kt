@@ -3,7 +3,6 @@ package com.example.generator2.features.explorer.domen
 import android.annotation.SuppressLint
 import android.content.Context
 import com.example.generator2.features.explorer.data.treeAllAudio
-import com.example.generator2.features.explorer.data.treeAllAudioS3
 import com.example.generator2.features.explorer.model.ExploreNodeItem
 import com.example.generator2.model.TreeNode
 import com.example.generator2.model.traverseTree
@@ -85,8 +84,7 @@ fun explorerInitialization(context: Context) {
     treeAllAudio = explorerTreeBuild(listAllFiles, isS3 = false, listAllFiles)
 
     //Получить дерево всех аудиофайлов на S3
-    treeAllAudioS3 = explorerTreeBuildS3(listAllS3url.filter { !it.isDirectory  })
-
+    val treeAllAudioS3 = explorerTreeBuildS3(listAllS3url.filter { !it.isDirectory } )
 
     //В каждый элемент дерева добавить поле path
     traverseTree(treeAllAudio) { node ->

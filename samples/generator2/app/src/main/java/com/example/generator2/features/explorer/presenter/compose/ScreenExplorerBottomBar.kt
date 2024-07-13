@@ -23,6 +23,7 @@ import com.example.generator2.R
 import com.example.generator2.features.explorer.presenter.ScreenExplorerViewModel
 
 
+@Suppress("NonSkippableComposable")
 @androidx.media3.common.util.UnstableApi
 @Composable
 fun ScreenExplorerBottomBar(vm: ScreenExplorerViewModel) {
@@ -30,8 +31,8 @@ fun ScreenExplorerBottomBar(vm: ScreenExplorerViewModel) {
     val navigator = LocalNavigator.currentOrThrow
 
     Column {
-
-        var s = vm.currentNode.collectAsState().value.value.path //.substringAfter(vm.appPath.sdcard)
+        val node = vm.currentNode.collectAsState().value
+        var s = if (node.value.isS3) node.value.uri.replace("https://ru-spb-s3.hexcore.cloud", "") else node.value.path //.substringAfter(vm.appPath.sdcard)
         if (s == "") s = "/"
 
         //Текущий путь

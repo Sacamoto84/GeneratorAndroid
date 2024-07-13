@@ -31,15 +31,14 @@ import androidx.compose.ui.unit.sp
 import androidx.media3.common.util.UnstableApi
 import com.example.generator2.R
 import com.example.generator2.features.explorer.model.ExplorerItem
+import com.example.generator2.features.explorer.presenter.NODE_UP
 import com.example.generator2.features.explorer.presenter.ScreenExplorerViewModel
 
 
-
-
-
+@Suppress("NonSkippableComposable")
 @OptIn(UnstableApi::class)
 @Composable
-fun ScreenExplorerDrawItem(item: ExplorerItem, vm: ScreenExplorerViewModel) {
+fun ScreenExplorerDrawItem(item: ExplorerItem, onClick: () -> Unit) {
 
     Box(
         modifier = Modifier
@@ -47,15 +46,12 @@ fun ScreenExplorerDrawItem(item: ExplorerItem, vm: ScreenExplorerViewModel) {
             .padding(start = 4.dp, end = 4.dp, top = 2.dp, bottom = 2.dp)
             .clip(RoundedCornerShape(2.dp))
             .border(1.dp, Color.DarkGray, RoundedCornerShape(2.dp))
-            .background(if (item.node.value.isDirectory) Color(0xFF006064) else Color(0xFF33313B))
+            .background(
+                if (item.node.value.isDirectory || item.node.value.name == "/") Color(0xFF006064) else Color(0xFF33313B)
+            )
     ) {
 
-        Row(verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.clickable {
-                vm.onClick_DrawItem(item)
-            }
-        )
-        {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable { onClick() } ) {
 
             //Иконка папка и формат текст
             ScreenExplorerDrawItemIcon(item)
@@ -67,9 +63,11 @@ fun ScreenExplorerDrawItem(item: ExplorerItem, vm: ScreenExplorerViewModel) {
                     .weight(1f)
             ) {
 
-
-
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
 
                     Text(
                         text = item.name//.substringBeforeLast('.')
@@ -81,9 +79,7 @@ fun ScreenExplorerDrawItem(item: ExplorerItem, vm: ScreenExplorerViewModel) {
                     ScreenExplorerDrawCount(item)
                 }
 
-
-
-                if (item.node.value.isFormat.isNotEmpty()) {
+                if (!item.node.value.isDirectory && item.node.value.name != "/" && item.name != NODE_UP) {
 
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier
