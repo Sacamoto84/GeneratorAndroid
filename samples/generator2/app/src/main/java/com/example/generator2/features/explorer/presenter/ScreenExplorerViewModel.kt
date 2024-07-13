@@ -52,16 +52,6 @@ class ScreenExplorerViewModel @Inject constructor(
 
 ) : ViewModel() {
 
-
-
-
-
-
-
-
-
-
-
     val startNode = treeAllAudio
 
     var currentNode = MutableStateFlow(treeAllAudio)
@@ -87,11 +77,21 @@ class ScreenExplorerViewModel @Inject constructor(
             val value = it.value
 
             var count = 0
+
             traverseTree(it) { nod ->
-                val result: Boolean = File(nod.value.path).isFile
-                if (result) {
-                    count++
+
+                if (!nod.value.isS3) {
+                    val result: Boolean = File(nod.value.path).isFile
+                    if (result) {
+                        count++
+                    }
                 }
+                else
+                {
+                    if (nod.value.isDirectory)
+                        count++
+                }
+
             }
 
             listItems.add(
@@ -105,13 +105,15 @@ class ScreenExplorerViewModel @Inject constructor(
 
         listItems.forEach {
 
-            if (!it.node.value.isInit) {
-                if (!it.node.value.isDirectory) {
-                    val format = explorerMediaFormat(it.node.value.path)
-                    it.node.value.isFormat = format
-                    tagInItemMp3(it.node)
+            if (!it.node.value.isS3) {
+                if (!it.node.value.isInit) {
+                    if (!it.node.value.isDirectory) {
+                        val format = explorerMediaFormat(it.node.value.path)
+                        it.node.value.isFormat = format
+                        tagInItemMp3(it.node)
+                    }
+                    it.node.value.isInit = true
                 }
-                it.node.value.isInit = true
             }
 
             // mediaFind(it)
@@ -142,8 +144,9 @@ class ScreenExplorerViewModel @Inject constructor(
             if (node != null) {
                 currentNode.value = node
             }
+
         } else {
-            play(item.node.value.path)
+            play(if(!item.node.value.isS3) item.node.value.path else item.node.value.uri)
         }
 
     }

@@ -16,7 +16,7 @@ data class ExploreNodeItem (
 
     var isDirectory: Boolean = true, //Признак того что файл является директорией
     var isFormat: String = "",    //Формат файла mp3 wav flac acc
-
+    var fileSize : Long  = 0,
 
 
     //var channel: Int = 0,

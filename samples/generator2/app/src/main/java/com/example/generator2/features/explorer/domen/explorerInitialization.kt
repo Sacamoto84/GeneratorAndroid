@@ -7,6 +7,8 @@ import com.example.generator2.features.explorer.data.treeAllAudioS3
 import com.example.generator2.features.explorer.model.ExploreNodeItem
 import com.example.generator2.model.TreeNode
 import com.example.generator2.model.traverseTree
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jaudiotagger.audio.AudioFileIO
@@ -15,10 +17,28 @@ import java.io.File
 
 private const val server = "https://ru-spb-s3.hexcore.cloud"
 
+
+
+data class FileInfoS3(
+    val path: String,
+    val url: String,
+    val format: String,
+    val isDirectory: Boolean,
+    val size: Long,
+    val isStereo: Boolean = false,
+    val lengthInSeconds: Long = 0,
+    var sampleRate: Int,  //44100
+    var bitRate: Int,      //224kbps
+    var count : Int = 0
+)
+
+
+
+
 /**
  * Запрос на S3 для получения списка всех файлов
  */
-fun readS3List(urlS3 : String= "$server/rabbit/list.txt"):List<String>{
+fun readS3List(urlS3 : String= "$server/rabbit/list.txt"):List<FileInfoS3>{
 
     Timber.d("!!! readS3List()")
 
@@ -34,7 +54,13 @@ fun readS3List(urlS3 : String= "$server/rabbit/list.txt"):List<String>{
         }
         val responseBody = response.body.string()
         Timber.i(responseBody)
-        return responseBody.lines()
+
+        val gson = Gson()
+        val listPersonType = object : TypeToken<List<FileInfoS3>>() {}.type
+        val persons: List<FileInfoS3> = gson.fromJson(responseBody, listPersonType)
+
+        return persons
+
     } catch (e: Exception) {
         Timber.e(e.message)
         return emptyList()
@@ -53,13 +79,13 @@ fun explorerInitialization(context: Context) {
     val aa = explorerFilterMediaType(listAllFiles)
 
     //Убрали https://ru-spb-s3.hexcore.cloud
-    val bb = listAllS3url.map { it.substringAfter(server) }
+    //val bb = listAllS3url.map { it.url.substringAfter(server) }
 
     //Получить дерево всех аудиофайлов на телефоне
     treeAllAudio = explorerTreeBuild(listAllFiles, isS3 = false, listAllFiles)
 
     //Получить дерево всех аудиофайлов на S3
-    treeAllAudioS3 = explorerTreeBuild(bb, isS3 = true, listAllS3url)
+    treeAllAudioS3 = explorerTreeBuildS3(listAllS3url.filter { !it.isDirectory  })
 
 
     //В каждый элемент дерева добавить поле path
@@ -81,14 +107,32 @@ fun explorerInitialization(context: Context) {
         p.forEach { pp ->
             s += if (pp.name != "/") "/${pp.name}" else ""
         }
-        node.value.path = s
-
         node.value.uri = server + s
 
-        if (node.children.isEmpty())
-            node.value.isDirectory = false
-        else
-            node.value.isDirectory = true
+        val item = listAllS3url.find { it.url == node.value.uri  }
+
+        if (item != null)
+        {
+            node.value.lengthInSeconds = item.lengthInSeconds.formatSecondsToTime()
+            node.value.sampleRate = item.sampleRate.toString()
+            node.value.bitRate = item.bitRate.toString()
+            node.value.channelMode = if (item.isStereo) "Stereo" else "Mono"
+            node.value.fileSize = item.size
+            node.value.isDirectory = item.isDirectory
+            node.value.isFormat = item.format
+            node.value.counterItems = item.count
+            node.value.isS3 = true
+            node.value.isInit = true
+        }
+        else{
+            Timber.e("error")
+        }
+
+
+//        if (node.children.isEmpty())
+//            node.value.isDirectory = false
+//        else
+//            node.value.isDirectory = true
 
         println("!!! S3> "+node.value.toString())
     }
