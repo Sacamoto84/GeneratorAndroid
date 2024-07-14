@@ -522,6 +522,10 @@ dependencies {
     //https://developer.android.com/studio/preview/features
     debugImplementation "androidx.compose.runtime:runtime-tracing:1.0.0-beta01"
 
+    //debugImplementation "com.squareup.leakcanary:leakcanary-android:2.14"
+
+
+
 }
 
 //https://github.com/Skeptick/libres

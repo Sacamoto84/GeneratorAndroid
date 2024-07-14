@@ -31,7 +31,7 @@ fun ScreenExplorerBottomBar(vm: ScreenExplorerViewModel) {
     val navigator = LocalNavigator.currentOrThrow
 
     Column {
-        val node = vm.currentNode.collectAsState().value
+        val node = vm.dataRepository.currentNode//.collectAsState().value
         var s = if (node.value.isS3) node.value.uri.replace("https://ru-spb-s3.hexcore.cloud", "") else node.value.path //.substringAfter(vm.appPath.sdcard)
         if (s == "") s = "/"
 

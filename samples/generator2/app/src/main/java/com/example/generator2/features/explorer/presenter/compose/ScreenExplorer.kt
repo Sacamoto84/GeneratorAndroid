@@ -27,7 +27,7 @@ import com.example.generator2.features.explorer.presenter.ScreenExplorerViewMode
 @Composable
 fun ScreenExplorer(vm: ScreenExplorerViewModel) {
 
-    LaunchedEffect(key1 = vm.currentNode.collectAsState().value) {
+    LaunchedEffect(key1 = vm.dataRepository.currentNode) {
         vm.scanNode()
     }
 

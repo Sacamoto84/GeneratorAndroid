@@ -116,7 +116,7 @@ void main() {
             glLinkProgram(it)
         }
 
-        glDisable(GL_LIGHTING)
+        //glDisable(GL_LIGHTING)
         glUseProgram(program)
 
     }

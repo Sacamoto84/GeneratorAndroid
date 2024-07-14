@@ -5,8 +5,10 @@ import android.content.Context
 import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
@@ -34,11 +36,21 @@ import org.json.JSONObject
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Строка кнопки назад ...
  */
 val NODE_UP = """<...>"""
+
+
+/**
+ * То что должно сохраниться при уничтожении вьюмодели
+ */
+@Singleton
+class ScreenExplorerViewModelDataRepository @Inject constructor() {
+    var currentNode by mutableStateOf(treeAllAudio) //MutableStateFlow(treeAllAudio)
+}
 
 @androidx.media3.common.util.UnstableApi
 @SuppressLint("StaticFieldLeak")
@@ -46,32 +58,48 @@ val NODE_UP = """<...>"""
 class ScreenExplorerViewModel @Inject constructor(
     @ApplicationContext val context: Context,
     val appPath: AppPath,
-    val global: Global,
+
+    //val global: Global,
 
     @MainAudioMixerPump
-   val audioMixerPump: AudioMixerPump
+    val audioMixerPump: AudioMixerPump,
+
+    val dataRepository: ScreenExplorerViewModelDataRepository
 
 ) : ViewModel() {
 
-    val startNode = treeAllAudio
+    init {
+        Timber.i("!!! init() ScreenExplorerViewModel()")
+    }
 
-    var currentNode = MutableStateFlow(treeAllAudio)
+    override fun onCleared() {
+        super.onCleared()
+        Timber.i("!!! onCleared() ScreenExplorerViewModel()")
+    }
+
+
 
     fun upNode() {
-        val parent = currentNode.value.parent
+        val parent = dataRepository.currentNode.parent
         if (parent != null) {
-            currentNode.value = parent
+            dataRepository.currentNode = parent
         }
     }
 
 
     fun scanNode() {
-        val childs = explorerGetAllChildNode(currentNode.value)
+        val childs = explorerGetAllChildNode(dataRepository.currentNode)
 
         listItems.clear()
 
-        if (currentNode.value.parent != null) {
-            listItems.add(ExplorerItem(node = currentNode.value.parent!!, name = NODE_UP, spec = true))
+        if (dataRepository.currentNode.parent != null) {
+            listItems.add(
+                ExplorerItem(
+                    node = dataRepository.currentNode.parent!!,
+                    name = NODE_UP,
+                    spec = true
+                )
+            )
         }
 
         childs.forEach {
@@ -86,9 +114,7 @@ class ScreenExplorerViewModel @Inject constructor(
                     if (result) {
                         count++
                     }
-                }
-                else
-                {
+                } else {
                     if (!nod.value.isDirectory)
                         count++
                 }
@@ -121,21 +147,25 @@ class ScreenExplorerViewModel @Inject constructor(
             // tagInItemMp3(it)
         }
 
-            val _spec = listItems.filter { it.spec && it.name == NODE_UP }
-            val _folder = listItems.filter { it.node.value.isDirectory && !it.spec && it.name != NODE_UP }.sortedBy { it.name }
-            val _files = listItems.filter { !it.node.value.isDirectory && !it.spec && it.name != NODE_UP }.sortedBy { it.name }
-            listItems.clear()
-            listItems.addAll(_spec)
-            listItems.addAll(_folder)
-            listItems.addAll(_files)
+        val _spec = listItems.filter { it.spec && it.name == NODE_UP }
+        val _folder =
+            listItems.filter { it.node.value.isDirectory && !it.spec && it.name != NODE_UP }
+                .sortedBy { it.name }
+        val _files =
+            listItems.filter { !it.node.value.isDirectory && !it.spec && it.name != NODE_UP }
+                .sortedBy { it.name }
+        listItems.clear()
+        listItems.addAll(_spec)
+        listItems.addAll(_folder)
+        listItems.addAll(_files)
 
-    //.filter { it.node.value.isDirectory }
-            //.sortedBy { it.name }
-            //.sortedByDescending { it.node.value.isDirectory }
+        //.filter { it.node.value.isDirectory }
+        //.sortedBy { it.name }
+        //.sortedByDescending { it.node.value.isDirectory }
 
 
-            //listItems.clear()
-            //listItems.addAll(l)
+        //listItems.clear()
+        //listItems.addAll(l)
 
 //        //Сортировка
 //        val l = listItems.filter { it.isDirectory or it.isMedia }.sortedBy { it.name }
@@ -159,11 +189,11 @@ class ScreenExplorerViewModel @Inject constructor(
 
             val node = treeAllAudio.search(item.node.value)
             if (node != null) {
-                currentNode.value = node
+                dataRepository.currentNode = node
             }
 
         } else {
-            play(if(!item.node.value.isS3) item.node.value.path else item.node.value.uri)
+            play(if (!item.node.value.isS3) item.node.value.path else item.node.value.uri)
         }
 
     }

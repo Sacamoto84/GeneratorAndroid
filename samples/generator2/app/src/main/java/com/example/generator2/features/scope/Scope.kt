@@ -120,7 +120,8 @@ class Scope {
 
 
 
-    val deferred = CompletableDeferred<Long>()
+    val deferredOscill = Channel<Int>(capacity = 1, BufferOverflow.DROP_OLDEST) //CompletableDeferred<Long>()
+    val deferredLissagu = Channel<Int>(capacity = 1, BufferOverflow.DROP_OLDEST)
 
     init {
 
@@ -165,7 +166,7 @@ class Scope {
             withContext(Dispatchers.IO) {
                 while (true) {
                     //delay(1)
-                    deferred.await()//channelDataStreamOutCompressorIndex.receive()
+                    deferredOscill.receive()//.await()//channelDataStreamOutCompressorIndex.receive()
                     shaderRenderer.updateVerticesDirect()
                     shaderRenderer.compressorCount = compressorCount.floatValue
                     shaderRenderer.bools[0] = if (isOneTwo.value) 1 else 0
@@ -254,8 +255,7 @@ class Scope {
         LaunchedEffect(key1 = true) {
             withContext(Dispatchers.IO) {
                 while (true) {
-                    deferred.await()
-                    //channelDataStreamOutCompressorIndexLissagu.receive()
+                    deferredLissagu.receive()
                     shaderRenderer.updateVerticesDirect()
                     view?.requestRender()
                 }
