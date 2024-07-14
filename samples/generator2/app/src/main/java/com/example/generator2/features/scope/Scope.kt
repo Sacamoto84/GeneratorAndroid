@@ -30,20 +30,28 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.compose.LocalLifecycleOwner
+
+
 import com.example.generator2.features.opengl.MyGLSurfaceView
 import com.example.generator2.features.scope.compose.OscilloscopeControl
 import com.example.generator2.features.scope.opengl.render.GLShaderLissagu
 import com.example.generator2.features.scope.opengl.render.GLShaderOscill
 import com.example.generator2.features.scope.opengl.render.MyGLRendererLissagu
 import com.example.generator2.features.scope.opengl.render.MyGLRendererOscill
-import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private val colorEnabled = Color.Black
@@ -116,31 +124,43 @@ class Scope {
     /** Сжатые данные после компрессора */
     val channelDataStreamOutCompressor = Channel<FloatArray>(capacity = Channel.RENDEZVOUS)
 
-    /** Сжатые данные после компрессора */
 
 
+    /** Разрешение на обновление нового кадра осцилографа, признак того что нужно перерисовать */
+    val enableOscill = MutableStateFlow(true)
 
-    val deferredOscill = Channel<Int>(capacity = 1, BufferOverflow.DROP_OLDEST) //CompletableDeferred<Long>()
+    val enableLissagu = MutableStateFlow(true)
+
+    val deferredOscill =
+        Channel<Int>(capacity = 1, BufferOverflow.DROP_OLDEST) //CompletableDeferred<Long>()
     val deferredLissagu = Channel<Int>(capacity = 1, BufferOverflow.DROP_OLDEST)
 
     init {
-
         println("!!! init Scope")
-
-        dataCompressor(this)
-
-        //renderDataToPoints(this)
-
-        //lissaguToBitmap(this)
-
-        //myGLSurfaceST =  getGLSurface(application)
-
+        dataCompressor()
     }
 
-    var signalLevels =
-        floatArrayOf(0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f, 0.15f, 0.18f)
 
-    var update: Int = 0
+    private fun dataCompressor() {
+
+        CoroutineScope(Dispatchers.IO).launch {
+
+            while (true) {
+                val buf = channelAudioOut.receive()
+
+                //Передаем FFT порцию данных
+                //Spectrogram.sentToFloatRingBufferFFT(buf, buf.size, scope.audioSampleRate)
+
+                NativeFloatDirectBuffer.add(buf, buf.size, compressorCount.floatValue.toInt())
+
+                if (enableOscill.value)
+                    deferredOscill.send(0)
+
+                if (enableLissagu.value)
+                    deferredLissagu.send(0)
+            }
+        }
+    }
 
     @Suppress("NonSkippableComposable")
     @Composable
@@ -177,12 +197,32 @@ class Scope {
             }
         }
 
+        val lifecycle = LocalLifecycleOwner.current.lifecycle
+
         DisposableEffect(Unit) {
             view?.onResume()
+            enableOscill.value = true
+
+            val lifecycleObserver = ScreenLifecycleObserver(
+                onPauseAction = {
+                    println("!!! lifecycleObserver onPauseAction Oscilloscope()")
+                    enableOscill.value = false
+                },
+                onResumeAction = {
+                    println("!!! lifecycleObserver onResumeAction Oscilloscope()")
+                    enableOscill.value = true
+                }
+            )
+
+
+            lifecycle.addObserver(lifecycleObserver)
+
             onDispose {
-                println("!!! onDispose")
+                println("!!! onDispose Oscilloscope()")
+                lifecycle.removeObserver(lifecycleObserver)
+                enableOscill.value = false
                 view?.onPause()
-                shaderRenderer?.deleteProgram()
+                shaderRenderer.deleteProgram()
                 view?.onDestroy()
                 view = null
             }
@@ -235,13 +275,25 @@ class Scope {
                         color = Color.LightGray,
                         fontSize = 12.sp
                     )
+
+                    if (isPause.collectAsState().value) {
+                        Text(
+                            text = "Pause",
+                            color = Color.Red,
+                            fontSize = 24.sp
+                        )
+                    }
+
                 }
 
                 PanelButton()
 
             }
+
             OscilloscopeControl()
         }
+
+
 
     }
 
@@ -264,8 +316,11 @@ class Scope {
 
         DisposableEffect(Unit) {
             view?.onResume()
+            enableLissagu.value = true
+
             onDispose {
-                println("!!! onDispose")
+                println("!!! onDispose Lissagu()")
+                enableLissagu.value = false
                 view?.onPause()
                 shaderRenderer.deleteProgram()
                 view?.onDestroy()
@@ -273,10 +328,15 @@ class Scope {
             }
         }
 
-        GLShaderLissagu(renderer = shaderRenderer, update = { view = it }, modifier = Modifier.height(200.dp).width(200.dp))
+        GLShaderLissagu(
+            renderer = shaderRenderer,
+            update = { view = it },
+            modifier = Modifier
+                .height(200.dp)
+                .width(200.dp)
+        )
 
     }
-
 
     @Suppress("NonSkippableComposable")
     @Composable
@@ -344,8 +404,23 @@ class Scope {
 
     }
 
+}
 
 
+class ScreenLifecycleObserver(
+    private val onPauseAction: () -> Unit,
+    private val onResumeAction: () -> Unit
+) : LifecycleObserver {
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    fun onPause() {
+        onPauseAction()
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun onResume() {
+        onResumeAction()
+    }
 }
 
 

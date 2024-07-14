@@ -32,6 +32,7 @@ import com.example.generator2.theme.colorGreen
 import com.example.generator2.theme.colorOrange
 
 
+@Suppress("NonSkippableComposable")
 @Composable
 fun Mp3Route(ch: String = "R", route: ROUTESTREAM, audioMixerPump: AudioMixerPump) {
 

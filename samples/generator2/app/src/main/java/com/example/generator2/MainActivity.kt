@@ -1,30 +1,15 @@
 package com.example.generator2
 
 import android.annotation.SuppressLint
-import android.opengl.GLSurfaceView
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.viewinterop.AndroidView
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
@@ -33,12 +18,8 @@ import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.example.generator2.di.MainAudioMixerPump
 import com.example.generator2.features.audio.AudioMixerPump
-import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.presets.presetsSaveFile
-import com.example.generator2.features.scope.Scope
-import com.example.generator2.screens.mainscreen4.Mainsreen4
 import com.example.generator2.theme.Generator2Theme
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.util.Utils
@@ -156,7 +137,6 @@ class HomeScreen2 : Screen {
 @androidx.media3.common.util.UnstableApi
 class MainActivity : ComponentActivity() {
 
-    @MainAudioMixerPump
     @Inject
     lateinit var audioMixerPump: AudioMixerPump
 

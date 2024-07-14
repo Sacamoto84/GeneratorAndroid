@@ -4,18 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.transformer.EditedMediaItem
 import com.example.generator2.AppPath
-import com.example.generator2.Global
-import com.example.generator2.di.MainAudioMixerPump
 import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.explorer.data.treeAllAudio
 import com.example.generator2.features.explorer.domen.explorerGetAllChildNode
@@ -23,16 +18,9 @@ import com.example.generator2.features.explorer.domen.explorerMediaFormat
 import com.example.generator2.features.explorer.domen.tagInItemMp3
 import com.example.generator2.features.explorer.model.ExplorerItem
 import com.example.generator2.model.traverseTree
-import com.kdownloader.httpclient.HttpClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import org.json.JSONObject
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -61,7 +49,6 @@ class ScreenExplorerViewModel @Inject constructor(
 
     //val global: Global,
 
-    @MainAudioMixerPump
     val audioMixerPump: AudioMixerPump,
 
     val dataRepository: ScreenExplorerViewModelDataRepository

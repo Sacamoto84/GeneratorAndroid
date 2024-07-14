@@ -41,7 +41,6 @@ class Initialization
 
     val audioMixerPump: AudioMixerPump,
 
-    val audioPreviewMixerPump: AudioMixerPump
 ) {
 
     var isInitialized = false  //Признак того что произошла инициализация

@@ -15,18 +15,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import timber.log.Timber
-import javax.inject.Qualifier
 import javax.inject.Singleton
-
-
-@Qualifier
-@Retention(AnnotationRetention.RUNTIME)
-annotation class MainAudioMixerPump
-
-@Qualifier
-@Retention(AnnotationRetention.RUNTIME)
-annotation class PreviewAudioMixerPump
-
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -35,7 +24,6 @@ object HomeActivityModule {
     @UnstableApi
     @Provides
     @Singleton
-    @MainAudioMixerPump
     fun provideAudioMixerPump(
         @ApplicationContext context: Context,
         gen: Generator
@@ -44,26 +32,12 @@ object HomeActivityModule {
         return AudioMixerPump(context, gen)
     }
 
-    @UnstableApi
-    @Provides
-    @Singleton
-    @PreviewAudioMixerPump
-    fun providePreviewAudioMixerPump(
-        @ApplicationContext context: Context,
-        gen: Generator
-    ): AudioMixerPump {
-        Timber.tag("Время работы").i("..DI AudioMixerPump() preview")
-        return AudioMixerPump(context, gen)
-    }
-
-
     @Provides
     @Singleton
     fun provideGenerator(): Generator {
         Timber.tag("Время работы").i("..DI provideGenerator()")
         return Generator()
     }
-
 
     @Provides
     @Singleton
@@ -108,10 +82,8 @@ object HomeActivityModule {
         utils: UtilsKT,
         appPath: AppPath,
         global: Global,
-        @MainAudioMixerPump
+
         audioMixerPump: AudioMixerPump,
-        @PreviewAudioMixerPump
-        audioPreviewMixerPump: AudioMixerPump,
     ): Initialization {
 
         Timber.tag("Время работы").i("..DI provideInitialization()")
@@ -122,7 +94,6 @@ object HomeActivityModule {
             appPath = appPath,
             global = global,
             audioMixerPump = audioMixerPump,
-            audioPreviewMixerPump = audioPreviewMixerPump
         )
     }
 
