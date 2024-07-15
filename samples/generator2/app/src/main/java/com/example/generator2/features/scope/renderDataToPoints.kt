@@ -1,21 +1,8 @@
 package com.example.generator2.features.scope
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
-import com.example.generator2.features.audio.BufSplitFloat
-import com.example.generator2.features.mp3.OSCILLSYNC
-import com.example.generator2.features.mp3.oscillSync
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
-import kotlin.system.measureNanoTime
 
 
 var hiRes: Boolean = false //Режим высокого разрешения

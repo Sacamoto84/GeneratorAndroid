@@ -1,6 +1,8 @@
 package com.example.generator2.features.scope
 
+
 import android.graphics.Typeface
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,6 +15,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -20,17 +25,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
-
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,10 +45,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.compose.LocalLifecycleOwner
-
-
+import com.example.generator2.R
 import com.example.generator2.features.opengl.MyGLSurfaceView
-import com.example.generator2.features.scope.compose.OscilloscopeControl
 import com.example.generator2.features.scope.opengl.render.GLShaderLissagu
 import com.example.generator2.features.scope.opengl.render.GLShaderOscill
 import com.example.generator2.features.scope.opengl.render.MyGLRendererLissagu
@@ -53,6 +58,10 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+enum class OSCILLSYNC {
+    NONE, R, L
+}
 
 private val colorEnabled = Color.Black
 private val colorTextDisabled = Color.DarkGray
@@ -66,7 +75,6 @@ class Scope {
 
     var audioSampleRate = 44100
 
-
     /**
      * Используем компонент или нет
      */
@@ -77,14 +85,14 @@ class Scope {
     val isVisibleR = MutableStateFlow(true) //Отобразить Правый канал
     val isOneTwo = MutableStateFlow(false)   //Комбинация двух каналов или раздельно
 
-    var isPause = MutableStateFlow(false)
+    val isPause = MutableStateFlow(false)
 
 
     //val bitmapPool = BitmapPool(4)
     //val floatArrayPool = FloatArrayPool(4)
 
     //============== Lissagu ===================
-    var isUseLissagu = MutableStateFlow(true)
+    val isUseLissagu = MutableStateFlow(true)
 
 
     private val textPaint = Paint().asFrameworkPaint().apply {
@@ -125,7 +133,6 @@ class Scope {
     val channelDataStreamOutCompressor = Channel<FloatArray>(capacity = Channel.RENDEZVOUS)
 
 
-
     /** Разрешение на обновление нового кадра осцилографа, признак того что нужно перерисовать */
     val enableOscill = MutableStateFlow(true)
 
@@ -134,6 +141,9 @@ class Scope {
     val deferredOscill =
         Channel<Int>(capacity = 1, BufferOverflow.DROP_OLDEST) //CompletableDeferred<Long>()
     val deferredLissagu = Channel<Int>(capacity = 1, BufferOverflow.DROP_OLDEST)
+
+    val oscillSync = mutableStateOf(OSCILLSYNC.L)
+
 
     init {
         println("!!! init Scope")
@@ -162,25 +172,30 @@ class Scope {
         }
     }
 
+
     @Suppress("NonSkippableComposable")
     @Composable
-    fun Oscilloscope() {
+    fun OscilloscopeCompose() {
+        Column {
+            Row {
+                Oscilloscope(modifier = Modifier.weight(1f))
+                Lissagu()
+            }
+            Divider()
+            PanelButton()
+            Divider()
+            OscilloscopeControl()
+        }
+    }
+
+
+    @Suppress("NonSkippableComposable")
+    @Composable
+    fun Oscilloscope(modifier: Modifier = Modifier) {
 
         var scopeW by remember { mutableFloatStateOf(0f) }
-
         var view: MyGLSurfaceView? = remember { null }
-
-        val shaderRenderer = remember {
-
-            MyGLRendererOscill().apply {
-//                setShaders(
-//                    shader.fragmentShader,
-//                    shader.vertexShader,
-//                    "MainListing ${shader.title}"
-//                )
-            }
-
-        }
+        val shaderRenderer = remember { MyGLRendererOscill() }
 
         LaunchedEffect(key1 = true) {
             withContext(Dispatchers.IO) {
@@ -214,7 +229,6 @@ class Scope {
                 }
             )
 
-
             lifecycle.addObserver(lifecycleObserver)
 
             onDispose {
@@ -228,72 +242,59 @@ class Scope {
             }
         }
 
-        Column(modifier = Modifier.border(1.dp, color = Color.Gray)) {
-
-            Row(modifier = Modifier.fillMaxWidth()) {
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .weight(1f)
-                        .onGloballyPositioned { coordinates ->
-                            scopeW = coordinates.size.width.toFloat()
-                        }
-                        .pointerInput(Unit) {
-                            detectTapGestures { offset ->
-
-                                val x = offset.x
-
-                                isPause.value = (x in scopeW / 3..scopeW * 2 / 3) xor isPause.value
-
-                                compressorCount.floatValue = when {
-                                    x < scopeW / 3 -> {
-                                        isPause.value =
-                                            false; (compressorCount.floatValue * 2).coerceAtMost(
-                                            256f
-                                        )
-                                    }
-
-                                    x > scopeW * 2 / 3 -> {
-                                        isPause.value =
-                                            false; (compressorCount.floatValue / 2).coerceAtLeast(
-                                            0.125f
-                                        )
-                                    }
-
-                                    else -> compressorCount.floatValue
-                                }
-                            }
-                        },
-                    contentAlignment = Alignment.TopStart,
-                ) {
-                    GLShaderOscill(renderer = shaderRenderer, update = { view = it })
-
-                    Text(
-                        text = compressorCount.floatValue.toString(),
-                        color = Color.LightGray,
-                        fontSize = 12.sp
-                    )
-
-                    if (isPause.collectAsState().value) {
-                        Text(
-                            text = "Pause",
-                            color = Color.Red,
-                            fontSize = 24.sp
-                        )
-                    }
-
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .then(modifier)
+                .onGloballyPositioned { coordinates ->
+                    scopeW = coordinates.size.width.toFloat()
                 }
+                .pointerInput(Unit) {
+                    detectTapGestures { offset ->
 
-                PanelButton()
+                        val x = offset.x
 
+                        isPause.value = (x in scopeW / 3..scopeW * 2 / 3) xor isPause.value
+
+                        compressorCount.floatValue = when {
+                            x < scopeW / 3 -> {
+                                isPause.value =
+                                    false; (compressorCount.floatValue * 2).coerceAtMost(
+                                    256f
+                                )
+                            }
+
+                            x > scopeW * 2 / 3 -> {
+                                isPause.value =
+                                    false; (compressorCount.floatValue / 2).coerceAtLeast(
+                                    0.125f
+                                )
+                            }
+
+                            else -> compressorCount.floatValue
+                        }
+                    }
+                },
+            //contentAlignment = Alignment.TopStart,
+        ) {
+            GLShaderOscill(renderer = shaderRenderer, update = { view = it })
+
+            Text(
+                text = compressorCount.floatValue.toString(),
+                color = Color.LightGray,
+                fontSize = 12.sp
+            )
+
+            if (isPause.collectAsState().value) {
+                Text(
+                    text = "Pause",
+                    color = Color.Red,
+                    fontSize = 24.sp
+                )
             }
 
-            OscilloscopeControl()
         }
-
-
 
     }
 
@@ -338,6 +339,7 @@ class Scope {
 
     }
 
+
     @Suppress("NonSkippableComposable")
     @Composable
     fun PanelButton() {
@@ -348,10 +350,20 @@ class Scope {
         val stateIsVisibleR = isVisibleR.collectAsState().value
         val stateIsOneTwo = isOneTwo.collectAsState().value
 
+        Image(
+            painter = painterResource(id = R.drawable.up),
+            contentDescription = null,
+            modifier = Modifier
+                .width(32.dp)
+                .height(100.dp)
+                .background(Color.Cyan)
+        )
+
         Box(
             modifier = Modifier
                 .width(32.dp)
                 .height(100.dp)
+                .background(Color.Cyan)
         ) {
             Column(
                 modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween
@@ -401,8 +413,70 @@ class Scope {
             }
         }
 
-
     }
+
+    private val m = Modifier
+        .height(32.dp)
+        .width(32.dp)
+//.border(1.dp, Color.Gray)
+//.background(Color.Black)
+
+    private val colorEnabled = Color.Black
+    private val colorTextEnabled = Color.Green
+    private val colorTextDisabled = Color.Gray
+
+    @Suppress("NonSkippableComposable")
+    @Composable
+    fun OscilloscopeControl() {
+
+        val a = 8.dp
+
+        Row {
+
+            Box(
+                modifier = m
+                    .clip(RoundedCornerShape(topStart = a, bottomStart = a))
+                    .border(1.dp, Color.Gray, RoundedCornerShape(topStart = a, bottomStart = a))
+                    .clickable(onClick = { oscillSync.value = OSCILLSYNC.NONE })
+                    .background(if (oscillSync.value == OSCILLSYNC.NONE) colorEnabled else Color.Black),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "N",
+                    color = if (oscillSync.value == OSCILLSYNC.NONE) colorTextEnabled else colorTextDisabled
+                )
+            }
+
+            Box(
+                modifier = m
+                    .border(1.dp, Color.Gray)
+                    .clickable(onClick = { oscillSync.value = OSCILLSYNC.L })
+                    .background(if (oscillSync.value == OSCILLSYNC.L) colorEnabled else Color.Black),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "L",
+                    color = if (oscillSync.value == OSCILLSYNC.L) colorTextEnabled else colorTextDisabled
+                )
+            }
+
+            Box(
+                modifier = m
+                    .clip(RoundedCornerShape(topEnd = a, bottomEnd = a))
+                    .border(1.dp, Color.Gray, RoundedCornerShape(topEnd = a, bottomEnd = a))
+                    .clickable(onClick = { oscillSync.value = OSCILLSYNC.R })
+                    .background(if (oscillSync.value == OSCILLSYNC.R) colorEnabled else Color.Black),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "R",
+                    color = if (oscillSync.value == OSCILLSYNC.R) colorTextEnabled else colorTextDisabled
+                )
+            }
+
+        }
+    }
+
 
 }
 

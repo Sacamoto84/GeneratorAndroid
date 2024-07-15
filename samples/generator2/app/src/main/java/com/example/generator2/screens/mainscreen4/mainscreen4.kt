@@ -1,5 +1,6 @@
 package com.example.generator2.screens.mainscreen4
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateDpAsState
@@ -11,14 +12,20 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -33,7 +40,6 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.generator2.AppScreen
-import com.example.generator2.WaterfallComposeView
 import com.example.generator2.features.mp3.compose.MP3Control
 import com.example.generator2.features.presets.Presets
 import com.example.generator2.features.presets.ui.DialogPresetsNewFile
@@ -45,6 +51,7 @@ import com.example.generator2.theme.colorDarkBackground
 import timber.log.Timber
 
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Suppress("NonSkippableComposable")
 @Composable
 fun Mainsreen4(vm: VMMain4) {
@@ -74,6 +81,8 @@ fun Mainsreen4(vm: VMMain4) {
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
+
+                //TopBarAudioSource(vm)
             }
         },
 
@@ -96,17 +105,21 @@ fun Mainsreen4(vm: VMMain4) {
             animationSpec = tween(durationMillis = 7050), label = ""
         )
 
-        //Основной экран
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(bottom = it.calculateBottomPadding())
-                .background(colorDarkBackground)
-                .verticalScroll(rememberScrollState()),
-            //verticalArrangement = Arrangement.SpaceEvenly
-        ) {
+        Column {
 
-            //Заполнение сверху
+
+
+            //Основной экран
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(bottom = it.calculateBottomPadding())
+                    .background(colorDarkBackground)
+                    .verticalScroll(rememberScrollState()),
+                //verticalArrangement = Arrangement.SpaceEvenly
+            ) {
+
+                //Заполнение сверху
 //            Box(
 //                modifier = Modifier
 //                    .fillMaxHeight()
@@ -114,8 +127,15 @@ fun Mainsreen4(vm: VMMain4) {
 //                    .weight(1f)
 //            )
 
-            //Выбор Аудио Источников MP3 Gen Oscill
-            TopBarAudioSource(vm)
+
+                //Выбор Аудио Источников MP3 Gen Oscill
+//            TopBarAudioSource(vm)
+//            TopBarAudioSource(vm)
+//            TopBarAudioSource(vm)
+//            TopBarAudioSource(vm)
+
+                Divider()
+
 
 //            AnimatedVisibility(
 //                visible = vm.audioMixerPump.scope.isUse.collectAsState().value,
@@ -126,57 +146,63 @@ fun Mainsreen4(vm: VMMain4) {
 //                shrinkVertically(), //+ fadeOut()
 //            )
 //            {
-            //Осциллограф
 
-            vm.audioMixerPump.scope.Oscilloscope()
-            vm.audioMixerPump.scope.Lissagu()
-            //}
+                TopBarAudioSource(vm)
+
+                //Осциллограф
+                LazyColumn(userScrollEnabled = false, modifier = Modifier.fillMaxWidth().height(480.dp).border(1.dp, Color.Gray)) {
+                    item {
+                        vm.audioMixerPump.scope.OscilloscopeCompose()
+                    }
+                }
+
+                //}
 
 
-            //WaterfallComposeView()
+                //WaterfallComposeView()
 
-            MP3Control(vm)
+                MP3Control(vm)
 
-            Column()
-            {
-                //CardCarrier("CH0")
-                CardCard("CH0", vm.audioMixerPump.gen)
-                Spacer(modifier = Modifier.height(8.dp))
+                Column()
+                {
+                    //CardCarrier("CH0")
+                    CardCard("CH0", vm.audioMixerPump.gen)
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                //CardCommander(vm)                                                     //<-- Commander
+                    //CardCommander(vm)                                                     //<-- Commander
 
-                //Spacer(modifier = Modifier.height(8.dp))
-            }
+                    //Spacer(modifier = Modifier.height(8.dp))
+                }
 
-            AnimatedContent(
-                targetState = mono,
-                transitionSpec = {
-                    val time = 400
-                    //Появление
-                    (fadeIn(animationSpec = tween(time / 2)) + expandVertically(
-                        animationSpec = tween(time)
-                    ))
-                        .togetherWith(
-                            (fadeOut(animationSpec = tween(time)) + shrinkVertically(
-                                animationSpec = tween(time)
-                            ))
-                        ).using(
-                            SizeTransform(
-                                clip = true,
-                                sizeAnimationSpec = { _, _ -> tween(time) })
-                        )
-                }, label = ""
-            )
-            {
-                if (!it)
-                //CardCarrier("CH1")
-                    CardCard("CH1", vm.audioMixerPump.gen)
-                else Spacer(
-                    modifier = Modifier
-                        .height(1.dp)
-                        .fillMaxWidth()
+                AnimatedContent(
+                    targetState = mono,
+                    transitionSpec = {
+                        val time = 400
+                        //Появление
+                        (fadeIn(animationSpec = tween(time / 2)) + expandVertically(
+                            animationSpec = tween(time)
+                        ))
+                            .togetherWith(
+                                (fadeOut(animationSpec = tween(time)) + shrinkVertically(
+                                    animationSpec = tween(time)
+                                ))
+                            ).using(
+                                SizeTransform(
+                                    clip = true,
+                                    sizeAnimationSpec = { _, _ -> tween(time) })
+                            )
+                    }, label = ""
                 )
-            }
+                {
+                    if (!it)
+                    //CardCarrier("CH1")
+                        CardCard("CH1", vm.audioMixerPump.gen)
+                    else Spacer(
+                        modifier = Modifier
+                            .height(1.dp)
+                            .fillMaxWidth()
+                    )
+                }
 
 
 //            Box(
@@ -185,6 +211,9 @@ fun Mainsreen4(vm: VMMain4) {
 //                    .fillMaxWidth()
 //                    .weight(1f)
 //            )
+
+
+            }
 
 
         }

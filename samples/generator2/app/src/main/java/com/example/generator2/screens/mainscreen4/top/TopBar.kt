@@ -14,10 +14,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.generator2.features.mp3.OSCILLSYNC
-import com.example.generator2.features.mp3.oscillSync
+import com.example.generator2.features.scope.OSCILLSYNC
 import com.example.generator2.screens.mainscreen4.VMMain4
 
+@Suppress("NonSkippableComposable")
 @Composable
 fun TopBarAudioSource(vm: VMMain4) {
 
@@ -25,7 +25,7 @@ fun TopBarAudioSource(vm: VMMain4) {
         .fillMaxWidth()
         .height(40.dp)
         .border(1.dp, Color.Gray)
-        .background(Color.Black)
+        .background(Color.Magenta)
 
     Row(modifier = Modifier.fillMaxWidth()) {
 
@@ -37,7 +37,7 @@ fun TopBarAudioSource(vm: VMMain4) {
         ) {
             Text(
                 text = "MP3",
-                color = if (oscillSync.value == OSCILLSYNC.NONE) Color.Green else Color.Gray
+                color = if (vm.audioMixerPump.scope.oscillSync.value == OSCILLSYNC.NONE) Color.Green else Color.Gray
             )
         }
 
@@ -49,7 +49,7 @@ fun TopBarAudioSource(vm: VMMain4) {
         ) {
             Text(
                 text = "GEN",
-                color = if (oscillSync.value == OSCILLSYNC.NONE) Color.Green else Color.Gray
+                color = if (vm.audioMixerPump.scope.oscillSync.value == OSCILLSYNC.NONE) Color.Green else Color.Gray
             )
         }
 

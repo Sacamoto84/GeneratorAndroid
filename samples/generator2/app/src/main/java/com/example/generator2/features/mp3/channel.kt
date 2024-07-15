@@ -5,12 +5,10 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 
 
-enum class OSCILLSYNC {
-    NONE, R, L
-}
 
 
-val oscillSync = mutableStateOf(OSCILLSYNC.L)
+
+
 
 
 
