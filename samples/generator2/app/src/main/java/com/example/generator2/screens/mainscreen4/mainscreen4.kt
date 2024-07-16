@@ -150,11 +150,9 @@ fun Mainsreen4(vm: VMMain4) {
                 TopBarAudioSource(vm)
 
                 //Осциллограф
-                LazyColumn(userScrollEnabled = false, modifier = Modifier.fillMaxWidth().height(480.dp).border(1.dp, Color.Gray)) {
-                    item {
+
                         vm.audioMixerPump.scope.OscilloscopeCompose()
-                    }
-                }
+
 
                 //}
 

@@ -46,16 +46,6 @@
 },
 {
   "directory": "D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/RelWithDebInfo/305o3q1b/x86",
-  "command": "C:\\Users\\user\\AppData\\Local\\Android\\Sdk\\ndk\\26.1.10909125\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=i686-none-linux-android26 --sysroot=C:/Users/user/AppData/Local/Android/Sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dplasma_EXPORTS -ID:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/src/main/cpp/audio -ID:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/src/main/cpp/fftw-3.3.9/api -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -Ofast -Wall -static-openmp -std=c++17 -fPIC -O2 -g -DNDEBUG -fPIC -o CMakeFiles\\plasma.dir\\ChunkerProcessor.cpp.o -c D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\ChunkerProcessor.cpp",
-  "file": "D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\ChunkerProcessor.cpp"
-},
-{
-  "directory": "D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/RelWithDebInfo/305o3q1b/x86",
-  "command": "C:\\Users\\user\\AppData\\Local\\Android\\Sdk\\ndk\\26.1.10909125\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=i686-none-linux-android26 --sysroot=C:/Users/user/AppData/Local/Android/Sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dplasma_EXPORTS -ID:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/src/main/cpp/audio -ID:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/src/main/cpp/fftw-3.3.9/api -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -Ofast -Wall -static-openmp -std=c++17 -fPIC -O2 -g -DNDEBUG -fPIC -o CMakeFiles\\plasma.dir\\Processor.cpp.o -c D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\Processor.cpp",
-  "file": "D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\Processor.cpp"
-},
-{
-  "directory": "D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/RelWithDebInfo/305o3q1b/x86",
   "command": "C:\\Users\\user\\AppData\\Local\\Android\\Sdk\\ndk\\26.1.10909125\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=i686-none-linux-android26 --sysroot=C:/Users/user/AppData/Local/Android/Sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dplasma_EXPORTS -ID:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/src/main/cpp/audio -ID:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/src/main/cpp/fftw-3.3.9/api -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -Ofast -Wall -static-openmp -std=c++17 -fPIC -O2 -g -DNDEBUG -fPIC -o CMakeFiles\\plasma.dir\\route\\global.cpp.o -c D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\route\\global.cpp",
   "file": "D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\route\\global.cpp"
 },
@@ -63,6 +53,11 @@
   "directory": "D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/RelWithDebInfo/305o3q1b/x86",
   "command": "C:\\Users\\user\\AppData\\Local\\Android\\Sdk\\ndk\\26.1.10909125\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=i686-none-linux-android26 --sysroot=C:/Users/user/AppData/Local/Android/Sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dplasma_EXPORTS -ID:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/src/main/cpp/audio -ID:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/src/main/cpp/fftw-3.3.9/api -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -Ofast -Wall -static-openmp -std=c++17 -fPIC -O2 -g -DNDEBUG -fPIC -o CMakeFiles\\plasma.dir\\route\\jniFFT.cpp.o -c D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\route\\jniFFT.cpp",
   "file": "D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\route\\jniFFT.cpp"
+},
+{
+  "directory": "D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/RelWithDebInfo/305o3q1b/x86",
+  "command": "C:\\Users\\user\\AppData\\Local\\Android\\Sdk\\ndk\\26.1.10909125\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=i686-none-linux-android26 --sysroot=C:/Users/user/AppData/Local/Android/Sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dplasma_EXPORTS -ID:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/src/main/cpp/audio -ID:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/src/main/cpp/fftw-3.3.9/api -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -Ofast -Wall -static-openmp -std=c++17 -fPIC -O2 -g -DNDEBUG -fPIC -o CMakeFiles\\plasma.dir\\route\\FloatDirectBuffer.cpp.o -c D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\route\\FloatDirectBuffer.cpp",
+  "file": "D:\\Dropbox\\Android\\GeneratorAndroid\\samples\\generator2\\app\\src\\main\\cpp\\route\\FloatDirectBuffer.cpp"
 },
 {
   "directory": "D:/Dropbox/Android/GeneratorAndroid/samples/generator2/app/.cxx/RelWithDebInfo/305o3q1b/x86",

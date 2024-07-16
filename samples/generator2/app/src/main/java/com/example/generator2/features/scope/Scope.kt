@@ -9,12 +9,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material3.Surface
@@ -31,11 +31,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -176,16 +179,43 @@ class Scope {
     @Suppress("NonSkippableComposable")
     @Composable
     fun OscilloscopeCompose() {
-        Column {
-            Row {
-                Oscilloscope(modifier = Modifier.weight(1f))
-                Lissagu()
+
+        LazyColumn(
+            userScrollEnabled = false,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(234.dp)
+                .border(1.dp, Color.Gray)
+        ) {
+
+            item {
+                Row {
+                    Oscilloscope(modifier = Modifier.weight(1f))
+
+                    if (isUseLissagu.collectAsState().value) {
+                        Lissagu()
+                    }
+                }
             }
-            Divider()
-            PanelButton()
-            Divider()
-            OscilloscopeControl()
+
+            item {
+                Divider()
+            }
+            item {
+                Row(Modifier.fillMaxWidth()) {
+                    PanelButton()
+                    Spacer(modifier = Modifier.width(8.dp))
+                    OscilloscopeControl()
+
+                }
+            }
+            item {
+                Divider()
+            }
+
         }
+
+
     }
 
 
@@ -315,12 +345,28 @@ class Scope {
             }
         }
 
+        val lifecycle = LocalLifecycleOwner.current.lifecycle
+
         DisposableEffect(Unit) {
             view?.onResume()
             enableLissagu.value = true
 
+            val lifecycleObserver = ScreenLifecycleObserver(
+                onPauseAction = {
+                    println("!!! lifecycleObserver onPauseAction Oscilloscope()")
+                    enableLissagu.value = false
+                },
+                onResumeAction = {
+                    println("!!! lifecycleObserver onResumeAction Oscilloscope()")
+                    enableLissagu.value = true
+                }
+            )
+
+            lifecycle.addObserver(lifecycleObserver)
+
             onDispose {
                 println("!!! onDispose Lissagu()")
+                lifecycle.removeObserver(lifecycleObserver)
                 enableLissagu.value = false
                 view?.onPause()
                 shaderRenderer.deleteProgram()
@@ -333,8 +379,8 @@ class Scope {
             renderer = shaderRenderer,
             update = { view = it },
             modifier = Modifier
-                .height(200.dp)
-                .width(200.dp)
+                .height(100.dp)
+                .width(100.dp)
         )
 
     }
@@ -350,68 +396,119 @@ class Scope {
         val stateIsVisibleR = isVisibleR.collectAsState().value
         val stateIsOneTwo = isOneTwo.collectAsState().value
 
-        Image(
-            painter = painterResource(id = R.drawable.up),
-            contentDescription = null,
+        Row(
             modifier = Modifier
-                .width(32.dp)
-                .height(100.dp)
-                .background(Color.Cyan)
-        )
-
-        Box(
-            modifier = Modifier
-                .width(32.dp)
-                .height(100.dp)
-                .background(Color.Cyan)
+                .height(32.dp)
+                .background(Color.Cyan), horizontalArrangement = Arrangement.Start
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween
+
+            Box(
+                modifier = m
+                    .clickable(onClick = { isVisibleL.value = isVisibleL.value.not() })
+                    .border(1.dp, Color.Gray)
+                    .background(if (stateIsVisibleL) colorEnabled else Color.Black),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "L",
+                    color = if (stateIsVisibleL) Color.Yellow else colorTextDisabled,
+                    fontSize = fontSize,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Box(
+                modifier = m
+                    .clickable(onClick = { isVisibleR.value = isVisibleR.value.not() })
+                    .border(1.dp, Color.Gray)
+                    .background(if (stateIsVisibleR) colorEnabled else Color.Black),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "R",
+                    color = if (stateIsVisibleR) Color.Magenta else colorTextDisabled,
+                    fontSize = fontSize,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Box(
+                modifier = m
+                    .clickable(onClick = { isOneTwo.value = isOneTwo.value.not() })
+                    .border(1.dp, Color.Gray)
+                    .background(if (stateIsOneTwo) colorEnabled else Color.Black)
+                    .rotate(90f),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = if (stateIsOneTwo) "•" else "••",
+                    color = Color.White,
+                    fontSize = fontSize
+                )
+            }
+
+            Box(
+                modifier = m
+                    .clickable(onClick = { isUseLissagu.value = isUseLissagu.value.not() })
+                    .border(1.dp, Color.Gray)
+                    .background(Color.Magenta),
+                contentAlignment = Alignment.Center
             ) {
 
-
-                Box(
-                    modifier = m
-                        .clickable(onClick = { isVisibleL.value = isVisibleL.value.not() })
-                        .background(if (stateIsVisibleL) colorEnabled else Color.Black),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "L",
-                        color = if (stateIsVisibleL) Color.Yellow else colorTextDisabled,
-                        fontSize = fontSize,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-                Box(
-                    modifier = m
-                        .clickable(onClick = { isVisibleR.value = isVisibleR.value.not() })
-                        .background(if (stateIsVisibleR) colorEnabled else Color.Black),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "R",
-                        color = if (stateIsVisibleR) Color.Magenta else colorTextDisabled,
-                        fontSize = fontSize,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                Box(
-                    modifier = m
-                        .clickable(onClick = { isOneTwo.value = isOneTwo.value.not() })
-                        .background(if (stateIsOneTwo) colorEnabled else Color.Black)
-                        .rotate(90f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = if (stateIsOneTwo) "•" else "••",
-                        color = Color.White,
-                        fontSize = fontSize
-                    )
-                }
+                Image(
+                    painter = painterResource(id = R.drawable.lissagu_1),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
+                )
             }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            //Знак минус
+            Box(
+                modifier = m
+                    .clickable(onClick = { isUseLissagu.value = isUseLissagu.value.not() })
+                    .border(1.dp, Color.Gray)
+                    .background(Color.Black)
+                    .drawBehind {
+                        drawLine(
+                            Color.White,
+                            start = Offset(size.width* 1/3f, size.height / 2f),
+                            end = Offset(size.width* 2/3f, size.height / 2f),
+                            strokeWidth = 3.dp.toPx()
+                        )
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+            }
+
+            //Знак минус
+            Box(
+                modifier = m
+                    .clickable(onClick = { isUseLissagu.value = isUseLissagu.value.not() })
+                    .border(1.dp, Color.Gray)
+                    .background(Color.Black)
+                    .drawBehind {
+                        drawLine(
+                            Color.White,
+                            start = Offset(size.width* 1/3f, size.height / 2f),
+                            end = Offset(size.width* 2/3f, size.height / 2f),
+                            strokeWidth = 3.dp.toPx()
+                        )
+
+                        drawLine(
+                            Color.White,
+                            start = Offset(size.width* 1/2f, size.height / 3f),
+                            end = Offset(size.width* 1/2f, size.height * 2f / 3f),
+                            strokeWidth = 3.dp.toPx()
+                        )
+
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+            }
+
         }
+
 
     }
 
