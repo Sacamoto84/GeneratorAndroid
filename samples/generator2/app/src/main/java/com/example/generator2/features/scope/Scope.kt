@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -14,7 +15,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material3.Surface
@@ -34,14 +37,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.drawscope.DrawStyle
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -128,6 +138,14 @@ class Scope {
     /** Количество пакетов в которое будет упакован выходной канал */
     val compressorCount = mutableFloatStateOf(256f)
 
+    private fun compressonCountAdd() {
+        compressorCount.floatValue = (compressorCount.floatValue * 2).coerceAtMost(256f)
+    }
+
+    private fun compressonCountDiv() {
+        compressorCount.floatValue = (compressorCount.floatValue / 2.0f).coerceAtLeast(1f)
+    }
+
     /** ## Выход аудиоданных -> compressor */
     val channelAudioOut = Channel<FloatArray>(capacity = 16, BufferOverflow.DROP_OLDEST)
 
@@ -166,10 +184,10 @@ class Scope {
 
                 NativeFloatDirectBuffer.add(buf, buf.size, compressorCount.floatValue.toInt())
 
-                if (enableOscill.value)
+                if (enableOscill.value && isPause.value)
                     deferredOscill.send(0)
 
-                if (enableLissagu.value)
+                if (enableLissagu.value && isPause.value)
                     deferredLissagu.send(0)
             }
         }
@@ -184,7 +202,7 @@ class Scope {
             userScrollEnabled = false,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(234.dp)
+                .height(242.dp)
                 .border(1.dp, Color.Gray)
         ) {
 
@@ -202,10 +220,14 @@ class Scope {
                 Divider()
             }
             item {
-                Row(Modifier.fillMaxWidth()) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                    //.horizontalScroll(rememberScrollState())
+                ) {
                     PanelButton()
-                    Spacer(modifier = Modifier.width(8.dp))
-                    OscilloscopeControl()
+                    //Spacer(modifier = Modifier.width(8.dp))
+                    //OscilloscopeControl()
 
                 }
             }
@@ -316,13 +338,6 @@ class Scope {
                 fontSize = 12.sp
             )
 
-            if (isPause.collectAsState().value) {
-                Text(
-                    text = "Pause",
-                    color = Color.Red,
-                    fontSize = 24.sp
-                )
-            }
 
         }
 
@@ -398,114 +413,193 @@ class Scope {
 
         Row(
             modifier = Modifier
-                .height(32.dp)
-                .background(Color.Cyan), horizontalArrangement = Arrangement.Start
+                .height(40.dp)
+                .fillMaxWidth()
+                .background(Color.Cyan),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Box(
-                modifier = m
-                    .clickable(onClick = { isVisibleL.value = isVisibleL.value.not() })
-                    .border(1.dp, Color.Gray)
-                    .background(if (stateIsVisibleL) colorEnabled else Color.Black),
-                contentAlignment = Alignment.Center
-            ) {
+
+            Row {
+                Box(
+                    modifier = m
+                        .clickable(onClick = { isVisibleL.value = isVisibleL.value.not() })
+                        .border(1.dp, Color.Gray)
+                        .background(if (stateIsVisibleL) colorEnabled else Color.Black),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "L",
+                        color = if (stateIsVisibleL) Color.Yellow else colorTextDisabled,
+                        fontSize = fontSize,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Box(
+                    modifier = m
+                        .clickable(onClick = { isVisibleR.value = isVisibleR.value.not() })
+                        .border(1.dp, Color.Gray)
+                        .background(if (stateIsVisibleR) colorEnabled else Color.Black),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "R",
+                        color = if (stateIsVisibleR) Color.Magenta else colorTextDisabled,
+                        fontSize = fontSize,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Box(
+                    modifier = m
+                        .clickable(onClick = { isOneTwo.value = isOneTwo.value.not() })
+                        .border(1.dp, Color.Gray)
+                        .background(if (stateIsOneTwo) colorEnabled else Color.Black)
+                        .rotate(90f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (stateIsOneTwo) "•" else "••",
+                        color = Color.White,
+                        fontSize = fontSize
+                    )
+                }
+            }
+
+
+            if (isPause.collectAsState().value) {
                 Text(
-                    text = "L",
-                    color = if (stateIsVisibleL) Color.Yellow else colorTextDisabled,
-                    fontSize = fontSize,
-                    fontWeight = FontWeight.Bold
+                    text = "Pause",
+                    color = Color.Red,
+                    fontSize = 24.sp
                 )
             }
 
+
             Box(
-                modifier = m
-                    .clickable(onClick = { isVisibleR.value = isVisibleR.value.not() })
+                modifier = Modifier
+                    .height(40.dp)
+                    .width(64.dp)
                     .border(1.dp, Color.Gray)
-                    .background(if (stateIsVisibleR) colorEnabled else Color.Black),
-                contentAlignment = Alignment.Center
+                    .background(Color.Black)
+                    .clickable {
+                        isPause.value =  isPause.value.not()
+                    }
+
+                , contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "R",
-                    color = if (stateIsVisibleR) Color.Magenta else colorTextDisabled,
-                    fontSize = fontSize,
-                    fontWeight = FontWeight.Bold
-                )
+                Text("Pause", color = Color.White)
             }
-            Box(
-                modifier = m
-                    .clickable(onClick = { isOneTwo.value = isOneTwo.value.not() })
-                    .border(1.dp, Color.Gray)
-                    .background(if (stateIsOneTwo) colorEnabled else Color.Black)
-                    .rotate(90f),
-                contentAlignment = Alignment.Center
-            ) {
+
+
+            //Spacer(modifier = Modifier.width(8.dp))
+
+
+            Row {
+
+
+                //Знак Плюс
+                Box(
+                    modifier = m
+                        .clickable(onClick = { compressonCountAdd() })
+                        .border(1.dp, Color.Gray)
+                        .background(Color.Black)
+                        .drawBehind {
+                            drawLine(
+                                Color.White,
+                                start = Offset(size.width * 1 / 3f, size.height / 2f),
+                                end = Offset(size.width * 2 / 3f, size.height / 2f),
+                                strokeWidth = 3.dp.toPx()
+                            )
+
+                            drawLine(
+                                Color.White,
+                                start = Offset(size.width * 1 / 2f, size.height / 3f),
+                                end = Offset(size.width * 1 / 2f, size.height * 2f / 3f),
+                                strokeWidth = 3.dp.toPx()
+                            )
+
+                        })
+
+
                 Text(
-                    text = if (stateIsOneTwo) "•" else "••",
+                    text = compressorCount.floatValue.toInt().toString(),
+                    modifier = Modifier
+                        .width(64.dp)
+                        .height(40.dp)
+                        //.border(1.dp, Color.Gray)
+                        .wrapContentHeight(Alignment.CenterVertically)
+                        .background(Color.Black),
                     color = Color.White,
-                    fontSize = fontSize
+                    fontSize = 24.sp,
+                    textAlign = TextAlign.Center, fontFamily = FontFamily(Font(R.font.nunito))
                 )
+
+                //Знак минус
+                Box(
+                    modifier = m
+                        .clickable(onClick = { compressonCountDiv() })
+                        .border(1.dp, Color.Gray)
+                        .background(Color.Black)
+                        .drawBehind {
+                            drawLine(
+                                Color.White,
+                                start = Offset(size.width * 1 / 3f, size.height / 2f),
+                                end = Offset(size.width * 2 / 3f, size.height / 2f),
+                                strokeWidth = 3.dp.toPx()
+                            )
+                        })
             }
 
+/////////////////////////////////////// Кнопка лиссажу ///////////////////////////////////////
             Box(
                 modifier = m
                     .clickable(onClick = { isUseLissagu.value = isUseLissagu.value.not() })
-                    .border(1.dp, Color.Gray)
-                    .background(Color.Magenta),
-                contentAlignment = Alignment.Center
-            ) {
-
-                Image(
-                    painter = painterResource(id = R.drawable.lissagu_1),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
-                )
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            //Знак минус
-            Box(
-                modifier = m
-                    .clickable(onClick = { isUseLissagu.value = isUseLissagu.value.not() })
-                    .border(1.dp, Color.Gray)
+                    .border(1.dp, Color.Green)
                     .background(Color.Black)
                     .drawBehind {
-                        drawLine(
-                            Color.White,
-                            start = Offset(size.width* 1/3f, size.height / 2f),
-                            end = Offset(size.width* 2/3f, size.height / 2f),
-                            strokeWidth = 3.dp.toPx()
-                        )
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-            }
+                        // Размеры овала
+                        val ovalWidth = size.height * 0.75f
+                        val ovalHeight = ovalWidth * 0.45f
 
-            //Знак минус
-            Box(
-                modifier = m
-                    .clickable(onClick = { isUseLissagu.value = isUseLissagu.value.not() })
-                    .border(1.dp, Color.Gray)
-                    .background(Color.Black)
-                    .drawBehind {
-                        drawLine(
-                            Color.White,
-                            start = Offset(size.width* 1/3f, size.height / 2f),
-                            end = Offset(size.width* 2/3f, size.height / 2f),
-                            strokeWidth = 3.dp.toPx()
+                        // Центр канвы
+                        val canvasCenter = Offset(x = size.width / 2, y = size.height / 2)
+
+                        // Верхний левый угол для центрирования овала
+                        val topLeft = Offset(
+                            x = canvasCenter.x - ovalWidth / 2,
+                            y = canvasCenter.y - ovalHeight / 2
                         )
+
+                        // Поворачиваем канву
+                        rotate(degrees = -45f, pivot = canvasCenter) {
+                            drawOval(
+                                color = Color.White,
+                                topLeft = topLeft,
+                                size = Size(width = ovalWidth, height = ovalHeight),
+                                style = Stroke(width = 1.dp.toPx())
+                            )
+                        }
 
                         drawLine(
                             Color.White,
-                            start = Offset(size.width* 1/2f, size.height / 3f),
-                            end = Offset(size.width* 1/2f, size.height * 2f / 3f),
-                            strokeWidth = 3.dp.toPx()
+                            start = Offset(size.width * 0.1f, size.height / 2f),
+                            end = Offset(size.width * 0.9f, size.height / 2f),
+                            strokeWidth = 1.dp.toPx()
                         )
 
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-            }
+                        drawLine(
+                            Color.White,
+                            start = Offset(size.width * 1 / 2f, size.height * 0.2f),
+                            end = Offset(size.width * 1 / 2f, size.height * 0.8f),
+                            strokeWidth = 1.dp.toPx()
+                        )
+
+
+                    }
+            )
+//////////////////////////////////////////////////////////////////////////////////////////////
 
         }
 
@@ -513,8 +607,8 @@ class Scope {
     }
 
     private val m = Modifier
-        .height(32.dp)
-        .width(32.dp)
+        .height(40.dp)
+        .width(40.dp)
 //.border(1.dp, Color.Gray)
 //.background(Color.Black)
 
