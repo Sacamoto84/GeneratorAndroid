@@ -15,6 +15,7 @@ import androidx.compose.runtime.MutableFloatState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.generator2.MainRes
 import com.example.generator2.model.LiveConstrain
@@ -22,6 +23,18 @@ import com.example.generator2.screens.config.Config_header
 import com.example.generator2.screens.config.DefScreenConfig
 import com.example.generator2.screens.config.atom.editConfig
 import com.example.generator2.screens.config.vm.VMConfig
+
+
+
+@Preview
+@Composable
+private fun Preview1(){
+
+
+
+
+}
+
 
 @Composable
 private fun EditConfig(

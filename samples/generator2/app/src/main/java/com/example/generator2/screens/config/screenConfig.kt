@@ -45,7 +45,6 @@ val modifierGreenButton = Modifier
     .height(40.dp)
 
 
-
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
     fun ScreenConfig(vm: VMConfig) {
