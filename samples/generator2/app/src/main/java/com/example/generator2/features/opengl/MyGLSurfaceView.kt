@@ -12,7 +12,6 @@ class MyGLSurfaceView(context: Context) : GLSurfaceView(context) {
 
     private var hasSetShader = false
 
-
     init {
         id = generateViewId()
     }

@@ -1,7 +1,7 @@
 package com.example.generator2.features.generator
 
 import com.example.generator2.util.ArrayUtils
-import com.example.libs.utils.maping
+import com.example.generator2.util.maping
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 

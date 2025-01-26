@@ -9,7 +9,7 @@ import android.content.pm.PackageManager
 fun getVersionName(context: Context): String {
     try {
         val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        return pInfo.versionName
+        return pInfo.versionName!!
     } catch (e: PackageManager.NameNotFoundException) {
         e.printStackTrace()
     }
