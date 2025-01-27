@@ -3,17 +3,23 @@ package com.example.generator2.features.audio
 import android.media.AudioFormat
 import android.media.AudioTrack
 import android.media.AudioTrack.MODE_STREAM
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 
-@OptIn(DelicateCoroutinesApi::class)
 class AudioOut(
     val sampleRate: Int = 48000,
     val minBufferMs: Int = 1000,
     val encoding: Int = AudioFormat.ENCODING_PCM_FLOAT
 ) {
+
+    companion object {
+
+        /**
+         * Частота аудио выхода
+         */
+        val AudioSampleRate = MutableStateFlow(0) //Частота которая используется на аудиовыводе, для UI
+
+    }
 
     /**
      * Признак того что устройство поддерживает 192k
@@ -25,46 +31,33 @@ class AudioOut(
     init {
 
         try {
+            val minBufferInBytes = 4 * (sampleRate / 1000) * minBufferMs / 1000
+            val audioFormat = AudioFormat.Builder().setEncoding(encoding).setSampleRate(sampleRate).setChannelMask(AudioFormat.CHANNEL_OUT_STEREO).build()
+            val minBuffer = AudioTrack.getMinBufferSize( sampleRate, AudioFormat.CHANNEL_OUT_STEREO, encoding )
 
-            val minBufferInBytes = 4 * (sampleRate / 1000) * (minBufferMs / 1000.0).toInt()
-
-            val audioFormat = AudioFormat.Builder()
-                .setEncoding(encoding)
-                .setSampleRate(sampleRate)
-                .setChannelMask(AudioFormat.CHANNEL_OUT_STEREO)
+            out = AudioTrack.Builder()
+                .setAudioFormat(audioFormat)
+                .setBufferSizeInBytes(minBuffer.coerceAtLeast(minBufferInBytes))
+                .setTransferMode(MODE_STREAM)
                 .build()
 
-            val minBuffer = AudioTrack.getMinBufferSize(
-                sampleRate,
-                AudioFormat.CHANNEL_OUT_STEREO,
-                encoding
-            )
-
-            out =
-                AudioTrack.Builder()
-                    .setAudioFormat(audioFormat)
-                    .setBufferSizeInBytes(minBuffer.coerceAtLeast(minBufferInBytes))
-                    .setTransferMode(MODE_STREAM)
-                    .build()
-
-            out!!.play()
-
-            GlobalScope.launch { AudioSampleRate.value = out!!.sampleRate }
-
-            Timber.w("Запуск AudioOut ${out!!.sampleRate}")
-
+            out?.play()
+            out?.let { AudioSampleRate.value = it.sampleRate }
+            Timber.w("Запуск AudioOut ${out?.sampleRate}")
         } catch (e: Exception) {
-            Timber.e(e.localizedMessage)
+            Timber.e( e,"Error initializing AudioOut with sampleRate=$sampleRate, encoding=$encoding" )
         }
-
 
     }
 
     fun destroy() {
         Timber.w("AudioOut destroy")
-        out?.stop()
-        out?.flush()
-        out?.release()
+        out?.let {
+            it.stop()
+            it.flush()
+            it.release()
+        }
+        out = null
     }
 
     fun checkSupport192k() {
@@ -75,13 +68,11 @@ class AudioOut(
                 AudioFormat.ENCODING_PCM_FLOAT
             )
 
-            if (minBuffer >= 0)
-                isDeviceSupport192k = true
+            isDeviceSupport192k = minBuffer > 0
 
         } catch (e: Exception) {
-            Timber.e(e.localizedMessage)
+            Timber.e(e, "Error checking support for 192kHz")
         }
     }
-
 
 }

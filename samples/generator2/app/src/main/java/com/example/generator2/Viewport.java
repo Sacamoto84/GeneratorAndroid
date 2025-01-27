@@ -1,8 +1,6 @@
 package com.example.generator2;
 
-import android.content.Context;
 import android.graphics.PointF;
-import android.graphics.RectF;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;

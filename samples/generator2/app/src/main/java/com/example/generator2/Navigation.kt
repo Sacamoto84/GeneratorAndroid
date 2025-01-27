@@ -34,7 +34,6 @@ sealed class AppScreen : Screen {
         }
     }
 
-
     data object Explorer :  AppScreen() {
         private fun readResolve(): Any = Explorer
 
@@ -45,9 +44,6 @@ sealed class AppScreen : Screen {
             ScreenExplorer(viewModel)
         }
     }
-
-
-
 
 }
 

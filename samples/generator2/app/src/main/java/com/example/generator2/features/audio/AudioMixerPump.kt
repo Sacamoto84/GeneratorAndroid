@@ -10,15 +10,12 @@ import com.example.generator2.features.mp3.PlayerMP3
 import com.example.generator2.features.mp3.processor.audioProcessorInputFormat
 import com.example.generator2.features.scope.Scope
 import com.example.generator2.model.itemList
-import com.example.generator2.util.BufMenge
 import com.example.generator2.util.MeasureMicroAvg
-import com.example.generator2.util.bufMerge
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.LinkedList
 import kotlin.system.measureNanoTime
@@ -83,31 +80,22 @@ class AudioMixerPump
         var delay = 50
         //
 
-        var bufferSize = 1152*2 //R+L
-
-        val calculator = Calculator()
-
-
-        val bufMerge0 = BufMenge()
-        val bufMerge1 = BufMenge()
-        val bufMerge2 = BufMenge()
-        val bufMerge3 = BufMenge()
+        var bufferSize = 1152 * 2 //R+L
 
         val measureMicroAvg = MeasureMicroAvg()
 
-
         //GlobalScope.launch(Dispatchers.Default) {
 
-            var init = false
+        var init = false
 
-            while (!init) {
-                init = try {
-                    exoplayer.player
-                    true
-                } catch (e: UninitializedPropertyAccessException) {
-                    false
-                }
+        while (!init) {
+            init = try {
+                exoplayer.player
+                true
+            } catch (e: UninitializedPropertyAccessException) {
+                false
             }
+        }
 
 //            GlobalScope.launch(Dispatchers.IO) {
 //
@@ -122,23 +110,23 @@ class AudioMixerPump
 //                }
 //            }
 
-            while (true) {
+        while (true) {
 
 
-                if (exoplayer.isPlayingD.value) {
+            if (exoplayer.isPlayingD.value) {
 
 //                    val duration = Duration.between(lastEventTime, LocalDateTime.now()).toMillis()
 //                    lastEventTime = LocalDateTime.now()
 //                    println("Частота вызова mp3: "+duration+" ms")
 
-                    val bigBufMp3 = exoplayer.streamOut.receive()
+                val bigBufMp3 = exoplayer.streamOut.receive()
 
-                    bufferSize = bigBufMp3.size
+                bufferSize = bigBufMp3.size
 
-                    if (bufferSize == 0)
-                        continue
+                if (bufferSize == 0)
+                    continue
 
-                    //println("bigBufMp3.size ${bigBufMp3.size}")
+                //println("bigBufMp3.size ${bigBufMp3.size}")
 
 //                    if (start) {
 //                        Timber.e("1 start $volume $delay")
@@ -153,179 +141,192 @@ class AudioMixerPump
 //                    }
 
 
-                    if ((audioProcessorInputFormat.value.sampleRate != audioOut.sampleRate)) {
-                        audioOut.destroy(); audioOut = AudioOut(
-                            audioProcessorInputFormat.value.sampleRate,
-                            200,
-                            AudioFormat.ENCODING_PCM_FLOAT
-                        )
-                    }
+                if ((audioProcessorInputFormat.value.sampleRate != audioOut.sampleRate)) {
+                    audioOut.destroy(); audioOut = AudioOut(
+                        audioProcessorInputFormat.value.sampleRate,
+                        200,
+                        AudioFormat.ENCODING_PCM_FLOAT
+                    )
+                }
 
 
-                    val bufGenL: FloatArray
-                    val bufGenR: FloatArray
-                    if ((routeL.value == ROUTESTREAM.GEN) or (routeR.value == ROUTESTREAM.GEN)) {
-                        gen.sampleRate = audioProcessorInputFormat.value.sampleRate
+                val bufGenL: FloatArray
+                val bufGenR: FloatArray
+
+                if ((routeL.value == ROUTESTREAM.GEN) or (routeR.value == ROUTESTREAM.GEN)) {
+                    gen.sampleRate = audioProcessorInputFormat.value.sampleRate
 
 
-                        val p = gen.renderAudio(bufferSize)
+                    val p = gen.renderAudio(bufferSize)
 
-                        bufGenL = p.first
-                        bufGenR = p.second
-                    } else {
-                        bufGenL = FloatArray(bufferSize)
-                        bufGenR = FloatArray(bufferSize)
-                    }
+                    bufGenL = p.first
+                    bufGenR = p.second
+                } else {
+                    bufGenL = FloatArray(bufferSize)
+                    bufGenR = FloatArray(bufferSize)
+                }
 //
 //                    for (i in bigBufMp3.indices) {
 //                        bigBufMp3[i] = bigBufMp3[i] * volume
 //                    }
 
-                    val (bufMp3L, bufMp3R) = BufSplitFloat().split(bigBufMp3)
+                val (bufMp3L, bufMp3R) = split(bigBufMp3)
 //
-                    val outR = when (routeR.value) {
-                        ROUTESTREAM.MP3 -> bufMp3R
-                        ROUTESTREAM.GEN -> bufGenR
-                        ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
-                    }
+                val outR = when (routeR.value) {
+                    ROUTESTREAM.MP3 -> bufMp3R
+                    ROUTESTREAM.GEN -> bufGenR
+                    ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
+                }
 
-                    val outL = when (routeL.value) {
-                        ROUTESTREAM.MP3 -> bufMp3L
-                        ROUTESTREAM.GEN -> bufGenL
-                        ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
-                    }
-//
-                    //invertL
-                    if (invertL.value) for (i in outL.indices) {
-                        outL[i] = -outL[i]
-                    }
-                    //invertR
-                    if (invertR.value) for (i in outR.indices) {
-                        outR[i] = -outR[i]
-                    }
+                val outL = when (routeL.value) {
+                    ROUTESTREAM.MP3 -> bufMp3L
+                    ROUTESTREAM.GEN -> bufGenL
+                    ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
+                }
 
-                    val v = if (shuffle.value) {
-                        //bufMerge0.merge(outL, outR)//
-                        bufMerge(outL, outR)
-                    } else {
-                        //Нормальный режим
-                        //bufMerge1.merge(outR, outL)//
-                        bufMerge(outR, outL)
-                    }
+                //───────────────────────────────────────────────┐
+                // Инверсия                                      │
+                //───────────────────────────────────────────────┤
+                //                                               │
+                if (invertL.value) for (i in outL.indices) {  // │
+                    outL[i] = -outL[i]                        // │
+                }                                             // │
+                //                                               │
+                if (invertR.value) for (i in outR.indices) {  // │
+                    outR[i] = -outR[i]                        // │
+                }                                             // │
+                //───────────────────────────────────────────────┘
+                //───────────────────────────────────────────────┐
+                // Переворот канала                              │
+                //───────────────────────────────────────────────┤
+                val v = if (shuffle.value) {                  // │
+                    bufMerge(outL, outR)                      // │
+                } else {                                      // │
+                    //Нормальный режим                        // │
+                    bufMerge(outR, outL)                      // │
+                }                                             // │
+                //───────────────────────────────────────────────┘
+                //Отравили в scope
+                if (scope.isUse.value) {
+                    scope.channelAudioOut.send(v)
+                    //scope.channelAudioOutLissagu.send(v)
+                }
 
-                    //Отравили в scope
-                    if (scope.isUse.value) {
-                        scope.channelAudioOut.send(v)
-                        //scope.channelAudioOutLissagu.send(v)
-                    }
+                //───────────────────────────────────────────────┐
+                // Вывод в аудио устройство                      │
+                //───────────────────────────────────────────────┤
+                // LRLRLR
+                audioOut.out?.write(v, 0, v.size, WRITE_BLOCKING)
+                //───────────────────────────────────────────────┘
 
-                    //LRLRLR
-                    audioOut.out?.write(v, 0, v.size, WRITE_BLOCKING)
-
-                } else {
+            } else {
 
 //                    val duration = Duration.between(lastEventTime, LocalDateTime.now()).toMillis()
 //                    lastEventTime = LocalDateTime.now()
 //                    calculator2.update(duration.toDouble())
 //                    println("Частота вызова: " + duration + " ms AVG: ${calculator2.getAvg()} ms")
 
-                    while (exoplayer.streamOut.tryReceive().isSuccess) {
-                        println("Очистка канала")
+                while (exoplayer.streamOut.tryReceive().isSuccess) {
+                    println("Очистка канала")
+                }
+
+                //8192 LR-4096    192k -> 21.3ms 48k->85.4ms
+
+                //Перевод на 192k только если есть поддержка устройтвом
+                if ((routeL.value == ROUTESTREAM.GEN) and (routeR.value == ROUTESTREAM.GEN)) {
+                    if ((audioOut.out!!.sampleRate != 192000) and isDeviceSupport192k) {
+                        Timber.w("Меняем частоту на 192k")
+                        audioOut.destroy()
+                        audioOut = AudioOut(192000, 200, encoding = AudioFormat.ENCODING_PCM_FLOAT)
                     }
-
-                    //8192 LR-4096    192k -> 21.3ms 48k->85.4ms
-
-                    //Перевод на 192k только если есть поддержка устройтвом
-                    if ((routeL.value == ROUTESTREAM.GEN) and (routeR.value == ROUTESTREAM.GEN)) {
-                        if ((audioOut.out!!.sampleRate != 192000) and isDeviceSupport192k) {
-                            Timber.w("Меняем частоту на 192k")
-                            audioOut.destroy()
-                            audioOut =
-                                AudioOut(192000, 200, encoding = AudioFormat.ENCODING_PCM_FLOAT)
-                        }
+                } else {
+                    if (audioOut.out!!.sampleRate == 192000) {
+                        Timber.w("Меняем частоту на 48k")
+                        audioOut.destroy()
+                        audioOut = AudioOut(a48, 200, AudioFormat.ENCODING_PCM_FLOAT)
                     }
-                    else
-                    {
-                        if (audioOut.out!!.sampleRate == 192000) {
-                            Timber.w("Меняем частоту на 48k")
-                            audioOut.destroy()
-                            audioOut = AudioOut(a48, 200, AudioFormat.ENCODING_PCM_FLOAT)
-                        }
+                }
+
+                gen.sampleRate = audioOut.sampleRate
+                scope.audioSampleRate = audioOut.sampleRate
+
+                val buf: Pair<FloatArray, FloatArray>
+
+                //8192 LR-4096    192k -> 21.3ms 48k->85.4ms
+                //8192
+
+                // S7         1200us   5.6% | 192K   21.3ms
+                //                     1.4% |  48k   85.4ms
+                // X6 Pro      350us   1.6% | 192k
+                //                     0.4% |  48k
+                // 23 Ultra     70us
+                // 22 Ultra    750us
+                // Pixel8 Pro  990us
+
+                //mi8  2220us release 192k 8192
+                //9060 3940us release 192k 8192
+                val nanos = measureNanoTime {
+
+                    val t = measureMicroAvg.measureNanoTime {//measureNanoTime {
+                        buf = gen.renderAudio(bufferSize)
                     }
-
-                    gen.sampleRate = audioOut.sampleRate
-                    scope.audioSampleRate = audioOut.sampleRate
-
-                    val buf: Pair<FloatArray, FloatArray>
-
-                    //8192 LR-4096    192k -> 21.3ms 48k->85.4ms
-                    //8192
-
-                    // S7         1200us   5.6% | 192K   21.3ms
-                    //                     1.4% |  48k   85.4ms
-                    // X6 Pro      350us   1.6% | 192k
-                    //                     0.4% |  48k
-                    // 23 Ultra     70us
-                    // 22 Ultra    750us
-                    // Pixel8 Pro  990us
-
-                    //mi8  2220us release 192k 8192
-                    //9060 3940us release 192k 8192
-                    val nanos = measureNanoTime {
-
-                       val t = measureMicroAvg.measureNanoTime{//measureNanoTime {
-                           buf = gen.renderAudio(bufferSize)
-                       }
-                        //println("!!! renderAudio ${measureMicroAvg.avgUs.toInt()} us ${measureMicroAvg.count} t : ${t} us")
-
-                    }
-
-                    //calculator.update(nanos / 1000.0)
-
-                    //println("measure :${nanos / 1000.0} us bufferSize: $bufferSize среднее ${calculator.getAvg()}")
-
-                    val outR = when (routeR.value) {
-                        ROUTESTREAM.MP3 -> FloatArray(buf.second.size)
-                        ROUTESTREAM.GEN -> buf.second
-                        ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
-                    }
-
-                    val outL = when (routeL.value) {
-                        ROUTESTREAM.MP3 -> FloatArray(buf.first.size)
-                        ROUTESTREAM.GEN -> buf.first
-                        ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
-                    }
-
-                    //invertL
-                    if (invertL.value) for (i in outL.indices) {
-                        outL[i] = -outL[i]
-                    }
-                    //invertR
-                    if (invertR.value) for (i in outR.indices) {
-                        outR[i] = -outR[i]
-                    }
-
-                    val v = if (shuffle.value) {
-                        // bufMerge2.merge(outL, outR)//
-                        bufMerge(outL, outR)
-                    } else {
-                        //Нормальный режим
-                        //bufMerge3.merge(outR, outL)//
-                        bufMerge(outR, outL)
-                    }
-
-                    //Отравили в scope
-                    if (scope.isUse.value) {
-                        scope.channelAudioOut.send(v)
-                        //scope.channelAudioOutLissagu.send(v)
-                    }
-
-                    audioOut.out?.write(v, 0, v.size, WRITE_BLOCKING)
+                    //println("!!! renderAudio ${measureMicroAvg.avgUs.toInt()} us ${measureMicroAvg.count} t : ${t} us")
 
                 }
 
+                //calculator.update(nanos / 1000.0)
+
+                //println("measure :${nanos / 1000.0} us bufferSize: $bufferSize среднее ${calculator.getAvg()}")
+
+                val outR = when (routeR.value) {
+                    ROUTESTREAM.MP3 -> FloatArray(buf.second.size)
+                    ROUTESTREAM.GEN -> buf.second
+                    ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
+                }
+
+                val outL = when (routeL.value) {
+                    ROUTESTREAM.MP3 -> FloatArray(buf.first.size)
+                    ROUTESTREAM.GEN -> buf.first
+                    ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
+                }
+
+                //invertL
+                if (invertL.value) for (i in outL.indices) {
+                    outL[i] = -outL[i]
+                }
+                //invertR
+                if (invertR.value) for (i in outR.indices) {
+                    outR[i] = -outR[i]
+                }
+
+                val v = if (shuffle.value) {
+                    // bufMerge2.merge(outL, outR)//
+                    bufMerge(outL, outR)
+                } else {
+                    //Нормальный режим
+                    //bufMerge3.merge(outR, outL)//
+                    bufMerge(outR, outL)
+                }
+
+                //Отравили в scope
+                if (scope.isUse.value) {
+                    scope.channelAudioOut.send(v)
+                    //scope.channelAudioOutLissagu.send(v)
+                }
+
+                audioOut.out?.write(v, 0, v.size, WRITE_BLOCKING)
 
             }
+
+
+
+
+
+
+
+
+
+        }
 
         //}
 
@@ -387,7 +388,6 @@ fun ListToShortArray(bigList: LinkedList<ShortArray>): ShortArray {
     // Теперь resultArray содержит объединенные элементы из всех ShortArray
     return resultArray
 }
-
 
 class Calculator(val count: Int = 1000) {
     private val data = mutableListOf<Double>()

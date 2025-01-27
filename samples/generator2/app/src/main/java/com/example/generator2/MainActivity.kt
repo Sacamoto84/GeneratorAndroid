@@ -1,15 +1,27 @@
 package com.example.generator2
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Service
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.IBinder
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
@@ -179,9 +191,7 @@ class MainActivity : ComponentActivity() {
         }
         highPriorityThread.start()
 
-
         //play()
-
 
         //GlobalScope.launch(Dispatchers.IO) {
         //player.playUri()
@@ -194,6 +204,8 @@ class MainActivity : ComponentActivity() {
         //a = a/0
 
         Spectrogram.startFFTLoop()
+
+        startForegroundService()
 
         setContent {
 
@@ -210,8 +222,6 @@ class MainActivity : ComponentActivity() {
             //exitTransition  - управляет тем, что ExitTransition  запускается, когда initialState NavBackStackEntry исчезает с экрана.
             Generator2Theme {
                 Timber.i("..................................Generator2Theme.................................")
-
-
 
                 Timber.tag("Время работы")
                     .i("!!! MainActivity запуск Navigation он начала запуска Splash: ${System.currentTimeMillis() - startTimeSplashScreenActivity} мс!!!")
@@ -236,5 +246,35 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    private fun startForegroundService() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, POST_NOTIFICATIONS ) == PackageManager.PERMISSION_GRANTED) {
+                val intent = Intent(this, SoundService::class.java)
+                startForegroundService(intent)
+            } else {
+                Timber.w("Notification permission not granted: Requesting permission...")
+                // Запрашиваем разрешение через launcher
+                requestPermissionLauncher.launch(POST_NOTIFICATIONS)
+            }
+        } else {
+            val intent = Intent(this, SoundService::class.java)
+            startForegroundService(intent)
+        }
+    }
+
+    // Создаем launcher для запроса разрешений
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            // Разрешение предоставлено, запускаем сервис
+            val intent = Intent(this, SoundService::class.java)
+            startForegroundService(intent)
+        } else {
+            Timber.w("Notification permission denied: Foreground service cannot start")
+        }
+    }
+
 }
 

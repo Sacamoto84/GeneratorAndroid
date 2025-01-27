@@ -25,15 +25,11 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun WaterfallComposeView() {
-
     val context = LocalContext.current
-
     val waterfallView = remember {
         WaterfallView(context, null).apply {
-
         }
     }
-
     AndroidView(
         modifier = Modifier
             .fillMaxWidth()
@@ -43,7 +39,6 @@ fun WaterfallComposeView() {
             waterfallView
         },
     )
-
 }
 
 class WaterfallView(context: Context?, attrs: AttributeSet?) :
@@ -139,7 +134,6 @@ class WaterfallView(context: Context?, attrs: AttributeSet?) :
         gray.color = Color.GRAY
         gray.alpha = 128 + 64
 
-
         black = Paint()
         black.color = Color.BLACK
         black.alpha = 255
@@ -179,7 +173,7 @@ class WaterfallView(context: Context?, attrs: AttributeSet?) :
 
         canvas.drawBitmap(
             mBitmap!!,
-            Rect(0, currentRow , mBitmap!!.width, mBitmap!!.height),
+            Rect(0, currentRow, mBitmap!!.width, mBitmap!!.height),
             Rect(0, barsHeight + 1, mBitmap!!.width, topHalf),
             null
         )
@@ -220,17 +214,12 @@ class WaterfallView(context: Context?, attrs: AttributeSet?) :
             val currentRow = Spectrogram.Lock(mBitmap)
             //Timber.i("!!! currentRow: $currentRow")
 
-
 //
             if (currentRow >= 0) {
                 // draw bars
-
                 canvas.drawBitmap(mBitmap!!, bars, bars!!, drawPaint)
-
                 drawWaterfall(canvas, currentRow, mBarsHeight)
-
             }
-
             Spectrogram.Unlock(mBitmap)
 
         }
@@ -246,22 +235,22 @@ class WaterfallView(context: Context?, attrs: AttributeSet?) :
 //        }
 
 //        //Отображение дебаг иформации
-//        if (showDebugInfo) {
-//            val x = 10
-//            var y = (250 + white.descent() - white.ascent()).toInt()
-//            val text = Spectrogram.GetDebugInfo()
-//            if (text != null) {
-//                for (line in text.split("\n".toRegex()).dropLastWhile { it.isEmpty() }
-//                    .toTypedArray()) {
-//                    canvas.drawText(line, x.toFloat(), y.toFloat(), white)
-//                    y = (y + (white.descent() - white.ascent())).toInt()
-//                }
-//            }
-//        }
+        if (showDebugInfo) {
+            val x = 10
+            var y = (250 + white.descent() - white.ascent()).toInt()
+            val text = Spectrogram.GetDebugInfo()
+            if (text != null) {
+                for (line in text.split("\n".toRegex()).dropLastWhile { it.isEmpty() }
+                    .toTypedArray()) {
+                    canvas.drawText(line, x.toFloat(), y.toFloat(), white)
+                    y = (y + (white.descent() - white.ascent())).toInt()
+                }
+            }
+        }
 
 //        if (processor == ProcessorMode.FFT) {
 //            if (mLogX) {
-//                //DrawLogarithmicX(canvas)
+//                DrawLogarithmicX(canvas)
 //            } else {
 //                //DrawLinearX(canvas)
 //            }
@@ -384,32 +373,31 @@ class WaterfallView(context: Context?, attrs: AttributeSet?) :
 
         // Draw measurements
         //
-//        if (mMeasuring) {
-//            val xx = viewport.fromScreenSpace(xxx)
-//            var str = "none"
-//
-//            val freq = Spectrogram.XToFreq(xx.toDouble()).toInt()
-//            str = String.format("%d Hz", freq)
-//
-//            canvas.drawText(str, xxx, yyy - mBarsHeight, white)
-//            canvas.drawLine(xxx, 0f, xxx, height.toFloat(), white)
-//
-//            // draw time graphs
-//            var delta = linesPerSecond()
-//            if (delta * 60 < 100) {
-//                delta *= 60f
-//            }
-//
-//            for (i in 1..59) {
-//                val yy = yyy - i * delta
-//                canvas.drawLine(xxx - 20, yy, xxx + 20, yy, white)
-//            }
-//        }
+        if (mMeasuring) {
+            val xx = viewport.fromScreenSpace(xxx)
+            var str = "none"
+
+            val freq = Spectrogram.XToFreq(xx.toDouble()).toInt()
+            str = String.format("%d Hz", freq)
+
+            canvas.drawText(str, xxx, yyy - mBarsHeight, white)
+            canvas.drawLine(xxx, 0f, xxx, height.toFloat(), white)
+
+            // draw time graphs
+            var delta = linesPerSecond()
+            if (delta * 60 < 100) {
+                delta *= 60f
+            }
+
+            for (i in 1..59) {
+                val yy = yyy - i * delta
+                canvas.drawLine(xxx - 20, yy, xxx + 20, yy, white)
+            }
+        }
 
         viewport.EnforceMinimumSize()
 
         invalidate()
-
 
     }
 

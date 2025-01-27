@@ -12,17 +12,12 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
@@ -40,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.generator2.AppScreen
+import com.example.generator2.WaterfallComposeView
 import com.example.generator2.features.mp3.compose.MP3Control
 import com.example.generator2.features.presets.Presets
 import com.example.generator2.features.presets.ui.DialogPresetsNewFile
@@ -88,7 +84,9 @@ fun Mainsreen4(vm: VMMain4) {
 
         bottomBar = {
             //Нижняя панель
-            M4BottomAppBarComponent(vm, navigateToConfig = { navigator.push(AppScreen.Config) })
+            M4BottomAppBarComponent(vm,
+                navigateToConfig = { navigator.push(AppScreen.Config) }
+            )
         }
     )
     { it ->
@@ -150,14 +148,13 @@ fun Mainsreen4(vm: VMMain4) {
                 TopBarAudioSource(vm)
 
                 //Осциллограф
-
-                        vm.audioMixerPump.scope.OscilloscopeCompose()
+                vm.audioMixerPump.scope.OscilloscopeCompose()
 
 
                 //}
 
 
-                //WaterfallComposeView()
+                WaterfallComposeView()
 
                 MP3Control(vm)
 

@@ -9,6 +9,11 @@
         </intent>
     </queries>
 
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -80,6 +85,12 @@
         <meta-data
             android:name="com.bugsnag.android.API_KEY"
             android:value="e4bf50278fb1109c567e0ba0cd82cf61"/>
+
+        <service
+            android:name=".SoundService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
+
 
     </application>
 

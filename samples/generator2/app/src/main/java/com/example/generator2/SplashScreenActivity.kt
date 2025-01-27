@@ -61,11 +61,6 @@ class SplashScreenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
 
-
-
-
-
-
 //        val fastBitmap = FastBitmap()
 //        fastBitmap.WIDTH = 1024
 //        fastBitmap.HEIGHT = 512
@@ -83,11 +78,6 @@ class SplashScreenActivity : AppCompatActivity() {
 //        val bitmap = fastBitmap.bitmap
 //        bitmap
 
-
-
-
-
-
         //android O fix bug orientation
         if (android.os.Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -97,7 +87,6 @@ class SplashScreenActivity : AppCompatActivity() {
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.setBackgroundDrawable(ColorDrawable(Color.BLACK))
-
 
         Timber.tag("Время работы").i("!!! SplashActivity начало !!!")
         startTimeSplashScreenActivity = System.currentTimeMillis()
@@ -110,8 +99,6 @@ class SplashScreenActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         } else {
-
-
 
             /* При повторном запуске */
             if (initialization.isInitialized) {

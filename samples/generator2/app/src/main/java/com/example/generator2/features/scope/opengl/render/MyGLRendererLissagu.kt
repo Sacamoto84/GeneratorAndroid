@@ -1,8 +1,5 @@
 package com.example.generator2.features.scope.opengl.render
 
-import android.opengl.GLSurfaceView
-import android.opengl.GLES10.GL_LIGHTING
-import android.opengl.GLES20.glUniform3iv
 import android.opengl.GLES30.GL_COLOR_BUFFER_BIT
 import android.opengl.GLES30.GL_COMPILE_STATUS
 import android.opengl.GLES30.GL_FLOAT
@@ -17,22 +14,17 @@ import android.opengl.GLES30.glCreateProgram
 import android.opengl.GLES30.glCreateShader
 import android.opengl.GLES30.glDeleteProgram
 import android.opengl.GLES30.glDeleteShader
-import android.opengl.GLES30.glDisable
 import android.opengl.GLES30.glDisableVertexAttribArray
 import android.opengl.GLES30.glDrawArrays
 import android.opengl.GLES30.glEnableVertexAttribArray
-import android.opengl.GLES30.glGetAttribLocation
 import android.opengl.GLES30.glGetShaderInfoLog
 import android.opengl.GLES30.glGetShaderiv
-import android.opengl.GLES30.glGetUniformLocation
 import android.opengl.GLES30.glLinkProgram
 import android.opengl.GLES30.glShaderSource
-import android.opengl.GLES30.glUniform1f
 import android.opengl.GLES30.glUseProgram
 import android.opengl.GLES30.glVertexAttribPointer
 import android.opengl.GLES30.glViewport
-
-import com.example.generator2.features.audio.BufSplitFloat
+import android.opengl.GLSurfaceView
 import com.example.generator2.features.scope.NativeFloatDirectBuffer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -186,8 +178,6 @@ void main() {
             }
         }
     }
-
-    private val bufSplit = BufSplitFloat()
 
     private lateinit var pairFlatArray: Pair<FloatArray, FloatArray>
 

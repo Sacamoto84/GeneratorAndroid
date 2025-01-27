@@ -9,17 +9,13 @@ import com.example.generator2.PermissionStorage
 import com.example.generator2.application
 import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.explorer.domen.explorerInitialization
-import com.example.generator2.features.initialization.utils.listFilesInAssetsFolder
+import com.example.generator2.features.generator.observe
 import com.example.generator2.features.presets.presetsInit
 import com.example.generator2.features.presets.presetsReadFile
 import com.example.generator2.features.presets.presetsToLiveData
-import com.example.generator2.features.update.kDownloader
-import com.example.generator2.model.itemList
-import com.example.generator2.features.generator.observe
 import com.example.generator2.util.Utils
 import com.example.generator2.util.UtilsKT
 import com.example.generator2.util.toast
-import com.kdownloader.KDownloader
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -38,9 +34,7 @@ class Initialization
     val utils: UtilsKT,
     val appPath: AppPath,
     val global: Global,
-
     val audioMixerPump: AudioMixerPump,
-
 ) {
 
     var isInitialized = false  //Признак того что произошла инициализация
@@ -56,7 +50,6 @@ class Initialization
 
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun run() {
-
 
         Timber.tag("Время работы").i("!!! Инициализация начало !!!")
         val startTime = System.currentTimeMillis()
@@ -78,7 +71,7 @@ class Initialization
         /* explorer */
         GlobalScope.launch(Dispatchers.IO) {
             val t = measureTimeMillis {
-                explorerInitialization(context)
+                //explorerInitialization(context)
             }
             Timber.tag("Время работы").i("Время инициализации explorer: $t ms") //6350ms на 157 файлов
         }
@@ -176,7 +169,6 @@ class Initialization
         observe(audioMixerPump.gen) //30ms
         s3.await()
         s4.await()
-
 
         val endTime = System.currentTimeMillis()
         val elapsedTime = endTime - startTime

@@ -27,7 +27,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.generator2.AppScreen
 import com.example.generator2.R
-import com.example.generator2.features.audio.AudioSampleRate
+import com.example.generator2.features.audio.AudioOut
 import com.example.generator2.features.mp3.formatMinSec
 import com.example.generator2.screens.mainscreen4.VMMain4
 import com.example.generator2.theme.Purple200
@@ -140,7 +140,7 @@ fun MP3Control(vm: VMMain4) {
         //Text(text = ":${exoplayer.bitrate}", color = Color.Yellow)
         //Text(text = ":${exoplayer.averageBitrate}", color = Color.Yellow)
 
-        Text(text = "AudioOut:${AudioSampleRate.collectAsState().value} Hz", color = Color.Yellow)
+        Text(text = "AudioOut:${AudioOut.AudioSampleRate.collectAsState().value} Hz", color = Color.Yellow)
 
 
         Row(modifier = Modifier.fillMaxWidth()) {
