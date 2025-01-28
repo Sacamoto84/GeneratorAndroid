@@ -3,7 +3,7 @@ package com.example.generator2.features.audio
 import android.content.Context
 import android.media.AudioFormat
 import android.media.AudioTrack.WRITE_BLOCKING
-import com.example.generator2.application
+import com.example.generator2.App
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.initialization.utils.listFilesInAssetsFolder
 import com.example.generator2.features.mp3.PlayerMP3
@@ -97,6 +97,9 @@ class AudioMixerPump
             }
         }
 
+        var outL: FloatArray
+        var outR: FloatArray
+
 //            GlobalScope.launch(Dispatchers.IO) {
 //
 //                var isPlayingLast = false
@@ -156,7 +159,6 @@ class AudioMixerPump
                 if ((routeL.value == ROUTESTREAM.GEN) or (routeR.value == ROUTESTREAM.GEN)) {
                     gen.sampleRate = audioProcessorInputFormat.value.sampleRate
 
-
                     val p = gen.renderAudio(bufferSize)
 
                     bufGenL = p.first
@@ -172,53 +174,19 @@ class AudioMixerPump
 
                 val (bufMp3L, bufMp3R) = split(bigBufMp3)
 //
-                val outR = when (routeR.value) {
+                outR = when (routeR.value) {
                     ROUTESTREAM.MP3 -> bufMp3R
                     ROUTESTREAM.GEN -> bufGenR
                     ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
                 }
 
-                val outL = when (routeL.value) {
+                outL = when (routeL.value) {
                     ROUTESTREAM.MP3 -> bufMp3L
                     ROUTESTREAM.GEN -> bufGenL
                     ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
                 }
 
-                //───────────────────────────────────────────────┐
-                // Инверсия                                      │
-                //───────────────────────────────────────────────┤
-                //                                               │
-                if (invertL.value) for (i in outL.indices) {  // │
-                    outL[i] = -outL[i]                        // │
-                }                                             // │
-                //                                               │
-                if (invertR.value) for (i in outR.indices) {  // │
-                    outR[i] = -outR[i]                        // │
-                }                                             // │
-                //───────────────────────────────────────────────┘
-                //───────────────────────────────────────────────┐
-                // Переворот канала                              │
-                //───────────────────────────────────────────────┤
-                val v = if (shuffle.value) {                  // │
-                    bufMerge(outL, outR)                      // │
-                } else {                                      // │
-                    //Нормальный режим                        // │
-                    bufMerge(outR, outL)                      // │
-                }                                             // │
-                //───────────────────────────────────────────────┘
-                //Отравили в scope
-                if (scope.isUse.value) {
-                    scope.channelAudioOut.send(v)
-                    //scope.channelAudioOutLissagu.send(v)
-                }
 
-
-                //───────────────────────────────────────────────┐
-                // Вывод в аудио устройство                      │
-                //───────────────────────────────────────────────┤
-                // LRLRLR
-                audioOut.out?.write(v, 0, v.size, WRITE_BLOCKING)
-                //───────────────────────────────────────────────┘
 
             } else {
 
@@ -267,69 +235,68 @@ class AudioMixerPump
                 //mi8  2220us release 192k 8192
                 //9060 3940us release 192k 8192
                 val nanos = measureNanoTime {
-
                     val t = measureMicroAvg.measureNanoTime {//measureNanoTime {
                         buf = gen.renderAudio(bufferSize)
                     }
                     //println("!!! renderAudio ${measureMicroAvg.avgUs.toInt()} us ${measureMicroAvg.count} t : ${t} us")
-
                 }
 
                 //calculator.update(nanos / 1000.0)
 
                 //println("measure :${nanos / 1000.0} us bufferSize: $bufferSize среднее ${calculator.getAvg()}")
 
-                val outR = when (routeR.value) {
+                outR = when (routeR.value) {
                     ROUTESTREAM.MP3 -> FloatArray(buf.second.size)
                     ROUTESTREAM.GEN -> buf.second
                     ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
                 }
 
-                val outL = when (routeL.value) {
+                outL = when (routeL.value) {
                     ROUTESTREAM.MP3 -> FloatArray(buf.first.size)
                     ROUTESTREAM.GEN -> buf.first
                     ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
                 }
 
-                //invertL
-                if (invertL.value) for (i in outL.indices) {
-                    outL[i] = -outL[i]
-                }
-                //invertR
-                if (invertR.value) for (i in outR.indices) {
-                    outR[i] = -outR[i]
-                }
-
-                val v = if (shuffle.value) {
-                    // bufMerge2.merge(outL, outR)//
-                    bufMerge(outL, outR)
-                } else {
-                    //Нормальный режим
-                    //bufMerge3.merge(outR, outL)//
-                    bufMerge(outR, outL)
-                }
-
-                //Отравили в scope
-                if (scope.isUse.value) {
-                    scope.channelAudioOut.send(v)
-                    //scope.channelAudioOutLissagu.send(v)
-                }
-
-                audioOut.out?.write(v, 0, v.size, WRITE_BLOCKING)
-
             }
 
+            //───────────────────────────────────────────────┐
+            // Инверсия                                      │
+            //───────────────────────────────────────────────┤
+            //                                               │
+            if (invertL.value) for (i in outL.indices) {  // │
+                outL[i] = -outL[i]                        // │
+            }                                             // │
+            //                                               │
+            if (invertR.value) for (i in outR.indices) {  // │
+                outR[i] = -outR[i]                        // │
+            }                                             // │
+            //───────────────────────────────────────────────┘
+            //───────────────────────────────────────────────┐
+            // Переворот канала                              │
+            //───────────────────────────────────────────────┤
+            val v = if (shuffle.value) {                  // │
+                bufMerge(outL, outR)                      // │
+            } else {                                      // │
+                //Нормальный режим                        // │
+                bufMerge(outR, outL)                      // │
+            }                                             // │
+            //───────────────────────────────────────────────┘
+            //Отравили в scope
+            if (scope.isUse.value) {
+                scope.channelAudioOut.send(v)
+                //scope.channelAudioOutLissagu.send(v)
+            }
 
-
-
-
-
-
-
+            //───────────────────────────────────────────────┐
+            // Вывод в аудио устройство                      │
+            //───────────────────────────────────────────────┤
+            // LRLRLR
+            audioOut.out?.write(v, 0, v.size, WRITE_BLOCKING)
+            //───────────────────────────────────────────────┘
 
         }
 
-        //}
+
 
     }
 
@@ -340,7 +307,7 @@ class AudioMixerPump
         val s1 = GlobalScope.async(Dispatchers.Main) {
             val t = measureTimeMillis {
                 Timber.tag("Время работы").i("firstDeferred start")
-                val arrFilesCarrier = listFilesInAssetsFolder(application, "Carrier")
+                val arrFilesCarrier = listFilesInAssetsFolder(App.application, "Carrier")
                 for (i in arrFilesCarrier.indices) {
                     gen.itemlistCarrier.add(itemList("Carrier", arrFilesCarrier[i], 0))
                 }
@@ -351,7 +318,7 @@ class AudioMixerPump
         val s2 = GlobalScope.async(Dispatchers.IO) {
             val t111 = measureTimeMillis {
                 Timber.tag("Время работы").i("secondDeferred start")
-                val arrFilesMod = listFilesInAssetsFolder(application, "Mod")
+                val arrFilesMod = listFilesInAssetsFolder(App.application, "Mod")
                 //listFileInDir(appPath.mod) //Получение списка файлов в папке Mod //6ms
                 for (i in arrFilesMod.indices) {
                     gen.itemlistAM.add(itemList("Mod", arrFilesMod[i], 1)) //648ms -> 369 -> 207

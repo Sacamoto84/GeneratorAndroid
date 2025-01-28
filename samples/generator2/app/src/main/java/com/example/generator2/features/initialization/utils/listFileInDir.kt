@@ -1,6 +1,6 @@
 package com.example.generator2.features.initialization.utils
 
-import com.example.generator2.application
+import com.example.generator2.App
 import com.snatik.storage.Storage
 import timber.log.Timber
 
@@ -11,7 +11,7 @@ import timber.log.Timber
  */
 fun listFileInDir(path: String): List<String> {
     Timber.i( "Получить список файлов по пути: $path")
-    val storage = Storage(application)
+    val storage = Storage(App.application)
     val files = storage.getFiles(path).toList().sorted().mapNotNull { it?.name }
     return files
 }

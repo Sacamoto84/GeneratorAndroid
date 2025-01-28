@@ -227,7 +227,7 @@ class MainActivity : ComponentActivity() {
                     .i("!!! MainActivity запуск Navigation он начала запуска Splash: ${System.currentTimeMillis() - startTimeSplashScreenActivity} мс!!!")
 
                 Timber.tag("Время работы")
-                    .i("!!! MainActivity запуск Navigation он начала запуска App: ${System.currentTimeMillis() - startTimeAplication} мс!!!")
+                    .i("!!! MainActivity запуск Navigation он начала запуска App: ${System.currentTimeMillis() - App.startTimeAplication} мс!!!")
 
                 //   Navigation()
 

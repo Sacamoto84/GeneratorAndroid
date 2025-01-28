@@ -7,12 +7,19 @@ import androidx.media3.common.util.UnstableApi
 import cafe.adriel.voyager.core.screen.Screen
 import com.example.generator2.features.explorer.presenter.ScreenExplorerViewModel
 import com.example.generator2.features.explorer.presenter.compose.ScreenExplorer
+import com.example.generator2.features.playlist.compose.PlaylistUI
+import com.example.generator2.features.presets.ui.DialogPresets
 import com.example.generator2.screens.config.ScreenConfig
 import com.example.generator2.screens.config.vm.VMConfig
+import com.example.generator2.screens.editor.ScreenEditor
+import com.example.generator2.screens.html.Html
 import com.example.generator2.screens.mainscreen4.Mainsreen4
 import com.example.generator2.screens.mainscreen4.VMMain4
+import com.example.generator2.screens.scripting.ScreenScriptCommon
+import com.example.generator2.screens.scripting.ScreenScriptInfo
 
 sealed class AppScreen : Screen {
+
 
     data object Home : AppScreen() {
         private fun readResolve(): Any = Home
@@ -45,6 +52,66 @@ sealed class AppScreen : Screen {
         }
     }
 
+    data object Script :  AppScreen() {
+        private fun readResolve(): Any = Script
+
+        @OptIn(UnstableApi::class)
+        @Composable
+        override fun Content() {
+            ScreenScriptCommon()
+        }
+    }
+
+    data object Editor :  AppScreen() {
+        private fun readResolve(): Any = Editor
+
+        @OptIn(UnstableApi::class)
+        @Composable
+        override fun Content() {
+            ScreenEditor()
+        }
+    }
+
+    data object ScriptInfo :  AppScreen() {
+        private fun readResolve(): Any = ScriptInfo
+
+        @OptIn(UnstableApi::class)
+        @Composable
+        override fun Content() {
+            ScreenScriptInfo()
+        }
+    }
+
+    data object Presets :  AppScreen() {
+        private fun readResolve(): Any = Presets
+
+        @OptIn(UnstableApi::class)
+        @Composable
+        override fun Content() {
+            DialogPresets()
+        }
+    }
+
+    data object html :  AppScreen() {
+        private fun readResolve(): Any = html
+
+        @OptIn(UnstableApi::class)
+        @Composable
+        override fun Content() {
+            Html()
+        }
+    }
+
+    data object Playlist :  AppScreen() {
+        private fun readResolve(): Any = Playlist
+
+        @OptIn(UnstableApi::class)
+        @Composable
+        override fun Content() {
+            PlaylistUI()
+        }
+    }
+
 }
 
 
@@ -66,74 +133,4 @@ sealed class AppScreen : Screen {
 //    PLAYLIST("playlist"),
 //}
 //
-//@SuppressLint("StaticFieldLeak")
-//lateinit var navController: NavHostController
-//
-//@androidx.media3.common.util.UnstableApi
-//@Composable
-//fun Navigation() {
-//    navController = rememberNavController()
-//
-//    NavHost(
-//        navController = navController,
-//        startDestination = NavigationRoute.HOME.value,
-//
-//        enterTransition = { fadeIn(animationSpec = tween(0)) },
-//        exitTransition = { fadeOut(animationSpec = tween(0)) },
-//        popEnterTransition = { fadeIn(animationSpec = tween(0)) },
-//        popExitTransition = { fadeOut(animationSpec = tween(0)) },
-//
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(Color.Black)
-////            .semantics {
-////                testTagsAsResourceId = true
-////            }
-//    ) {
-//
-//
-//        composable("script"
-//        ) {
-//            ScreenScriptCommon()
-//        }
-//
-//        composable("editor"
-//        ) {
-//            ScreenEditor()
-//        }
-//
-//        composable("scriptinfo"
-//        ) {
-//            ScreenScriptInfo()
-//        }
-//
-//
-//        //Экран настройки программы
-//        composable("presets"
-//        ) {
-//            DialogPresets()
-//        }
-//
-//
-//        //Экран настройки программы
-//        composable("html"
-//        ) {
-//            Html()
-//        }
-//
-//        composable(NavigationRoute.EXPLORER.value)
-//        {
-//            ScreenExplorer()
-//        }
-//
-//        composable(NavigationRoute.PLAYLIST.value)
-//        {
-//            PlaylistUI()
-//        }
-//
-//
-//    }
-//
-//
-//}
 

@@ -3,12 +3,11 @@ package com.example.generator2.features.initialization
 import android.content.Context
 import androidx.media3.common.util.UnstableApi
 import cafe.adriel.pufferdb.android.AndroidPufferDB
+import com.example.generator2.App
 import com.example.generator2.AppPath
 import com.example.generator2.Global
 import com.example.generator2.PermissionStorage
-import com.example.generator2.application
 import com.example.generator2.features.audio.AudioMixerPump
-import com.example.generator2.features.explorer.domen.explorerInitialization
 import com.example.generator2.features.generator.observe
 import com.example.generator2.features.presets.presetsInit
 import com.example.generator2.features.presets.presetsReadFile
@@ -90,7 +89,7 @@ class Initialization
         s4 = GlobalScope.async(Dispatchers.IO) {
             val t = measureTimeMillis {
                 Timber.tag("Время работы").i("S4 start")
-                AndroidPufferDB.init(application)
+                AndroidPufferDB.init(App.application)
                 presetsInit(appPath)
             }
             Timber.tag("Время работы")

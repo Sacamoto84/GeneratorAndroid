@@ -1,9 +1,8 @@
 package com.example.generator2.model
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
-import com.example.generator2.application
+import com.example.generator2.App
 import com.example.generator2.features.initialization.utils.createBitmapCarrier
 import com.example.generator2.features.initialization.utils.createBitmapModulation
 import com.example.generator2.features.initialization.utils.readBytesFromAssets
@@ -28,7 +27,7 @@ class itemList(
 
         try {
 
-            buf = readBytesFromAssets(application, path, filename, 2048)!!
+            buf = readBytesFromAssets(App.application, path, filename, 2048)!!
 
             bitmap =
                 if (mod == 0)
