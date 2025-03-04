@@ -1,7 +1,7 @@
 package com.example.generator2.features.script
 
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,11 +10,11 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
+import java.util.concurrent.CopyOnWriteArrayList
 
 /*
  * ----------------- Логика -----------------
@@ -77,34 +77,38 @@ enum class StateCommandScript {
     START, PAUSE, RESUME, STOP, EDIT, //Перевести в режим редактирования
 
     //Состояния
-    ISRUNNING, ISPAUSE, ISTOPPING, ISEDITTING, //Сейчас режим редактирования
+    ISRUNNING, ISPAUSE, ISTOPPING, ISEDITING, //Сейчас режим редактирования
 }
 
 //@Stable
-class Script (val gen: Generator) {
+class Script(val gen: Generator) {
 
     //╭─ Генератор ───────────────────────╮
     var end = true
     private var endTime = 0L              //Время > которого можно продолжать работу
 
-    var f = mutableStateListOf<Float>()
+
+    //───────────────────────────────────────────────┐
+    /**
+     * ## Регистры Float 10 штук
+     */
+    var registerF = FloatArray(10)
+    //───────────────────────────────────────────────┘
 
     var pc = 0
 
     var str: String = ""
-    val list = mutableStateListOf<String>()
 
-
-    var pc_ex by mutableStateOf(0)
+    //───────────────────────────────────────────────┐
+    val list = CopyOnWriteArrayList<String>()      //|
+    //───────────────────────────────────────────────┘
+    var pc_ex = MutableStateFlow(0)
 
     var state by mutableStateOf(StateCommandScript.ISTOPPING)
 
     init {
-        Timber.i("Script() init{}")
-        f.addAll(FloatArray(10).toList())
+        Timber.i("!!! Script() init{}")
         command(StateCommandScript.STOP)
-
-
     }
 
     fun command(s: StateCommandScript) {
@@ -132,7 +136,7 @@ class Script (val gen: Generator) {
 
             StateCommandScript.EDIT -> {
                 stop()
-                state = StateCommandScript.ISEDITTING
+                state = StateCommandScript.ISEDITING
             }
 
             else -> {}
@@ -150,7 +154,7 @@ class Script (val gen: Generator) {
             StateCommandScript.EDIT -> "EDIT"
             StateCommandScript.ISRUNNING -> "isRUNNING"
             StateCommandScript.ISTOPPING -> "isSTOPPING"
-            StateCommandScript.ISEDITTING -> "isEDITTING"
+            StateCommandScript.ISEDITING -> "isEDITING"
             StateCommandScript.ISPAUSE -> "isPAUSE"
         }
         return s
@@ -160,11 +164,9 @@ class Script (val gen: Generator) {
     fun log(
         str: String
     ) { //
-
         GlobalScope.launch(Dispatchers.Main) {
             //consoleLog.println(str)
         }
-
     }
 
     //Тесты
@@ -181,13 +183,13 @@ class Script (val gen: Generator) {
                 val list1 = list.toList()
                 if ((pc >= 0) && (pc <= list1.lastIndex)) {
                     val s = list1[pc]
-                    println("QQQQQQQQQQQ S=" + s + " pc:" + pc)
+                    println("!!! S=$s pc:$pc")
                     cmdExecute(s)
                 } else {
-                    println("Ошибка индекса pc:" + pc)
+                    println("Ошибка индекса pc:$pc")
                     println(list.joinToString(","))
                     pc = 1
-                    pc_ex = pc
+                    pc_ex.value = pc
                 }
             } catch (e: Exception) {
                 println("Exception Ошибка " + e.message + " pc:" + pc)
@@ -197,18 +199,19 @@ class Script (val gen: Generator) {
         }
     }
 
+
     private fun start() {
         pc = 1
-        pc_ex = pc
+        pc_ex.value  = pc
         end = false
     }
 
     private fun stop() {
-        for (i in f.indices) {
-            f[i] = 0f
+        for (i in registerF.indices) {
+            registerF[i] = 0f
         }
         pc = 1
-        pc_ex = pc
+        pc_ex.value = pc
         end = true
         println("Script stop()")
     }
@@ -225,7 +228,7 @@ class Script (val gen: Generator) {
     //Выполнить команду по строке
     private suspend fun cmdExecute(comand: String) {
 
-        println("Script: ${pc} $comand")
+        println("Script: $pc $comand")
 
         //log("${pc.value} $comand")
 
@@ -243,7 +246,7 @@ class Script (val gen: Generator) {
                 while (true) {
                     if (list[currentPC] == "ENDIF") {
                         pc = currentPC
-                        pc_ex = pc
+                        pc_ex.value  = pc
                         break
                     }
                     currentPC++
@@ -253,7 +256,7 @@ class Script (val gen: Generator) {
 
             "ENDIF" -> {
                 pc++
-                pc_ex = pc
+                pc_ex.value  = pc
             }
 
             "END" -> {
@@ -269,37 +272,37 @@ class Script (val gen: Generator) {
             "CH1", "CH2", "CR1", "CR2", "AM1", "AM2", "FM1", "FM2" -> {
                 generatorComand(comand)
                 pc++
-                pc_ex = pc
+                pc_ex.value  = pc
             }
 
             "MINUS", "PLUS" -> {
                 comandPlusMinus(comand)
                 pc++
-                pc_ex = pc
+                pc_ex.value  = pc
             }
 
             "GOTO" -> {
                 pc = listCMD[1].toInt()
-                pc_ex = pc
+                pc_ex.value  = pc
             }
 
             "DELAY" -> {
                 val d = listCMD[1].toLong()
                 endTime = System.currentTimeMillis() + d
                 pc++
-                pc_ex = pc
+                pc_ex.value  = pc
             }
 
             "LOAD" -> { //LOAD F1 2344.0  │ 2344.0 -> F1
                 load(comand)
                 pc++
-                pc_ex = pc
+                pc_ex.value  = pc
             }
 
             else -> {
                 println("Script:? pc:$pc :$comand")
                 pc++
-                pc_ex = pc
+                pc_ex.value  = pc
                 if (pc >= PC_MAX) end = true
             }
 
@@ -315,7 +318,7 @@ class Script (val gen: Generator) {
             return
         }
         val index = listCMD[1].drop(1).toInt()
-        f[index] = if ((listCMD[2].first() == 'F')) f[listCMD[2].drop(1).toInt()]
+        registerF[index] = if ((listCMD[2].first() == 'F')) registerF[listCMD[2].drop(1).toInt()]
         else listCMD[2].toFloat()
     }
 
@@ -330,9 +333,9 @@ class Script (val gen: Generator) {
         }
 
         //IF Rxx Первый всегда R регистр
-        val f1value = f[listCMD[1].drop(1).toInt()]
+        val f1value = registerF[listCMD[1].drop(1).toInt()]
 
-        val f2value = if ((listCMD[3].first() == 'F')) f[listCMD[3].drop(1).toInt()]
+        val f2value = if ((listCMD[3].first() == 'F')) registerF[listCMD[3].drop(1).toInt()]
         else listCMD[3].toFloat()
 
         // имеем f1value и f2value
@@ -347,20 +350,20 @@ class Script (val gen: Generator) {
 
         if (boolResult) {
             pc++ //Переход на следующую строку, ибо условие выполнено
-            pc_ex = pc
+            pc_ex.value  = pc
         } else { //Ищем первое ELSE или ENDIF, ибо условие не выполнено
             var currentPC = pc
             while (true) {
                 if (list[currentPC] == "ELSE") //+1 к ELSE
                 {
                     pc = currentPC + 1
-                    pc_ex = pc
+                    pc_ex.value  = pc
                     break
                 }
 
                 if (list[currentPC] == "ENDIF") {
                     pc = currentPC
-                    pc_ex = pc
+                    pc_ex.value  = pc
                     break
                 }
                 currentPC++
@@ -383,29 +386,30 @@ class Script (val gen: Generator) {
         //╭─ CH1 CH2 ─────────────────────────────────────────────────────────────────╮
         if ((listCMD[0] == "CH1") || (listCMD[0] == "CH2")) {                       //│                                                                       //│
             val onoff =                                                             //│
-                listCMD[2] == "ON"                                                  //│ //────────────────────────────────────────────┬───────────────────────────┤
+                listCMD[2] == "ON"                                                  //│
+            // ──────────────────────────────────────────┬────────────────────────────┤
             if (listCMD[1] == "CR")                    //│  CH1 CR ON   CH2 CR OFF  //│
             {                                          //╰────────────────────────────┤
                 if (chanel == 1)                                                    //│
-                    gen.liveData.ch1_EN.update { onoff }                                //│
+                    gen.liveData.ch1_EN.update { onoff }                            //│
                 else                                                                //│
-                    gen.liveData.ch2_EN.update { onoff }                                //│
+                    gen.liveData.ch2_EN.update { onoff }                            //│
             }                                                                       //│
             //────────────────────────────────────────────┬───────────────────────────┤
             if (listCMD[1] == "AM")                     //│  CH1 AM ON   CH2 AM OFF //│
             {                                           //╰───────────────────────────┤
                 if (chanel == 1)                                                    //│
-                    gen.liveData.ch1_AM_EN.update { onoff }                                //│
+                    gen.liveData.ch1_AM_EN.update { onoff }                         //│
                 else                                                                //│
-                    gen.liveData.ch2_AM_EN.update { onoff }                                //│
+                    gen.liveData.ch2_AM_EN.update { onoff }                         //│
             }                                                                       //│
             //────────────────────────────────────────────────────────────────────────┤
             if (listCMD[1] == "FM")                                                 //│
             {                                                                       //│
                 if (chanel == 1)                                                    //│
-                    gen.liveData.ch1_FM_EN.update { onoff }                                //│
+                    gen.liveData.ch1_FM_EN.update { onoff }                         //│
                 else                                                                //│
-                    gen.liveData.ch2_FM_EN.update { onoff }                                //│
+                    gen.liveData.ch2_FM_EN.update { onoff }                         //│
             }                                                                       //│
             //────────────────────────────────────────────────────────────────────────┤
             return                                                                  //│
@@ -429,7 +433,7 @@ class Script (val gen: Generator) {
             {
 
                 val value = if (listCMD[2].first() == 'F') {
-                    f[listCMD[2].drop(1).toInt()]
+                    registerF[listCMD[2].drop(1).toInt()]
                 } else {
                     listCMD[2].toFloat()
                 }
@@ -437,9 +441,9 @@ class Script (val gen: Generator) {
                 if (chanel == 1) {
                     gen.liveData.ch1_Carrier_Fr.update { value }
                     //channel.send(value)
-                } else {                                             //│
+                } else {                                                            //│
                     gen.liveData.ch2_Carrier_Fr.update { value }
-                }                       //│
+                }                                                                   //│
             }
 
 
@@ -455,15 +459,15 @@ class Script (val gen: Generator) {
             //AM[1 2] FR 1000.3                                                     //│
             if (listCMD[1] == "FR")                                                 //│
             {                                                                       //│
-                val value = if (listCMD[2].first() == 'F') f[listCMD[2].drop(1)
-                    .toInt()]                      //│
+                val value = if (listCMD[2].first() == 'F') registerF[listCMD[2].drop(1)
+                    .toInt()]                                                       //│
                 else                                                                //│
                     listCMD[2].toFloat()                                            //│
 
                 if (chanel == 1)                                                    //│
-                    gen.liveData.ch1_AM_Fr.update { value }                             //│
+                    gen.liveData.ch1_AM_Fr.update { value }                         //│
                 else                                                                //│
-                    gen.liveData.ch2_AM_Fr.update { value }                             //│
+                    gen.liveData.ch2_AM_Fr.update { value }                         //│
             }                                                                       //│
 
             //AM[1 2] MOD 02_HWawe { 1.9ms }                                        //│
@@ -502,7 +506,7 @@ class Script (val gen: Generator) {
         if (listCMD[1] == "DEV")                                                    //│
         {
             val value = if (listCMD[2].first() == 'F') {
-                f[listCMD[2].drop(1).toInt()]
+                registerF[listCMD[2].drop(1).toInt()]
             } else listCMD[2].toFloat()
 
             if (chanel == 1) gen.liveData.ch1_FM_Dev.update { value }
@@ -522,7 +526,7 @@ class Script (val gen: Generator) {
         if (listCMD[1] == "FR")                                                      //│
         {                                                                            //│
             val value = if (listCMD[2].first() == 'F') {
-                f[listCMD[2].drop(1).toInt()]
+                registerF[listCMD[2].drop(1).toInt()]
             } else listCMD[2].toFloat()
 
             if (chanel == 1) gen.liveData.ch1_FM_Fr.update { value }
@@ -542,23 +546,27 @@ class Script (val gen: Generator) {
         val index = listCMD[1].drop(1).toInt() //Индекс первой ячейки 0..9 //MINUS F1 F2
         if (listCMD[2].first() == 'F') { //Второй операнд это регистор
             val secondIndex = listCMD[2].drop(1)
-                .toInt() //Индекс второго регистра // ┌── MINUS ────────────────────────────────────┐
+                .toInt() //Индекс второго регистра
+
+            // ┌── MINUS ────────────────────────────────────┐
             if (listCMD[0] == "MINUS") {
-                f[index] = f[index] - f[secondIndex]  //MINUS F* F*
-            } //└────────────────────────────────────────────┘
+                registerF[index] = registerF[index] - registerF[secondIndex]  //MINUS F* F*
+            }
+            //└────────────────────────────────────────────┘
+
             //┌── PLUS ────────────────────────────────────┐
             if (listCMD[0] == "PLUS") {
-                f[index] = f[index] + f[secondIndex]          //PLUS F* F*
+                registerF[index] = registerF[index] + registerF[secondIndex]          //PLUS F* F*
             } //└────────────────────────────────────────────┘
         } else { //Второй операнд это константа
             //MINUS F1 5000.0
             val fvalue = listCMD[2].toFloat() //┌── MINUS ───────────────────────────────────┐
             if (listCMD[0] == "MINUS") {
-                f[index] = f[index] - fvalue //MINUS F* F*
+                registerF[index] = registerF[index] - fvalue //MINUS F* F*
             } //└────────────────────────────────────────────┘
             //┌── PLUS ────────────────────────────────────┐
             if (listCMD[0] == "PLUS") {
-                f[index] = f[index] + fvalue //MINUS F* F*
+                registerF[index] = registerF[index] + fvalue //MINUS F* F*
             } //└────────────────────────────────────────────┘
         }
     }

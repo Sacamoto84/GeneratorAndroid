@@ -12,7 +12,7 @@ import com.example.generator2.features.presets.ui.DialogPresets
 import com.example.generator2.screens.config.ScreenConfig
 import com.example.generator2.screens.config.vm.VMConfig
 import com.example.generator2.screens.editor.ScreenEditor
-import com.example.generator2.screens.html.Html
+import com.example.generator2.screens.html.ScreenHtml
 import com.example.generator2.screens.mainscreen4.Mainsreen4
 import com.example.generator2.screens.mainscreen4.VMMain4
 import com.example.generator2.screens.scripting.ScreenScriptCommon
@@ -98,7 +98,7 @@ sealed class AppScreen : Screen {
         @OptIn(UnstableApi::class)
         @Composable
         override fun Content() {
-            Html()
+            ScreenHtml()
         }
     }
 

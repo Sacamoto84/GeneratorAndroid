@@ -8,6 +8,8 @@ import com.example.generator2.Global
 import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.initialization.Initialization
+import com.example.generator2.features.script.Script
+import com.example.generator2.screens.scripting.ui.ScriptKeyboard
 import com.example.generator2.util.UtilsKT
 import dagger.Module
 import dagger.Provides
@@ -48,24 +50,24 @@ object HomeActivityModule {
         return UtilsKT(context)
     }
 
-//    @Provides
-//    @Singleton
-//    fun provideScript(
-//        gen: Generator,
-//    ): Script {
-//        Timber.tag("Время работы").i("..DI provideScript()")
-//        return Script(gen)
-//    }
+    @Provides
+    @Singleton
+    fun provideScript(
+        gen: Generator,
+    ): Script {
+        Timber.tag("Время работы").i("..DI provideScript()")
+        return Script(gen)
+    }
 
-//    @Provides
-//    @Singleton
-//    fun provideKeyboard(
-//        script: Script,
-//        gen: Generator
-//    ): ScriptKeyboard {
-//        Timber.tag("Время работы").i("..DI provideKeyboard()")
-//        return ScriptKeyboard(script, gen)
-//    }
+    @Provides
+    @Singleton
+    fun provideKeyboard(
+        script: Script,
+        gen: Generator
+    ): ScriptKeyboard {
+        Timber.tag("Время работы").i("..DI provideKeyboard()")
+        return ScriptKeyboard(script, gen)
+    }
 
     @Provides
     @Singleton
@@ -82,7 +84,6 @@ object HomeActivityModule {
         utils: UtilsKT,
         appPath: AppPath,
         global: Global,
-
         audioMixerPump: AudioMixerPump,
     ): Initialization {
 

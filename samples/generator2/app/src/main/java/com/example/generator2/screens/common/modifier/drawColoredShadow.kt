@@ -1,4 +1,4 @@
-package com.example.generator2.modifier
+package com.example.generator2.screens.common.modifier
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed

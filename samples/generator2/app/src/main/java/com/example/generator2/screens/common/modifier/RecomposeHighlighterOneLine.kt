@@ -1,4 +1,4 @@
-package com.example.generator2.modifier
+package com.example.generator2.screens.common.modifier
 
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable

@@ -48,7 +48,7 @@ import com.example.generator2.screens.mainscreen4.ui.MainscreenTextBoxPlus2Line
 import com.example.generator2.screens.mainscreen4.ui.UIspinner
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.theme.colorLightBackground2
-import com.example.generator2.modifier.noRippleClickable
+import com.example.generator2.screens.common.modifier.noRippleClickable
 import kotlinx.coroutines.flow.update
 
 

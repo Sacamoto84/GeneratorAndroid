@@ -29,7 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.generator2.modifier.recomposeHighlighterOneLine
+import com.example.generator2.screens.common.modifier.recomposeHighlighterOneLine
 
 
 

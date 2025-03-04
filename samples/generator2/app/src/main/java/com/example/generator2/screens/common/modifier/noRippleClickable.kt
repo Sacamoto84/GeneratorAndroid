@@ -1,4 +1,4 @@
-package com.example.generator2.modifier
+package com.example.generator2.screens.common.modifier
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable

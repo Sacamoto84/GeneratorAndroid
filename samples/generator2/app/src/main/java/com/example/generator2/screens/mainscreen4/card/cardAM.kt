@@ -28,7 +28,7 @@ import com.example.generator2.screens.mainscreen4.ui.InfinitySlider
 import com.example.generator2.screens.mainscreen4.ui.MainscreenTextBoxAndDropdownMenu
 import com.example.generator2.screens.mainscreen4.ui.UIspinner
 import com.example.generator2.theme.colorDarkBackground
-import com.example.generator2.modifier.noRippleClickable
+import com.example.generator2.screens.common.modifier.noRippleClickable
 
 
 @Composable

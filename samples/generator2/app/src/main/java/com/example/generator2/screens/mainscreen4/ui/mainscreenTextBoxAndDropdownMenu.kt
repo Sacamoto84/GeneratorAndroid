@@ -29,7 +29,7 @@ import com.example.generator2.model.LiveConstrain
 import com.example.generator2.screens.mainscreen4.textStyleEditFontFamily
 import com.example.generator2.screens.mainscreen4.textStyleEditFontSize
 import com.example.generator2.theme.colorLightBackground2
-import com.example.generator2.modifier.noRippleClickable
+import com.example.generator2.screens.common.modifier.noRippleClickable
 
 
 @Composable
