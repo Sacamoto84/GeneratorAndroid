@@ -91,7 +91,6 @@ fun OutlinedButtonTextAndIcon(
                 modifier = Modifier.padding(start = paddingStartText)
             )
 
-
         }
     }
 }

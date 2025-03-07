@@ -12,6 +12,7 @@ import com.example.generator2.screens.scripting.ui.ScriptKeyboard
 import com.example.generator2.util.UtilsKT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.update
 import java.util.*
 import javax.inject.Inject
 
@@ -22,6 +23,7 @@ class VMScripting @Inject constructor(
     @ApplicationContext val contextActivity: Context,
     val script: Script,
     val utils: UtilsKT,
+    val keyboard: ScriptKeyboard
     //val keyboard: ScriptKeyboard
 ) : ViewModel() {
 
@@ -30,8 +32,9 @@ class VMScripting @Inject constructor(
 
     fun bNewClick() {
         script.command(StateCommandScript.STOP)
+
         script.list.clear()
-        script.list.add("New")
+        script.list.add("---")
         script.list.add("?")
         script.list.add("END")
         script.command(StateCommandScript.EDIT)
@@ -42,20 +45,19 @@ class VMScripting @Inject constructor(
     }
 
     fun bSaveClick() {
-        if (script.list[0] == "New")
+        if (script.list[0].value == "New")
             openDialogSaveAs.value = true
         else
-            utils.saveListToScriptFile(script.list, script.list[0])
+            utils.saveListToScriptFile(script.list.map { it.value }, script.list[0].value)
     }
 
     fun bAddEndClick() {
-        script.list.add(
-            script.pc + 1, "END"
-        )
+        script.list.add(script.pc + 1, mutableStateOf("END"))
         script.pc_ex.value = script.pc
     }
 
     fun bDeleteClick() {
+
         if (script.list.size > 1) {
             script.list.removeAt(
                 script.pc
@@ -72,8 +74,7 @@ class VMScripting @Inject constructor(
     }
 
     fun bUpClick() {
-        if (
-            script.pc > 1) {
+        if (script.pc > 1) {
             Collections.swap(
                 script.list,
                 script.pc - 1,
@@ -130,7 +131,7 @@ class VMScripting @Inject constructor(
 
     //DialogSaveAs
     fun bDialogSaveAsDone(value: String) {
-        script.list[0] = value
+        script.list[0].value = value
         saveListToScript(value)
         openDialogSaveAs.value = false
         Toast.makeText(contextActivity, "Saved", Toast.LENGTH_LONG).show()

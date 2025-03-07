@@ -1,8 +1,6 @@
 package com.example.generator2.features.script
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.generator2.features.generator.Generator
@@ -14,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.concurrent.CopyOnWriteArrayList
 
 /*
  * ----------------- Логика -----------------
@@ -92,7 +89,7 @@ class Script(val gen: Generator) {
     /**
      * ## Регистры Float 10 штук
      */
-    var registerF = FloatArray(10)
+    var register = FloatArray(10)
     //───────────────────────────────────────────────┘
 
     var pc = 0
@@ -100,8 +97,11 @@ class Script(val gen: Generator) {
     var str: String = ""
 
     //───────────────────────────────────────────────┐
-    val list = CopyOnWriteArrayList<String>()      //|
+    val list = ScriptList()//CopyOnWriteArrayList<MutableState<String>>()
     //───────────────────────────────────────────────┘
+    val update = MutableStateFlow(0)
+
+
     var pc_ex = MutableStateFlow(0)
 
     var state by mutableStateOf(StateCommandScript.ISTOPPING)
@@ -182,12 +182,12 @@ class Script(val gen: Generator) {
             try {
                 val list1 = list.toList()
                 if ((pc >= 0) && (pc <= list1.lastIndex)) {
-                    val s = list1[pc]
+                    val s = list1[pc].value
                     println("!!! S=$s pc:$pc")
                     cmdExecute(s)
                 } else {
                     println("Ошибка индекса pc:$pc")
-                    println(list.joinToString(","))
+                    println(list1.joinToString(","))
                     pc = 1
                     pc_ex.value = pc
                 }
@@ -202,13 +202,13 @@ class Script(val gen: Generator) {
 
     private fun start() {
         pc = 1
-        pc_ex.value  = pc
+        pc_ex.value = pc
         end = false
     }
 
     private fun stop() {
-        for (i in registerF.indices) {
-            registerF[i] = 0f
+        for (i in register.indices) {
+            register[i] = 0f
         }
         pc = 1
         pc_ex.value = pc
@@ -243,10 +243,11 @@ class Script(val gen: Generator) {
 
             "ELSE" -> { //Ищем первое ENDIF
                 var currentPC = pc
+
                 while (true) {
-                    if (list[currentPC] == "ENDIF") {
+                    if (list.get(currentPC) == "ENDIF") {
                         pc = currentPC
-                        pc_ex.value  = pc
+                        pc_ex.value = pc
                         break
                     }
                     currentPC++
@@ -256,7 +257,7 @@ class Script(val gen: Generator) {
 
             "ENDIF" -> {
                 pc++
-                pc_ex.value  = pc
+                pc_ex.value = pc
             }
 
             "END" -> {
@@ -272,37 +273,37 @@ class Script(val gen: Generator) {
             "CH1", "CH2", "CR1", "CR2", "AM1", "AM2", "FM1", "FM2" -> {
                 generatorComand(comand)
                 pc++
-                pc_ex.value  = pc
+                pc_ex.value = pc
             }
 
             "MINUS", "PLUS" -> {
                 comandPlusMinus(comand)
                 pc++
-                pc_ex.value  = pc
+                pc_ex.value = pc
             }
 
             "GOTO" -> {
                 pc = listCMD[1].toInt()
-                pc_ex.value  = pc
+                pc_ex.value = pc
             }
 
             "DELAY" -> {
                 val d = listCMD[1].toLong()
                 endTime = System.currentTimeMillis() + d
                 pc++
-                pc_ex.value  = pc
+                pc_ex.value = pc
             }
 
             "LOAD" -> { //LOAD F1 2344.0  │ 2344.0 -> F1
                 load(comand)
                 pc++
-                pc_ex.value  = pc
+                pc_ex.value = pc
             }
 
             else -> {
                 println("Script:? pc:$pc :$comand")
                 pc++
-                pc_ex.value  = pc
+                pc_ex.value = pc
                 if (pc >= PC_MAX) end = true
             }
 
@@ -318,7 +319,7 @@ class Script(val gen: Generator) {
             return
         }
         val index = listCMD[1].drop(1).toInt()
-        registerF[index] = if ((listCMD[2].first() == 'F')) registerF[listCMD[2].drop(1).toInt()]
+        register[index] = if ((listCMD[2].first() == 'F')) register[listCMD[2].drop(1).toInt()]
         else listCMD[2].toFloat()
     }
 
@@ -333,9 +334,9 @@ class Script(val gen: Generator) {
         }
 
         //IF Rxx Первый всегда R регистр
-        val f1value = registerF[listCMD[1].drop(1).toInt()]
+        val f1value = register[listCMD[1].drop(1).toInt()]
 
-        val f2value = if ((listCMD[3].first() == 'F')) registerF[listCMD[3].drop(1).toInt()]
+        val f2value = if ((listCMD[3].first() == 'F')) register[listCMD[3].drop(1).toInt()]
         else listCMD[3].toFloat()
 
         // имеем f1value и f2value
@@ -350,20 +351,21 @@ class Script(val gen: Generator) {
 
         if (boolResult) {
             pc++ //Переход на следующую строку, ибо условие выполнено
-            pc_ex.value  = pc
+            pc_ex.value = pc
         } else { //Ищем первое ELSE или ENDIF, ибо условие не выполнено
             var currentPC = pc
+
             while (true) {
-                if (list[currentPC] == "ELSE") //+1 к ELSE
+                if (list.get(currentPC) == "ELSE") //+1 к ELSE
                 {
                     pc = currentPC + 1
-                    pc_ex.value  = pc
+                    pc_ex.value = pc
                     break
                 }
 
-                if (list[currentPC] == "ENDIF") {
+                if (list.get(currentPC) == "ENDIF") {
                     pc = currentPC
-                    pc_ex.value  = pc
+                    pc_ex.value = pc
                     break
                 }
                 currentPC++
@@ -433,7 +435,7 @@ class Script(val gen: Generator) {
             {
 
                 val value = if (listCMD[2].first() == 'F') {
-                    registerF[listCMD[2].drop(1).toInt()]
+                    register[listCMD[2].drop(1).toInt()]
                 } else {
                     listCMD[2].toFloat()
                 }
@@ -459,7 +461,7 @@ class Script(val gen: Generator) {
             //AM[1 2] FR 1000.3                                                     //│
             if (listCMD[1] == "FR")                                                 //│
             {                                                                       //│
-                val value = if (listCMD[2].first() == 'F') registerF[listCMD[2].drop(1)
+                val value = if (listCMD[2].first() == 'F') register[listCMD[2].drop(1)
                     .toInt()]                                                       //│
                 else                                                                //│
                     listCMD[2].toFloat()                                            //│
@@ -506,7 +508,7 @@ class Script(val gen: Generator) {
         if (listCMD[1] == "DEV")                                                    //│
         {
             val value = if (listCMD[2].first() == 'F') {
-                registerF[listCMD[2].drop(1).toInt()]
+                register[listCMD[2].drop(1).toInt()]
             } else listCMD[2].toFloat()
 
             if (chanel == 1) gen.liveData.ch1_FM_Dev.update { value }
@@ -526,7 +528,7 @@ class Script(val gen: Generator) {
         if (listCMD[1] == "FR")                                                      //│
         {                                                                            //│
             val value = if (listCMD[2].first() == 'F') {
-                registerF[listCMD[2].drop(1).toInt()]
+                register[listCMD[2].drop(1).toInt()]
             } else listCMD[2].toFloat()
 
             if (chanel == 1) gen.liveData.ch1_FM_Fr.update { value }
@@ -550,40 +552,40 @@ class Script(val gen: Generator) {
 
             // ┌── MINUS ────────────────────────────────────┐
             if (listCMD[0] == "MINUS") {
-                registerF[index] = registerF[index] - registerF[secondIndex]  //MINUS F* F*
+                register[index] = register[index] - register[secondIndex]  //MINUS F* F*
             }
             //└────────────────────────────────────────────┘
 
             //┌── PLUS ────────────────────────────────────┐
             if (listCMD[0] == "PLUS") {
-                registerF[index] = registerF[index] + registerF[secondIndex]          //PLUS F* F*
+                register[index] = register[index] + register[secondIndex]          //PLUS F* F*
             } //└────────────────────────────────────────────┘
         } else { //Второй операнд это константа
             //MINUS F1 5000.0
             val fvalue = listCMD[2].toFloat() //┌── MINUS ───────────────────────────────────┐
             if (listCMD[0] == "MINUS") {
-                registerF[index] = registerF[index] - fvalue //MINUS F* F*
+                register[index] = register[index] - fvalue //MINUS F* F*
             } //└────────────────────────────────────────────┘
             //┌── PLUS ────────────────────────────────────┐
             if (listCMD[0] == "PLUS") {
-                registerF[index] = registerF[index] + fvalue //MINUS F* F*
+                register[index] = register[index] + fvalue //MINUS F* F*
             } //└────────────────────────────────────────────┘
         }
     }
 
     //Тесты
-    fun unit5Load() {
-        list.clear()
-        list.add("New")
-        list.add("LOAD F1 1000")
-        list.add("IF F1 < 10000")
-        list.add("CR1 FR F1")
-        list.add("PLUS F1 100")
-        list.add("DELAY 50")
-        list.add("GOTO 2")
-        list.add("ENDIF")
-        list.add("END")
-    }
+//    fun unit5Load() {
+//        list.value.clear()
+//        list.value.add("New")
+//        list.add("LOAD F1 1000")
+//        list.add("IF F1 < 10000")
+//        list.add("CR1 FR F1")
+//        list.add("PLUS F1 100")
+//        list.add("DELAY 50")
+//        list.add("GOTO 2")
+//        list.add("ENDIF")
+//        list.add("END")
+//    }
 
 }
 

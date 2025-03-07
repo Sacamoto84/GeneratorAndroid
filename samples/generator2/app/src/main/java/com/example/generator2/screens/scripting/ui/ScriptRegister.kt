@@ -14,94 +14,37 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.generator2.screens.scripting.vm.VMScripting
 
-
-//Блок регистров
+/**
+ * Блок регистров
+ */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun RegisterViewDraw(global: VMScripting) {
-//    Box(
-//        modifier = Modifier
-//            .padding(start = 6.dp, end = 6.dp)
-//            .fillMaxWidth()
-//    ) {
-//        Column(
-//            Modifier.height(50.dp)
-//        ) {
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//
-//                horizontalArrangement = Arrangement.SpaceBetween
-//            ) {
-//
-//                ComposeBoxForF(
-//                    0,
-//                    modifier = Modifier.weight(1f),
-//                    text = { global.script.f[0].toString() })
-//                ComposeBoxForF(
-//                    1,
-//                    modifier = Modifier.weight(1f),
-//                    text = { global.script.f[1].toString() })
-//                ComposeBoxForF(
-//                    2,
-//                    modifier = Modifier.weight(1f),
-//                    text = { global.script.f[2].toString() })
-//                ComposeBoxForF(
-//                    3,
-//                    modifier = Modifier.weight(1f),
-//                    text = { global.script.f[3].toString() })
-//                ComposeBoxForF(
-//                    4,
-//                    modifier = Modifier.weight(1f),
-//                    text = { global.script.f[4].toString() })
-//
-//
-//            }
-//
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//
-//                horizontalArrangement = Arrangement.SpaceBetween
-//            ) {
-//
-//                ComposeBoxForF(
-//                    5,
-//                    modifier = Modifier.weight(1f),
-//                    text = { global.script.f[5].toString() })
-//                ComposeBoxForF(
-//                    6,
-//                    modifier = Modifier.weight(1f),
-//                    text = { global.script.f[6].toString() })
-//                ComposeBoxForF(
-//                    7,
-//                    modifier = Modifier.weight(1f),
-//                    text = { global.script.f[7].toString() })
-//                ComposeBoxForF(
-//                    8,
-//                    modifier = Modifier.weight(1f),
-//                    text = { global.script.f[8].toString() })
-//                ComposeBoxForF(
-//                    9,
-//                    modifier = Modifier.weight(1f),
-//                    text = { global.script.f[9].toString() })
-//
-//
-//            }
-//
-//        }
-//    }
+fun RegisterViewDraw(register: FloatArray) {
+    FlowRow(
+        modifier = Modifier.padding(start = 6.dp, end = 6.dp).fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.Center,
+        maxItemsInEachRow = 5
+    ) {
+        register.forEachIndexed { index, it ->
+            ComposeBoxForF(
+                index,
+                modifier = Modifier.weight(1f),
+                text = { it.toString() })
+        }
+    }
 }
 
 //Ячейка регистра
 @Composable
 private fun ComposeBoxForF(index: Int, text: () -> String, modifier: Modifier = Modifier) {
-
     Box(
         modifier = Modifier
             .padding(start = 1.dp, end = 1.dp)
             .height(25.dp)
             .fillMaxWidth()
             .border(1.dp, Color.LightGray, RoundedCornerShape(4.dp))
-            .then(modifier) //, contentAlignment = Alignment.CenterStart
-
+            .then(modifier)
     ) {
 
         Row(
@@ -111,7 +54,7 @@ private fun ComposeBoxForF(index: Int, text: () -> String, modifier: Modifier = 
 
             Box(
                 modifier = Modifier
-                    .width(12.dp)
+                    .width(14.dp)
                     .height(25.dp)
                     .background(Color.DarkGray),
                 contentAlignment = Alignment.Center
@@ -124,8 +67,6 @@ private fun ComposeBoxForF(index: Int, text: () -> String, modifier: Modifier = 
                     textAlign = TextAlign.Center
                 )
             }
-
-
 
             Text(
                 text = text(),

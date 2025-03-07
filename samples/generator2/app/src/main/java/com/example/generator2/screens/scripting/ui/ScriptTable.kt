@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.generator2.R
 import com.example.generator2.screens.ConsoleLogDraw
 import com.example.generator2.screens.scripting.vm.VMScripting
@@ -22,6 +23,8 @@ import com.example.generator2.screens.scripting.atom.OutlinedButtonTextAndIcon
 import com.example.generator2.screens.scripting.dialog.DialogDeleteRename
 import com.example.generator2.screens.scripting.dialog.DialogSaveAs
 import com.example.generator2.features.script.StateCommandScript
+import com.example.generator2.theme.colorGreen
+import kotlinx.coroutines.flow.update
 
 val refresh = mutableIntStateOf(0)
 
@@ -34,7 +37,10 @@ fun ScriptTable(vm: VMScripting) {
     var filename by remember { mutableStateOf("") }  //Имя выбранного файла в списке
 
     Box(modifier = Modifier.fillMaxSize(1f)) {
-        Column() {
+
+        Column {
+
+            Text(filename, color = colorGreen)
 
             Row(
                 modifier = Modifier
@@ -42,17 +48,30 @@ fun ScriptTable(vm: VMScripting) {
                     .weight(1f)
             )
             {
-                Box(
+
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .weight(1f), contentAlignment = Alignment.BottomEnd
+                        .weight(1f)
                 ) {
-                    //if (vm.script.pc_ex > vm.script.list.lastIndex)
-                        //vm.script.pc_ex =
-                        //vm.script.list.lastIndex
-                        //ScriptConsole(vm.script.list, vm.script.pc_ex, global = vm)
-                }
 
+                    Text(filename, color = Color.Red)
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .weight(1f), contentAlignment = Alignment.BottomEnd
+                    ) {
+                        if (vm.script.pc_ex.collectAsStateWithLifecycle().value > vm.script.list.lastIndex)
+                            vm.script.pc_ex.update { vm.script.list.lastIndex }
+                        ScriptConsole(
+                            vm.script.list.map { it.value },
+                            { vm.script.pc_ex },
+                            global = vm
+                        )
+                    }
+
+                }
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
@@ -70,7 +89,7 @@ fun ScriptTable(vm: VMScripting) {
                     )
                     {
 
-                        if (vm.script.state != StateCommandScript.ISEDITTING) {
+                        if (vm.script.state != StateCommandScript.ISEDITING) {
 
                             Spacer(modifier = Modifier.height(8.dp))
                             //Кнопка New
@@ -126,7 +145,7 @@ fun ScriptTable(vm: VMScripting) {
                                                     val l =
                                                         vm.utils.readScriptFileToList(files[index])
                                                     vm.script.list.clear()
-                                                    vm.script.list.addAll(l)
+                                                    //vm.script.list.addAll(l)
 
                                                 }, onLongClick = {
 
@@ -157,7 +176,8 @@ fun ScriptTable(vm: VMScripting) {
 
 
 
-                        if (vm.script.state == StateCommandScript.ISEDITTING) {
+                        if (vm.script.state == StateCommandScript.ISEDITING) {
+
                             Spacer(modifier = Modifier.height(8.dp))
                             OutlinedButtonTextAndIcon(str = "Back", onClick = {
                                 vm.script.command(
@@ -194,7 +214,8 @@ fun ScriptTable(vm: VMScripting) {
                             OutlinedButtonTextAndIcon(
                                 str = "Delete",
                                 onClick = { vm.bDeleteClick() },
-                                resId = R.drawable.delete)
+                                resId = R.drawable.delete
+                            )
                             Spacer(modifier = Modifier.height(8.dp))
                             OutlinedButtonTextAndIcon(
                                 str = "Up",
@@ -207,9 +228,11 @@ fun ScriptTable(vm: VMScripting) {
                                 onClick = { vm.bDownClick() },
                                 resId = R.drawable.down
                             )
-                            Spacer(modifier = Modifier
-                                .fillMaxHeight()
-                                .weight(1f))
+                            Spacer(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .weight(1f)
+                            )
                         }
 
 
@@ -220,8 +243,8 @@ fun ScriptTable(vm: VMScripting) {
             if (vm.openDialogSaveAs.value) DialogSaveAs(vm)
             if (vm.openDialogDeleteRename.value) DialogDeleteRename(filename, vm)
 
-            if (vm.script.state == StateCommandScript.ISEDITTING) {
-                //vm.keyboard.Core { vm.script.pc_ex }
+            if (vm.script.state == StateCommandScript.ISEDITING) {
+                vm.keyboard.Core { vm.script.pc_ex.value }
             }
         }
     }
