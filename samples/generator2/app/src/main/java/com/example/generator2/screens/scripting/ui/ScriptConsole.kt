@@ -11,17 +11,18 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.generator2.screens.scripting.atom.ScriptItem
 import com.example.generator2.screens.scripting.vm.VMScripting
-import kotlinx.coroutines.flow.update
 
 @Composable
 fun ScriptConsole(
-    l: List<String>,
-    selectLine: (Int) -> Unit,
+    l: SnapshotStateList<MutableState<String>>,
+    selectLine: Int,
     modifier: Modifier = Modifier,
     global: VMScripting,
 ) {
@@ -31,7 +32,7 @@ fun ScriptConsole(
     var indexSelect by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(selectLine) {
-        indexSelect = 0 // Или передавать нужное значение
+        indexSelect = selectLine // Или передавать нужное значение
     }
 
 //
@@ -55,23 +56,26 @@ fun ScriptConsole(
     )
     {
 
+
+
         LazyColumn(
             modifier = Modifier.fillMaxSize(), state = lazyListState
         ) {
             itemsIndexed(l)
             { index, item ->
+                val a = global.script.update.collectAsStateWithLifecycle().value
+                a
                 Row(horizontalArrangement = Arrangement.Start)
                 {
                     Box(
                         modifier = Modifier.selectable(
                             selected = indexSelect == index,
                             onClick = {
-                                global.script.pc = index
-                                global.script.pc_ex.value = index
+                                global.script.pc.value = index
                             })
                     ) {
                         val select = indexSelect == index
-                        ScriptItem().Draw(str = { item }, index = { index }, { select })
+                        ScriptItem().Draw(str = { item.value}, index = { index }, { select })
                     }
                 }
             }

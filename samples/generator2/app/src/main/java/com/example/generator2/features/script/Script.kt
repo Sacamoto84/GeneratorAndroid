@@ -77,8 +77,15 @@ enum class StateCommandScript {
     ISRUNNING, ISPAUSE, ISTOPPING, ISEDITING, //Сейчас режим редактирования
 }
 
-//@Stable
+
+
 class Script(val gen: Generator) {
+
+    /**
+     *  Имя файла
+     */
+    var name by mutableStateOf("New")
+
 
     //╭─ Генератор ───────────────────────╮
     var end = true
@@ -92,17 +99,14 @@ class Script(val gen: Generator) {
     var register = FloatArray(10)
     //───────────────────────────────────────────────┘
 
-    var pc = 0
-
     var str: String = ""
 
     //───────────────────────────────────────────────┐
-    val list = ScriptList()//CopyOnWriteArrayList<MutableState<String>>()
+    val list = ScriptList()
     //───────────────────────────────────────────────┘
     val update = MutableStateFlow(0)
 
-
-    var pc_ex = MutableStateFlow(0)
+    var pc = MutableStateFlow(0)
 
     var state by mutableStateOf(StateCommandScript.ISTOPPING)
 
@@ -181,15 +185,14 @@ class Script(val gen: Generator) {
         while (!end) {
             try {
                 val list1 = list.toList()
-                if ((pc >= 0) && (pc <= list1.lastIndex)) {
-                    val s = list1[pc].value
+                if ((pc.value >= 0) && (pc.value <= list1.lastIndex)) {
+                    val s = list1[pc.value]
                     println("!!! S=$s pc:$pc")
                     cmdExecute(s)
                 } else {
                     println("Ошибка индекса pc:$pc")
                     println(list1.joinToString(","))
-                    pc = 1
-                    pc_ex.value = pc
+                    pc.value = 0
                 }
             } catch (e: Exception) {
                 println("Exception Ошибка " + e.message + " pc:" + pc)
@@ -201,8 +204,7 @@ class Script(val gen: Generator) {
 
 
     private fun start() {
-        pc = 1
-        pc_ex.value = pc
+        pc.value = 0
         end = false
     }
 
@@ -210,8 +212,7 @@ class Script(val gen: Generator) {
         for (i in register.indices) {
             register[i] = 0f
         }
-        pc = 1
-        pc_ex.value = pc
+        pc.value = 0
         end = true
         println("Script stop()")
     }
@@ -242,12 +243,11 @@ class Script(val gen: Generator) {
         when (listCMD[0]) {
 
             "ELSE" -> { //Ищем первое ENDIF
-                var currentPC = pc
+                var currentPC = pc.value
 
                 while (true) {
                     if (list.get(currentPC) == "ENDIF") {
-                        pc = currentPC
-                        pc_ex.value = pc
+                        pc.value = currentPC
                         break
                     }
                     currentPC++
@@ -256,55 +256,46 @@ class Script(val gen: Generator) {
             }
 
             "ENDIF" -> {
-                pc++
-                pc_ex.value = pc
+                pc.value ++
             }
 
             "END" -> {
                 println("Скрипт окончен")
                 end = true
-
                 command(StateCommandScript.STOP)
-
             }
 
             "IF" -> ifCommand(comand)
 
             "CH1", "CH2", "CR1", "CR2", "AM1", "AM2", "FM1", "FM2" -> {
                 generatorComand(comand)
-                pc++
-                pc_ex.value = pc
+                pc.value++
             }
 
             "MINUS", "PLUS" -> {
                 comandPlusMinus(comand)
-                pc++
-                pc_ex.value = pc
+                pc.value++
             }
 
             "GOTO" -> {
-                pc = listCMD[1].toInt()
-                pc_ex.value = pc
+                pc.value = listCMD[1].toInt()
             }
 
             "DELAY" -> {
                 val d = listCMD[1].toLong()
                 endTime = System.currentTimeMillis() + d
-                pc++
-                pc_ex.value = pc
+                pc.value++
             }
 
             "LOAD" -> { //LOAD F1 2344.0  │ 2344.0 -> F1
                 load(comand)
-                pc++
-                pc_ex.value = pc
+                pc.value++
             }
 
             else -> {
                 println("Script:? pc:$pc :$comand")
-                pc++
-                pc_ex.value = pc
-                if (pc >= PC_MAX) end = true
+                pc.value++
+                if (pc.value >= PC_MAX) end = true
             }
 
         }
@@ -350,22 +341,19 @@ class Script(val gen: Generator) {
         if ((listCMD[2] == "==") && (f1value == f2value)) boolResult = true
 
         if (boolResult) {
-            pc++ //Переход на следующую строку, ибо условие выполнено
-            pc_ex.value = pc
+            pc.value++ //Переход на следующую строку, ибо условие выполнено
         } else { //Ищем первое ELSE или ENDIF, ибо условие не выполнено
-            var currentPC = pc
+            var currentPC = pc.value
 
             while (true) {
                 if (list.get(currentPC) == "ELSE") //+1 к ELSE
                 {
-                    pc = currentPC + 1
-                    pc_ex.value = pc
+                    pc.value = currentPC + 1
                     break
                 }
 
                 if (list.get(currentPC) == "ENDIF") {
-                    pc = currentPC
-                    pc_ex.value = pc
+                    pc.value = currentPC
                     break
                 }
                 currentPC++

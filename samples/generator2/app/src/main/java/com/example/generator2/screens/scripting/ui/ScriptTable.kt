@@ -24,7 +24,10 @@ import com.example.generator2.screens.scripting.dialog.DialogDeleteRename
 import com.example.generator2.screens.scripting.dialog.DialogSaveAs
 import com.example.generator2.features.script.StateCommandScript
 import com.example.generator2.theme.colorGreen
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.update
+import timber.log.Timber
+import java.io.FileNotFoundException
 
 val refresh = mutableIntStateOf(0)
 
@@ -34,13 +37,9 @@ private val files: MutableList<String> = mutableListOf()
 @Composable
 fun ScriptTable(vm: VMScripting) {
 
-    var filename by remember { mutableStateOf("") }  //Имя выбранного файла в списке
-
     Box(modifier = Modifier.fillMaxSize(1f)) {
 
         Column {
-
-            Text(filename, color = colorGreen)
 
             Row(
                 modifier = Modifier
@@ -55,20 +54,25 @@ fun ScriptTable(vm: VMScripting) {
                         .weight(1f)
                 ) {
 
-                    Text(filename, color = Color.Red)
-
+                    Text(vm.script.name, color = colorGreen)
+                    Text("PC:"+vm.script.pc.collectAsStateWithLifecycle().value.toString(), color = Color.White)
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .weight(1f), contentAlignment = Alignment.BottomEnd
                     ) {
-                        if (vm.script.pc_ex.collectAsStateWithLifecycle().value > vm.script.list.lastIndex)
-                            vm.script.pc_ex.update { vm.script.list.lastIndex }
+
+//                        if (vm.script.pc_ex.collectAsStateWithLifecycle().value > vm.script.list.lastIndex)
+//                            vm.script.pc_ex.1update { vm.script.list.lastIndex }
+
+                        val pc = vm.script.pc.collectAsStateWithLifecycle().value
+                        vm.script.update.collectAsStateWithLifecycle().value
                         ScriptConsole(
-                            vm.script.list.map { it.value },
-                            { vm.script.pc_ex },
+                            l = vm.script.list.list,
+                            selectLine = pc,
                             global = vm
                         )
+
                     }
 
                 }
@@ -110,11 +114,13 @@ fun ScriptTable(vm: VMScripting) {
 
                             Spacer(modifier = Modifier.height(4.dp))
                             // Создать список названий файлов из папки /Script
+
                             if (vm.script.state == StateCommandScript.ISTOPPING) {
                                 println("Читаем файлы")
                                 files.clear()
                                 files.addAll(
-                                    vm.utils.filesInDirToList("/Script").map { it.dropLast(3) }) //
+                                    vm.utils.filesInScriptToList().map { it.dropLast(3) }
+                                )
                             }
 
                             //Отображение списка названия скриптов
@@ -141,16 +147,24 @@ fun ScriptTable(vm: VMScripting) {
                                             .combinedClickable(
                                                 onClick = {
 
-                                                    vm.script.command(StateCommandScript.STOP)
-                                                    val l =
-                                                        vm.utils.readScriptFileToList(files[index])
-                                                    vm.script.list.clear()
-                                                    //vm.script.list.addAll(l)
-
+                                                    try {
+                                                        vm.script.command(StateCommandScript.STOP)
+                                                        val l = vm.utils.readScriptFileToList(files[index])
+                                                        vm.script.list.clear()
+                                                        l.forEach {
+                                                            vm.script.list.add(it)
+                                                        }
+                                                    }
+                                                    catch(e1: FileNotFoundException){
+                                                        Timber.e(e1.localizedMessage)
+                                                    }
+                                                    catch (e: Exception){
+                                                        Timber.e(e.localizedMessage)
+                                                    }
                                                 }, onLongClick = {
 
                                                     vm.openDialogDeleteRename.value = true
-                                                    filename = files[index]
+                                                    vm.script.name = files[index]
 
                                                 })
                                             .offset(0.dp, (0).dp),
@@ -241,10 +255,10 @@ fun ScriptTable(vm: VMScripting) {
             }
 
             if (vm.openDialogSaveAs.value) DialogSaveAs(vm)
-            if (vm.openDialogDeleteRename.value) DialogDeleteRename(filename, vm)
+            if (vm.openDialogDeleteRename.value) DialogDeleteRename(vm.script.name, vm)
 
             if (vm.script.state == StateCommandScript.ISEDITING) {
-                vm.keyboard.Core { vm.script.pc_ex.value }
+                vm.keyboard.Core { vm.script.pc.value }
             }
         }
     }

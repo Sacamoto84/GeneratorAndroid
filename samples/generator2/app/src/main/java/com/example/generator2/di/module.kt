@@ -44,10 +44,11 @@ object HomeActivityModule {
     @Provides
     @Singleton
     fun provideUtilsKT(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        appPath: AppPath
     ): UtilsKT {
         Timber.tag("Время работы").i("..DI provideUtilsKT()")
-        return UtilsKT(context)
+        return UtilsKT(context, appPath)
     }
 
     @Provides
