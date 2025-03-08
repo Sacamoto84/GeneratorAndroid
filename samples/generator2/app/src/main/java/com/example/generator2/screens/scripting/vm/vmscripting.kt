@@ -7,13 +7,11 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.generator2.features.script.Script
+import com.example.generator2.features.script.ScriptUtils
 import com.example.generator2.features.script.StateCommandScript
 import com.example.generator2.screens.scripting.ui.ScriptKeyboard
-import com.example.generator2.util.UtilsKT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.update
-import java.util.*
 import javax.inject.Inject
 
 @Stable
@@ -22,7 +20,7 @@ import javax.inject.Inject
 class VMScripting @Inject constructor(
     @ApplicationContext val contextActivity: Context,
     val script: Script,
-    val utils: UtilsKT,
+    val utils: ScriptUtils,
     val keyboard: ScriptKeyboard
     //val keyboard: ScriptKeyboard
 ) : ViewModel() {
@@ -92,17 +90,13 @@ class VMScripting @Inject constructor(
      * Сохранить текущий скрипт в файл
      */
     fun saveListToScript(name: String) {
-        println("global saveListToScript()")
-
-        utils.saveListToScriptFile(
-            script.list.toList(), name
-        )
+        utils.saveListToScriptFile(script.list.toList(), name)
     }
 
     //DialogSaveAs
     fun bDialogSaveAsDone(value: String) {
         script.name = value
-        saveListToScript(value)
+        utils.saveListToScriptFile(script.list.toList(), value)
         openDialogSaveAs.value = false
         Toast.makeText(contextActivity, "Saved", Toast.LENGTH_LONG).show()
     }

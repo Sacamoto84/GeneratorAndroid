@@ -149,6 +149,9 @@ class Script(val gen: Generator) {
 
     //╰─────────────────────────────╯
 
+    /**
+     * ️⚡️Перевод состояния в строку ️
+     */
     fun stateToString(): String {
         val s = when (state) {
             StateCommandScript.START -> "START"
@@ -165,9 +168,7 @@ class Script(val gen: Generator) {
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    fun log(
-        str: String
-    ) { //
+    fun log( str: String) { //
         GlobalScope.launch(Dispatchers.Main) {
             //consoleLog.println(str)
         }
@@ -175,7 +176,6 @@ class Script(val gen: Generator) {
 
     //Тесты
     //val unit5 = listOf<String>("New", "LOAD F1 1000", "IF F1 < 10000","CR1 FR F1","PLUS F1 100","GOTO 2", "ENDIF", "END")
-
 
     suspend fun run() {
         if (end) return

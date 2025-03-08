@@ -1,5 +1,6 @@
 package com.example.generator2.screens.scripting.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -28,8 +30,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.update
 import timber.log.Timber
 import java.io.FileNotFoundException
-
-val refresh = mutableIntStateOf(0)
 
 private val files: MutableList<String> = mutableListOf()
 
@@ -256,7 +256,14 @@ fun ScriptTable(vm: VMScripting) {
             }
 
             if (vm.openDialogSaveAs.value) DialogSaveAs(vm)
-            if (vm.openDialogDeleteRename.value) DialogDeleteRename(vm.script.name, vm)
+
+            val context = LocalContext.current
+
+            if (vm.openDialogDeleteRename.value) DialogDeleteRename(vm.script.name, vm, onDone = { itRenameDoneValue ->
+                vm.utils.renameScriptFile(vm.script.name, itRenameDoneValue)
+                vm.openDialogDeleteRename.value = false
+                Toast.makeText(context, "Renamed", Toast.LENGTH_LONG).show()
+            })
 
             if (vm.script.state == StateCommandScript.ISEDITING) {
                 vm.keyboard.Core { vm.script.pc.value }

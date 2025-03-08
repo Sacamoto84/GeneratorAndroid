@@ -19,6 +19,13 @@ plugins {
 
 android {
 
+    sourceSets {
+        main {
+            kotlin.srcDirs +='src/main/libres/'
+        }
+    }
+
+
 //    kotlinOptions {
 //        freeCompilerArgs += [
 //                "-P",

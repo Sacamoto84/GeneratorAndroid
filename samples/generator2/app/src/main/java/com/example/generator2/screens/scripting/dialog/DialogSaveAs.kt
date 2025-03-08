@@ -100,7 +100,9 @@ fun DialogSaveAs(vm: VMScripting) {
                     singleLine = true,
                     shape = RoundedCornerShape(Corner),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = { vm.bDialogSaveAsDone(value) }),
+                    keyboardActions = KeyboardActions(onDone = {
+                        vm.bDialogSaveAsDone(value)
+                    }),
                     textStyle = TextStyle(
                         fontSize = 18.sp,
                         fontFamily = FontFamily(Font(R.font.jetbrains))

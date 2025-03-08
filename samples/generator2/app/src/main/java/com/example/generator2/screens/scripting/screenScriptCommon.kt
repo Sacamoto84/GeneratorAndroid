@@ -25,26 +25,19 @@ fun ScreenScriptCommon(vm: VMScripting = hiltViewModel()) {
     Scaffold(
         bottomBar = { BottomAppBarScript(vm) }
     ) {
-
         Column(Modifier
-            .padding(paddingValues = it)
-            .fillMaxSize()) {
+            .padding(paddingValues = it).fillMaxSize()) {
 
             ScriptTable(vm = vm)
-
 
             //Блок регистров
             if (vm.script.state != StateCommandScript.ISEDITING) {
                 Spacer(modifier = Modifier.height(8.dp))
                 RegisterViewDraw(vm.script.register)
             }
-
             Spacer(modifier = Modifier.height(8.dp))
         }
-
-
     }
-
 }
 
 

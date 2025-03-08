@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screenScriptDialogRenameOr">или</string>
+    <string name="screenScriptDialogRenameFileName">Имя скрипта</string>
+    <string name="screenScriptDialogRenameRename">Переименовать</string>
+    <string name="screenScriptDialogRenameDelete">Удалить</string>
+</resources>
