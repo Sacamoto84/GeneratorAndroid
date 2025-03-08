@@ -14,7 +14,6 @@ import com.example.generator2.features.presets.presetsReadFile
 import com.example.generator2.features.presets.presetsToLiveData
 import com.example.generator2.util.Utils
 import com.example.generator2.util.UtilsKT
-import com.example.generator2.util.toast
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -141,7 +140,7 @@ class Initialization
             if ((!isInitialized) && (PermissionStorage.hasPermissions(context))) {
 
                 Timber.tag("Время работы").i("t4 1")
-                toast.initialized(context) //0 ms
+                //toast.initialized(context) //0 ms
                 Timber.tag("Время работы").i("t4 2")
 
                 Timber.tag("Время работы").i("t4 3")

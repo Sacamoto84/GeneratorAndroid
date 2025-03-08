@@ -20,7 +20,6 @@ import com.example.generator2.screens.scripting.ScreenScriptInfo
 
 sealed class AppScreen : Screen {
 
-
     data object Home : AppScreen() {
         private fun readResolve(): Any = Home
 

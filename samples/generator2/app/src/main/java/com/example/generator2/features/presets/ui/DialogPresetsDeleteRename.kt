@@ -39,7 +39,6 @@ import com.example.generator2.features.presets.presetsGetListName
 import com.example.generator2.features.presets.presetsVM
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.theme.colorLightBackground
-import com.example.generator2.util.toast
 import java.io.File
 
 private val Corner = 8.dp
@@ -112,7 +111,7 @@ fun DialogPresetsDeleteRename(name: String, vm: presetsVM = hiltViewModel()) {
 
                         Presets.isOpenDialogDeleteRename.value = false
 
-                        toast.show("Renamed")
+                        //toast.show("Renamed")
 
                     }),
                     textStyle = TextStyle(

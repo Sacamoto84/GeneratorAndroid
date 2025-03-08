@@ -50,8 +50,7 @@ fun ScriptTable(vm: VMScripting) {
 
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f)
+                        .fillMaxSize().weight(1f)
                 ) {
 
                     Text(vm.script.name, color = colorGreen)

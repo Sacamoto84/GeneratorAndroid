@@ -1,6 +1,5 @@
 package com.example.generator2.screens.scripting.dialog
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,22 +9,33 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.generator2.R
-import com.example.generator2.screens.scripting.vm.VMScripting
 import com.example.generator2.strings.MainResStrings
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.theme.colorLightBackground
 
 private val Corner = 8.dp
+
+
+@Preview
+@Composable
+private fun PreviewDialogDeleteRename() {
+    DialogDeleteRename(
+        name = "test",
+        onDone = {},
+        onDismissRequest = {},
+        onClickDelete = {}
+    )
+}
 
 @Composable
 fun DialogDeleteRename(
@@ -37,31 +47,26 @@ fun DialogDeleteRename(
 
     println("DialogDeleteRename name:$name")
 
-    var value by remember { mutableStateOf("") }
-
-    value = name
+    var value by remember { mutableStateOf(name) }
 
     Dialog(
         onDismissRequest = onDismissRequest
     ) {
+
         Card(
-            Modifier.width(220.dp), elevation = 8.dp, border = BorderStroke(
-                1.dp, Color.Gray
-            ), shape = RoundedCornerShape(Corner), backgroundColor = colorDarkBackground
+            Modifier.width(220.dp), elevation = 8.dp, border = BorderStroke(1.dp, Color.Gray),
+            shape = RoundedCornerShape(Corner), backgroundColor = colorDarkBackground
         ) {
 
             Column {
-
-
+                
                 Text(
                     text = MainResStrings.screenScriptDialogRenameRename,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
-                    //.clip(RoundedCornerShape(Corner)).background(Color.DarkGray)
-                    ,
+                        .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
                     textAlign = TextAlign.Center,
-                    fontSize = 16.sp,
+                    fontSize = 20.sp,
                     fontFamily = FontFamily(Font(R.font.jetbrains)),
                     color = Color.LightGray
                 )
@@ -87,12 +92,8 @@ fun DialogDeleteRename(
                     singleLine = true,
                     shape = RoundedCornerShape(Corner),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = {
-                        onDone(value)
-                        //vm.utils.renameScriptFile(name, value)
-                        //vm.openDialogDeleteRename.value = false
-                        //Toast.makeText(context, "Renamed", Toast.LENGTH_LONG).show()
-                    }),
+                    keyboardActions = KeyboardActions(onDone = { onDone(value) }
+                    ),
                     textStyle = TextStyle(
                         fontSize = 18.sp, fontFamily = FontFamily(Font(R.font.jetbrains)),
                     ),
@@ -102,21 +103,15 @@ fun DialogDeleteRename(
                     text = MainResStrings.screenScriptDialogRenameOr,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
-                    //.clip(RoundedCornerShape(Corner)).background(Color.DarkGray)
-                    ,
+                        .padding(start = 16.dp, top = 4.dp, end = 16.dp, bottom = 4.dp),
                     textAlign = TextAlign.Center,
-                    fontSize = 16.sp,
+                    fontSize = 20.sp,
                     fontFamily = FontFamily(Font(R.font.jetbrains)),
                     color = Color.LightGray
                 )
 
                 Button(
-                    onClick =
-                        onClickDelete
-                    //vm.utils.deleteScriptFile(name)
-                    //vm.openDialogDeleteRename.value = false
-                    ,
+                    onClick = onClickDelete,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(72.dp)
@@ -131,10 +126,6 @@ fun DialogDeleteRename(
                         modifier = Modifier.offset(0.dp, (0).dp)
                     )
                 }
-
-                //Divider(color = Color.Gray, thickness = 2.dp)
-
-                //Spacer(modifier = Modifier.height(16.dp))
 
             }
         }
