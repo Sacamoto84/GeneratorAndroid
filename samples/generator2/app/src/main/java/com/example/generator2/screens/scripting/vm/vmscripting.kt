@@ -101,5 +101,28 @@ class VMScripting @Inject constructor(
         Toast.makeText(contextActivity, "Saved", Toast.LENGTH_LONG).show()
     }
 
+    //░▒▓▌░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    //░░░░░ Блок диалога переименования ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    //░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    /**
+     * ⚡️Нажата кнопка удалить скрипт
+     */
+    fun dialogRenameClickDelete(){
+        utils.deleteScriptFile(script.name)
+        openDialogDeleteRename.value = false
+    }
+
+    /**
+     * ⚡️Переименовать скрипт новым именем
+     */
+    fun dialogRenameNewValue(value : String){
+        utils.renameScriptFile(script.name, value)
+        openDialogDeleteRename.value = false
+    }
+
+
+
+    //░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
 
 }

@@ -28,7 +28,12 @@ import com.example.generator2.theme.colorLightBackground
 private val Corner = 8.dp
 
 @Composable
-fun DialogDeleteRename(name: String, vm: VMScripting, onDone : (String) -> Unit) {
+fun DialogDeleteRename(
+    name: String,
+    onDone: (String) -> Unit,
+    onDismissRequest: () -> Unit,
+    onClickDelete: () -> Unit
+) {
 
     println("DialogDeleteRename name:$name")
 
@@ -36,9 +41,9 @@ fun DialogDeleteRename(name: String, vm: VMScripting, onDone : (String) -> Unit)
 
     value = name
 
-    if (vm.openDialogDeleteRename.value) Dialog(onDismissRequest = {
-        vm.openDialogDeleteRename.value = false
-    }) {
+    Dialog(
+        onDismissRequest = onDismissRequest
+    ) {
         Card(
             Modifier.width(220.dp), elevation = 8.dp, border = BorderStroke(
                 1.dp, Color.Gray
@@ -64,14 +69,21 @@ fun DialogDeleteRename(name: String, vm: VMScripting, onDone : (String) -> Unit)
                 OutlinedTextField(
                     value = value,
                     onValueChange = { value = it },
-                    modifier = Modifier.height(58.dp).padding(start = 16.dp, end = 16.dp, bottom = 0.dp),
+                    modifier = Modifier
+                        .height(58.dp)
+                        .padding(start = 16.dp, end = 16.dp, bottom = 0.dp),
                     colors = TextFieldDefaults.textFieldColors(
                         textColor = Color.LightGray,
                         leadingIconColor = Color.LightGray,
                         backgroundColor = colorLightBackground,
                         focusedIndicatorColor = Color.Transparent
                     ),
-                    placeholder = { Text(text = MainResStrings.screenScriptDialogRenameFileName, color = Color.Gray) },
+                    placeholder = {
+                        Text(
+                            text = MainResStrings.screenScriptDialogRenameFileName,
+                            color = Color.Gray
+                        )
+                    },
                     singleLine = true,
                     shape = RoundedCornerShape(Corner),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -100,10 +112,11 @@ fun DialogDeleteRename(name: String, vm: VMScripting, onDone : (String) -> Unit)
                 )
 
                 Button(
-                    onClick = {
-                        vm.utils.deleteScriptFile(name)
-                        vm.openDialogDeleteRename.value = false
-                    },
+                    onClick =
+                        onClickDelete
+                    //vm.utils.deleteScriptFile(name)
+                    //vm.openDialogDeleteRename.value = false
+                    ,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(72.dp)

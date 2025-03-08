@@ -55,7 +55,10 @@ fun ScriptTable(vm: VMScripting) {
                 ) {
 
                     Text(vm.script.name, color = colorGreen)
-                    Text("PC:"+vm.script.pc.collectAsStateWithLifecycle().value.toString(), color = Color.White)
+                    Text(
+                        "PC:" + vm.script.pc.collectAsStateWithLifecycle().value.toString(),
+                        color = Color.White
+                    )
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -149,17 +152,16 @@ fun ScriptTable(vm: VMScripting) {
 
                                                     try {
                                                         vm.script.command(StateCommandScript.STOP)
-                                                        val l = vm.utils.readScriptFileToList(files[index])
+                                                        val l =
+                                                            vm.utils.readScriptFileToList(files[index])
                                                         vm.script.list.clear()
                                                         l.forEach {
                                                             vm.script.list.add(it)
                                                         }
                                                         vm.script.name = files[index]
-                                                    }
-                                                    catch(e1: FileNotFoundException){
+                                                    } catch (e1: FileNotFoundException) {
                                                         Timber.e(e1.localizedMessage)
-                                                    }
-                                                    catch (e: Exception){
+                                                    } catch (e: Exception) {
                                                         Timber.e(e.localizedMessage)
                                                     }
                                                 }, onLongClick = {
@@ -255,19 +257,29 @@ fun ScriptTable(vm: VMScripting) {
                 }
             }
 
-            if (vm.openDialogSaveAs.value) DialogSaveAs(vm)
+            if (vm.openDialogSaveAs.value)
+                DialogSaveAs(vm)
 
             val context = LocalContext.current
 
-            if (vm.openDialogDeleteRename.value) DialogDeleteRename(vm.script.name, vm, onDone = { itRenameDoneValue ->
-                vm.utils.renameScriptFile(vm.script.name, itRenameDoneValue)
-                vm.openDialogDeleteRename.value = false
-                Toast.makeText(context, "Renamed", Toast.LENGTH_LONG).show()
-            })
+            //Блок диалога переименования
+            if (vm.openDialogDeleteRename.value)
+                DialogDeleteRename(
+                    vm.script.name,
+                    onDone = { itRenameDoneValue ->
+                        vm.dialogRenameNewValue(itRenameDoneValue)
+                        Toast.makeText(context, "Renamed", Toast.LENGTH_LONG).show()
+                    }, onDismissRequest = {
+                        vm.openDialogDeleteRename.value = false
+                    }, onClickDelete = {
+                        vm.dialogRenameClickDelete()
+                    })
+
 
             if (vm.script.state == StateCommandScript.ISEDITING) {
                 vm.keyboard.Core { vm.script.pc.value }
             }
+
         }
     }
 }
