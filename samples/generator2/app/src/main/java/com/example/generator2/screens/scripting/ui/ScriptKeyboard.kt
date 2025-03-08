@@ -127,12 +127,12 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
         }
 
         listCommandRemoveToIndex(route.value.argument)
-        list.list[selectIndex].value  = listCommandToText()
+        list.update(selectIndex, listCommandToText())
 
         route.value = routeStack.pop()
 
         listCommandRemoveToIndex(route.value.argument)
-        list.list[selectIndex].value   = listCommandToText()
+        list.update(selectIndex, listCommandToText())
 
     }
 
@@ -152,7 +152,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
         if (pc1 > list.lastIndex())
             s.pc.update { list.lastIndex() }
 
-        textToListCommand(list.list[selectIndex].value )
+        textToListCommand(list.get(selectIndex))
         selectIndex = pc1
 
         Timber.tag("script").i("Keyboard Core() PC:${s.pc}")
@@ -224,7 +224,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
                             .border(0.2.dp, Color.Magenta)
                             .selectable(selected = selectedIndex.value == index, onClick = {
                                 listCommandAddToIndex(arg, item.name)
-                                list.list[selectIndex].value  = listCommandToText()
+                                list.update(selectIndex, listCommandToText())
                                 routeTo(RouteKeyboard(0, RouteKeyboardEnum.HOME))
                                 routeStack.clear()
                             })
@@ -267,56 +267,56 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             KeyX("CH1", onClick = {
                 listCommand.clear()
                 listCommandAddToIndex(0, "CH1")
-                list.list[selectIndex].value = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(1, RouteKeyboardEnum.CRAMFM))
             })
         }, k1 = {
             KeyX("CR1", onClick = {
                 listCommand.clear()
                 listCommandAddToIndex(0, "CR1")
-                list.list[selectIndex].value   = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(1, RouteKeyboardEnum.CRAMValue))
             })
         }, k2 = {
             KeyX("AM1", onClick = {
                 listCommand.clear()
                 listCommandAddToIndex(0, "AM1")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(1, RouteKeyboardEnum.CRAMValue))
             })
         }, k3 = {
             KeyX("FM1", onClick = {
                 listCommand.clear()
                 listCommandAddToIndex(0, "FM1")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(1, RouteKeyboardEnum.FMValue))
             })
         }, k4 = {
             KeyX("CH2", onClick = {
                 listCommand.clear()
                 listCommandAddToIndex(0, "CH2")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(1, RouteKeyboardEnum.CRAMFM))
             })
         }, k5 = {
             KeyX("CR2", onClick = {
                 listCommand.clear()
                 listCommandAddToIndex(0, "CR2")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(1, RouteKeyboardEnum.CRAMValue))
             })
         }, k6 = {
             KeyX("AM2", onClick = {
                 listCommand.clear()
                 listCommandAddToIndex(0, "AM2")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(1, RouteKeyboardEnum.CRAMValue))
             })
         }, k7 = {
             KeyX("FM2", onClick = {
                 listCommand.clear()
                 listCommandAddToIndex(0, "FM2")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(1, RouteKeyboardEnum.FMValue))
             })
         },
@@ -325,7 +325,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
                 KeyX("GOTO", onClick = {
                     listCommand.clear()
                     listCommandAddToIndex(0, "GOTO")
-                    list.list[selectIndex].value = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(1, RouteKeyboardEnum.NUMBER))
                 })
             },
@@ -334,18 +334,17 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
                 KeyX("IF", onClick = {
                     listCommand.clear()
                     listCommandAddToIndex(0, "IF")
-                    list.list[selectIndex].value  =
-                        listCommandToText() //(RouteKeyboard(1, RouteKeyboardEnum.FPADFM))
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(1, RouteKeyboardEnum.F, RouteKeyboardEnum.Comparison))
                 })
             },
 
-            k10 = { KeyX("ELSE", onClick = { list.list[selectIndex].value  = "ELSE" }) }, k11 = {
+            k10 = { KeyX("ELSE", onClick = { list.update(selectIndex, "ELSE") }) }, k11 = {
                 KeyX("PLUS", onClick = {
 
                     listCommand.clear()
                     listCommandAddToIndex(0, "PLUS")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(1, RouteKeyboardEnum.F, RouteKeyboardEnum.IFValue))
 
                 })
@@ -353,15 +352,15 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
                 KeyX("DELAY", onClick = {
                     listCommand.clear()
                     listCommandAddToIndex(0, "DELAY")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(1, RouteKeyboardEnum.NUMBER))
                 })
-            }, k13 = { KeyX("ENDIF", onClick = { list.list[selectIndex].value  = "ENDIF" }) }, k14 = {
+            }, k13 = { KeyX("ENDIF", onClick = { list.update(selectIndex, "ENDIF") }) }, k14 = {
                 KeyX("LOAD", onClick = {
 
                     listCommand.clear()
                     listCommandAddToIndex(0, "LOAD")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(1, RouteKeyboardEnum.F, RouteKeyboardEnum.IFValue))
 
                 })
@@ -370,7 +369,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
 
                     listCommand.clear()
                     listCommandAddToIndex(0, "MINUS")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(1, RouteKeyboardEnum.F, RouteKeyboardEnum.IFValue))
 
                 })
@@ -389,13 +388,13 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
 
         var s: String = listCommand[arg()]
 
-        list.list[selectIndex].value  = listCommandToText()
+        list.update(selectIndex, listCommandToText())
 
         Draw(k0 = {
             KeyX("1", onClick = {
                 s += "1"
                 listCommandAddToIndex(arg(), s)
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
             })
 
 
@@ -403,67 +402,67 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             KeyX("2", onClick = {
                 s += "2"
                 listCommandAddToIndex(arg(), s)
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
             })
         }, k2 = {
             KeyX("3", onClick = {
                 s += "3"
                 listCommandAddToIndex(arg(), s)
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
             })
         }, k3 = {
             KeyX("DEL", onClick = {
                 s = s.dropLast(1)
                 listCommandAddToIndex(arg(), s)
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
             })
         }, k4 = {
             KeyX("4", onClick = {
                 s += "4"
                 listCommandAddToIndex(arg(), s)
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
             })
         }, k5 = {
             KeyX("5", onClick = {
                 s += "5"
                 listCommandAddToIndex(arg(), s)
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
             })
         }, k6 = {
             KeyX("6", onClick = {
                 s += "6"
                 listCommandAddToIndex(arg(), s)
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
             })
         }, k7 = { KeyBack() }, k8 = {
             KeyX("7", onClick = {
                 s += "7"
                 listCommandAddToIndex(arg(), s)
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
             })
         }, k9 = {
             KeyX("8", onClick = {
                 s += "8"
                 listCommandAddToIndex(arg(), s)
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
             })
         }, k10 = {
             KeyX("9", onClick = {
                 s += "9"
                 listCommandAddToIndex(arg(), s)
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
             })
         }, k11 = { }, k12 = {
             KeyX(".", onClick = {
                 s += "."
                 listCommandAddToIndex(arg(), s)
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
             })
         }, k13 = {
             KeyX("0", onClick = {
                 s += "0"
                 listCommandAddToIndex(arg(), s)
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
             })
         }, k14 = { }, k15 = { KeyEnter() })
     }
@@ -476,7 +475,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             KeyX("F1", onClick = {
 
                 listCommandAddToIndex(arg(), "F1")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
 
                 if (route.value.NoHomeRoute == null) {
                     routeTo(RouteKeyboard(0, RouteKeyboardEnum.HOME))
@@ -490,7 +489,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             KeyX("F2", onClick = {
 
                 listCommandAddToIndex(arg(), "F2")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 if (route.value.NoHomeRoute == null) {
                     routeTo(RouteKeyboard(0, RouteKeyboardEnum.HOME))
                     routeStack.clear()
@@ -503,7 +502,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             KeyX("F3", onClick = {
 
                 listCommandAddToIndex(arg(), "F3")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 if (route.value.NoHomeRoute == null) {
                     routeTo(RouteKeyboard(0, RouteKeyboardEnum.HOME))
                     routeStack.clear()
@@ -517,7 +516,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             KeyX("F4", onClick = {
 
                 listCommandAddToIndex(arg(), "F4")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 if (route.value.NoHomeRoute == null) {
                     routeTo(RouteKeyboard(0, RouteKeyboardEnum.HOME))
                     routeStack.clear()
@@ -530,7 +529,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             KeyX("F5", onClick = {
 
                 listCommandAddToIndex(arg(), "F5")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 if (route.value.NoHomeRoute == null) {
                     routeTo(RouteKeyboard(0, RouteKeyboardEnum.HOME))
                     routeStack.clear()
@@ -543,7 +542,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             KeyX("F6", onClick = {
 
                 listCommandAddToIndex(arg(), "F6")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 if (route.value.NoHomeRoute == null) {
                     routeTo(RouteKeyboard(0, RouteKeyboardEnum.HOME))
                     routeStack.clear()
@@ -556,7 +555,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             KeyX("F7", onClick = {
 
                 listCommandAddToIndex(arg(), "F7")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 if (route.value.NoHomeRoute == null) {
                     routeTo(RouteKeyboard(0, RouteKeyboardEnum.HOME))
                     routeStack.clear()
@@ -569,7 +568,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             KeyX("F8", onClick = {
 
                 listCommandAddToIndex(arg(), "F8")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 if (route.value.NoHomeRoute == null) {
                     routeTo(RouteKeyboard(0, RouteKeyboardEnum.HOME))
                     routeStack.clear()
@@ -582,7 +581,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             KeyX("F9", onClick = {
 
                 listCommandAddToIndex(arg(), "F9")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 if (route.value.NoHomeRoute == null) {
                     routeTo(RouteKeyboard(0, RouteKeyboardEnum.HOME))
                     routeStack.clear()
@@ -595,7 +594,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             KeyX("F0", onClick = {
 
                 listCommandAddToIndex(arg(), "F0")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 if (route.value.NoHomeRoute == null) {
                     routeTo(RouteKeyboard(0, RouteKeyboardEnum.HOME))
                     routeStack.clear()
@@ -613,7 +612,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             KeyX("<", onClick = {
                 listCommandRemoveToIndex(arg)
                 listCommandAddToIndex(arg, "<")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.IFValue))
             })
         },
@@ -621,7 +620,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
                 KeyX(">", onClick = {
                     listCommandRemoveToIndex(arg)
                     listCommandAddToIndex(arg, ">")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.IFValue))
                 })
             },
@@ -631,7 +630,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
                 KeyX("<=", onClick = {
                     listCommandRemoveToIndex(arg)
                     listCommandAddToIndex(arg, "<=")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.IFValue))
                 })
             },
@@ -639,7 +638,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
                 KeyX(">=", onClick = {
                     listCommandRemoveToIndex(arg)
                     listCommandAddToIndex(arg, ">=")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.IFValue))
                 })
             },
@@ -649,7 +648,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
                 KeyX("==", onClick = {
                     listCommandRemoveToIndex(arg)
                     listCommandAddToIndex(arg, "==")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.IFValue))
                 })
             },
@@ -657,7 +656,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
                 KeyX("!=", onClick = {
                     listCommandRemoveToIndex(arg)
                     listCommandAddToIndex(arg, "!=")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.IFValue))
                 })
             },
@@ -675,7 +674,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
         Draw(k0 = {
             KeyX("ON", onClick = {
                 listCommandAddToIndex(arg, "ON")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(0, RouteKeyboardEnum.HOME))
                 routeStack.clear()
             })
@@ -683,7 +682,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             k1 = {
                 KeyX("OFF", onClick = {
                     listCommandAddToIndex(arg, "OFF")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(0, RouteKeyboardEnum.HOME))
                     routeStack.clear()
                 })
@@ -709,21 +708,21 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
         Draw(k0 = {
             KeyX("CR", onClick = {
                 listCommandAddToIndex(arg, "CR")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.ONOFF))
             })
         },
             k1 = {
                 KeyX("AM", onClick = {
                     listCommandAddToIndex(arg, "AM")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.ONOFF))
                 })
             },
             k2 = {
                 KeyX("FM", onClick = {
                     listCommandAddToIndex(arg, "FM")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.ONOFF))
                 })
             },
@@ -752,7 +751,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             KeyX("FR Fx", onClick = {
 
                 listCommandAddToIndex(arg, "FR")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.F))
 
             })
@@ -760,7 +759,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             k1 = {
                 KeyX("FR xx", onClick = {
                     listCommandAddToIndex(arg, "FR")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.NUMBER))
                 })
             },
@@ -771,8 +770,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
 
                     listCommandRemoveToIndex(arg)
                     listCommandAddToIndex(arg, "MOD")
-                    list.list[selectIndex].value  = listCommandToText()
-
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.MODFM))
 
                 })
@@ -783,14 +781,14 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             k8 = {
                 KeyX("BASE Fx", onClick = {
                     listCommandAddToIndex(arg, "BASE")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.F))
                 })
             },
             k9 = {
                 KeyX("BASE xx", onClick = {
                     listCommandAddToIndex(arg, "BASE")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.NUMBER))
                 })
             },
@@ -799,14 +797,14 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             k12 = {
                 KeyX("DEV Fx", onClick = {
                     listCommandAddToIndex(arg, "DEV")
-                    list.list[selectIndex] .value = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.F))
                 })
             },
             k13 = {
                 KeyX("DEV xx", onClick = {
                     listCommandAddToIndex(arg, "DEV")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.NUMBER))
                 })
             },
@@ -852,7 +850,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
             KeyX("FR Fx", onClick = {
                 listCommandRemoveToIndex(arg)
                 listCommandAddToIndex(arg, "FR")
-                list.list[selectIndex].value  = listCommandToText()
+                list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.F))
             })
         },
@@ -860,7 +858,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
                 KeyX("FR xx.x", onClick = {
                     listCommandRemoveToIndex(arg)
                     listCommandAddToIndex(arg, "FR")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex, listCommandToText())
                     routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.NUMBER))
                 })
             },
@@ -871,7 +869,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
 
                     listCommandRemoveToIndex(arg)
                     listCommandAddToIndex(arg, "MOD")
-                    list.list[selectIndex].value  = listCommandToText()
+                    list.update(selectIndex,  listCommandToText())
                     if ((listCommand[0] == "CR1") || (listCommand[0] == "CR2"))
                         routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.MODCR))
                     else

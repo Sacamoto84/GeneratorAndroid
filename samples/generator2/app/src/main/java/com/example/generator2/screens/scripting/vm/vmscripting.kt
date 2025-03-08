@@ -85,7 +85,7 @@ class VMScripting @Inject constructor(
     }
 
     fun bAddClick() {
-        script.list.add(script.pc.value, "?")
+        script.list.add(script.pc.value + 1, "?")
     }
 
     /**

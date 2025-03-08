@@ -1,19 +1,28 @@
 package com.example.generator2.features.script
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
+
+// ✅ Работает
+// ❌ UI не перерисуется! 👍⚠️⚡️🔰🔴⛔️⚙️☁️✨🚫📖🔸❓🌌◍◉▶∎∷⋮⋯⋰⋱✏✔☑☐⌨⓿❶❷❸❹░▒▓▌▧▧▧▧▦▦▦◇½
 
 class ScriptList {
 
-    val list = mutableStateListOf<MutableState<String>>()
+    private val list = mutableStateListOf<String>()
 
-    fun add( index: Int, value : String ) {
-       list.add(index, mutableStateOf(value))
+    fun instance() = list
+
+    fun update(index: Int, value: String) {
+        if ((index < 0) || (index > list.lastIndex))
+            return
+        list[index] = value
     }
 
-    fun add( value : String ) {
-        list.add(mutableStateOf(value))
+    fun add(index: Int, value: String) {
+        list.add(index, value)
+    }
+
+    fun add(value: String) {
+        list.add(value)
     }
 
     /**
@@ -24,19 +33,24 @@ class ScriptList {
     }
 
     fun get(index: Int): String {
-        return list[index].value
+        return list[index]
     }
 
-    fun toList() = list.map { it.value }.toList()
-    fun removeAt(index: Int): MutableState<String> = list.removeAt(index)
+    fun toList() = list.map { it }.toList()
+
+    /**
+     * ⚡️Удалить елемент по индексу
+     */
+    fun removeAt(index: Int) = list.removeAt(index)
+
     fun size() = list.size
 
     fun lastIndex() = list.lastIndex
 
-    fun swap( i : Int, j : Int){
-        val tmp = list[i].value
-        list[i].value = list[j].value
-        list[j].value = tmp
+    fun swap(i: Int, j: Int) {
+        val tmp = list[i]
+        list[i] = list[j]
+        list[j] = tmp
     }
 
 }

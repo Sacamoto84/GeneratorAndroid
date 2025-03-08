@@ -68,7 +68,7 @@ fun ScriptTable(vm: VMScripting) {
                         val pc = vm.script.pc.collectAsStateWithLifecycle().value
                         vm.script.update.collectAsStateWithLifecycle().value
                         ScriptConsole(
-                            l = vm.script.list.list,
+                            l = vm.script.list.instance(),
                             selectLine = pc,
                             global = vm
                         )
@@ -154,6 +154,7 @@ fun ScriptTable(vm: VMScripting) {
                                                         l.forEach {
                                                             vm.script.list.add(it)
                                                         }
+                                                        vm.script.name = files[index]
                                                     }
                                                     catch(e1: FileNotFoundException){
                                                         Timber.e(e1.localizedMessage)

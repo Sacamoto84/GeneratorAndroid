@@ -21,7 +21,7 @@ import com.example.generator2.screens.scripting.vm.VMScripting
 
 @Composable
 fun ScriptConsole(
-    l: SnapshotStateList<MutableState<String>>,
+    l: SnapshotStateList<String>,
     selectLine: Int,
     modifier: Modifier = Modifier,
     global: VMScripting,
@@ -56,8 +56,6 @@ fun ScriptConsole(
     )
     {
 
-
-
         LazyColumn(
             modifier = Modifier.fillMaxSize(), state = lazyListState
         ) {
@@ -75,7 +73,7 @@ fun ScriptConsole(
                             })
                     ) {
                         val select = indexSelect == index
-                        ScriptItem().Draw(str = { item.value}, index = { index }, { select })
+                        ScriptItem().Draw(str = { item }, index = { index }, { select })
                     }
                 }
             }
