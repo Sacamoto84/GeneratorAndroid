@@ -83,6 +83,8 @@ fun Mainsreen4(vm: VMMain4) {
         },
 
         bottomBar = {
+
+
             //Нижняя панель
             M4BottomAppBarComponent(vm,
                 navigateToConfig = { navigator.push(AppScreen.Config) },
@@ -90,6 +92,8 @@ fun Mainsreen4(vm: VMMain4) {
                 navigateToScript = { navigator.push(AppScreen.Script) }
 
             )
+
+
         }
     )
     { it ->
@@ -105,8 +109,6 @@ fun Mainsreen4(vm: VMMain4) {
             targetValue = if (!mono) 1f else 0.0f,
             animationSpec = tween(durationMillis = 7050), label = ""
         )
-
-        Column {
 
 
 
@@ -212,10 +214,6 @@ fun Mainsreen4(vm: VMMain4) {
 
 
             }
-
-
-        }
-
 
     }
 }

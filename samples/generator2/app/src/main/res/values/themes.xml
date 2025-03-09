@@ -2,6 +2,7 @@
 <resources>
 
     <style name="Theme.Generator2" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowFullscreen">false</item>
         <item name="android:statusBarColor">@color/purple_700</item>
         <item name="android:windowBackground">@color/background</item>
     </style>

@@ -10,20 +10,33 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
+import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.updateLayoutParams
+import androidx.privacysandbox.tools.core.model.Type
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
@@ -176,10 +189,26 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         //WindowCompat.setDecorFitsSystemWindows(window, false) // Поддержка WindowInsets
-        WindowCompat.setDecorFitsSystemWindows(window, true)
+        //WindowCompat.setDecorFitsSystemWindows(window, true)
         //renderer = MyGLRenderer()
 
+//        WindowCompat.getInsetsController(window, window.decorView)
+//            .isAppearanceLightStatusBars = false
+
+        //val windowInsetsController =
+        //    WindowCompat.getInsetsController(window, window.decorView)
+        // Hide the system bars.
+        //windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+
         //Timber.plant(Timber.DebugTree())
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        // Adjust status and navigation bar appearance
+        val insetsController = WindowInsetsControllerCompat(window, window.decorView)
+        insetsController.isAppearanceLightStatusBars = true
+        insetsController.isAppearanceLightNavigationBars = true
+
         Timber.i("..................................onCreate.................................")
 
         Utils.ContextMainActivity = applicationContext
@@ -236,7 +265,14 @@ class MainActivity : ComponentActivity() {
 
                 //   Navigation()
 
-                Navigator(AppScreen.Home)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .windowInsetsPadding(WindowInsets.systemBars)
+                ) {
+                    Navigator(AppScreen.Home)
+                }
+
 
 
                 //OpenGLComposeView()
@@ -254,7 +290,11 @@ class MainActivity : ComponentActivity() {
 
     private fun startForegroundService() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, POST_NOTIFICATIONS ) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
                 val intent = Intent(this, SoundService::class.java)
                 startForegroundService(intent)
             } else {

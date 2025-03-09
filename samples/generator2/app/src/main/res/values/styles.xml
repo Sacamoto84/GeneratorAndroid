@@ -3,7 +3,7 @@
 
     <style name="Transparent" parent="Theme.AppCompat.NoActionBar">
 
-        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowFullscreen">false</item>
 
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>

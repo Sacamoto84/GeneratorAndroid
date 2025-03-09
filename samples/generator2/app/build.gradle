@@ -243,6 +243,7 @@ dependencies {
     //Разрешения
     //https://github.com/alexstyl/warden
     implementation 'com.alexstyl:warden:1.0.0-alpha2'
+    implementation 'androidx.privacysandbox.tools:tools-core:1.0.0-alpha12'
 
 ///////////////////
     def compose_version = "1.7.8"

@@ -9,6 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.generator2.R
 import com.example.generator2.features.script.StateCommandScript
 import com.example.generator2.screens.scripting.vm.VMScripting
@@ -20,6 +22,8 @@ import com.example.generator2.theme.colorLightBackground
 @Composable
 fun BottomAppBarScript(vm: VMScripting){
 
+    val navigator = LocalNavigator.currentOrThrow
+
     BottomAppBar(
         backgroundColor = colorLightBackground,
         contentColor = Color.White,
@@ -27,9 +31,7 @@ fun BottomAppBarScript(vm: VMScripting){
 
         //Кнопка назад
         IconButton(modifier = Modifier.testTag("buttonM4ScriptGoBack"),
-            onClick = {
-                //navController.popBackStack()
-            }) {
+            onClick = {navigator.pop()}) {
             Icon(painter = painterResource(R.drawable.back4), contentDescription = null)
         }
 
