@@ -19,15 +19,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.generator2.R
-import com.example.generator2.screens.ConsoleLogDraw
 import com.example.generator2.screens.scripting.vm.VMScripting
 import com.example.generator2.screens.scripting.atom.OutlinedButtonTextAndIcon
 import com.example.generator2.screens.scripting.dialog.DialogDeleteRename
 import com.example.generator2.screens.scripting.dialog.DialogSaveAs
 import com.example.generator2.features.script.StateCommandScript
 import com.example.generator2.theme.colorGreen
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.update
 import timber.log.Timber
 import java.io.FileNotFoundException
 
@@ -50,7 +47,8 @@ fun ScriptTable(vm: VMScripting) {
 
                 Column(
                     modifier = Modifier
-                        .fillMaxSize().weight(1f)
+                        .fillMaxSize()
+                        .weight(1f)
                 ) {
 
                     Text(vm.script.name, color = colorGreen)
@@ -190,8 +188,6 @@ fun ScriptTable(vm: VMScripting) {
                             ConsoleLogDraw(Modifier.weight(0.4f))
                         }
 
-
-
                         if (vm.script.state == StateCommandScript.ISEDITING) {
 
                             Spacer(modifier = Modifier.height(8.dp))
@@ -256,8 +252,15 @@ fun ScriptTable(vm: VMScripting) {
                 }
             }
 
+            //Блок диалога сохранить как
             if (vm.openDialogSaveAs.value)
-                DialogSaveAs(vm)
+                DialogSaveAs(
+                    onDismissRequest = { vm.openDialogSaveAs.value = false },
+                    onDone = { vm.bDialogSaveAsDone(it) }, onScan = {
+                        val a = vm.utils.filesInScriptToList()
+                        a
+                    }
+                )
 
             val context = LocalContext.current
 

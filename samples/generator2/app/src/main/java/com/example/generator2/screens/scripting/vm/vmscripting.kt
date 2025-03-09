@@ -31,7 +31,6 @@ class VMScripting @Inject constructor(
     fun bNewClick() {
         script.command(StateCommandScript.STOP)
         script.list.clear()
-        script.list.add("---")
         script.list.add("?")
         script.list.add("END")
         script.command(StateCommandScript.EDIT)

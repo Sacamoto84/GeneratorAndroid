@@ -1,7 +1,6 @@
-package com.example.generator2.screens
+package com.example.generator2.screens.scripting.ui
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,11 +18,9 @@ fun ConsoleLogDraw(modifier: Modifier = Modifier) {
             //.border(width = 1.dp, color = Color.White)
             .then(modifier)
     ) {
-        Column() {
-            consoleLog.Draw(
-                Modifier.padding(start = 8.dp)
-            )
-        }
+        consoleLog.Draw(
+            Modifier.padding(start = 8.dp)
+        )
     }
 }
 

@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateListOf
 
 class ScriptList {
 
-    private val list = mutableStateListOf<String>()
+    private val list = mutableStateListOf<String>("?","END")
 
     fun instance() = list
 

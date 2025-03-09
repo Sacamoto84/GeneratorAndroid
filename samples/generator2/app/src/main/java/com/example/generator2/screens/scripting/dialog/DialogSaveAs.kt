@@ -2,13 +2,20 @@ package com.example.generator2.screens.scripting.dialog
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -21,20 +28,26 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -45,15 +58,31 @@ import kotlinx.coroutines.delay
 
 private val Corner = 8.dp
 
+@Preview
 @Composable
-fun DialogSaveAs(vm: VMScripting) {
+private fun Preview() {
+    DialogSaveAs(onDismissRequest = {}, onDone = {}, onScan = { listOf("ewew", "ererwe") })
+}
 
-    var value by remember { mutableStateOf("") }
+@Composable
+fun DialogSaveAs(
+    onDismissRequest: () -> Unit,
+    onDone: (String) -> Unit,
+    onScan: () -> List<String>
+) {
+
+    //var value by remember { mutableStateOf("") }
+    //var value by remember { mutableStateOf(TextFieldValue("")) }
+    var value by remember { mutableStateOf(TextFieldValue("")) }
     val focusRequester = remember { FocusRequester() }
+    val files = remember { mutableStateListOf<String>() }
 
-    if (vm.openDialogSaveAs.value) Dialog(onDismissRequest = {
-        vm.openDialogSaveAs.value = false
-    }) {
+    LaunchedEffect(Unit) {
+        files.clear()
+        files.addAll(onScan.invoke())
+    }
+
+    Dialog(onDismissRequest = onDismissRequest) {
 
         Card(
             Modifier
@@ -65,51 +94,66 @@ fun DialogSaveAs(vm: VMScripting) {
             backgroundColor = colorLightBackground2
         )
         {
-
             LaunchedEffect(Unit) {
                 delay(500)
                 focusRequester.requestFocus()
             }
 
-            Column() {
+            Column {
 
                 Text(
                     text = "Save As",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
-                    //.clip(RoundedCornerShape(Corner)).background(Color.DarkGray)
-                    ,
+                        .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 0.dp),
                     textAlign = TextAlign.Center,
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(R.font.jetbrains)),
                     color = Color.LightGray
                 )
 
-                OutlinedTextField(
-                    value = value,
-                    onValueChange = { value = it },
-                    modifier = Modifier
-                        .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
-                        .focusRequester(focusRequester),
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = Color.LightGray, leadingIconColor = Color.LightGray,
-                        backgroundColor = Color.Black, focusedIndicatorColor = Color.Transparent
-                    ),
-                    placeholder = { Text(text = "File Name", color = Color.Gray) },
-                    singleLine = true,
-                    shape = RoundedCornerShape(Corner),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = {
-                        vm.bDialogSaveAsDone(value)
-                    }),
-                    textStyle = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.jetbrains))
-                    )
-                )
+                Box(
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
 
-                val files = vm.utils.filesInDirToList("/Script")
+                    OutlinedTextField(
+                        value = value,
+                        onValueChange = { value = it },
+                        modifier = Modifier
+                            .focusRequester(focusRequester),
+                        colors = TextFieldDefaults.textFieldColors(
+                            textColor = Color.LightGray, leadingIconColor = Color.LightGray,
+                            backgroundColor = Color.Black, focusedIndicatorColor = Color.Transparent
+                        ),
+                        placeholder = { Text(text = "File Name", color = Color.Gray) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(Corner),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = {
+                            onDone.invoke(value.text)
+                        }),
+                        textStyle = TextStyle(
+                            fontSize = 18.sp,
+                            fontFamily = FontFamily(Font(R.font.jetbrains))
+                        )
+                    )
+
+//                    Box(
+//                        modifier = Modifier.padding(end = 4.dp)
+//                            .fillMaxWidth(),
+//                        contentAlignment = Alignment.CenterEnd
+//                    ) {
+//                        Box(modifier = Modifier
+//                            .size(32.dp)
+//                            , contentAlignment = Alignment.Center) {
+//                            Text("+", fontSize = 28.sp, color = Color.LightGray)
+//                        }
+//
+//                    }
+
+
+                }
 
                 Column(
                     Modifier
@@ -117,29 +161,42 @@ fun DialogSaveAs(vm: VMScripting) {
                         .weight(1f)
                         //.padding(4.dp)
                         .background(Color(0x8B1D1C1C))
-                        //.clip(RoundedCornerShape(8.dp))
-                        .verticalScroll(rememberScrollState())
+                    //.clip(RoundedCornerShape(8.dp))
+                    //.verticalScroll(rememberScrollState())
                 )
                 {
                     Spacer(modifier = Modifier.height(4.dp))
-                    for (index in files.indices) {
-                        Text(
-                            text = " " + files[index].dropLast(3),
-                            color = Color.DarkGray,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 8.dp, top = 2.dp, end = 8.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(Color.LightGray),
-                            fontFamily = FontFamily(Font(R.font.jetbrains)),
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
-                        )
+
+                    LazyColumn {
+
+                        items(files) {
+
+                            val str = it.dropLast(3)
+                            Text(
+                                text = str,
+                                color = Color.DarkGray,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(32.dp)
+                                    .padding(start = 8.dp, top = 4.dp, end = 8.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(Color.LightGray)
+                                    .clickable {
+                                        value = TextFieldValue(
+                                            text = str,
+                                            selection = TextRange(str.length)
+                                        )
+                                    },
+                                fontFamily = FontFamily(Font(R.font.jetbrains)),
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
+                                fontSize = 18.sp,
+                            )
+
+                        }
+
                     }
                 }
-
-                //Spacer(modifier = Modifier.height(8.dp))
-
 
             }
         }
