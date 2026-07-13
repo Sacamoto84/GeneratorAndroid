@@ -53,14 +53,14 @@ android {
         }
     }
 
-    compileSdk 35
+    compileSdk 36
 
     namespace 'com.example.generator2'
 
     defaultConfig {
         applicationId "com.example.generator2"
         minSdk 26
-        targetSdk 35
+        targetSdk 36
         versionCode 2007
         versionName "2.0.0.7"
 
@@ -233,7 +233,7 @@ dependencies {
 
     //implementation 'com.github.seniorjoinu:reliable-udp:0.3.1' //Udp
 
-    implementation 'com.google.code.gson:gson:2.12.1'
+    implementation 'com.google.code.gson:gson:2.14.0'
 
     //Цвета
     //https://materialui.co/colors/
@@ -243,7 +243,7 @@ dependencies {
     //Разрешения
     //https://github.com/alexstyl/warden
     implementation 'com.alexstyl:warden:1.0.0-alpha2'
-    implementation 'androidx.privacysandbox.tools:tools-core:1.0.0-alpha12'
+    implementation 'androidx.privacysandbox.tools:tools-core:1.0.0-alpha14'
 
 ///////////////////
     def compose_version = "1.7.8"
