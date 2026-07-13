@@ -1,19 +1,19 @@
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
-    id 'com.google.devtools.ksp'
-    id 'com.google.dagger.hilt.android'
-    id 'com.google.gms.google-services'
+    alias libs.plugins.android.application
+    alias libs.plugins.jetbrains.kotlin.android
+    alias libs.plugins.google.devtools.ksp
+    alias libs.plugins.google.dagger.hilt.android
+    alias libs.plugins.google.gms.google.services
     //id 'androidx.baselineprofile'
 
-    id 'io.github.skeptick.libres'
+    alias libs.plugins.io.github.skeptick.libres
 
     //id 'org.jetbrains.kotlin.plugin.serialization'
 
 // Apply the Bugsnag plugin
 //    id  'com.bugsnag.android.gradle'
 
-    id 'org.jetbrains.kotlin.plugin.compose'
+    alias libs.plugins.jetbrains.kotlin.plugin.compose
 
 }
 
@@ -185,11 +185,11 @@ dependencies {
 
     //implementation("com.android.tools.lint:lint-gradle:31.0.2")
 
-    implementation 'androidx.core:core-ktx:1.15.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.7'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7'
-    implementation 'androidx.lifecycle:lifecycle-runtime-compose-android:2.8.7'
-    implementation 'androidx.activity:activity-compose:1.10.1'
+    implementation libs.core.ktx
+    implementation libs.androidx.lifecycle.runtime.ktx
+    implementation libs.androidx.lifecycle.viewmodel.compose
+    implementation libs.androidx.lifecycle.runtime.compose.android
+    implementation libs.activity.compose
 
     //testImplementation 'junit:junit:4.13.2'
     //androidTestImplementation 'androidx.test.ext:junit:1.1.5'
@@ -198,21 +198,21 @@ dependencies {
 
     //implementation 'androidx.benchmark:benchmark-macro-junit4:1.1.1'
 
-    implementation 'androidx.profileinstaller:profileinstaller:1.4.1'
-    implementation "androidx.startup:startup-runtime:1.2.0"
+    implementation libs.androidx.profileinstaller
+    implementation libs.androidx.startup.runtime
 
-    implementation 'com.snatik:storage:2.1.0'
+    implementation libs.storage
 
 
     //Копирование Assert в папку
     //https://github.com/morristech/android-assetcopier
-    implementation 'com.github.flipagram:android-assetcopier:0.1.1'
+    implementation libs.android.assetcopier
 
 
     //implementation "com.orhanobut:hawk:2.0.1"
 
-    implementation 'androidx.appcompat:appcompat:1.7.1'
-    implementation 'androidx.appcompat:appcompat-resources:1.7.1'
+    implementation libs.appcompat
+    implementation libs.appcompat.resources
 
     //implementation("io.coil-kt:coil-compose:2.2.2")
     //implementation("io.coil-kt:coil-gif:2.2.2")
@@ -229,74 +229,76 @@ dependencies {
 
     //Обработчик нажатий
     //https://github.com/SmartToolFactory/Compose-Extended-Gestures
-    implementation 'com.github.SmartToolFactory:Compose-Extended-Gestures:3.1'
+    implementation libs.compose.extended.gestures
 
     //implementation 'com.github.seniorjoinu:reliable-udp:0.3.1' //Udp
 
-    implementation 'com.google.code.gson:gson:2.14.0'
+    implementation libs.gson
 
     //Цвета
     //https://materialui.co/colors/
     //https://github.com/PatilSiddhesh/Holi
-    implementation 'com.siddroid:holi:1.0.1'
+    implementation libs.holi
 
     //Разрешения
     //https://github.com/alexstyl/warden
-    implementation 'com.alexstyl:warden:1.0.0-alpha2'
-    implementation 'androidx.privacysandbox.tools:tools-core:1.0.0-alpha14'
+    implementation libs.warden
+    implementation libs.androidx.tools.core
 
 ///////////////////
     def compose_version = "1.7.8"
     //Compose
-    implementation "androidx.compose.ui:ui-android:$compose_version"
-    implementation "androidx.compose.material:material-android:$compose_version"
-    implementation 'androidx.compose.material3:material3:1.3.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    debugImplementation "androidx.compose.ui:ui-tooling-android:$compose_version"
-    implementation "androidx.compose.ui:ui-tooling-preview-android:$compose_version"
-    implementation "androidx.compose.ui:ui-util-android:$compose_version"
-    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+    implementation libs.androidx.ui.android
+    implementation libs.androidx.material.android
+    implementation libs.androidx.material.icons.core
+    implementation libs.androidx.material.icons.extended
+    implementation libs.androidx.material3
+    implementation libs.constraintlayout
+    debugImplementation libs.androidx.ui.tooling.android
+    implementation libs.androidx.ui.tooling.preview.android
+    implementation libs.androidx.ui.util.android
+    implementation libs.androidx.runtime.livedata
 
-    implementation "androidx.compose.animation:animation-android:$compose_version"
-    implementation "androidx.compose.animation:animation-core-android:$compose_version"
-    implementation "androidx.compose.animation:animation-graphics-android:$compose_version"
+    implementation libs.animation.android
+    implementation libs.animation.core.android
+    implementation libs.animation.graphics.android
 ///////////////////
     //accompanist
     //implementation 'com.google.accompanist:accompanist-navigation-animation:0.34.0'
-    implementation 'com.google.accompanist:accompanist-drawablepainter:0.37.3'
-    implementation 'com.google.accompanist:accompanist-webview:0.36.0'
-    implementation 'com.google.accompanist:accompanist-pager:0.36.0'
-    implementation 'com.google.accompanist:accompanist-systemuicontroller:0.36.0'
-    implementation 'com.google.accompanist:accompanist-permissions:0.37.3'
+    implementation libs.accompanist.drawablepainter
+    implementation libs.accompanist.webview
+    implementation libs.accompanist.pager
+    implementation libs.accompanist.systemuicontroller
+    implementation libs.accompanist.permissions
 ///////////////////
     //lottie анимация
     //implementation 'com.airbnb.android:lottie:5.2.0'
     //implementation 'com.airbnb.android:lottie-compose:5.2.0'
 ///////////////////
     //Hilt
-    implementation 'com.google.dagger:hilt-android:2.60.1'
-    implementation 'androidx.hilt:hilt-navigation-compose:1.4.0'
-    ksp 'com.google.dagger:hilt-compiler:2.60.1'
-    ksp 'androidx.hilt:hilt-compiler:1.4.0'
-    implementation("it.czerwinski.android.hilt:hilt-extensions:1.4.0")
-    ksp("it.czerwinski.android.hilt:hilt-processor-ksp:1.4.0")
+    implementation libs.hilt.android
+    implementation libs.androidx.hilt.navigation.compose
+    ksp libs.hilt.compiler
+    ksp libs.androidx.hilt.compiler
+    implementation(libs.hilt.extensions1)
+    ksp(libs.hilt.processor.ksp)
 ///////////////////
     //Навигация
-    implementation 'androidx.navigation:navigation-compose:2.9.8'
+    implementation libs.androidx.navigation.compose
 
     def voyagerVersion = "2.2.21-1.10.3"
     // Navigator
     implementation("cafe.adriel.voyager:voyager-navigator:$voyagerVersion")
     // Screen Model
-    implementation("cafe.adriel.voyager:voyager-screenmodel:$voyagerVersion")
+    implementation(libs.voyager.screenmodel)
     // BottomSheetNavigator
     implementation("cafe.adriel.voyager:voyager-bottom-sheet-navigator:$voyagerVersion")
     // TabNavigator
     implementation("cafe.adriel.voyager:voyager-tab-navigator:$voyagerVersion")
     // Transitions
-    implementation("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
+    implementation(libs.voyager.transitions)
     // Hilt integration
-    implementation("cafe.adriel.voyager:voyager-hilt:$voyagerVersion")
+    implementation(libs.voyager.hilt)
     // LiveData integration
     //implementation("cafe.adriel.voyager:voyager-livedata:$voyagerVersion")
 
@@ -325,7 +327,7 @@ dependencies {
 
 
     //https://github.com/tfaki/ComposableSweetToast?ref=androidexample365.com
-    implementation 'com.github.tfaki:ComposableSweetToast:1.0.1'
+    implementation libs.composablesweettoast
 
     //ZIP https://github.com/arnab-kundu/Storage
     //mplementation 'com.github.arnab-kundu:Storage:1.0.2'
@@ -355,29 +357,29 @@ dependencies {
 
     //https://github.com/vincentrussell/java-ini-parser
     //implementation "com.github.vincentrussell:java-ini-parser:1.3"
-    implementation 'commons-io:commons-io:20030203.000550'
-    implementation 'org.apache.commons:commons-lang3:3.20.0'
+    implementation libs.commons.io
+    implementation libs.commons.lang3
 
-    implementation 'com.github.yagmurerdogan:Toastic:1.0.1'
+    implementation libs.toastic
 
     //Поддержка md
     //https://github.com/jeziellago/compose-markdown
-    implementation 'com.github.jeziellago:compose-markdown:0.3.1'
+    implementation libs.compose.markdown
 
-    implementation 'com.jakewharton.timber:timber:5.0.1'
+    implementation libs.timber
 
 
-    implementation "com.github.adrielcafe.pufferdb:core:1.1.1"
-    implementation "com.github.adrielcafe.pufferdb:android:1.1.1"
+    implementation libs.core
+    implementation libs.android
     //implementation "com.github.adrielcafe.pufferdb:coroutines:1.1.1"
 
     //implementation 'com.tencent:mmkv:1.3.2'
 
     //implementation 'com.dropbox.core:dropbox-core-sdk:5.4.4'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:2.4.0'
+    implementation libs.kotlin.stdlib
 
     // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
-    implementation 'com.squareup.okhttp3:okhttp:5.4.0'
+    implementation libs.okhttp
 
 
     //implementation "io.karn:notify:1.4.0"
@@ -386,12 +388,12 @@ dependencies {
 
 
     // Core (required)
-    implementation "com.github.adrielcafe.satchel:satchel-core:1.0.3"
+    implementation libs.satchel.core
     // Storers
-    implementation "com.github.adrielcafe.satchel:satchel-storer-encrypted-file:1.0.3"
+    implementation libs.satchel.storer.encrypted.file
 
     //https://github.com/aclassen/ComposeReorderable
-    implementation("org.burnoutcrew.composereorderable:reorderable:0.9.6")
+    implementation(libs.reorderable)
 
     //https://github.com/a914-gowtham/compose-ratingbar
     //implementation 'com.github.a914-gowtham:compose-ratingbar:1.3.4'
@@ -401,15 +403,15 @@ dependencies {
 
     //f6c5d62e-e201-4d03-8322-b7e738a4759f
     // AppMetrica SDK.
-    implementation 'com.yandex.android:mobmetricalib:5.3.0'
-    implementation 'com.yandex.android:mobmetricalib-ndk-crashes:2.0.0'
+    implementation libs.mobmetricalib
+    implementation libs.mobmetricalib.ndk.crashes
 
-    implementation 'com.github.varungulatii:Kdownloader:1.0.4'
+    implementation libs.kdownloader
 
     def media3_version = '1.10.1' //"1.1.1"
 
     // For media playback using ExoPlayer
-    implementation "androidx.media3:media3-exoplayer:$media3_version"
+    implementation libs.androidx.media3.exoplayer
 
     // For DASH playback support with ExoPlayer
     //implementation "androidx.media3:media3-exoplayer-dash:$media3_version"
@@ -428,33 +430,33 @@ dependencies {
     //implementation "androidx.media3:media3-datasource-rtmp:$media3_version"
 
     // For building media playback UIs
-    implementation "androidx.media3:media3-ui:$media3_version"
-    implementation "androidx.media3:media3-ui-leanback:$media3_version"
+    implementation libs.androidx.media3.ui
+    implementation libs.androidx.media3.ui.leanback
     //implementation "androidx.media3:media3-session:$media3_version"
     //implementation "androidx.media3:media3-extractor:$media3_version"
     //implementation "androidx.media3:media3-cast:$media3_version"
     //implementation "androidx.media3:media3-exoplayer-workmanager:$media3_version"
-    implementation "androidx.media3:media3-transformer:$media3_version"
+    implementation libs.androidx.media3.transformer
     //implementation "androidx.media3:media3-database:$media3_version"
-    implementation "androidx.media3:media3-decoder:$media3_version"
-    implementation "androidx.media3:media3-datasource:$media3_version"
-    implementation "androidx.media3:media3-common:$media3_version"
+    implementation libs.androidx.media3.decoder
+    implementation libs.androidx.media3.datasource
+    implementation libs.androidx.media3.common
 
 
     //Чтение тегов https://github.com/mpatric/mp3agic
-    implementation 'com.mpatric:mp3agic:0.9.1'
+    implementation libs.mp3agic
     //https://github.com/Kaned1as/jaudiotagger
-    implementation 'com.github.Adonai:jaudiotagger:2.3.14'
+    implementation libs.jaudiotagger
 
 
     //https://youtu.be/eFZmMSm1G1c
-    implementation "androidx.core:core-splashscreen:1.2.0"
+    implementation libs.core.splashscreen
 
 
-    implementation 'com.jaredrummler:animated-svg-view:1.0.6'
-    implementation 'com.caverock:androidsvg-aar:1.4'
+    implementation libs.animated.svg.view
+    implementation libs.androidsvg.aar
 
-    implementation 'com.github.bumptech.glide:glide:5.0.9'
+    implementation libs.glide
 
 
 //    // Room
@@ -466,13 +468,13 @@ dependencies {
 
    // implementation ("com.github.paramsen:noise:2.0.0")
     
-    implementation 'com.github.wendykierp:JTransforms:3.2'
+    implementation libs.jtransforms
 
     //implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-debug:1.6.0")
 
     //https://developer.android.com/studio/preview/features
-    debugImplementation "androidx.compose.runtime:runtime-tracing:1.11.4"
-    implementation("io.github.skeptick.libres:libres-compose:1.2.3")
+    debugImplementation libs.androidx.runtime.tracing
+    implementation(libs.libres.compose)
 }
 
 //https://github.com/Skeptick/libres
