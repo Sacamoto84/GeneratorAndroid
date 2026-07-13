@@ -1,0 +1,6 @@
+- `[x]` Update `compileSdk` and `targetSdk` to 37 in `:app/build.gradle`
+- `[x]` Upgrade AGP to `9.1.1` and Gradle to `9.6.1`
+- `[x]` Update Hilt plugin to `2.60.1`
+- `[x]` Add compatibility flags to `gradle.properties`
+- `[x]` Fix `libres` task dependency issues
+- `[x]` Run Gradle sync/build to verify fix
