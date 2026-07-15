@@ -125,18 +125,7 @@ void ProcessChunk1() {
     int iterationsPerChunk = 0;
 
     //В буфере нет нужного количества данных
-    if (ringBufferFft.size() < (LENPOINT * 2)) {
-        //LOGE("!!! ProcessChunk1() ringBufferFft.size() < LENPOINT * 2");
-        return;
-    }
-
-    while (ringBufferFft.size() >= (LENPOINT * 2)) {
-
-        ringBufferFft.peek(buf, LENPOINT * 2);
-
-        if (!ringBufferFft.gotoNext(LENPOINT / 16)) {
-            break;
-        }
+    while (ringBufferFft.peekAndAdvance(buf, LENPOINT * 2, LENPOINT / 16)) {
 
         for (int i = 0; i < LENPOINT; i++) {
             bufL[i] = buf[2 * i] * 20;

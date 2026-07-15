@@ -29,11 +29,6 @@ object Spectrogram {
 
     external fun SetScaler(width: Int, min: Double, max: Double, bLogX: Boolean, bLogY: Boolean)
 
-
-
-
-
-
     external fun ResetScanline()
     external fun Init(bitmap: Bitmap?)
     external fun Lock(bitmap: Bitmap?): Int

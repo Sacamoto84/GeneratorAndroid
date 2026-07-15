@@ -8,6 +8,8 @@
 #include <jni.h>
 #include <cstring>
 #include <memory>
+#include <mutex>
+#include <stdexcept>
 
 // Определение класса FloatRingBufferFFT
 class FloatRingBufferFFT {
@@ -20,6 +22,7 @@ public:
 
     // Добавить массив float в буфер
     void add(const float* data, size_t data_size) {
+        std::lock_guard<std::mutex> lock(mutex);
         if (data_size > bufferSize) {
             throw std::overflow_error("Data size is larger than buffer capacity.");
         }
@@ -35,7 +38,8 @@ public:
 
     // Прочитать блок данных из буфера
     void read(float* dest, size_t block_size) {
-        if (block_size > bufferSize || block_size > size()) {
+        std::lock_guard<std::mutex> lock(mutex);
+        if (block_size > bufferSize || block_size > sizeUnlocked()) {
             throw std::underflow_error("Not enough data in the buffer.");
         }
 
@@ -48,8 +52,9 @@ public:
 
     // Прочитать блок данных из буфера не изменяя положения указателей
     bool peek(float* dest, size_t block_size) {
+        std::lock_guard<std::mutex> lock(mutex);
 
-        if (block_size > size()) {
+        if (block_size > sizeUnlocked()) {
             return false;
         }
 
@@ -70,7 +75,8 @@ public:
      * @return
      */
     bool gotoNext(int step){
-        if (step > size()) {
+        std::lock_guard<std::mutex> lock(mutex);
+        if (step > sizeUnlocked()) {
             return false;
         }
         head = (head + step) % bufferSize;
@@ -78,7 +84,31 @@ public:
     }
 
     // Получить текущее количество элементов в буфере
-   [[nodiscard]] size_t size() const {
+    [[nodiscard]] size_t size() const {
+        std::lock_guard<std::mutex> lock(mutex);
+        return sizeUnlocked();
+    }
+
+    // Keeps a complete FFT window stable while audio data is being appended.
+    bool peekAndAdvance(float* dest, size_t block_size, size_t step) {
+        std::lock_guard<std::mutex> lock(mutex);
+        if (block_size > sizeUnlocked() || step > sizeUnlocked()) {
+            return false;
+        }
+
+        size_t readHead = head;
+        for (size_t i = 0; i < block_size; ++i) {
+            dest[i] = buffer[readHead];
+            readHead = (readHead + 1) % bufferSize;
+        }
+
+        head = (head + step) % bufferSize;
+        is_full = false;
+        return true;
+    }
+
+private:
+    [[nodiscard]] size_t sizeUnlocked() const {
         if (is_full) {
             return bufferSize;
         } else if (tail >= head) {
@@ -94,6 +124,8 @@ private:
     size_t head;
     size_t tail;
     bool is_full;
+
+    mutable std::mutex mutex;
 
     std::unique_ptr<float[]> buffer;
 };

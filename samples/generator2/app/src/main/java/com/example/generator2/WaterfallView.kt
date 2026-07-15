@@ -13,9 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -25,19 +23,12 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun WaterfallComposeView() {
-    val context = LocalContext.current
-    val waterfallView = remember {
-        WaterfallView(context, null).apply {
-        }
-    }
     AndroidView(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
             .background(color = androidx.compose.ui.graphics.Color.Black),
-        factory = {
-            waterfallView
-        },
+        factory = { context -> WaterfallView(context, null) },
     )
 }
 

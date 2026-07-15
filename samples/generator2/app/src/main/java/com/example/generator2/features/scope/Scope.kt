@@ -58,6 +58,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.example.generator2.Spectrogram
 import com.example.generator2.R
 import com.example.generator2.features.opengl.MyGLSurfaceView
 import com.example.generator2.features.scope.opengl.render.GLShaderLissagu
@@ -180,7 +181,7 @@ class Scope {
                 val buf = channelAudioOut.receive()
 
                 //Передаем FFT порцию данных
-                //Spectrogram.sentToFloatRingBufferFFT(buf, buf.size, scope.audioSampleRate)
+                Spectrogram.sentToFloatRingBufferFFT(buf, buf.size, audioSampleRate)
 
                 NativeFloatDirectBuffer.add(buf, buf.size, compressorCount.floatValue.toInt())
 
