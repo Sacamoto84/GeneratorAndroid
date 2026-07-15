@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import timber.log.Timber
 import java.time.format.DateTimeFormatter
+import kotlin.math.pow
 
 
 @Composable
@@ -44,6 +45,8 @@ class WaterfallView(context: Context?, attrs: AttributeSet?) :
     private var mBitmap: Bitmap? = null
 
     private val mBarsHeight = 150
+    private val minFrequencyHz = 100
+    private val maxFrequencyHz = 10_000
 
     private var mLogX = false
     private var mLogY = true
@@ -94,7 +97,13 @@ class WaterfallView(context: Context?, attrs: AttributeSet?) :
     private fun updateScaler() {
         Timber.i("!!! WaterfallView updateScaler() start")
         if (mBitmap == null) return
-        Spectrogram.SetScaler(mBitmap!!.width, 100.0, (20000 / 2).toDouble(), mLogX, mLogY)
+        Spectrogram.SetScaler(
+            mBitmap!!.width,
+            minFrequencyHz.toDouble(),
+            maxFrequencyHz.toDouble(),
+            mLogX,
+            mLogY,
+        )
         Timber.i("!!! WaterfallView updateScaler() end")
     }
 
@@ -212,9 +221,14 @@ class WaterfallView(context: Context?, attrs: AttributeSet?) :
                 drawWaterfall(canvas, currentRow, mBarsHeight)
             }
             Spectrogram.Unlock(mBitmap)
+            drawFrequencyGrid(canvas)
 
         }
         canvas.restore()
+
+        if (mBitmap != null) {
+            drawFrequencyScale(canvas)
+        }
 
 //        run {
 //            val dp = Spectrogram.GetDroppedFrames()
@@ -429,6 +443,100 @@ class WaterfallView(context: Context?, attrs: AttributeSet?) :
             }
             d *= 10f
         }
+    }
+
+    private data class FrequencyTick(val frequencyHz: Float, val isMajor: Boolean)
+
+    private fun drawFrequencyGrid(canvas: Canvas) {
+        val scaleTop = mBarsHeight - 24f
+        for (tick in frequencyTicks()) {
+            val x = Spectrogram.FreqToX(tick.frequencyHz.toDouble())
+            if (x !in 0f..width.toFloat()) continue
+
+            gray.alpha = if (tick.isMajor) 160 else 72
+            canvas.drawLine(x, 0f, x, scaleTop, gray)
+        }
+        gray.alpha = 192
+    }
+
+    private fun drawFrequencyScale(canvas: Canvas) {
+        val scaleTop = mBarsHeight - 24f
+        var previousLabelRight = Float.NEGATIVE_INFINITY
+
+        canvas.drawRect(0f, scaleTop, width.toFloat(), mBarsHeight.toFloat(), black)
+        for (tick in frequencyTicks()) {
+            val x = viewport.toScreenSpace(Spectrogram.FreqToX(tick.frequencyHz.toDouble()))
+            if (x !in 0f..width.toFloat()) continue
+
+            gray.alpha = if (tick.isMajor) 192 else 96
+            val tickHeight = if (tick.isMajor) 7f else 4f
+            canvas.drawLine(x, scaleTop, x, scaleTop + tickHeight, gray)
+            if (!tick.isMajor) continue
+
+            val label = formatFrequency(tick.frequencyHz)
+            val labelWidth = white.measureText(label)
+            val labelLeft = (x - labelWidth / 2).coerceIn(0f, width - labelWidth)
+            if (labelLeft < previousLabelRight + 8f) continue
+
+            canvas.drawText(label, labelLeft, mBarsHeight - 5f, white)
+            previousLabelRight = labelLeft + labelWidth
+        }
+        gray.alpha = 192
+    }
+
+    private fun frequencyTicks(): List<FrequencyTick> {
+        val leftFrequency = Spectrogram.XToFreq(viewport.fromScreenSpace(0f).toDouble())
+        val rightFrequency = Spectrogram.XToFreq(viewport.fromScreenSpace(width.toFloat()).toDouble())
+        val visibleMin = minOf(leftFrequency, rightFrequency).coerceIn(minFrequencyHz.toFloat(), maxFrequencyHz.toFloat())
+        val visibleMax = maxOf(leftFrequency, rightFrequency).coerceIn(minFrequencyHz.toFloat(), maxFrequencyHz.toFloat())
+
+        return if (mLogX) logarithmicTicks(visibleMin, visibleMax)
+        else linearTicks(visibleMin, visibleMax)
+    }
+
+    private fun linearTicks(visibleMin: Float, visibleMax: Float): List<FrequencyTick> {
+        val targetMajorCount = (width / 90f).toInt().coerceAtLeast(2)
+        val majorStep = niceFrequencyStep((visibleMax - visibleMin) / targetMajorCount)
+        val minorStep = majorStep / 5f
+        val ticks = mutableListOf<FrequencyTick>()
+        var frequency = kotlin.math.ceil(visibleMin / minorStep) * minorStep
+        while (frequency <= visibleMax) {
+            val isMajor = kotlin.math.abs((frequency / majorStep) - kotlin.math.round(frequency / majorStep)) < 0.001f
+            ticks += FrequencyTick(frequency, isMajor)
+            frequency += minorStep
+        }
+        return ticks
+    }
+
+    private fun logarithmicTicks(visibleMin: Float, visibleMax: Float): List<FrequencyTick> {
+        val ticks = mutableListOf<FrequencyTick>()
+        var decade = 10f.pow(kotlin.math.floor(kotlin.math.log10(visibleMin.toDouble())).toInt())
+        while (decade <= visibleMax) {
+            for (multiplier in 1..9) {
+                val frequency = decade * multiplier
+                if (frequency in visibleMin..visibleMax) {
+                    ticks += FrequencyTick(frequency, multiplier == 1 || multiplier == 2 || multiplier == 5)
+                }
+            }
+            decade *= 10f
+        }
+        return ticks
+    }
+
+    private fun niceFrequencyStep(value: Float): Float {
+        val exponent = kotlin.math.floor(kotlin.math.log10(value.toDouble())).toInt()
+        val power = 10f.pow(exponent)
+        return when (value / power) {
+            in 0f..1f -> power
+            in 1f..2f -> 2f * power
+            in 2f..5f -> 5f * power
+            else -> 10f * power
+        }
+    }
+
+    private fun formatFrequency(frequencyHz: Float): String {
+        val frequency = frequencyHz.toInt()
+        return if (frequency >= 1_000 && frequency % 1_000 == 0) "${frequency / 1_000}k" else "$frequency"
     }
 
     private fun DrawLinearX(canvas: Canvas) {

@@ -35,6 +35,9 @@ public class Viewport {
 
     PointF getDistance(MotionEvent event)
     {
+        if (event.getPointerCount() < 2) {
+            return new PointF(0, 0);
+        }
         //distance
         float dx = event.getX(0)-event.getX(1);
         float dy = event.getY(0)-event.getY(1);
@@ -67,6 +70,7 @@ public class Viewport {
         switch (maskedAction) {
 
             case MotionEvent.ACTION_DOWN:
+                mActivePointers.clear();
 
             case MotionEvent.ACTION_POINTER_DOWN: {
                 // We have a new pointer. Lets add it to the list of pointers
@@ -77,7 +81,7 @@ public class Viewport {
 
                 mActivePointers.put(pointerId, f);
 
-                if (mActivePointers.size()==2) {
+                if (mActivePointers.size() == 2 && event.getPointerCount() >= 2) {
                     // average
                     PointF midPoint = new PointF();
 
@@ -99,7 +103,7 @@ public class Viewport {
 
             case MotionEvent.ACTION_MOVE: { // a pointer was moved
 
-                if (mActivePointers.size()==2)
+                if (mActivePointers.size() == 2 && event.getPointerCount() >= 2)
                 {
                     // scale factor
                     //
@@ -114,10 +118,9 @@ public class Viewport {
                         {
                             point.x = event.getX(i);
                             point.y = event.getY(i);
+                            midPoint.x += point.x / 2.0f;
+                            midPoint.y += point.y / 2.0f;
                         }
-
-                        midPoint.x += point.x / 2.0f;
-                        midPoint.y += point.y / 2.0f;
                     }
 
                     //-----------------------------

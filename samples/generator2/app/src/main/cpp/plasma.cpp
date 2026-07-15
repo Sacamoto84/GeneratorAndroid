@@ -28,6 +28,9 @@ myFFT *pProcessor = nullptr;
 
 ScaleBufferBase *pScale = nullptr;
 
+extern ScaleBufferBase *pScaleL;
+extern Context context1;
+
 BufferIODouble *m_pHoldedData = nullptr;
 
 
@@ -222,12 +225,18 @@ Java_com_example_generator2_Spectrogram_GetAverageCount(JNIEnv *env, jobject) {
 
 extern "C" JNIEXPORT float JNICALL
 Java_com_example_generator2_Spectrogram_FreqToX(JNIEnv *env, jobject, jdouble freq) {
-    return pScale->FreqToX(static_cast<float>(freq));
+    pthread_mutex_lock(&context1.scaleLock);
+    const float x = pScaleL == nullptr ? 0.0f : pScaleL->FreqToX(static_cast<float>(freq));
+    pthread_mutex_unlock(&context1.scaleLock);
+    return x;
 }
 
 extern "C" JNIEXPORT float JNICALL
 Java_com_example_generator2_Spectrogram_XToFreq(JNIEnv *env, jobject, jdouble x) {
-    return pScale->XtoFreq(static_cast<float>(x));
+    pthread_mutex_lock(&context1.scaleLock);
+    const float frequency = pScaleL == nullptr ? 0.0f : pScaleL->XtoFreq(static_cast<float>(x));
+    pthread_mutex_unlock(&context1.scaleLock);
+    return frequency;
 }
 
 
