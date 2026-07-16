@@ -2,22 +2,18 @@ package com.example.generator2.features.scope
 
 
 import android.graphics.Typeface
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material3.Surface
@@ -40,50 +36,41 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.example.generator2.Spectrogram
 import com.example.generator2.R
+import com.example.generator2.Spectrogram
 import com.example.generator2.features.opengl.MyGLSurfaceView
 import com.example.generator2.features.scope.opengl.render.GLShaderLissagu
 import com.example.generator2.features.scope.opengl.render.GLShaderOscill
 import com.example.generator2.features.scope.opengl.render.MyGLRendererLissagu
 import com.example.generator2.features.scope.opengl.render.MyGLRendererOscill
+import com.example.generator2.theme.Generator2Theme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-enum class OSCILLSYNC {
-    NONE, R, L
-}
-
-private val colorEnabled = Color.Black
-private val colorTextDisabled = Color.DarkGray
-private val m = Modifier
-    .height(32.dp)
-    .width(32.dp)
-    .border(1.dp, Color.Gray)
-    .background(Color.Black)
+enum class OSCILLSYNC {  NONE, R, L }
 
 class Scope {
 
@@ -95,8 +82,8 @@ class Scope {
     val isUse = MutableStateFlow(true)
 
     //Режимы отображения каналов на осцилографе
-    val isVisibleL = MutableStateFlow(true) //Отобразить Левый канал
-    val isVisibleR = MutableStateFlow(true) //Отобразить Правый канал
+    val isVisibleL = MutableStateFlow(true)  //Отобразить Левый канал
+    val isVisibleR = MutableStateFlow(true)  //Отобразить Правый канал
     val isOneTwo = MutableStateFlow(false)   //Комбинация двух каналов или раздельно
 
     val isPause = MutableStateFlow(false)
@@ -147,7 +134,7 @@ class Scope {
         compressorCount.floatValue = (compressorCount.floatValue / 2.0f).coerceAtLeast(1f)
     }
 
-    /** ## Выход аудиоданных -> compressor */
+    /** ## Выход аудиоданных -> dataRouter */
     val channelAudioOut = Channel<FloatArray>(capacity = 16, BufferOverflow.DROP_OLDEST)
 
 
@@ -160,8 +147,7 @@ class Scope {
 
     val enableLissagu = MutableStateFlow(true)
 
-    val deferredOscill =
-        Channel<Int>(capacity = 1, BufferOverflow.DROP_OLDEST) //CompletableDeferred<Long>()
+    val deferredOscill = Channel<Int>(capacity = 1, BufferOverflow.DROP_OLDEST) //CompletableDeferred<Long>()
     val deferredLissagu = Channel<Int>(capacity = 1, BufferOverflow.DROP_OLDEST)
 
     val oscillSync = mutableStateOf(OSCILLSYNC.L)
@@ -169,15 +155,14 @@ class Scope {
 
     init {
         println("!!! init Scope")
-        dataCompressor()
+        dataRouter()
     }
 
-
-    private fun dataCompressor() {
+    private fun dataRouter() {
 
         CoroutineScope(Dispatchers.IO).launch {
 
-            while (true) {
+            while (isActive) {
                 val buf = channelAudioOut.receive()
 
                 //Передаем FFT порцию данных
@@ -185,11 +170,10 @@ class Scope {
 
                 NativeFloatDirectBuffer.add(buf, buf.size, compressorCount.floatValue.toInt())
 
-                if (enableOscill.value && isPause.value)
-                    deferredOscill.send(0)
+                if (enableOscill.value && !isPause.value)  deferredOscill.send(0)
 
-                if (enableLissagu.value && isPause.value)
-                    deferredLissagu.send(0)
+                if (enableLissagu.value && !isPause.value) deferredLissagu.send(0)
+
             }
         }
     }
@@ -312,17 +296,13 @@ class Scope {
 
                         compressorCount.floatValue = when {
                             x < scopeW / 3 -> {
-                                isPause.value =
-                                    false; (compressorCount.floatValue * 2).coerceAtMost(
-                                    256f
-                                )
+                                //isPause.update { false }
+                                (compressorCount.floatValue * 2).coerceAtMost(256f)
                             }
 
                             x > scopeW * 2 / 3 -> {
-                                isPause.value =
-                                    false; (compressorCount.floatValue / 2).coerceAtLeast(
-                                    0.125f
-                                )
+                                //isPause.update { false }
+                                (compressorCount.floatValue / 2).coerceAtLeast(0.125f)
                             }
 
                             else -> compressorCount.floatValue
@@ -338,7 +318,6 @@ class Scope {
                 color = Color.LightGray,
                 fontSize = 12.sp
             )
-
 
         }
 
@@ -400,8 +379,7 @@ class Scope {
         )
 
     }
-
-
+    
     @Suppress("NonSkippableComposable")
     @Composable
     fun PanelButton() {
@@ -469,13 +447,13 @@ class Scope {
             }
 
 
-            if (isPause.collectAsState().value) {
-                Text(
-                    text = "Pause",
-                    color = Color.Red,
-                    fontSize = 24.sp
-                )
-            }
+//            if (isPause.collectAsState().value) {
+//                Text(
+//                    text = "Pause",
+//                    color = Color.Red,
+//                    fontSize = 24.sp
+//                )
+//            }
 
 
             Box(
@@ -686,6 +664,51 @@ class ScreenLifecycleObserver(
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume() {
         onResumeAction()
+    }
+}
+
+@Preview
+@Composable
+fun OscilloscopePreview() {
+    Generator2Theme {
+        val scope = remember { Scope() }
+        scope.Oscilloscope()
+    }
+}
+
+@Preview
+@Composable
+fun LissaguPreview() {
+    Generator2Theme {
+        val scope = remember { Scope() }
+        scope.Lissagu()
+    }
+}
+
+@Preview
+@Composable
+fun PanelButtonPreview() {
+    Generator2Theme {
+        val scope = remember { Scope() }
+        scope.PanelButton()
+    }
+}
+
+@Preview
+@Composable
+fun OscilloscopeControlPreview() {
+    Generator2Theme {
+        val scope = remember { Scope() }
+        scope.OscilloscopeControl()
+    }
+}
+
+@Preview
+@Composable
+fun OscilloscopeComposePreview() {
+    Generator2Theme {
+        val scope = remember { Scope() }
+        scope.OscilloscopeCompose()
     }
 }
 

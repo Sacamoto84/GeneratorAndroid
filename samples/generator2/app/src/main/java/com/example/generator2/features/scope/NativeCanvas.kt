@@ -10,9 +10,6 @@ class NativeCanvas {
         }
     }
 
-
-
-
     external fun jniCanvas(
         scope : Long,
         bigPointnL: FloatArray,
