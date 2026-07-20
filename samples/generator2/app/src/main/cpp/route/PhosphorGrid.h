@@ -64,8 +64,7 @@ public:
         half_.assign(cells_.size(), 0u);
         columnPosition_ = 0.0f;
         lastColumn_ = -1;
-        dirtyStart_ = 0;
-        dirtyCount_ = columns_;
+        dirtyRange_.store(packRange(0, columns_), std::memory_order_relaxed);
         hasPrevious_ = false;
         ready_ = true;
     }
@@ -83,6 +82,13 @@ public:
         // Считаем пакет до всех проверок: счётчик нужен и в режиме развёртки,
         // где этот метод сразу выходит.
         packetSerial_.fetch_add(1, std::memory_order_relaxed);
+
+        // Режим проверяем до мьютекса: в режиме развёртки его держит rebuild()
+        // из потока GL всю пересборку, и аудиопоток вставал бы там на
+        // миллисекунды впустую — работы для него всё равно нет.
+        if (!rollMode_.load(std::memory_order_relaxed)) {
+            return;
+        }
 
         std::unique_lock<std::mutex> lock(mutex_);
         if (!ready_ || !rollMode_) {
@@ -168,8 +174,7 @@ public:
             column += step;
         }
 
-        dirtyStart_ = 0;
-        dirtyCount_ = columns_;
+        dirtyRange_.store(packRange(0, columns_), std::memory_order_relaxed);
     }
 
     /**
@@ -177,11 +182,11 @@ public:
      * сбрасывает его. Диапазон кольцевой: может пересекать край сетки.
      */
     void takeDirtyRange(int *start, int *count) {
-        std::lock_guard<std::mutex> lock(mutex_);
-        *start = dirtyStart_;
-        *count = dirtyCount_;
-        dirtyStart_ = 0;
-        dirtyCount_ = 0;
+        // Без мьютекса: обмен атомарен, а ждать здесь аудиопоток нельзя.
+        const std::uint64_t range =
+                dirtyRange_.exchange(0, std::memory_order_relaxed);
+        *start = rangeStart(range);
+        *count = rangeCount(range);
     }
 
     /**
@@ -194,8 +199,7 @@ public:
         if (!ready_) {
             return;
         }
-        dirtyStart_ = 0;
-        dirtyCount_ = columns_;
+        dirtyRange_.store(packRange(0, columns_), std::memory_order_relaxed);
     }
 
     /** Смещение чтения текстуры, чтобы новейший столбец был у правого края. */
@@ -273,7 +277,9 @@ private:
     std::vector<std::uint16_t> half_;
     int columns_ = 0;
     int layout_ = 0;
-    bool rollMode_ = true;
+    // Атомарный: appendFrames() проверяет режим до взятия мьютекса, иначе в
+    // режиме развёртки аудиопоток вставал бы на всё время rebuild().
+    std::atomic<bool> rollMode_{true};
     bool ready_ = false;
     std::size_t framesInWindow_ = 0;
     float columnsPerFrame_ = 0.0f;
@@ -281,8 +287,25 @@ private:
     // Атомарные: их читает поток GL без мьютекса.
     std::atomic<int> lastColumn_{-1};
     std::atomic<unsigned> packetSerial_{0};
-    int dirtyStart_ = 0;
-    int dirtyCount_ = 0;
+    // Грязный диапазон живёт в одном атомарном слове, а не под мьютексом:
+    // поток GL забирает его на каждом кадре, и ждать там аудиопоток нельзя.
+    // Тот может быть вытеснен планировщиком прямо внутри критической секции,
+    // и тогда кадр стоит миллисекундами — наблюдали 7.4 мс.
+    // Старшие 32 бита — начало диапазона, младшие — количество столбцов.
+    std::atomic<std::uint64_t> dirtyRange_{0};
+
+    static std::uint64_t packRange(int start, int count) {
+        return (static_cast<std::uint64_t>(static_cast<std::uint32_t>(start)) << 32) |
+               static_cast<std::uint32_t>(count);
+    }
+
+    static int rangeStart(std::uint64_t range) {
+        return static_cast<int>(static_cast<std::uint32_t>(range >> 32));
+    }
+
+    static int rangeCount(std::uint64_t range) {
+        return static_cast<int>(static_cast<std::uint32_t>(range));
+    }
     bool hasPrevious_ = false;
     float previous_[2] = {0.0f, 0.0f};
 
@@ -405,25 +428,34 @@ private:
     }
 
     void markDirty(int column) {
-        if (dirtyCount_ == 0) {
-            dirtyStart_ = column;
-            dirtyCount_ = 1;
-            return;
-        }
-        if (dirtyCount_ >= columns_) {
-            dirtyStart_ = 0;
-            dirtyCount_ = columns_;
-            return;
-        }
+        std::uint64_t expected = dirtyRange_.load(std::memory_order_relaxed);
+        std::uint64_t desired;
 
-        const int offset = (column - dirtyStart_ + columns_) % columns_;
-        if (offset >= dirtyCount_) {
-            dirtyCount_ = offset + 1;
-        }
-        if (dirtyCount_ > columns_) {
-            dirtyStart_ = 0;
-            dirtyCount_ = columns_;
-        }
+        // Цикл CAS: поток GL может забрать диапазон между чтением и записью.
+        do {
+            int start = rangeStart(expected);
+            int count = rangeCount(expected);
+
+            if (count == 0) {
+                start = column;
+                count = 1;
+            } else if (count >= columns_) {
+                start = 0;
+                count = columns_;
+            } else {
+                const int offset = (column - start + columns_) % columns_;
+                if (offset >= count) {
+                    count = offset + 1;
+                }
+                if (count > columns_) {
+                    start = 0;
+                    count = columns_;
+                }
+            }
+
+            desired = packRange(start, count);
+        } while (!dirtyRange_.compare_exchange_weak(expected, desired,
+                                                    std::memory_order_relaxed));
     }
 };
 
