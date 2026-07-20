@@ -69,6 +69,13 @@ private const val TONEMAP_GAIN = 2.0f
 private const val MAX_COLUMNS = 4096
 
 /**
+ * Запас столбцов в кольце сверх видимых. Голова записи и несколько столбцов
+ * за ней не показываются: тот, в который аудиопоток пишет прямо сейчас,
+ * накоплен лишь частично и выглядит тусклее соседей.
+ */
+private const val RING_MARGIN = 8
+
+/**
  * Временная диагностика микрофризов: раз в 60 кадров пишет в logcat, сколько
  * времени съели update() и заливка текстуры. Снять, когда причина найдена.
  */
@@ -117,6 +124,8 @@ class MyGLRendererOscill : GLSurfaceView.Renderer {
 
     private var gridHandle: Int = -1
     private var ringOffsetHandle: Int = -1
+    private var uvSpanHandle: Int = -1
+    private var texelTHandle: Int = -1
     private var gainHandle: Int = -1
     private var visibilityHandle: Int = -1
 
@@ -183,6 +192,8 @@ precision mediump float;
 
 uniform sampler2D grid;
 uniform float ringOffset;
+uniform float uvSpan;
+uniform float texelT;
 uniform float gain;
 uniform vec2 visibility;
 
@@ -192,7 +203,12 @@ out vec4 fragColor;
 void main() {
     // Текстура развёрнута под column-major память сетки: по X идут бины,
     // по Y — столбцы. Поэтому оси меняются местами.
-    vec2 energy = texture(grid, vec2(uv.y, fract(uv.x + ringOffset))).rg;
+    //
+    // Отступ в полтексела с каждого края обязателен: в кольце самый свежий
+    // столбец и самый старый лежат рядом, и без отступа линейная фильтрация
+    // на краю смешивает их между собой.
+    float t = fract(ringOffset + texelT * 0.5 + uv.x * (uvSpan - texelT));
+    vec2 energy = texture(grid, vec2(uv.y, t)).rg;
 
     // Мягкое насыщение: ядро луча яркое, ореол остаётся плавным.
     float first = 1.0 - exp(-energy.r * gain);
@@ -221,6 +237,8 @@ void main() {
 
         gridHandle = glGetUniformLocation(program, "grid")
         ringOffsetHandle = glGetUniformLocation(program, "ringOffset")
+        uvSpanHandle = glGetUniformLocation(program, "uvSpan")
+        texelTHandle = glGetUniformLocation(program, "texelT")
         gainHandle = glGetUniformLocation(program, "gain")
         visibilityHandle = glGetUniformLocation(program, "visibility")
 
@@ -238,12 +256,12 @@ void main() {
     }
 
     /**
-     * Ширина сетки: столбец на пиксель экрана. Не может превышать ни лимит
-     * GL, ни лимит аккумулятора.
+     * Размер кольца: столбец на пиксель экрана плюс запас, который остаётся
+     * за кадром. Не может превышать ни лимит GL, ни лимит аккумулятора.
      */
     private fun columnsFor(surfaceWidth: Int): Int {
         val limit = if (maxTextureSize > 0) maxTextureSize else MAX_COLUMNS
-        return maxOf(1, minOf(surfaceWidth, limit, MAX_COLUMNS))
+        return maxOf(RING_MARGIN + 1, minOf(surfaceWidth + RING_MARGIN, limit, MAX_COLUMNS))
     }
 
     override fun onDrawFrame(gl: GL10?) {
@@ -374,6 +392,11 @@ void main() {
         glBindTexture(GL_TEXTURE_2D, texture)
         glUniform1i(gridHandle, 0)
         glUniform1f(ringOffsetHandle, ringOffset)
+        // Видимое окно уже кольца на RING_MARGIN столбцов: голова записи и
+        // её ближайшие соседи остаются за кадром.
+        val ringColumns = textureColumns.toFloat()
+        glUniform1f(uvSpanHandle, (textureColumns - RING_MARGIN) / ringColumns)
+        glUniform1f(texelTHandle, 1.0f / ringColumns)
         // Энергия столбца нормирована к единице, значит на один бин
         // приходится порядка 1/BINS. Приводим усиление к этому масштабу,
         // иначе константа теряет смысл при смене числа бинов.
