@@ -236,7 +236,7 @@ class Scope {
 
         LaunchedEffect(key1 = true) {
             withContext(Dispatchers.IO) {
-                while (true) {
+                while (isActive) {
                     //delay(1)
                     deferredOscill.receive()//.await()//channelDataStreamOutCompressorIndex.receive()
                     shaderRenderer.updateVerticesDirect()

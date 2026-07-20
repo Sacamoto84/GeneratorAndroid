@@ -264,7 +264,7 @@ void main() {
     fun updateVerticesDirect() {
 
         vertexBuffer = NativeFloatDirectBuffer.getByteBuffer(0)
-            //.order(ByteOrder.nativeOrder())
+            .order(ByteOrder.nativeOrder())
             .asFloatBuffer()
 
         vertexBuffer.position(0)

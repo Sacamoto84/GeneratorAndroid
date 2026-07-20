@@ -1,116 +1,131 @@
 //
-// Created by user on 07.07.2024.
+// Создано пользователем 07.07.2024.
 //
 
-#ifndef GENERATOR2_FLOATDIRECTBUFFER_H
-#define GENERATOR2_FLOATDIRECTBUFFER_H
+#ifndef GENERATOR2_AUDIOHISTORYBUFFER_H
+#define GENERATOR2_AUDIOHISTORYBUFFER_H
 
-#include <jni.h>
-#include <iostream>
-#include <cstring>
 #include <android/log.h>
+#include <cstddef>
+#include <cstring>
+#include <jni.h>
 
-#define MODULE_NAME "FLOAT_DIRECT_BUFFER"
+#define MODULE_NAME "AUDIO_HISTORY_BUFFER"
 #define LOGD(...) \
   __android_log_print(ANDROID_LOG_DEBUG, MODULE_NAME, __VA_ARGS__)
 #define LOGE(...) \
   __android_log_print(ANDROID_LOG_ERROR, MODULE_NAME, __VA_ARGS__)
 
-#define BUFFER_SIZE 3000000
-#define THRESHOLD   2000000
-
-class FloatDirectBuffer {
+class AudioHistoryBuffer {
 public:
-    float bigBuffer[BUFFER_SIZE];
+    static constexpr std::size_t kCapacity = 3'000'000; // Около 12 МБ.
+    static constexpr jint kMaxItemCount = 256;
+
+    float bigBuffer[kCapacity];
 
     /**
-     * Сброс поинтеров
-     * @param _itemSize  размер одного пакета 1152*2
-     * @param _itemCount текущий делитель 1..256
+     * Настраивает отображаемое окно истории и очищает предыдущие данные.
+     * @param _itemSize количество float-значений в одном аудиопакете.
+     * @param _itemCount число пакетов в отображаемом окне, 1..256.
      */
-    void clear(int _itemSize, int _itemCount) {
-        LOGD("!!! clear()");
-        // Заполняем массив нулями
-        memset(bigBuffer, 0, BUFFER_SIZE * sizeof(float));
+    bool clear(jint _itemSize, jint _itemCount) {
+        if (!isValidConfiguration(_itemSize, _itemCount)) {
+            return false;
+        }
 
+        itemSize = static_cast<std::size_t>(_itemSize);
+        itemCount = static_cast<std::size_t>(_itemCount);
+        std::memset(bigBuffer, 0, kCapacity * sizeof(float));
         wP = window();
-        wPMirror = 0;
-
-        itemSize = _itemSize;
-        itemCount = _itemCount;
+        LOGD("clear(): itemSize=%d, itemCount=%d", _itemSize, _itemCount);
+        return true;
     }
 
+    bool add(const jfloat *data, jint len, jint _itemCount) {
+        if (data == nullptr) {
+            LOGE("add(): data is null");
+            return false;
+        }
+        if (!isValidConfiguration(len, _itemCount)) {
+            return false;
+        }
 
-    void add(jfloat *data, jint len, jint _itemCount) {
-
-        //LOGD("!!! add len:%i count:%i wP:%i", len, _itemCount, wP);
-
-        //Изменился размер 1..256
-        if ((itemCount != _itemCount) || (itemSize != len)) {
-            //LOGD("!!! add mod:%i", wP % itemSize);
-            itemCount = _itemCount;
-            itemSize = len;
-            clear(len, _itemCount);
-            memcpy(bigBuffer + wP, data, len * sizeof(float));
-            wP += len;
-        } else {
-            //LOGD("!!! add mod:%i", wP % itemSize);
-            memcpy(bigBuffer + wP, data, len * sizeof(float));
-            wP += len;
-            //Делаем зеркало
-            if (wP >= THRESHOLD) {
-                memcpy(bigBuffer + wPMirror, data, len * sizeof(float));
-                wPMirror += len;
-
-                if (wP >= THRESHOLD + window()) {
-                    wP = window();
-                    wPMirror = 0;
-                    LOGD("!!! reset");
-                }
+        const auto incomingLength = static_cast<std::size_t>(len);
+        if (itemSize != incomingLength ||
+            itemCount != static_cast<std::size_t>(_itemCount)) {
+            if (!clear(len, _itemCount)) {
+                return false;
             }
         }
+
+        // Хвост, который возвращает read(), должен быть одним непрерывным участком памяти.
+        // Перед концом массива переносим последнее окно в его начало.
+        if (wP > kCapacity - incomingLength) {
+            const auto currentWindow = window();
+            std::memmove(bigBuffer, bigBuffer + (wP - currentWindow),
+                         currentWindow * sizeof(float));
+            wP = currentWindow;
+            LOGD("relocated history window");
+        }
+
+        std::memcpy(bigBuffer + wP, data, incomingLength * sizeof(float));
+        wP += incomingLength;
+        return true;
     }
 
     float *read() {
-        //LOGD("!!! read");
-        int rP = wP - window();
-        //auto mod = rP % itemSize;
-        //LOGD("!!! read rP:%i, mod: %i", rP, mod);
-        if (rP < 0) {
-            rP = 0;
-            LOGD("!!! read rP<0");
+        const auto currentWindow = window();
+        if (currentWindow == 0 || wP < currentWindow) {
+            LOGE("read(): buffer is not configured");
+            return nullptr;
         }
-        float *p = &bigBuffer[0] + rP;
-        return p;
+        return bigBuffer + (wP - currentWindow);
     }
 
-    float *readSmall(int len) {
-        //LOGD("!!! read");
-        int rP = wP - len;
-        //auto mod = rP % itemSize;
-        //LOGD("!!! read rP:%i, mod: %i", rP, mod);
-        if (rP < 0) {
-            rP = 0;
-            LOGD("!!! readSmall rP<0");
+    float *readSmall(jint len) {
+        if (len <= 0 || static_cast<std::size_t>(len) > kCapacity ||
+            wP < static_cast<std::size_t>(len)) {
+            LOGE("readSmall(): invalid len=%d", len);
+            return nullptr;
         }
-        float *p = &bigBuffer[0] + rP;
-        return p;
+        return bigBuffer + (wP - static_cast<std::size_t>(len));
     }
 
-
-
-    int window() {
+    std::size_t window() const {
         return itemSize * itemCount;
     }
 
 private:
+    bool isValidConfiguration(jint _itemSize, jint _itemCount) const {
+        if (_itemSize <= 0) {
+            LOGE("Invalid item size: %d", _itemSize);
+            return false;
+        }
+        if (_itemCount <= 0 || _itemCount > kMaxItemCount) {
+            LOGE("Invalid item count: %d (expected 1..%d)",
+                 _itemCount, kMaxItemCount);
+            return false;
+        }
 
-    int wP = 524288;
-    int wPMirror = 0;
+        const auto newItemSize = static_cast<std::size_t>(_itemSize);
+        const auto newItemCount = static_cast<std::size_t>(_itemCount);
+        if (newItemSize > kCapacity / newItemCount) {
+            LOGE("Window exceeds buffer capacity");
+            return false;
+        }
 
-    int itemSize = 0;  //Размер одного итема 1152*2, 2048, получаем в блоке add
-    int itemCount = 0; //Количество итемов, 1..256
+        const auto newWindow = newItemSize * newItemCount;
+        if (newWindow > kCapacity - newItemSize) {
+            LOGE("Window and packet exceed buffer capacity: %zu + %zu > %zu",
+                 newWindow, newItemSize, kCapacity);
+            return false;
+        }
+        return true;
+    }
 
+    std::size_t wP = 0; // Текущая позиция записи.
+    std::size_t itemSize = 0;
+    std::size_t itemCount = 0;
 };
 
-#endif //GENERATOR2_FLOATDIRECTBUFFER_H
+#endif // GENERATOR2_AUDIOHISTORYBUFFER_H
