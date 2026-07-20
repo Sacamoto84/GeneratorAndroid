@@ -132,6 +132,8 @@ class MyGLRendererOscill : GLSurfaceView.Renderer {
     private var diagUploadNs = 0L
     private var diagColumns = 0L
     private var diagWorstNs = 0L
+    private var diagWorstUpdateNs = 0L
+    private var diagWorstUploadNs = 0L
     private var diagPrevEndNs = 0L
     private var diagWorstGapNs = 0L
 
@@ -365,6 +367,10 @@ void main() {
         diagUploadNs += endNs - updatedNs
         diagColumns += columns.toLong()
         diagWorstNs = maxOf(diagWorstNs, endNs - startNs)
+        // Выброс редкий, поэтому важно знать не сумму, а кто именно выбросил:
+        // ожидание мьютекса в update() или синхронизация с GPU в заливке.
+        diagWorstUpdateNs = maxOf(diagWorstUpdateNs, updatedNs - startNs)
+        diagWorstUploadNs = maxOf(diagWorstUploadNs, endNs - updatedNs)
         if (diagPrevEndNs != 0L) {
             diagWorstGapNs = maxOf(diagWorstGapNs, startNs - diagPrevEndNs)
         }
@@ -379,7 +385,8 @@ void main() {
             "update=${diagUpdateNs / diagFrames / 1000}us" +
                 " upload=${diagUploadNs / diagFrames / 1000}us" +
                 " cols=${diagColumns / diagFrames}" +
-                " worst=${diagWorstNs / 1000}us" +
+                " worstUpd=${diagWorstUpdateNs / 1000}us" +
+                " worstUpl=${diagWorstUploadNs / 1000}us" +
                 " gapMax=${diagWorstGapNs / 1000}us"
         )
 
@@ -388,6 +395,8 @@ void main() {
         diagUploadNs = 0
         diagColumns = 0
         diagWorstNs = 0
+        diagWorstUpdateNs = 0
+        diagWorstUploadNs = 0
         diagWorstGapNs = 0
     }
 
