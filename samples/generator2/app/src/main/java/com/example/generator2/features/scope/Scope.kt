@@ -248,6 +248,10 @@ class Scope {
             }
         }
 
+        // Рендер идёт непрерывно по vsync, поэтому паузу нельзя больше
+        // держать на том, что requestRender() не зовут.
+        shaderRenderer.isPaused = isPause.collectAsState().value
+
         val lifecycle = LocalLifecycleOwner.current.lifecycle
 
         DisposableEffect(Unit) {

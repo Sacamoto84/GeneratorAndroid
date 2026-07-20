@@ -94,6 +94,16 @@ class MyGLRendererOscill : GLSurfaceView.Renderer {
 
     var compressorCount: Float = 0f
 
+    /**
+     * Пауза. Аккумулятор продолжает наполняться из аудиопотока, поэтому на
+     * паузе нельзя ни забирать грязный диапазон, ни двигать кольцо — иначе
+     * застывший кадр поедет вперёд по несвежей текстуре.
+     */
+    @Volatile
+    var isPaused: Boolean = false
+
+    private var frozenRingOffset: Float = 0f
+
     val bools = intArrayOf(0, 1, 1) //oneTwo 0-one 1-two, L 1-true, R
 
     private var diagFrames = 0
@@ -193,6 +203,11 @@ void main() {
             return
         }
 
+        if (isPaused) {
+            drawGrid(frozenRingOffset)
+            return
+        }
+
         val rollMode = compressorCount >= ROLL_THRESHOLD
         val layout = bools[0]
         val columns = columnsFor(width)
@@ -210,7 +225,13 @@ void main() {
 
         val startNs = if (DIAG) System.nanoTime() else 0L
 
-        val range = NativePhosphor.update() ?: return
+        val range = NativePhosphor.update()
+        if (range == null) {
+            // Рисуем всё равно: режим непрерывный, и молчаливый выход подменил
+            // бы буфер неотрисованным содержимым.
+            drawGrid(frozenRingOffset)
+            return
+        }
 
         val updatedNs = if (DIAG) System.nanoTime() else 0L
 
@@ -220,6 +241,12 @@ void main() {
             recordDiagnostics(startNs, updatedNs, range[1])
         }
 
+        frozenRingOffset = NativePhosphor.ringOffset()
+        drawGrid(frozenRingOffset)
+    }
+
+    /** Выводит сетку на экран с заданным смещением кольца. */
+    private fun drawGrid(ringOffset: Float) {
         glClear(GL_COLOR_BUFFER_BIT)
 
         // До первой заливки содержимое текстуры не определено — показываем
@@ -233,7 +260,7 @@ void main() {
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, texture)
         glUniform1i(gridHandle, 0)
-        glUniform1f(ringOffsetHandle, NativePhosphor.ringOffset())
+        glUniform1f(ringOffsetHandle, ringOffset)
         // Энергия столбца нормирована к единице, значит на один бин
         // приходится порядка 1/BINS. Приводим усиление к этому масштабу,
         // иначе константа теряет смысл при смене числа бинов.

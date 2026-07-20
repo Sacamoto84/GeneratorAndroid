@@ -54,8 +54,10 @@ fun GLShaderOscill(
     AndroidView(modifier = modifier,
         factory = { MyGLSurfaceView(it) }) { glSurfaceView ->
         view = glSurfaceView
-        glSurfaceView.debugFlags = GLSurfaceView.DEBUG_CHECK_GL_ERROR or GLSurfaceView.DEBUG_LOG_GL_CALLS
-        glSurfaceView.setShaderRenderer( renderer )
+        // Лента должна ехать по вертикальной синхронизации, а не по приходу
+        // аудиопакетов: те дают 38 кадров в секунду на 60-герцовом экране,
+        // и картинка дёргается.
+        glSurfaceView.setShaderRenderer(renderer, GLSurfaceView.RENDERMODE_CONTINUOUSLY)
         update.invoke(view)
     }
 
