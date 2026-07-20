@@ -169,6 +169,20 @@ public:
         dirtyCount_ = 0;
     }
 
+    /**
+     * Помечает всю сетку грязной. Нужно, когда GL-сторона пересоздала
+     * текстуру: её содержимое потеряно, а конфигурация могла не измениться,
+     * и configure() тогда ничего не пометит.
+     */
+    void markAllDirty() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (!ready_) {
+            return;
+        }
+        dirtyStart_ = 0;
+        dirtyCount_ = columns_;
+    }
+
     /** Смещение чтения текстуры, чтобы новейший столбец был у правого края. */
     float ringOffset() const {
         std::lock_guard<std::mutex> lock(mutex_);

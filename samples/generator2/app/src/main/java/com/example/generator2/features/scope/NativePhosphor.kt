@@ -19,8 +19,18 @@ object NativePhosphor {
      */
     external fun configure(columns: Int, layout: Int, rollMode: Boolean)
 
-    /** Возвращает [начальный столбец, количество] изменившихся столбцов. */
-    external fun update(): IntArray
+    /**
+     * Возвращает [начальный столбец, количество] изменившихся столбцов,
+     * либо null, если выделить массив не удалось.
+     */
+    external fun update(): IntArray?
+
+    /**
+     * Помечает всю сетку грязной, чтобы следующий update() вернул её целиком.
+     * Вызывать после пересоздания текстуры: её содержимое потеряно, а
+     * конфигурация при этом могла остаться прежней.
+     */
+    external fun invalidate()
 
     /**
      * Direct-буфер всей сетки: columns * BINS * 2 float.

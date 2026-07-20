@@ -6,6 +6,7 @@ import android.opengl.GLES30.GL_COMPILE_STATUS
 import android.opengl.GLES30.GL_FLOAT
 import android.opengl.GLES30.GL_FRAGMENT_SHADER
 import android.opengl.GLES30.GL_LINEAR
+import android.opengl.GLES30.GL_MAX_TEXTURE_SIZE
 import android.opengl.GLES30.GL_RG
 import android.opengl.GLES30.GL_RG16F
 import android.opengl.GLES30.GL_REPEAT
@@ -30,6 +31,7 @@ import android.opengl.GLES30.glDeleteShader
 import android.opengl.GLES30.glDeleteTextures
 import android.opengl.GLES30.glDrawArrays
 import android.opengl.GLES30.glGenTextures
+import android.opengl.GLES30.glGetIntegerv
 import android.opengl.GLES30.glGetShaderInfoLog
 import android.opengl.GLES30.glGetShaderiv
 import android.opengl.GLES30.glGetUniformLocation
@@ -45,7 +47,6 @@ import android.opengl.GLES30.glUseProgram
 import android.opengl.GLES30.glViewport
 import android.opengl.GLSurfaceView
 import com.example.generator2.features.scope.NativePhosphor
-import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.microedition.khronos.egl.EGLConfig
@@ -57,16 +58,25 @@ private const val ROLL_THRESHOLD = 32f
 /** Подобранное усиление тонмаппинга: ядро луча выходит на полную яркость. */
 private const val TONEMAP_GAIN = 6.0f
 
+/** Верхняя граница ширины сетки, совпадает с PhosphorGrid::kMaxColumns. */
+private const val MAX_COLUMNS = 4096
+
 class MyGLRendererOscill : GLSurfaceView.Renderer {
 
     private var program: Int = 0
     private var vertexShader: Int = 0
     private var fragmentShader: Int = 0
 
+    private var gridHandle: Int = -1
+    private var ringOffsetHandle: Int = -1
+    private var gainHandle: Int = -1
+    private var visibilityHandle: Int = -1
+
     private var texture: Int = 0
     private var textureColumns: Int = 0
+    private var textureHasData: Boolean = false
+    private var maxTextureSize: Int = 0
 
-    private var gridBuffer: ByteBuffer? = null
     private var configuredColumns: Int = 0
     private var configuredLayout: Int = -1
     private var configuredRoll: Boolean? = null
@@ -103,7 +113,9 @@ in vec2 uv;
 out vec4 fragColor;
 
 void main() {
-    vec2 energy = texture(grid, vec2(fract(uv.x + ringOffset), uv.y)).rg;
+    // Текстура развёрнута под column-major память сетки: по X идут бины,
+    // по Y — столбцы. Поэтому оси меняются местами.
+    vec2 energy = texture(grid, vec2(uv.y, fract(uv.x + ringOffset))).rg;
 
     // Мягкое насыщение: ядро луча яркое, ореол остаётся плавным.
     float first = 1.0 - exp(-energy.r * gain);
@@ -130,11 +142,28 @@ void main() {
 
         glUseProgram(program)
 
-        // Текстура пересоздаётся при первом кадре с известной шириной.
+        gridHandle = glGetUniformLocation(program, "grid")
+        ringOffsetHandle = glGetUniformLocation(program, "ringOffset")
+        gainHandle = glGetUniformLocation(program, "gain")
+        visibilityHandle = glGetUniformLocation(program, "visibility")
+
+        val limit = IntArray(1)
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, limit, 0)
+        maxTextureSize = limit[0]
+
+        // Контекст новый: прежние объекты умерли вместе со старым.
+        texture = 0
         textureColumns = 0
+        textureHasData = false
         configuredColumns = 0
         configuredLayout = -1
         configuredRoll = null
+    }
+
+    /** Ширина сетки не может превышать ни лимит GL, ни лимит аккумулятора. */
+    private fun columnsFor(surfaceWidth: Int): Int {
+        val limit = if (maxTextureSize > 0) maxTextureSize else MAX_COLUMNS
+        return minOf(surfaceWidth, limit, MAX_COLUMNS)
     }
 
     override fun onDrawFrame(gl: GL10?) {
@@ -144,32 +173,39 @@ void main() {
 
         val rollMode = compressorCount >= ROLL_THRESHOLD
         val layout = bools[0]
+        val columns = columnsFor(width)
 
-        if (configuredColumns != width ||
+        if (configuredColumns != columns ||
             configuredLayout != layout ||
             configuredRoll != rollMode
         ) {
-            NativePhosphor.configure(width, layout, rollMode)
-            configuredColumns = width
+            NativePhosphor.configure(columns, layout, rollMode)
+            configuredColumns = columns
             configuredLayout = layout
             configuredRoll = rollMode
-            gridBuffer = null
-            ensureTexture(width)
+            ensureTexture(columns)
         }
 
-        val range = NativePhosphor.update()
+        val range = NativePhosphor.update() ?: return
         uploadColumns(range[0], range[1])
 
         glClear(GL_COLOR_BUFFER_BIT)
+
+        // До первой заливки содержимое текстуры не определено — показываем
+        // только фон, иначе на экран попадёт мусор из видеопамяти.
+        if (!textureHasData) {
+            return
+        }
+
         glUseProgram(program)
 
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, texture)
-        glUniform1i(glGetUniformLocation(program, "grid"), 0)
-        glUniform1f(glGetUniformLocation(program, "ringOffset"), NativePhosphor.ringOffset())
-        glUniform1f(glGetUniformLocation(program, "gain"), TONEMAP_GAIN)
+        glUniform1i(gridHandle, 0)
+        glUniform1f(ringOffsetHandle, NativePhosphor.ringOffset())
+        glUniform1f(gainHandle, TONEMAP_GAIN)
         glUniform2f(
-            glGetUniformLocation(program, "visibility"),
+            visibilityHandle,
             if (bools[2] == 1) 1.0f else 0.0f,
             if (bools[1] == 1) 1.0f else 0.0f
         )
@@ -191,14 +227,21 @@ void main() {
         texture = handles[0]
 
         glBindTexture(GL_TEXTURE_2D, texture)
-        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RG16F, columns, NativePhosphor.BINS)
+        // Развёрнуто под column-major память: X — бины, Y — столбцы.
+        // Тогда один столбец сетки это одна непрерывная строка текстуры.
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RG16F, NativePhosphor.BINS, columns)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        // По горизонтали кольцо, поэтому фильтрация должна заворачиваться.
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        // Кольцо идёт по Y, фильтрация должна заворачиваться именно там.
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
 
         textureColumns = columns
+        textureHasData = false
+
+        // Текстура новая и пустая, но configure() мог уйти в быстрый выход и
+        // ничего не пометить грязным. Просим сетку отдать себя целиком.
+        NativePhosphor.invalidate()
     }
 
     /** Заливает грязный кольцевой диапазон, разбивая его на куски по краю сетки. */
@@ -207,10 +250,10 @@ void main() {
             return
         }
 
-        val buffer = gridBuffer ?: NativePhosphor.gridBuffer()?.also {
-            it.order(ByteOrder.nativeOrder())
-            gridBuffer = it
-        } ?: return
+        // Буфер запрашивается заново каждый кадр: configure() перевыделяет
+        // нативную память, и сохранённая ссылка может протухнуть.
+        val buffer = NativePhosphor.gridBuffer() ?: return
+        buffer.order(ByteOrder.nativeOrder())
 
         glBindTexture(GL_TEXTURE_2D, texture)
 
@@ -223,14 +266,15 @@ void main() {
             buffer.position(column * columnBytes)
             glTexSubImage2D(
                 GL_TEXTURE_2D, 0,
-                column, 0,
-                chunk, NativePhosphor.BINS,
+                0, column,
+                NativePhosphor.BINS, chunk,
                 GL_RG, GL_FLOAT,
                 buffer.slice().order(ByteOrder.nativeOrder())
             )
             offset += chunk
         }
-        buffer.position(0)
+
+        textureHasData = true
     }
 
     var width: Int = 0
@@ -263,12 +307,12 @@ void main() {
             glDeleteTextures(1, intArrayOf(texture), 0)
             texture = 0
             textureColumns = 0
+            textureHasData = false
         }
         if (program != 0) {
             glDeleteProgram(program)
             program = 0
         }
-        gridBuffer = null
     }
 
     private val shouldPlay = AtomicBoolean(false)

@@ -54,9 +54,17 @@ Java_com_example_generator2_features_scope_NativePhosphor_update(
     ensureConfigured();
 
     if (phosphorGrid.isReady() && !phosphorGrid.isRollMode()) {
+        // Длина берётся один раз: аудиопоток может сменить геометрию между
+        // вызовами, и тогда указатель и длина разойдутся.
+        //
+        // Само содержимое окна аудиопоток может переписывать прямо во время
+        // чтения — у AudioHistoryBuffer нет блокировок. Гонка принята:
+        // массив фиксированного размера, выход за границы невозможен,
+        // худшее последствие — один порванный кадр.
+        const std::size_t frames = audioHistoryBuffer.window() / 2;
         const float *window = audioHistoryBuffer.read();
-        if (window != nullptr) {
-            phosphorGrid.rebuild(window, audioHistoryBuffer.window() / 2);
+        if (window != nullptr && frames > 0) {
+            phosphorGrid.rebuild(window, frames);
         }
     }
 
@@ -69,6 +77,13 @@ Java_com_example_generator2_features_scope_NativePhosphor_update(
     }
     env->SetIntArrayRegion(result, 0, 2, range);
     return result;
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_generator2_features_scope_NativePhosphor_invalidate(
+        JNIEnv * /* env */, jobject /* thiz */) {
+    phosphorGrid.markAllDirty();
 }
 
 extern "C"
