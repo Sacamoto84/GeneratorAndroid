@@ -106,6 +106,12 @@ public:
                 columnPosition_ -= static_cast<float>(columns_);
             }
         }
+
+        // Текущий столбец продолжит накапливать энергию в следующих пакетах,
+        // поэтому его нужно перезаливать в текстуру, пока он не завершён.
+        if (lastColumn_ >= 0) {
+            markDirty(lastColumn_);
+        }
     }
 
     /**
