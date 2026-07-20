@@ -6,6 +6,7 @@
 #define GENERATOR2_PHOSPHORGRID_H
 
 #include <algorithm>
+#include <atomic>
 #include <cmath>
 #include <cstddef>
 #include <mutex>
@@ -16,11 +17,6 @@ public:
     static constexpr int kBins = 512;
     static constexpr int kMaxColumns = 4096;
     static constexpr int kMaxSteps = 1024;
-
-    // Послесвечение в режиме развёртки: спад в e раз за 1/-ln(kDecay) кадров.
-    // 0.72f даёт около трёх кадров, вдвое короче прежних 0.85f.
-    // На яркость не влияет: rebuild() нормирует вклад на (1 - kDecay).
-    static constexpr float kDecay = 0.72f;
 
     // Столбец занимает kBins текселей по два float: канал 0 и канал 1.
     static constexpr std::size_t kColumnStride =
@@ -81,7 +77,7 @@ public:
             return;
         }
 
-        std::lock_guard<std::mutex> lock(mutex_);
+        std::unique_lock<std::mutex> lock(mutex_);
         if (!ready_ || !rollMode_) {
             return;
         }
@@ -93,6 +89,17 @@ public:
         for (std::size_t i = 0; i < frames; ++i) {
             const int column = static_cast<int>(columnPosition_);
             if (column != lastColumn_) {
+                // Растеризация пакета занимает заметное время, и держать
+                // мьютекс всю дорогу значит тормозить каждый кадр отрисовки.
+                // Граница столбца — место, где поток GL можно пустить вперёд.
+                lock.unlock();
+                lock.lock();
+                // Пока мьютекс был отпущен, configure() мог сменить геометрию.
+                // Тогда локальная позиция уже не относится к этой сетке —
+                // бросаем остаток пакета, следующий начнётся с чистого листа.
+                if (!ready_ || !rollMode_ || column >= columns_) {
+                    return;
+                }
                 advanceTo(column);
             }
 
@@ -137,15 +144,12 @@ public:
             return;
         }
 
-        for (float &cell : cells_) {
-            cell *= kDecay;
-        }
+        // Послесвечения в режиме развёртки нет: кадр собирается с нуля.
+        std::fill(cells_.begin(), cells_.end(), 0.0f);
 
         const float step = static_cast<float>(columns_) /
                            static_cast<float>(frames);
-        // Множитель (1 - kDecay) выравнивает установившуюся яркость
-        // с режимом roll, где затухания нет.
-        const float weight = step * (1.0f - kDecay);
+        const float weight = step;
 
         float column = 0.0f;
         for (std::size_t i = 1; i < frames; ++i) {
@@ -189,11 +193,14 @@ public:
 
     /** Смещение чтения текстуры, чтобы новейший столбец был у правого края. */
     float ringOffset() const {
-        std::lock_guard<std::mutex> lock(mutex_);
-        if (!rollMode_ || columns_ <= 0 || lastColumn_ < 0) {
+        // lastColumn_ атомарный, мьютекс здесь брать нельзя: аудиопоток
+        // держит его во время растеризации, и поток GL вставал бы в очередь
+        // на каждом кадре — именно это давало микрофризы.
+        const int last = lastColumn_.load(std::memory_order_relaxed);
+        if (!rollMode_ || columns_ <= 0 || last < 0) {
             return 0.0f;
         }
-        return static_cast<float>(lastColumn_ + 1) /
+        return static_cast<float>(last + 1) /
                static_cast<float>(columns_);
     }
 
@@ -227,7 +234,8 @@ private:
     std::size_t framesInWindow_ = 0;
     float columnsPerFrame_ = 0.0f;
     float columnPosition_ = 0.0f;
-    int lastColumn_ = -1;
+    // Атомарный: ringOffset() читает его из потока GL без мьютекса.
+    std::atomic<int> lastColumn_{-1};
     int dirtyStart_ = 0;
     int dirtyCount_ = 0;
     bool hasPrevious_ = false;

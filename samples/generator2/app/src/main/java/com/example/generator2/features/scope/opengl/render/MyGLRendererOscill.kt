@@ -165,10 +165,17 @@ void main() {
         configuredRoll = null
     }
 
-    /** Ширина сетки не может превышать ни лимит GL, ни лимит аккумулятора. */
-    private fun columnsFor(surfaceWidth: Int): Int {
+    /**
+     * Ширина сетки. В режиме ленты берём половину пикселей экрана: столбец
+     * растягивается на два, и след получается вдвое крупнее. Заодно вдвое
+     * меньше данных уходит в текстуру.
+     *
+     * Ширина не может превышать ни лимит GL, ни лимит аккумулятора.
+     */
+    private fun columnsFor(surfaceWidth: Int, rollMode: Boolean): Int {
         val limit = if (maxTextureSize > 0) maxTextureSize else MAX_COLUMNS
-        return minOf(surfaceWidth, limit, MAX_COLUMNS)
+        val wanted = if (rollMode) surfaceWidth / 2 else surfaceWidth
+        return maxOf(1, minOf(wanted, limit, MAX_COLUMNS))
     }
 
     override fun onDrawFrame(gl: GL10?) {
@@ -178,7 +185,7 @@ void main() {
 
         val rollMode = compressorCount >= ROLL_THRESHOLD
         val layout = bools[0]
-        val columns = columnsFor(width)
+        val columns = columnsFor(width, rollMode)
 
         if (configuredColumns != columns ||
             configuredLayout != layout ||
