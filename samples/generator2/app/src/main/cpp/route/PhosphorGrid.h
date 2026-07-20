@@ -20,6 +20,11 @@ public:
     static constexpr int kMaxColumns = 4096;
     static constexpr int kMaxSteps = 1024;
 
+    // На сколько частей дробится участок между отсчётами при ведении по
+    // кривой. Четырёх хватает: кубика через четыре отсчёта при десяти
+    // отсчётах на период отличается от синуса на доли бина.
+    static constexpr int kCurveSteps = 4;
+
     // Столбец занимает kBins текселей по два float: канал 0 и канал 1.
     static constexpr std::size_t kColumnStride =
             static_cast<std::size_t>(kBins) * 2;
@@ -65,7 +70,7 @@ public:
         columnPosition_ = 0.0f;
         lastColumn_ = -1;
         dirtyRange_.store(packRange(0, columns_), std::memory_order_relaxed);
-        hasPrevious_ = false;
+        historyCount_ = 0;
         ready_ = true;
     }
 
@@ -116,19 +121,27 @@ public:
                 advanceTo(column);
             }
 
-            const float current[2] = {interleaved[i * 2], interleaved[i * 2 + 1]};
-            if (hasPrevious_) {
+            // Окно из четырёх отсчётов: рисуем участок между вторым и третьим,
+            // крайние задают наклон кривой на его концах.
+            for (int channel = 0; channel < 2; ++channel) {
+                history_[0][channel] = history_[1][channel];
+                history_[1][channel] = history_[2][channel];
+                history_[2][channel] = history_[3][channel];
+                history_[3][channel] = interleaved[i * 2 + channel];
+            }
+            if (historyCount_ < 4) {
+                ++historyCount_;
+            }
+
+            if (historyCount_ == 4) {
                 for (int channel = 0; channel < 2; ++channel) {
-                    const float from = binOf(previous_[channel], channel);
-                    const float to = binOf(current[channel], channel);
-                    drawSegment(static_cast<float>(column), from,
-                                static_cast<float>(column), to,
-                                channel, weight);
+                    drawCurve(static_cast<float>(column),
+                              static_cast<float>(column),
+                              history_[0][channel], history_[1][channel],
+                              history_[2][channel], history_[3][channel],
+                              channel, weight);
                 }
             }
-            previous_[0] = current[0];
-            previous_[1] = current[1];
-            hasPrevious_ = true;
 
             columnPosition_ += columnsPerFrame_;
             while (columnPosition_ >= static_cast<float>(columns_)) {
@@ -166,10 +179,18 @@ public:
 
         float column = 0.0f;
         for (std::size_t i = 1; i < frames; ++i) {
+            // Соседи участка. На краях окна дублируем крайний отсчёт —
+            // наклон там всё равно неоткуда взять.
+            const std::size_t before = (i >= 2) ? i - 2 : 0;
+            const std::size_t after = (i + 1 < frames) ? i + 1 : frames - 1;
+
             for (int channel = 0; channel < 2; ++channel) {
-                const float from = binOf(interleaved[(i - 1) * 2 + channel], channel);
-                const float to = binOf(interleaved[i * 2 + channel], channel);
-                drawSegment(column, from, column + step, to, channel, weight);
+                drawCurve(column, column + step,
+                          interleaved[before * 2 + channel],
+                          interleaved[(i - 1) * 2 + channel],
+                          interleaved[i * 2 + channel],
+                          interleaved[after * 2 + channel],
+                          channel, weight);
             }
             column += step;
         }
@@ -306,8 +327,11 @@ private:
     static int rangeCount(std::uint64_t range) {
         return static_cast<int>(static_cast<std::uint32_t>(range));
     }
-    bool hasPrevious_ = false;
-    float previous_[2] = {0.0f, 0.0f};
+    // Скользящее окно из четырёх последних отсчётов по каналам. Рисуемый
+    // участок лежит между вторым и третьим, крайние задают наклон.
+    int historyCount_ = 0;
+    float history_[4][2] = {{0.0f, 0.0f}, {0.0f, 0.0f},
+                            {0.0f, 0.0f}, {0.0f, 0.0f}};
 
     /**
      * float32 в half-float. Значения сетки неотрицательные и невелики, но
@@ -375,6 +399,72 @@ private:
         float *base = cells_.data() +
                       static_cast<std::size_t>(column) * kColumnStride;
         std::fill(base, base + kColumnStride, 0.0f);
+    }
+
+    /**
+     * Сплайн Катмулла-Рома: значение сигнала между p1 и p2 при t от 0 до 1.
+     * p0 и p3 задают наклон на концах участка.
+     */
+    static float catmullRom(float p0, float p1, float p2, float p3, float t) {
+        const float t2 = t * t;
+        const float t3 = t2 * t;
+        return 0.5f * (2.0f * p1 +
+                       (-p0 + p2) * t +
+                       (2.0f * p0 - 5.0f * p1 + 4.0f * p2 - p3) * t2 +
+                       (-p0 + 3.0f * p1 - 3.0f * p2 + p3) * t3);
+    }
+
+    /**
+     * Растеризует путь луча между отсчётами p1 и p2, ведя его по кривой,
+     * а не по прямой.
+     *
+     * Прямая между отсчётами срезает вершины. При 10 отсчётах на период
+     * выборка попадает в фазы 0°, 36°, 72° и так далее, максимум приходится
+     * на sin 72° = 0.951, а хорда между соседними отсчётами опускает пик ещё
+     * ниже. Пока частота сигнала кратна частоте дискретизации, срез
+     * постоянен и не виден, но стоит ей уйти на пару герц, как набор фаз
+     * начинает медленно ползти и глубина среза гуляет — по краям экрана идёт
+     * волна. Кривая через четыре отсчёта восстанавливает вершину и волну
+     * убирает.
+     *
+     * Полная энергия участка равна weight независимо от числа дроблений.
+     */
+    void drawCurve(float columnA, float columnB, float p0, float p1, float p2,
+                   float p3, int channel, float weight) {
+        // Отклонение кривой от хорды задаётся второй разностью. Там, где
+        // сигнал почти прямой, дробить нечего: хорда и так точнее половины
+        // бина, а дробление стоило бы вчетверо дороже.
+        const float bend = std::max(std::fabs(p0 - 2.0f * p1 + p2),
+                                    std::fabs(p1 - 2.0f * p2 + p3));
+        const float deviationBins =
+                bend * 0.125f * static_cast<float>(kBins - 1) * 0.5f;
+
+        const float startBin = binOf(p1, channel);
+        if (deviationBins < 0.5f) {
+            drawSegment(columnA, startBin, columnB, binOf(p2, channel),
+                        channel, weight);
+            return;
+        }
+
+        const float share = weight / static_cast<float>(kCurveSteps);
+        const float columnStep =
+                (columnB - columnA) / static_cast<float>(kCurveSteps);
+
+        float fromColumn = columnA;
+        float fromBin = startBin;
+
+        for (int step = 1; step <= kCurveSteps; ++step) {
+            const float t =
+                    static_cast<float>(step) / static_cast<float>(kCurveSteps);
+            const float toColumn =
+                    columnA + columnStep * static_cast<float>(step);
+            const float toBin = binOf(catmullRom(p0, p1, p2, p3, t), channel);
+
+            drawSegment(fromColumn, fromBin, toColumn, toBin, channel, share);
+
+            fromColumn = toColumn;
+            fromBin = toBin;
+        }
     }
 
     /**
