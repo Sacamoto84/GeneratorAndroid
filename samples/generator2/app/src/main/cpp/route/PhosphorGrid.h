@@ -16,7 +16,11 @@ public:
     static constexpr int kBins = 512;
     static constexpr int kMaxColumns = 4096;
     static constexpr int kMaxSteps = 1024;
-    static constexpr float kDecay = 0.85f;
+
+    // Послесвечение в режиме развёртки: спад в e раз за 1/-ln(kDecay) кадров.
+    // 0.72f даёт около трёх кадров, вдвое короче прежних 0.85f.
+    // На яркость не влияет: rebuild() нормирует вклад на (1 - kDecay).
+    static constexpr float kDecay = 0.72f;
 
     // Столбец занимает kBins текселей по два float: канал 0 и канал 1.
     static constexpr std::size_t kColumnStride =

@@ -55,8 +55,13 @@ import javax.microedition.khronos.opengles.GL10
 /** Развёртки от этого значения и выше рисуются как бегущая лента. */
 private const val ROLL_THRESHOLD = 32f
 
-/** Подобранное усиление тонмаппинга: ядро луча выходит на полную яркость. */
-private const val TONEMAP_GAIN = 6.0f
+/**
+ * Яркость. Задаётся в единицах "след, размазанный ровно по всей высоте
+ * экрана": при 1.0 такой след выходит на 63% яркости, при 2.0 — на 86%.
+ * Плотные участки, вроде вершин синуса, уходят в насыщение раньше, редкие
+ * остаются тусклым ореолом — это и есть фосфор.
+ */
+private const val TONEMAP_GAIN = 2.0f
 
 /** Верхняя граница ширины сетки, совпадает с PhosphorGrid::kMaxColumns. */
 private const val MAX_COLUMNS = 4096
@@ -203,7 +208,10 @@ void main() {
         glBindTexture(GL_TEXTURE_2D, texture)
         glUniform1i(gridHandle, 0)
         glUniform1f(ringOffsetHandle, NativePhosphor.ringOffset())
-        glUniform1f(gainHandle, TONEMAP_GAIN)
+        // Энергия столбца нормирована к единице, значит на один бин
+        // приходится порядка 1/BINS. Приводим усиление к этому масштабу,
+        // иначе константа теряет смысл при смене числа бинов.
+        glUniform1f(gainHandle, TONEMAP_GAIN * NativePhosphor.BINS)
         glUniform2f(
             visibilityHandle,
             if (bools[2] == 1) 1.0f else 0.0f,
