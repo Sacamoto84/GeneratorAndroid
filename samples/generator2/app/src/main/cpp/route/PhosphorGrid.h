@@ -48,11 +48,18 @@ public:
             return;
         }
 
-        std::lock_guard<std::mutex> lock(mutex_);
+        // Сверяем параметры до мьютекса. Этот метод зовётся на каждом кадре,
+        // а меняется в нём почти никогда: брать замок ради ответа «ничего не
+        // изменилось» значит на каждом кадре ждать растеризацию аудиопотока,
+        // который вдобавок может быть вытеснен внутри критической секции.
+        // Читать поля отсюда безопасно — пишет их только configure(), то есть
+        // этот же поток GL.
         if (columns == columns_ && layout == layout_ &&
             framesInWindow == framesInWindow_ && rollMode == rollMode_) {
             return;
         }
+
+        std::lock_guard<std::mutex> lock(mutex_);
 
         columns_ = columns;
         layout_ = layout;
