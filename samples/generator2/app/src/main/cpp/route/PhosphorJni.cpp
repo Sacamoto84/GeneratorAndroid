@@ -16,6 +16,8 @@ namespace {
 int requestedColumns = 0;
 int requestedLayout = 0;
 bool requestedRollMode = true;
+unsigned lastRebuiltSerial = 0;
+bool hasRebuilt = false;
 
 /**
  * Пересобирает конфигурацию, когда меняются запрошенные параметры или
@@ -54,17 +56,26 @@ Java_com_example_generator2_features_scope_NativePhosphor_update(
     ensureConfigured();
 
     if (phosphorGrid.isReady() && !phosphorGrid.isRollMode()) {
-        // Длина берётся один раз: аудиопоток может сменить геометрию между
-        // вызовами, и тогда указатель и длина разойдутся.
-        //
-        // Само содержимое окна аудиопоток может переписывать прямо во время
-        // чтения — у AudioHistoryBuffer нет блокировок. Гонка принята:
-        // массив фиксированного размера, выход за границы невозможен,
-        // худшее последствие — один порванный кадр.
-        const std::size_t frames = audioHistoryBuffer.window() / 2;
-        const float *window = audioHistoryBuffer.read();
-        if (window != nullptr && frames > 0) {
-            phosphorGrid.rebuild(window, frames);
+        // Пересобирать имеет смысл только когда пришли новые сэмплы: экран
+        // обновляется втрое чаще, чем приходят пакеты, а каждая пересборка
+        // это полная сетка в текстуру.
+        const unsigned serial = phosphorGrid.packetSerial();
+        if (!hasRebuilt || serial != lastRebuiltSerial) {
+            lastRebuiltSerial = serial;
+            hasRebuilt = true;
+
+            // Длина берётся один раз: аудиопоток может сменить геометрию между
+            // вызовами, и тогда указатель и длина разойдутся.
+            //
+            // Само содержимое окна аудиопоток может переписывать прямо во время
+            // чтения — у AudioHistoryBuffer нет блокировок. Гонка принята:
+            // массив фиксированного размера, выход за границы невозможен,
+            // худшее последствие — один порванный кадр.
+            const std::size_t frames = audioHistoryBuffer.window() / 2;
+            const float *window = audioHistoryBuffer.read();
+            if (window != nullptr && frames > 0) {
+                phosphorGrid.rebuild(window, frames);
+            }
         }
     }
 

@@ -77,6 +77,10 @@ public:
             return;
         }
 
+        // Считаем пакет до всех проверок: счётчик нужен и в режиме развёртки,
+        // где этот метод сразу выходит.
+        packetSerial_.fetch_add(1, std::memory_order_relaxed);
+
         std::unique_lock<std::mutex> lock(mutex_);
         if (!ready_ || !rollMode_) {
             return;
@@ -204,6 +208,14 @@ public:
                static_cast<float>(columns_);
     }
 
+    /**
+     * Номер последнего принятого пакета. Растёт в обоих режимах и позволяет
+     * GL-стороне понять, появились ли новые сэмплы с прошлого кадра.
+     */
+    unsigned packetSerial() const {
+        return packetSerial_.load(std::memory_order_relaxed);
+    }
+
     bool isReady() const { return ready_; }
     int columns() const { return columns_; }
     bool isRollMode() const { return rollMode_; }
@@ -234,8 +246,9 @@ private:
     std::size_t framesInWindow_ = 0;
     float columnsPerFrame_ = 0.0f;
     float columnPosition_ = 0.0f;
-    // Атомарный: ringOffset() читает его из потока GL без мьютекса.
+    // Атомарные: их читает поток GL без мьютекса.
     std::atomic<int> lastColumn_{-1};
+    std::atomic<unsigned> packetSerial_{0};
     int dirtyStart_ = 0;
     int dirtyCount_ = 0;
     bool hasPrevious_ = false;
