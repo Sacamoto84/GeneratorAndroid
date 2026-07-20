@@ -93,6 +93,11 @@
           layout_ = layout;
           framesInWindow_ = framesInWindow;
           rollMode_ = rollMode;
+          // В режиме roll columnsPerFrame_ всегда много меньше единицы:
+          // при развёртке 32 окно составляет 36864 стереокадра против
+          // максимум 4096 столбцов. Поэтому appendFrames() рисует строго
+          // вертикальные отрезки внутри одного столбца, а advanceTo()
+          // только очищает пропущенные.
           columnsPerFrame_ = static_cast<float>(columns_) /
                              static_cast<float>(framesInWindow_);
           cells_.assign(static_cast<std::size_t>(columns_) * kColumnStride, 0.0f);
@@ -110,7 +115,22 @@
       const float *data() const { return cells_.data(); }
 
   private:
-      std::mutex mutex_;
+      // Разделение по потокам:
+      //   аудиопоток        — appendFrames()
+      //   поток GL          — configure(), rebuild(), takeDirtyRange(),
+      //                       ringOffset(), isReady(), columns(),
+      //                       isRollMode(), data()
+      //
+      // isReady(), columns() и isRollMode() читают поля, которые пишет только
+      // configure(), то есть тот же поток GL — блокировка им не нужна.
+      //
+      // data() отдаёт указатель на cells_ для заливки в текстуру без
+      // блокировки: аудиопоток в это время может дописывать ячейки. Гонка
+      // допущена сознательно, худшее последствие — один кадр с неполностью
+      // накопленным столбцом. Держать мьютекс на время glTexSubImage2D нельзя,
+      // это застопорило бы аудиопоток. Указатель нельзя сохранять между
+      // вызовами: configure() перевыделяет cells_.
+      mutable std::mutex mutex_;
       std::vector<float> cells_;
       int columns_ = 0;
       int layout_ = 0;
@@ -267,6 +287,12 @@
                   columnPosition_ -= static_cast<float>(columns_);
               }
           }
+
+          // Текущий столбец продолжит накапливать энергию в следующих пакетах,
+          // поэтому его нужно перезаливать в текстуру, пока он не завершён.
+          if (lastColumn_ >= 0) {
+              markDirty(lastColumn_);
+          }
       }
   ```
 
@@ -377,6 +403,9 @@
 
       /** Смещение чтения текстуры, чтобы новейший столбец был у правого края. */
       float ringOffset() const {
+          // lastColumn_ пишет аудиопоток, поэтому читать его без мьютекса
+          // нельзя. Вызов происходит раз в кадр, стоимость блокировки нулевая.
+          std::lock_guard<std::mutex> lock(mutex_);
           if (!rollMode_ || columns_ <= 0 || lastColumn_ < 0) {
               return 0.0f;
           }
