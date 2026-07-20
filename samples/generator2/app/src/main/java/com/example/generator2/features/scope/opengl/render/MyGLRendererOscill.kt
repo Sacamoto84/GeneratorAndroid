@@ -66,6 +66,12 @@ private const val TONEMAP_GAIN = 2.0f
 /** Верхняя граница ширины сетки, совпадает с PhosphorGrid::kMaxColumns. */
 private const val MAX_COLUMNS = 4096
 
+/**
+ * Временная диагностика микрофризов: раз в 60 кадров пишет в logcat, сколько
+ * времени съели update() и заливка текстуры. Снять, когда причина найдена.
+ */
+private const val DIAG = true
+
 class MyGLRendererOscill : GLSurfaceView.Renderer {
 
     private var program: Int = 0
@@ -89,6 +95,14 @@ class MyGLRendererOscill : GLSurfaceView.Renderer {
     var compressorCount: Float = 0f
 
     val bools = intArrayOf(0, 1, 1) //oneTwo 0-one 1-two, L 1-true, R
+
+    private var diagFrames = 0
+    private var diagUpdateNs = 0L
+    private var diagUploadNs = 0L
+    private var diagColumns = 0L
+    private var diagWorstNs = 0L
+    private var diagPrevEndNs = 0L
+    private var diagWorstGapNs = 0L
 
     private val vertexShaderCode =
         """
@@ -194,8 +208,17 @@ void main() {
             ensureTexture(columns)
         }
 
+        val startNs = if (DIAG) System.nanoTime() else 0L
+
         val range = NativePhosphor.update() ?: return
+
+        val updatedNs = if (DIAG) System.nanoTime() else 0L
+
         uploadColumns(range[0], range[1])
+
+        if (DIAG) {
+            recordDiagnostics(startNs, updatedNs, range[1])
+        }
 
         glClear(GL_COLOR_BUFFER_BIT)
 
@@ -222,6 +245,47 @@ void main() {
         )
 
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
+    }
+
+    /**
+     * Копит статистику кадра и раз в 60 кадров сбрасывает её в logcat.
+     *
+     * update — сколько ждали нативную сторону, включая мьютекс аудиопотока.
+     * upload — сколько заняла заливка текстуры.
+     * cols — средний размер грязного диапазона.
+     * gapMax — самый большой промежуток между кадрами, то есть сам фриз.
+     */
+    private fun recordDiagnostics(startNs: Long, updatedNs: Long, columns: Int) {
+        val endNs = System.nanoTime()
+
+        diagUpdateNs += updatedNs - startNs
+        diagUploadNs += endNs - updatedNs
+        diagColumns += columns.toLong()
+        diagWorstNs = maxOf(diagWorstNs, endNs - startNs)
+        if (diagPrevEndNs != 0L) {
+            diagWorstGapNs = maxOf(diagWorstGapNs, startNs - diagPrevEndNs)
+        }
+        diagPrevEndNs = endNs
+
+        if (++diagFrames < 60) {
+            return
+        }
+
+        android.util.Log.d(
+            "PHOSPHOR",
+            "update=${diagUpdateNs / diagFrames / 1000}us" +
+                " upload=${diagUploadNs / diagFrames / 1000}us" +
+                " cols=${diagColumns / diagFrames}" +
+                " worst=${diagWorstNs / 1000}us" +
+                " gapMax=${diagWorstGapNs / 1000}us"
+        )
+
+        diagFrames = 0
+        diagUpdateNs = 0
+        diagUploadNs = 0
+        diagColumns = 0
+        diagWorstNs = 0
+        diagWorstGapNs = 0
     }
 
     private fun ensureTexture(columns: Int) {
