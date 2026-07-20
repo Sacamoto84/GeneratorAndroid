@@ -159,6 +159,8 @@ class MyGLRendererOscill : GLSurfaceView.Renderer {
     private var diagWorstUploadNs = 0L
     private var diagPrevEndNs = 0L
     private var diagWorstGapNs = 0L
+    private var diagDraws = 0
+    private var diagWindowStartNs = 0L
 
     private val vertexShaderCode =
         """
@@ -275,6 +277,10 @@ void main() {
         }
 
         val startNs = System.nanoTime()
+
+        if (DIAG) {
+            diagDraws++
+        }
 
         // Данные забираем на своей частоте, кратной герцовке экрана. Движение
         // ленты при этом идёт каждый кадр — сглаживание ниже.
@@ -407,9 +413,19 @@ void main() {
         }
         diagPrevEndNs = endNs
 
+        if (diagWindowStartNs == 0L) {
+            diagWindowStartNs = startNs
+        }
+
         if (++diagFrames < 60) {
             return
         }
+
+        // Реальная частота вызовов onDrawFrame. Если она заметно ниже
+        // герцовки экрана, то узкое место не здесь, а в том, как часто
+        // система вообще пускает GL-поток.
+        val windowSec = (endNs - diagWindowStartNs) / 1_000_000_000.0
+        val drawHz = if (windowSec > 0.0) diagDraws / windowSec else 0.0
 
         android.util.Log.d(
             "PHOSPHOR",
@@ -418,7 +434,8 @@ void main() {
                 " cols=${diagColumns / diagFrames}" +
                 " worstUpd=${diagWorstUpdateNs / 1000}us" +
                 " worstUpl=${diagWorstUploadNs / 1000}us" +
-                " gapMax=${diagWorstGapNs / 1000}us"
+                " gapMax=${diagWorstGapNs / 1000}us" +
+                " drawHz=${"%.1f".format(drawHz)}"
         )
 
         diagFrames = 0
@@ -429,6 +446,8 @@ void main() {
         diagWorstUpdateNs = 0
         diagWorstUploadNs = 0
         diagWorstGapNs = 0
+        diagDraws = 0
+        diagWindowStartNs = 0
     }
 
     private fun ensureTexture(columns: Int) {
