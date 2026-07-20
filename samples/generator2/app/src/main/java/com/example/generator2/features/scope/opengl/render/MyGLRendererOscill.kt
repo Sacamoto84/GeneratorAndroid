@@ -51,6 +51,8 @@ import java.nio.ByteOrder
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
+import kotlin.math.abs
+import kotlin.math.floor
 
 /** Развёртки от этого значения и выше рисуются как бегущая лента. */
 private const val ROLL_THRESHOLD = 32f
@@ -71,6 +73,20 @@ private const val MAX_COLUMNS = 4096
  * времени съели update() и заливка текстуры. Снять, когда причина найдена.
  */
 private const val DIAG = true
+
+/**
+ * Коэффициенты следящего фильтра смещения кольца, критическое затухание при
+ * собственной частоте 15 рад/с: расхождение закрывается примерно за четверть
+ * секунды без перерегулирования. POSITION_GAIN = 2*w, RATE_GAIN = w*w.
+ */
+private const val POSITION_GAIN = 30.0f
+private const val RATE_GAIN = 225.0f
+
+/** Пауза кадров дольше этого — не догоняем, а прыгаем. */
+private const val MAX_SMOOTH_STEP_SEC = 0.1f
+
+/** Скачок смещения больше четверти оборота — это переконфигурация, не бег. */
+private const val MAX_SMOOTH_DELTA = 0.25f
 
 class MyGLRendererOscill : GLSurfaceView.Renderer {
 
@@ -103,6 +119,11 @@ class MyGLRendererOscill : GLSurfaceView.Renderer {
     var isPaused: Boolean = false
 
     private var frozenRingOffset: Float = 0f
+
+    private var smoothingActive = false
+    private var smoothOffset = 0f
+    private var smoothRate = 0f
+    private var smoothLastNs = 0L
 
     val bools = intArrayOf(0, 1, 1) //oneTwo 0-one 1-two, L 1-true, R
 
@@ -204,6 +225,9 @@ void main() {
         }
 
         if (isPaused) {
+            // Фильтр останавливаем: иначе после снятия паузы он будет
+            // догонять всё, что кольцо накрутило, пока кадр стоял.
+            smoothingActive = false
             drawGrid(frozenRingOffset)
             return
         }
@@ -221,6 +245,8 @@ void main() {
             configuredLayout = layout
             configuredRoll = rollMode
             ensureTexture(columns)
+            // Смещение теперь считается от другой сетки — начинаем заново.
+            smoothingActive = false
         }
 
         val startNs = if (DIAG) System.nanoTime() else 0L
@@ -241,8 +267,58 @@ void main() {
             recordDiagnostics(startNs, updatedNs, range[1])
         }
 
-        frozenRingOffset = NativePhosphor.ringOffset()
+        frozenRingOffset = smoothRingOffset(NativePhosphor.ringOffset())
         drawGrid(frozenRingOffset)
+    }
+
+    /**
+     * Ведёт ленту между рывками смещения.
+     *
+     * Кольцо двигает аудиопоток, а он приходит порциями по 26 мс: смещение
+     * прыгает сразу на несколько столбцов и потом стоит, пока экран успевает
+     * обновиться три раза. Прыжки видно как дёрганье.
+     *
+     * Забегать вперёд нельзя — за головой записи лежат нестёртые столбцы с
+     * прошлого оборота. Поэтому идём следом: интегратор держит скорость
+     * ленты, пропорциональная часть не даёт расхождению накопиться.
+     * Отставание выходит порядка четверти секунды при окне в шесть секунд.
+     */
+    private fun smoothRingOffset(target: Float): Float {
+        val nowNs = System.nanoTime()
+
+        if (!smoothingActive) {
+            smoothingActive = true
+            smoothLastNs = nowNs
+            smoothOffset = target
+            smoothRate = 0f
+            return target
+        }
+
+        val dt = (nowNs - smoothLastNs) / 1_000_000_000f
+        smoothLastNs = nowNs
+
+        if (dt <= 0f || dt > MAX_SMOOTH_STEP_SEC) {
+            smoothOffset = target
+            smoothRate = 0f
+            return target
+        }
+
+        // Кратчайший путь по кольцу: цель могла перевалить через край.
+        var delta = target - smoothOffset
+        if (delta > 0.5f) delta -= 1.0f
+        if (delta < -0.5f) delta += 1.0f
+
+        if (abs(delta) > MAX_SMOOTH_DELTA) {
+            smoothOffset = target
+            smoothRate = 0f
+            return target
+        }
+
+        smoothRate += delta * RATE_GAIN * dt
+        smoothOffset += (smoothRate + delta * POSITION_GAIN) * dt
+        smoothOffset -= floor(smoothOffset)
+
+        return smoothOffset
     }
 
     /** Выводит сетку на экран с заданным смещением кольца. */
