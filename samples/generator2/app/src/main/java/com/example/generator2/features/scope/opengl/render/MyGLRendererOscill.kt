@@ -88,6 +88,27 @@ private const val MAX_SMOOTH_STEP_SEC = 0.1f
 /** Скачок смещения больше четверти оборота — это переконфигурация, не бег. */
 private const val MAX_SMOOTH_DELTA = 0.25f
 
+/**
+ * Как часто забираем новые данные и заливаем текстуру.
+ *
+ * Величина должна делить герцовку экрана нацело, иначе порции данных лягут
+ * между вертикальными синхронизациями неравномерно — именно это и давало
+ * дёрганье, когда обновление шло по приходу аудиопакетов, то есть 38 раз в
+ * секунду. 60 делится и на 60, и на 120. 30 тоже делится и оставляет вчетверо
+ * больший запас по времени, но шаг движения выходит вдвое крупнее.
+ *
+ * Само движение ленты этим не ограничено: смещение кольца сглаживается на
+ * каждом кадре, на полной герцовке экрана.
+ */
+private const val UPDATE_HZ = 60f
+
+/**
+ * Порог срабатывания с запасом: ровно UPDATE_HZ брать нельзя, два интервала
+ * по 8.33 мс дают 16.66 мс против 16.67 мс порога, и обновление проскочило бы
+ * на третий рефреш.
+ */
+private const val UPDATE_INTERVAL_NS = (0.9e9f / UPDATE_HZ).toLong()
+
 class MyGLRendererOscill : GLSurfaceView.Renderer {
 
     private var program: Int = 0
@@ -124,6 +145,8 @@ class MyGLRendererOscill : GLSurfaceView.Renderer {
     private var smoothOffset = 0f
     private var smoothRate = 0f
     private var smoothLastNs = 0L
+
+    private var lastUpdateNs = 0L
 
     val bools = intArrayOf(0, 1, 1) //oneTwo 0-one 1-two, L 1-true, R
 
@@ -251,22 +274,28 @@ void main() {
             smoothingActive = false
         }
 
-        val startNs = if (DIAG) System.nanoTime() else 0L
+        val startNs = System.nanoTime()
 
-        val range = NativePhosphor.update()
-        if (range == null) {
-            // Рисуем всё равно: режим непрерывный, и молчаливый выход подменил
-            // бы буфер неотрисованным содержимым.
-            drawGrid(frozenRingOffset)
-            return
-        }
+        // Данные забираем на своей частоте, кратной герцовке экрана. Движение
+        // ленты при этом идёт каждый кадр — сглаживание ниже.
+        if (startNs - lastUpdateNs >= UPDATE_INTERVAL_NS) {
+            lastUpdateNs = startNs
 
-        val updatedNs = if (DIAG) System.nanoTime() else 0L
+            val range = NativePhosphor.update()
+            if (range == null) {
+                // Рисуем всё равно: режим непрерывный, и молчаливый выход
+                // подменил бы буфер неотрисованным содержимым.
+                drawGrid(frozenRingOffset)
+                return
+            }
 
-        uploadColumns(range[0], range[1])
+            val updatedNs = if (DIAG) System.nanoTime() else 0L
 
-        if (DIAG) {
-            recordDiagnostics(startNs, updatedNs, range[1])
+            uploadColumns(range[0], range[1])
+
+            if (DIAG) {
+                recordDiagnostics(startNs, updatedNs, range[1])
+            }
         }
 
         frozenRingOffset = smoothRingOffset(NativePhosphor.ringOffset())
@@ -358,7 +387,9 @@ void main() {
      * update — сколько ждали нативную сторону, включая мьютекс аудиопотока.
      * upload — сколько заняла заливка текстуры.
      * cols — средний размер грязного диапазона.
-     * gapMax — самый большой промежуток между кадрами, то есть сам фриз.
+     * gapMax — самый большой промежуток между обновлениями данных. Ждём здесь
+     * ровный интервал 1/UPDATE_HZ: разброс означает, что кадр не уложился в
+     * рефреш и уехал на следующий.
      */
     private fun recordDiagnostics(startNs: Long, updatedNs: Long, columns: Int) {
         val endNs = System.nanoTime()
