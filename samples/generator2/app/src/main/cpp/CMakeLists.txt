@@ -33,6 +33,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         route/jniFFT.cpp
 
         route/FloatDirectBuffer.cpp
+        route/PhosphorJni.cpp
 
 )
 
