@@ -3,8 +3,8 @@ package com.example.generator2.features.scope.opengl.render
 import android.opengl.GLES30.GL_CLAMP_TO_EDGE
 import android.opengl.GLES30.GL_COLOR_BUFFER_BIT
 import android.opengl.GLES30.GL_COMPILE_STATUS
-import android.opengl.GLES30.GL_FLOAT
 import android.opengl.GLES30.GL_FRAGMENT_SHADER
+import android.opengl.GLES30.GL_HALF_FLOAT
 import android.opengl.GLES30.GL_LINEAR
 import android.opengl.GLES30.GL_MAX_TEXTURE_SIZE
 import android.opengl.GLES30.GL_RG
@@ -359,7 +359,8 @@ void main() {
 
         glBindTexture(GL_TEXTURE_2D, texture)
 
-        val columnBytes = NativePhosphor.BINS * 2 * 4
+        // Два канала по два байта: сетка приходит уже в half-float.
+        val columnBytes = NativePhosphor.BINS * 2 * 2
         var offset = 0
         while (offset < count) {
             val column = (start + offset) % textureColumns
@@ -370,7 +371,7 @@ void main() {
                 GL_TEXTURE_2D, 0,
                 0, column,
                 NativePhosphor.BINS, chunk,
-                GL_RG, GL_FLOAT,
+                GL_RG, GL_HALF_FLOAT,
                 buffer.slice().order(ByteOrder.nativeOrder())
             )
             offset += chunk

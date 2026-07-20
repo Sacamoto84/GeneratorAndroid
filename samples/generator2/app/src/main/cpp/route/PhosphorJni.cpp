@@ -82,6 +82,10 @@ Java_com_example_generator2_features_scope_NativePhosphor_update(
     jint range[2] = {0, 0};
     phosphorGrid.takeDirtyRange(&range[0], &range[1]);
 
+    // Конверсию в half-float делаем сами: драйверу отдавать float32 в
+    // текстуру RG16F слишком дорого.
+    phosphorGrid.packHalf(range[0], range[1]);
+
     jintArray result = env->NewIntArray(2);
     if (result == nullptr) {
         return nullptr;
@@ -106,9 +110,9 @@ Java_com_example_generator2_features_scope_NativePhosphor_gridBuffer(
     }
     const jlong bytes = static_cast<jlong>(phosphorGrid.columns()) *
                         static_cast<jlong>(PhosphorGrid::kColumnStride) *
-                        static_cast<jlong>(sizeof(float));
+                        static_cast<jlong>(sizeof(std::uint16_t));
     return env->NewDirectByteBuffer(
-            const_cast<float *>(phosphorGrid.data()), bytes);
+            const_cast<std::uint16_t *>(phosphorGrid.halfData()), bytes);
 }
 
 extern "C"

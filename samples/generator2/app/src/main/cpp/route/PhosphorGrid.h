@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <atomic>
 #include <cmath>
+#include <cstdint>
+#include <cstring>
 #include <cstddef>
 #include <mutex>
 #include <vector>
@@ -59,6 +61,7 @@ public:
         columnsPerFrame_ = static_cast<float>(columns_) /
                            static_cast<float>(framesInWindow_);
         cells_.assign(static_cast<std::size_t>(columns_) * kColumnStride, 0.0f);
+        half_.assign(cells_.size(), 0u);
         columnPosition_ = 0.0f;
         lastColumn_ = -1;
         dirtyStart_ = 0;
@@ -209,6 +212,33 @@ public:
     }
 
     /**
+     * Переводит кольцевой диапазон столбцов в half-float для заливки в
+     * текстуру RG16F. Отдавать драйверу float32 нельзя: конверсию он делает
+     * сам и медленно, около 340 МБ/с, что при полной сетке съедает
+     * почти десять миллисекунд.
+     *
+     * Вызывается из потока GL. Мьютекс не берётся сознательно, ровно как в
+     * data(): аудиопоток в это время может дописывать ячейки, и худшее
+     * последствие — один столбец, собранный из двух соседних состояний.
+     */
+    void packHalf(int start, int count) {
+        if (count <= 0 || columns_ <= 0) {
+            return;
+        }
+
+        for (int i = 0; i < count; ++i) {
+            const int column = (start + i) % columns_;
+            const std::size_t base =
+                    static_cast<std::size_t>(column) * kColumnStride;
+            for (std::size_t k = 0; k < kColumnStride; ++k) {
+                half_[base + k] = floatToHalf(cells_[base + k]);
+            }
+        }
+    }
+
+    const std::uint16_t *halfData() const { return half_.data(); }
+
+    /**
      * Номер последнего принятого пакета. Растёт в обоих режимах и позволяет
      * GL-стороне понять, появились ли новые сэмплы с прошлого кадра.
      */
@@ -225,20 +255,22 @@ private:
     // Разделение по потокам:
     //   аудиопоток        — appendFrames()
     //   поток GL          — configure(), rebuild(), takeDirtyRange(),
-    //                       ringOffset(), isReady(), columns(),
-    //                       isRollMode(), data()
+    //                       packHalf(), ringOffset(), isReady(), columns(),
+    //                       isRollMode(), packetSerial(), halfData()
     //
     // isReady(), columns() и isRollMode() читают поля, которые пишет только
     // configure(), то есть тот же поток GL — блокировка им не нужна.
     //
-    // data() отдаёт указатель на cells_ для заливки в текстуру без
-    // блокировки: аудиопоток в это время может дописывать ячейки. Гонка
-    // допущена сознательно, худшее последствие — один кадр с неполностью
-    // накопленным столбцом. Держать мьютекс на время glTexSubImage2D нельзя,
-    // это застопорило бы аудиопоток. Указатель нельзя сохранять между
-    // вызовами: configure() перевыделяет cells_.
+    // packHalf() читает cells_ без блокировки, halfData() отдаёт результат
+    // для заливки в текстуру. Аудиопоток в это время может дописывать
+    // ячейки. Гонка допущена сознательно, худшее последствие — один кадр с
+    // неполностью накопленным столбцом. Держать мьютекс на время конверсии
+    // и glTexSubImage2D нельзя, это застопорило бы аудиопоток. Указатель
+    // нельзя сохранять между вызовами: configure() перевыделяет half_.
     mutable std::mutex mutex_;
     std::vector<float> cells_;
+    // Зеркало сетки в half-float, только для выдачи в OpenGL.
+    std::vector<std::uint16_t> half_;
     int columns_ = 0;
     int layout_ = 0;
     bool rollMode_ = true;
@@ -253,6 +285,30 @@ private:
     int dirtyCount_ = 0;
     bool hasPrevious_ = false;
     float previous_[2] = {0.0f, 0.0f};
+
+    /**
+     * float32 в half-float. Значения сетки неотрицательные и невелики, но
+     * конвертер общий: денормали схлопываются в ноль, переполнение
+     * насыщается максимумом.
+     */
+    static std::uint16_t floatToHalf(float value) {
+        std::uint32_t bits;
+        std::memcpy(&bits, &value, sizeof(bits));
+
+        const std::uint32_t sign = (bits >> 16) & 0x8000u;
+        const int exponent = static_cast<int>((bits >> 23) & 0xFFu) - 127 + 15;
+        const std::uint32_t mantissa = bits & 0x7FFFFFu;
+
+        if (exponent <= 0) {
+            return static_cast<std::uint16_t>(sign);
+        }
+        if (exponent >= 31) {
+            return static_cast<std::uint16_t>(sign | 0x7BFFu);
+        }
+        return static_cast<std::uint16_t>(
+                sign | (static_cast<std::uint32_t>(exponent) << 10) |
+                (mantissa >> 13));
+    }
 
     /** Переводит уровень сигнала канала в координату бина. */
     float binOf(float level, int channel) const {
