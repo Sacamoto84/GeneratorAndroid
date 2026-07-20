@@ -239,7 +239,6 @@ class Scope {
                 while (isActive) {
                     //delay(1)
                     deferredOscill.receive()//.await()//channelDataStreamOutCompressorIndex.receive()
-                    shaderRenderer.updateVerticesDirect()
                     shaderRenderer.compressorCount = compressorCount.floatValue
                     shaderRenderer.bools[0] = if (isOneTwo.value) 1 else 0
                     shaderRenderer.bools[1] = if (isVisibleL.value) 1 else 0
