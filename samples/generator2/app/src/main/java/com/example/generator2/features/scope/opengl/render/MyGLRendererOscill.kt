@@ -91,12 +91,6 @@ private const val RING_LEAD_SKIP = 128
 private const val MAX_TRACK_ERROR_COLUMNS = 64
 
 /**
- * Временная диагностика микрофризов: раз в 60 кадров пишет в logcat, сколько
- * времени съели update() и заливка текстуры. Снять, когда причина найдена.
- */
-private const val DIAG = true
-
-/**
  * Коэффициенты следящего фильтра смещения кольца, критическое затухание при
  * собственной частоте 15 рад/с: расхождение закрывается примерно за четверть
  * секунды без перерегулирования. POSITION_GAIN = 2*w, RATE_GAIN = w*w.
@@ -175,18 +169,6 @@ class MyGLRendererOscill : GLSurfaceView.Renderer {
     private var lastUpdateNs = 0L
 
     val bools = intArrayOf(0, 1, 1) //oneTwo 0-one 1-two, L 1-true, R
-
-    private var diagFrames = 0
-    private var diagUpdateNs = 0L
-    private var diagUploadNs = 0L
-    private var diagColumns = 0L
-    private var diagWorstNs = 0L
-    private var diagWorstUpdateNs = 0L
-    private var diagWorstUploadNs = 0L
-    private var diagPrevEndNs = 0L
-    private var diagWorstGapNs = 0L
-    private var diagDraws = 0
-    private var diagWindowStartNs = 0L
 
     private val vertexShaderCode =
         """
@@ -320,10 +302,6 @@ void main() {
 
         val startNs = System.nanoTime()
 
-        if (DIAG) {
-            diagDraws++
-        }
-
         // Данные забираем на своей частоте, кратной герцовке экрана. Движение
         // ленты при этом идёт каждый кадр — сглаживание ниже.
         if (startNs - lastUpdateNs >= UPDATE_INTERVAL_NS) {
@@ -337,13 +315,7 @@ void main() {
                 return
             }
 
-            val updatedNs = if (DIAG) System.nanoTime() else 0L
-
             uploadColumns(range[0], range[1])
-
-            if (DIAG) {
-                recordDiagnostics(startNs, updatedNs, range[1])
-            }
         }
 
         frozenRingOffset = smoothRingOffset(NativePhosphor.ringOffset())
@@ -448,69 +420,6 @@ void main() {
         )
 
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
-    }
-
-    /**
-     * Копит статистику кадра и раз в 60 кадров сбрасывает её в logcat.
-     *
-     * update — сколько ждали нативную сторону, включая мьютекс аудиопотока.
-     * upload — сколько заняла заливка текстуры.
-     * cols — средний размер грязного диапазона.
-     * gapMax — самый большой промежуток между обновлениями данных. Ждём здесь
-     * ровный интервал 1/UPDATE_HZ: разброс означает, что кадр не уложился в
-     * рефреш и уехал на следующий.
-     */
-    private fun recordDiagnostics(startNs: Long, updatedNs: Long, columns: Int) {
-        val endNs = System.nanoTime()
-
-        diagUpdateNs += updatedNs - startNs
-        diagUploadNs += endNs - updatedNs
-        diagColumns += columns.toLong()
-        diagWorstNs = maxOf(diagWorstNs, endNs - startNs)
-        // Выброс редкий, поэтому важно знать не сумму, а кто именно выбросил:
-        // ожидание мьютекса в update() или синхронизация с GPU в заливке.
-        diagWorstUpdateNs = maxOf(diagWorstUpdateNs, updatedNs - startNs)
-        diagWorstUploadNs = maxOf(diagWorstUploadNs, endNs - updatedNs)
-        if (diagPrevEndNs != 0L) {
-            diagWorstGapNs = maxOf(diagWorstGapNs, startNs - diagPrevEndNs)
-        }
-        diagPrevEndNs = endNs
-
-        if (diagWindowStartNs == 0L) {
-            diagWindowStartNs = startNs
-        }
-
-        if (++diagFrames < 60) {
-            return
-        }
-
-        // Реальная частота вызовов onDrawFrame. Если она заметно ниже
-        // герцовки экрана, то узкое место не здесь, а в том, как часто
-        // система вообще пускает GL-поток.
-        val windowSec = (endNs - diagWindowStartNs) / 1_000_000_000.0
-        val drawHz = if (windowSec > 0.0) diagDraws / windowSec else 0.0
-
-        android.util.Log.d(
-            "PHOSPHOR",
-            "update=${diagUpdateNs / diagFrames / 1000}us" +
-                " upload=${diagUploadNs / diagFrames / 1000}us" +
-                " cols=${diagColumns / diagFrames}" +
-                " worstUpd=${diagWorstUpdateNs / 1000}us" +
-                " worstUpl=${diagWorstUploadNs / 1000}us" +
-                " gapMax=${diagWorstGapNs / 1000}us" +
-                " drawHz=${"%.1f".format(drawHz)}"
-        )
-
-        diagFrames = 0
-        diagUpdateNs = 0
-        diagUploadNs = 0
-        diagColumns = 0
-        diagWorstNs = 0
-        diagWorstUpdateNs = 0
-        diagWorstUploadNs = 0
-        diagWorstGapNs = 0
-        diagDraws = 0
-        diagWindowStartNs = 0
     }
 
     private fun ensureTexture(columns: Int) {
