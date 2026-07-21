@@ -16,6 +16,7 @@ namespace {
 int requestedColumns = 0;
 int requestedLayout = 0;
 bool requestedRollMode = true;
+float requestedSweep = 1.0f;
 unsigned lastRebuiltSerial = 0;
 bool hasRebuilt = false;
 
@@ -28,10 +29,22 @@ void ensureConfigured() {
     if (requestedColumns <= 0) {
         return;
     }
-    const std::size_t frames = audioHistoryBuffer.window() / 2;
+    std::size_t frames = audioHistoryBuffer.window() / 2;
     if (frames == 0) {
         return;
     }
+
+    // Развёртка меньше единицы означает часть одного пакета. Сам буфер
+    // истории дробить нельзя, он считает пакетами и хранит минимум один,
+    // поэтому берём его хвост нужной длины.
+    if (requestedSweep < 1.0f) {
+        frames = static_cast<std::size_t>(
+                static_cast<float>(frames) * requestedSweep);
+        if (frames < 2) {
+            frames = 2;
+        }
+    }
+
     phosphorGrid.configure(requestedColumns, requestedLayout, frames,
                            requestedRollMode);
 }
@@ -42,10 +55,11 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_generator2_features_scope_NativePhosphor_configure(
         JNIEnv * /* env */, jobject /* thiz */, jint columns, jint layout,
-        jboolean rollMode) {
+        jboolean rollMode, jfloat sweep) {
     requestedColumns = columns;
     requestedLayout = layout;
     requestedRollMode = (rollMode == JNI_TRUE);
+    requestedSweep = sweep;
     ensureConfigured();
 }
 
@@ -71,8 +85,11 @@ Java_com_example_generator2_features_scope_NativePhosphor_update(
             // чтения — у AudioHistoryBuffer нет блокировок. Гонка принята:
             // массив фиксированного размера, выход за границы невозможен,
             // худшее последствие — один порванный кадр.
-            const std::size_t frames = audioHistoryBuffer.window() / 2;
-            const float *window = audioHistoryBuffer.read();
+            // Берём ровно столько кадров, сколько настроено: при развёртке
+            // меньше единицы это хвост одного пакета, иначе всё окно.
+            const std::size_t frames = phosphorGrid.framesInWindow();
+            const float *window = audioHistoryBuffer.readSmall(
+                    static_cast<jint>(frames * 2));
             if (window != nullptr && frames > 0) {
                 phosphorGrid.rebuild(window, frames);
             }

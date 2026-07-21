@@ -153,6 +153,7 @@ class MyGLRendererOscill : GLSurfaceView.Renderer {
     private var configuredColumns: Int = 0
     private var configuredLayout: Int = -1
     private var configuredRoll: Boolean? = null
+    private var configuredSweep: Float = 0f
 
     var compressorCount: Float = 0f
 
@@ -272,6 +273,7 @@ void main() {
         configuredColumns = 0
         configuredLayout = -1
         configuredRoll = null
+        configuredSweep = 0f
     }
 
     /**
@@ -303,9 +305,11 @@ void main() {
 
         if (configuredColumns != columns ||
             configuredLayout != layout ||
-            configuredRoll != rollMode
+            configuredRoll != rollMode ||
+            configuredSweep != compressorCount
         ) {
-            NativePhosphor.configure(columns, layout, rollMode)
+            NativePhosphor.configure(columns, layout, rollMode, compressorCount)
+            configuredSweep = compressorCount
             configuredColumns = columns
             configuredLayout = layout
             configuredRoll = rollMode

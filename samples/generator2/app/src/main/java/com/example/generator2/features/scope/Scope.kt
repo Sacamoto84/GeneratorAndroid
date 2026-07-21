@@ -126,12 +126,17 @@ class Scope {
     /** Количество пакетов в которое будет упакован выходной канал */
     val compressorCount = mutableFloatStateOf(256f)
 
+    /** Подпись развёртки: целое от единицы и выше, ниже — доля пакета. */
+    private fun sweepLabel(value: Float): String =
+        if (value >= 1f) value.toInt().toString()
+        else "1/${(1f / value).toInt()}"
+
     private fun compressonCountAdd() {
         compressorCount.floatValue = (compressorCount.floatValue * 2).coerceAtMost(256f)
     }
 
     private fun compressonCountDiv() {
-        compressorCount.floatValue = (compressorCount.floatValue / 2.0f).coerceAtLeast(1f)
+        compressorCount.floatValue = (compressorCount.floatValue / 2.0f).coerceAtLeast(0.125f)
     }
 
     /** ## Выход аудиоданных -> dataRouter */
@@ -168,7 +173,13 @@ class Scope {
                 //Передаем FFT порцию данных
                 Spectrogram.sentToFloatRingBufferFFT(buf, buf.size, audioSampleRate)
 
-                NativeFloatDirectBuffer.add(buf, buf.size, compressorCount.floatValue.toInt())
+                // Буфер истории считает пакетами и меньше одного не умеет.
+                // Развёртки ниже единицы показывают часть пакета, долю
+                // отсчитывает уже сетка фосфора.
+                NativeFloatDirectBuffer.add(
+                    buf, buf.size,
+                    compressorCount.floatValue.coerceAtLeast(1f).toInt()
+                )
 
                 if (enableOscill.value && !isPause.value)  deferredOscill.send(0)
 
@@ -317,7 +328,7 @@ class Scope {
             GLShaderOscill(renderer = shaderRenderer, update = { view = it })
 
             Text(
-                text = compressorCount.floatValue.toString(),
+                text = sweepLabel(compressorCount.floatValue),
                 color = Color.LightGray,
                 fontSize = 12.sp
             )
@@ -506,7 +517,7 @@ class Scope {
 
 
                 Text(
-                    text = compressorCount.floatValue.toInt().toString(),
+                    text = sweepLabel(compressorCount.floatValue),
                     modifier = Modifier
                         .width(64.dp)
                         .height(40.dp)

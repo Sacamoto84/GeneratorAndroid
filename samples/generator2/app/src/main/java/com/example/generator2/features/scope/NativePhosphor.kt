@@ -16,8 +16,11 @@ object NativePhosphor {
      * @param columns ширина области вывода в пикселях.
      * @param layout 0 — каналы совмещены, 1 — каналы в своих половинах.
      * @param rollMode true при развёртке 32 и выше.
+     * @param sweep значение развёртки. Меньше единицы означает часть одного
+     * пакета: буфер истории считает пакетами и дробить себя не умеет, поэтому
+     * долю отсчитывает уже сетка, забирая хвост нужной длины.
      */
-    external fun configure(columns: Int, layout: Int, rollMode: Boolean)
+    external fun configure(columns: Int, layout: Int, rollMode: Boolean, sweep: Float)
 
     /**
      * Возвращает [начальный столбец, количество] изменившихся столбцов,

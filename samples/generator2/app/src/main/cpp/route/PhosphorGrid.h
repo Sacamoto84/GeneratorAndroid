@@ -283,6 +283,9 @@ public:
         return packetSerial_.load(std::memory_order_relaxed);
     }
 
+    /** Сколько стереокадров показывает сетка. */
+    std::size_t framesInWindow() const { return framesInWindow_; }
+
     bool isReady() const { return ready_; }
     int columns() const { return columns_; }
     bool isRollMode() const { return rollMode_; }
