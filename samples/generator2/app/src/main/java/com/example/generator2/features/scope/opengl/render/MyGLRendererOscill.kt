@@ -53,6 +53,7 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 import kotlin.math.abs
 import kotlin.math.floor
+import kotlin.math.sign
 
 /** Развёртки от этого значения и выше рисуются как бегущая лента. */
 private const val ROLL_THRESHOLD = 32f
@@ -76,13 +77,18 @@ private const val MAX_COLUMNS = 4096
 private const val RING_MARGIN = 128
 
 /**
- * Насколько столбцов сглаженное смещение может уйти вперёд головы записи.
- * Уходит оно всегда: цель стоит между пакетами и прыгает разом, а интегратор
- * фильтра продолжает вести ленту равномерно. Столбцы впереди головы ещё не
- * переписаны и хранят данные с прошлого оборота, поэтому опережение обязано
- * оставаться внутри RING_MARGIN, который не показывается.
+ * Скрытый запас с другой стороны шва — сразу за головой записи.
+ *
+ * Там лежат столбцы, которые голова ещё не переписала на этом обороте, то
+ * есть данные с прошлого. Показывать их нельзя, а попадают они в кадр всегда:
+ * цель сглаживания стоит между пакетами и прыгает разом, интегратор фильтра
+ * при этом ведёт ленту равномерно и уезжает вперёд головы. Один запас у
+ * правого края здесь не спасает — шов надо закрывать с обеих сторон.
  */
-private const val MAX_LEAD_COLUMNS = 64
+private const val RING_LEAD_SKIP = 128
+
+/** Предел ошибки слежения в обе стороны, с запасом внутри скрытых полей. */
+private const val MAX_TRACK_ERROR_COLUMNS = 64
 
 /**
  * Временная диагностика микрофризов: раз в 60 кадров пишет в logcat, сколько
@@ -135,6 +141,7 @@ class MyGLRendererOscill : GLSurfaceView.Renderer {
     private var ringOffsetHandle: Int = -1
     private var uvSpanHandle: Int = -1
     private var texelTHandle: Int = -1
+    private var headSkipHandle: Int = -1
     private var gainHandle: Int = -1
     private var visibilityHandle: Int = -1
 
@@ -203,6 +210,7 @@ uniform sampler2D grid;
 uniform float ringOffset;
 uniform float uvSpan;
 uniform float texelT;
+uniform float headSkip;
 uniform float gain;
 uniform vec2 visibility;
 
@@ -213,10 +221,11 @@ void main() {
     // Текстура развёрнута под column-major память сетки: по X идут бины,
     // по Y — столбцы. Поэтому оси меняются местами.
     //
-    // Отступ в полтексела с каждого края обязателен: в кольце самый свежий
-    // столбец и самый старый лежат рядом, и без отступа линейная фильтрация
-    // на краю смешивает их между собой.
-    float t = fract(ringOffset + texelT * 0.5 + uv.x * (uvSpan - texelT));
+    // Шов кольца закрыт с обеих сторон: headSkip отступает от головы вперёд,
+    // где ещё лежит прошлый оборот, а uvSpan не доводит до неё сзади.
+    // Полтексела сверху — чтобы линейная фильтрация не дотянулась до шва.
+    float t = fract(ringOffset + headSkip + texelT * 0.5
+                    + uv.x * (uvSpan - texelT));
     vec2 energy = texture(grid, vec2(uv.y, t)).rg;
 
     // Мягкое насыщение: ядро луча яркое, ореол остаётся плавным.
@@ -248,6 +257,7 @@ void main() {
         ringOffsetHandle = glGetUniformLocation(program, "ringOffset")
         uvSpanHandle = glGetUniformLocation(program, "uvSpan")
         texelTHandle = glGetUniformLocation(program, "texelT")
+        headSkipHandle = glGetUniformLocation(program, "headSkip")
         gainHandle = glGetUniformLocation(program, "gain")
         visibilityHandle = glGetUniformLocation(program, "visibility")
 
@@ -270,7 +280,8 @@ void main() {
      */
     private fun columnsFor(surfaceWidth: Int): Int {
         val limit = if (maxTextureSize > 0) maxTextureSize else MAX_COLUMNS
-        return maxOf(RING_MARGIN + 1, minOf(surfaceWidth + RING_MARGIN, limit, MAX_COLUMNS))
+        val reserve = RING_MARGIN + RING_LEAD_SKIP
+        return maxOf(reserve + 1, minOf(surfaceWidth + reserve, limit, MAX_COLUMNS))
     }
 
     override fun onDrawFrame(gl: GL10?) {
@@ -382,13 +393,14 @@ void main() {
         smoothOffset += (smoothRate + delta * POSITION_GAIN) * dt
         smoothOffset -= floor(smoothOffset)
 
-        // Опережение ограничиваем: за головой лежат данные с прошлого оборота.
+        // Ошибку слежения держим в обе стороны: и опережение, и отставание
+        // уводят шов внутрь кадра, просто к разным его краям.
         if (textureColumns > 0) {
-            val maxLead = MAX_LEAD_COLUMNS.toFloat() / textureColumns
-            var lead = smoothOffset - target
-            lead -= floor(lead + 0.5f)
-            if (lead > maxLead) {
-                smoothOffset = target + maxLead
+            val limit = MAX_TRACK_ERROR_COLUMNS.toFloat() / textureColumns
+            var error = smoothOffset - target
+            error -= floor(error + 0.5f)
+            if (abs(error) > limit) {
+                smoothOffset = target + limit * sign(error)
                 smoothOffset -= floor(smoothOffset)
                 smoothRate = 0f
             }
@@ -416,8 +428,11 @@ void main() {
         // Видимое окно уже кольца на RING_MARGIN столбцов: голова записи и
         // её ближайшие соседи остаются за кадром.
         val ringColumns = textureColumns.toFloat()
-        glUniform1f(uvSpanHandle, (textureColumns - RING_MARGIN) / ringColumns)
+        val visible = textureColumns - RING_MARGIN - RING_LEAD_SKIP
+        glUniform1f(uvSpanHandle, visible / ringColumns)
         glUniform1f(texelTHandle, 1.0f / ringColumns)
+        // Пропуск сразу за головой: там ещё лежит прошлый оборот.
+        glUniform1f(headSkipHandle, RING_LEAD_SKIP / ringColumns)
         // Энергия столбца нормирована к единице, значит на один бин
         // приходится порядка 1/BINS. Приводим усиление к этому масштабу,
         // иначе константа теряет смысл при смене числа бинов.
