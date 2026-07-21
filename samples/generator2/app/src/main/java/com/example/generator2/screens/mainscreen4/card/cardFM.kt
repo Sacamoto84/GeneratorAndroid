@@ -219,21 +219,7 @@ private fun SecondLine(str: String = "CH0", gen: Generator) {
         //Переключение режима
 
         Button(
-            onClick = {
-
-                if (str == "CH0") {
-                    if (gen.liveData.parameterInt0.value == 0)
-                        gen.liveData.parameterInt0.value = 1
-                    else
-                        gen.liveData.parameterInt0.value = 0
-                } else {
-                    if (gen.liveData.parameterInt1.value == 0)
-                        gen.liveData.parameterInt1.value = 1
-                    else
-                        gen.liveData.parameterInt1.value = 0
-                }
-
-            },
+            onClick = { gen.switchFmMode(if (str == "CH0") 0 else 1) },
 
             modifier = Modifier
                 .padding(start = 8.dp)

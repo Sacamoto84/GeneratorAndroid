@@ -113,6 +113,52 @@ class Generator {
         }
     }
 
+    /**
+     * Переключение режима задания частот FM с пересчётом параметров так,
+     * чтобы диапазон частот (а значит и звучание) не изменился
+     */
+    fun switchFmMode(ch: Int) {
+        val mode = if (ch == 0) liveData.parameterInt0 else liveData.parameterInt1
+
+        if (mode.value == 0) {
+            //несущая ± девиация -> минимум/максимум
+            val carrier =
+                if (ch == 0) liveData.ch1_Carrier_Fr.value else liveData.ch2_Carrier_Fr.value
+            val dev = (if (ch == 0) liveData.ch1_FM_Dev.value else liveData.ch2_FM_Dev.value)
+                .coerceAtMost(fmDevLimit(ch))
+
+            val min = (carrier - dev).coerceAtLeast(FM_FREQ_MIN)
+            val max = carrier + dev
+
+            if (ch == 0) {
+                liveData.ch1FmMin.value = min
+                liveData.ch1FmMax.value = max
+            } else {
+                liveData.ch2FmMin.value = min
+                liveData.ch2FmMax.value = max
+            }
+            mode.value = 1
+        } else {
+            //минимум/максимум -> несущая ± девиация
+            val min = (if (ch == 0) liveData.ch1FmMin.value else liveData.ch2FmMin.value)
+                .coerceAtLeast(FM_FREQ_MIN)
+            val max = (if (ch == 0) liveData.ch1FmMax.value else liveData.ch2FmMax.value)
+                .coerceAtLeast(min)
+
+            val carrier = (max + min) / 2f
+            val dev = (max - min) / 2f
+
+            if (ch == 0) {
+                liveData.ch1_Carrier_Fr.value = carrier
+                liveData.ch1_FM_Dev.value = dev
+            } else {
+                liveData.ch2_Carrier_Fr.value = carrier
+                liveData.ch2_FM_Dev.value = dev
+            }
+            mode.value = 0
+        }
+    }
+
     /** Пересчитать буфер FM и отдать его в нативный рендер */
     fun updateFm(ch: Int) {
         createFm(ch)

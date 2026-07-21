@@ -47,6 +47,12 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
     else
         gen.liveData.parameterInt1.collectAsState() //CH2 режим выбора частот FM модуляции 0-обычный 1-минимум макс
 
+    val fmEN: State<Boolean> =
+        if (str == "CH0") gen.liveData.ch1_FM_EN.collectAsState() else gen.liveData.ch2_FM_EN.collectAsState()
+
+    //Несущая заблокирована только когда FM включена в режиме минимум/максимум
+    val carrierEnable = fmSelectMode.value == 0 || !fmEN.value
+
     Column {
 
         Box(
@@ -96,7 +102,7 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
             MainscreenTextBoxAndDropdownMenu(
                 str = String.format("%d", carrierFr.value.toInt()),
                 modifier = Modifier.weight(1f),
-                enable = fmSelectMode.value == 0,
+                enable = carrierEnable,
                 items = listOf(
                     "20",
                     "100",
@@ -120,7 +126,7 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
                 value = carrierFr.value,
                 onChange = {
 
-                    if (fmSelectMode.value == 0)
+                    if (carrierEnable)
                         if (str == "CH0") gen.liveData.ch1_Carrier_Fr.value =
                             it else gen.liveData.ch2_Carrier_Fr.value = it
                 },
@@ -134,7 +140,7 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
                 sensing = LiveConstrain.sensetingSliderCr.floatValue / 4,
                 range = 50f..100000f,
                 onValueChange = {
-                    if (fmSelectMode.value == 0) if (str == "CH0") gen.liveData.ch1_Carrier_Fr.value =
+                    if (carrierEnable) if (str == "CH0") gen.liveData.ch1_Carrier_Fr.value =
                         it else gen.liveData.ch2_Carrier_Fr.value = it
                 },
                 modifier = modifierInfinitySlider,
