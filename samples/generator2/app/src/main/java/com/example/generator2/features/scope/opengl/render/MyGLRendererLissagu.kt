@@ -44,6 +44,10 @@ class MyGLRendererLissagu: GLSurfaceView.Renderer {
 
     val bools = intArrayOf(0, 1, 1) //oneTwo 0-one 1-two, L 1-true, R
 
+    /** Сколько отсчётов показывает фигура. Задаётся снаружи, из Scope. */
+    @Volatile
+    var points: Int = 512
+
     private val vertexShaderCode =
         """
     #version 300 es
@@ -184,7 +188,14 @@ void main() {
     private lateinit var pairFlatArray: Pair<FloatArray, FloatArray>
 
     fun updateVerticesDirect() {
-        vertexBuffer = NativeFloatDirectBuffer.getByteBufferSmallLissagu(4096).asFloatBuffer()
+        // Пока история короче запрошенного окна, нативный слой отдаёт null.
+        // Это нормальное состояние сразу после смены геометрии потока —
+        // просто оставляем прошлый кадр вместо падения.
+        //
+        // Отсчёты чередуются по каналам: на точку фигуры уходит пара.
+        val byteBuffer =
+            NativeFloatDirectBuffer.getByteBufferSmallLissagu(points * 2) ?: return
+        vertexBuffer = byteBuffer.asFloatBuffer()
         vertexBuffer.position(0)
     }
 

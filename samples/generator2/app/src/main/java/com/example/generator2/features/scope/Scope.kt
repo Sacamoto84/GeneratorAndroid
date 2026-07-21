@@ -24,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -125,6 +126,24 @@ class Scope {
      */
     /** Количество пакетов в которое будет упакован выходной канал */
     val compressorCount = mutableFloatStateOf(256f)
+
+    /**
+     * Сколько отсчётов показывает фигура Лиссажу.
+     *
+     * Замкнутую фигуру рисует один период биения между каналами, дальше она
+     * ложится поверх себя же. Сколько именно отсчётов на это нужно, зависит от
+     * частоты сигнала, поэтому величина вынесена в управление: при 4410 Гц
+     * хватает сотни, на низких частотах нужны тысячи.
+     */
+    val lissaguPoints = mutableIntStateOf(512)
+
+    private fun lissaguPointsAdd() {
+        lissaguPoints.intValue = (lissaguPoints.intValue * 2).coerceAtMost(4096)
+    }
+
+    private fun lissaguPointsDiv() {
+        lissaguPoints.intValue = (lissaguPoints.intValue / 2).coerceAtLeast(64)
+    }
 
     /** Подпись развёртки: целое от единицы и выше, ниже — доля пакета. */
     private fun sweepLabel(value: Float): String =
@@ -348,6 +367,7 @@ class Scope {
             withContext(Dispatchers.IO) {
                 while (true) {
                     deferredLissagu.receive()
+                    shaderRenderer.points = lissaguPoints.intValue
                     shaderRenderer.updateVerticesDirect()
                     view?.requestRender()
                 }
@@ -592,6 +612,64 @@ class Scope {
 
                     }
             )
+
+            // Число отсчётов в фигуре. Своё, отдельно от развёртки
+            // осциллографа: замкнутую фигуру рисует один период биения между
+            // каналами, и сколько это отсчётов — зависит от частоты сигнала.
+            if (isUseLissagu.collectAsState().value) {
+                Row {
+
+                    //Знак Плюс
+                    Box(
+                        modifier = m
+                            .clickable(onClick = { lissaguPointsAdd() })
+                            .border(1.dp, Color.Green)
+                            .background(Color.Black)
+                            .drawBehind {
+                                drawLine(
+                                    Color.White,
+                                    start = Offset(size.width * 1 / 3f, size.height / 2f),
+                                    end = Offset(size.width * 2 / 3f, size.height / 2f),
+                                    strokeWidth = 3.dp.toPx()
+                                )
+
+                                drawLine(
+                                    Color.White,
+                                    start = Offset(size.width * 1 / 2f, size.height / 3f),
+                                    end = Offset(size.width * 1 / 2f, size.height * 2f / 3f),
+                                    strokeWidth = 3.dp.toPx()
+                                )
+                            })
+
+                    Text(
+                        text = lissaguPoints.intValue.toString(),
+                        modifier = Modifier
+                            .width(64.dp)
+                            .height(40.dp)
+                            .wrapContentHeight(Alignment.CenterVertically)
+                            .background(Color.Black),
+                        color = Color.Green,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center,
+                        fontFamily = FontFamily(Font(R.font.nunito))
+                    )
+
+                    //Знак минус
+                    Box(
+                        modifier = m
+                            .clickable(onClick = { lissaguPointsDiv() })
+                            .border(1.dp, Color.Green)
+                            .background(Color.Black)
+                            .drawBehind {
+                                drawLine(
+                                    Color.White,
+                                    start = Offset(size.width * 1 / 3f, size.height / 2f),
+                                    end = Offset(size.width * 2 / 3f, size.height / 2f),
+                                    strokeWidth = 3.dp.toPx()
+                                )
+                            })
+                }
+            }
 //////////////////////////////////////////////////////////////////////////////////////////////
 
         }
