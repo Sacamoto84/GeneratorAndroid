@@ -53,9 +53,9 @@ class MyGLRendererLissagu: GLSurfaceView.Renderer {
     out vec4 ourColor; // Передаем цвет во фрагментный шейдер
     
     void main() {
-        ourColor = vec4(1.0, 1.0, 1.0, 0.90001);
+        ourColor = vec4(0.0, 1.0, 0.2, 0.90001);
         gl_Position = vec4(aPosition, 0.0, 1.0);
-        gl_PointSize = 5.0;
+        gl_PointSize = 2.0;
     }
         
 """.trimIndent()
