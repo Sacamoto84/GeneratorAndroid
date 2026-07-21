@@ -183,12 +183,11 @@ void GetBufferQueues(float *pSampleRate, AudioQueue **pFreeQ, AudioQueue **pRecQ
 
 
 /**
- *  Длина массива данных (число точек, по которым будет выполняться преобразование Фурье). 4096
+ *  Длина массива данных (число точек, по которым будет выполняться преобразование Фурье).
  */
 extern "C" JNIEXPORT jint JNICALL
 Java_com_example_generator2_Spectrogram_getFftLength(JNIEnv *env, jobject) {
-    return 8192;
-    //pProcessor->getProcessedLength();
+    return LENPOINT;
 }
 
 /////////////////////////////////////////////////// get/sets ///////////////////////////////////////////////////////

@@ -45,8 +45,14 @@ class WaterfallView(context: Context?, attrs: AttributeSet?) :
     private var mBitmap: Bitmap? = null
 
     private val mBarsHeight = 150
-    private val minFrequencyHz = 100
-    private val maxFrequencyHz = 10_000
+    private val minFrequencyHz = 0
+    private val maxFrequencyHz = 5_000
+
+    /** Логарифмическая шкала не определена в нуле, поэтому для неё нижняя граница поднимается. */
+    private val logMinFrequencyHz = 20
+
+    private val scalerMinFrequencyHz: Int
+        get() = if (mLogX) maxOf(minFrequencyHz, logMinFrequencyHz) else minFrequencyHz
 
     private var mLogX = false
     private var mLogY = true
@@ -99,7 +105,7 @@ class WaterfallView(context: Context?, attrs: AttributeSet?) :
         if (mBitmap == null) return
         Spectrogram.SetScaler(
             mBitmap!!.width,
-            minFrequencyHz.toDouble(),
+            scalerMinFrequencyHz.toDouble(),
             maxFrequencyHz.toDouble(),
             mLogX,
             mLogY,
@@ -380,12 +386,32 @@ class WaterfallView(context: Context?, attrs: AttributeSet?) :
         //
         if (mMeasuring) {
             val xx = viewport.fromScreenSpace(xxx)
-            var str = "none"
 
-            val freq = Spectrogram.XToFreq(xx.toDouble()).toInt()
-            str = String.format("%d Hz", freq)
+            val cursorFrequency = Spectrogram.XToFreq(xx.toDouble())
+            canvas.drawText(
+                String.format("%d Hz", cursorFrequency.toInt()),
+                xxx,
+                yyy - mBarsHeight,
+                white
+            )
 
-            canvas.drawText(str, xxx, yyy - mBarsHeight, white)
+            // Окно поиска берём по ширине пикселя, чтобы курсор цеплял тот пик,
+            // на который наведён, а не соседний.
+            val searchHz = kotlin.math.abs(
+                Spectrogram.XToFreq(viewport.fromScreenSpace(xxx + PEAK_SEARCH_PX).toDouble()) -
+                        cursorFrequency
+            ).coerceAtLeast(MIN_PEAK_SEARCH_HZ)
+
+            val peakFrequency = Spectrogram.findPeakFreq(cursorFrequency.toDouble(), searchHz.toDouble())
+            if (peakFrequency >= 0f) {
+                canvas.drawText(
+                    String.format("^ %.2f Hz", peakFrequency),
+                    xxx,
+                    yyy - mBarsHeight + (white.descent() - white.ascent()),
+                    white
+                )
+            }
+
             canvas.drawLine(xxx, 0f, xxx, height.toFloat(), white)
 
             // draw time graphs
@@ -487,14 +513,16 @@ class WaterfallView(context: Context?, attrs: AttributeSet?) :
     private fun frequencyTicks(): List<FrequencyTick> {
         val leftFrequency = Spectrogram.XToFreq(viewport.fromScreenSpace(0f).toDouble())
         val rightFrequency = Spectrogram.XToFreq(viewport.fromScreenSpace(width.toFloat()).toDouble())
-        val visibleMin = minOf(leftFrequency, rightFrequency).coerceIn(minFrequencyHz.toFloat(), maxFrequencyHz.toFloat())
-        val visibleMax = maxOf(leftFrequency, rightFrequency).coerceIn(minFrequencyHz.toFloat(), maxFrequencyHz.toFloat())
+        val visibleMin = minOf(leftFrequency, rightFrequency).coerceIn(scalerMinFrequencyHz.toFloat(), maxFrequencyHz.toFloat())
+        val visibleMax = maxOf(leftFrequency, rightFrequency).coerceIn(scalerMinFrequencyHz.toFloat(), maxFrequencyHz.toFloat())
 
         return if (mLogX) logarithmicTicks(visibleMin, visibleMax)
         else linearTicks(visibleMin, visibleMax)
     }
 
     private fun linearTicks(visibleMin: Float, visibleMax: Float): List<FrequencyTick> {
+        if (visibleMax <= visibleMin) return emptyList()
+
         val targetMajorCount = (width / 90f).toInt().coerceAtLeast(2)
         val majorStep = niceFrequencyStep((visibleMax - visibleMin) / targetMajorCount)
         val minorStep = majorStep / 5f
@@ -596,6 +624,13 @@ class WaterfallView(context: Context?, attrs: AttributeSet?) :
     }
 
     companion object {
+
+        /** Полуширина окна поиска пика в пикселях экрана. */
+        private const val PEAK_SEARCH_PX = 20f
+
+        /** Нижняя граница окна поиска: на сильном зуме пиксель уже одного бина. */
+        private const val MIN_PEAK_SEARCH_HZ = 5f
+
         fun getNoteName(n: Int): String {
             val notes = arrayOf("A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#")
             val octave = (n + 8) / 12

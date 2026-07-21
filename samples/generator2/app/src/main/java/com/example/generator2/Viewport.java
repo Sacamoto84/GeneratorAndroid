@@ -7,6 +7,8 @@ import android.view.View;
 
 public class Viewport {
 
+    private static final float ZOOM_EPSILON = 1.001f;
+
     private SparseArray<PointF> mActivePointers = new SparseArray<PointF>();
 
     PointF lastPoint = new PointF();
@@ -31,6 +33,13 @@ public class Viewport {
 
     PointF GetScale() {
         return mScale;
+    }
+
+    /**
+     * Перемещение одним пальцем разрешено только когда включен масштаб.
+     */
+    boolean isZoomed() {
+        return mScale.x > ZOOM_EPSILON;
     }
 
     PointF getDistance(MotionEvent event)
@@ -97,6 +106,9 @@ public class Viewport {
 
                     //distance
                     lastDist = getDistance(event);
+                } else {
+                    // якорь для перемещения одним пальцем
+                    lastPoint.set(f);
                 }
                 break;
             }
@@ -127,13 +139,43 @@ public class Viewport {
 
                     DragScale(midPoint, dist);
                 }
+                else if (mActivePointers.size() == 1 && event.getPointerCount() >= 1 && isZoomed())
+                {
+                    PointF point = mActivePointers.get(event.getPointerId(0));
+
+                    float x = event.getX(0);
+                    float y = event.getY(0);
+
+                    if (point != null) {
+                        point.x = x;
+                        point.y = y;
+                    }
+
+                    Drag(x - lastPoint.x);
+
+                    lastPoint.x = x;
+                    lastPoint.y = y;
+                }
 
 
                 break;
             }
 
+            case MotionEvent.ACTION_POINTER_UP: {
+                mActivePointers.remove(pointerId);
+
+                // палец отпущен после щипка - переносим якорь на оставшийся,
+                // иначе следующее перемещение прыгнет
+                if (mActivePointers.size() == 1) {
+                    int index = event.findPointerIndex(mActivePointers.keyAt(0));
+                    if (index >= 0) {
+                        lastPoint.set(event.getX(index), event.getY(index));
+                    }
+                }
+                break;
+            }
+
             case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_POINTER_UP:
             case MotionEvent.ACTION_CANCEL: {
                 mActivePointers.remove(pointerId);
                 break;
@@ -164,6 +206,14 @@ public class Viewport {
         mTranslate.x += VelX;
 
         mScale.x *= scaleX;
+    }
+
+    /**
+     * Перемещение по горизонтали без изменения масштаба.
+     */
+    private void Drag(float deltaX)
+    {
+        mTranslate.x += deltaX;
     }
 
     private void setPos(float left, float right)

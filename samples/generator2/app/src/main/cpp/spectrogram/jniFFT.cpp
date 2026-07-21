@@ -24,24 +24,39 @@
 #include <android/bitmap.h>
 #include <pthread.h>
 #include <semaphore.h>
+#include <vector>
 
 #include "global.h"
 
 #include "FloatRingBufferFFT.h"
-
-#define LENPOINT 8192
+#include "Decimator.h"
 
 /**
- * Кольцевой буфер для LR данных получемых из dataCompressor
+ * Кольцевой буфер для LR данных получемых из dataCompressor.
+ * Хранит уже прореженный поток (fs / FFT_DECIM).
  */
 FloatRingBufferFFT ringBufferFft = FloatRingBufferFFT(262144);
+
+/**
+ * Прореживание входа перед FFT. Даёт шаг по частоте в FFT_DECIM раз мельче
+ * при той же длине преобразования, см. Decimator.h
+ */
+static DecimatorStereo decimator;
+
+/** Приёмник дециматора, растёт под размер входных порций. */
+static std::vector<float> decimated;
 
 ScaleBufferBase *pScaleL = nullptr;
 ScaleBufferBase *pScaleR = nullptr;
 
 
-//Частота дискретизации для все процов
+//Частота дискретизации входного потока
 static float sampleRate = 48000.0f;
+
+/** Частота дискретизации, с которой реально работает FFT. */
+static inline float fftSampleRate(float inputSampleRate) {
+    return inputSampleRate / (float) FFT_DECIM;
+}
 
 myFFT *pProcessorL = new myFFT();
 myFFT *pProcessorR = new myFFT();
@@ -68,16 +83,16 @@ void initFTTLoop() {
     if (isInitialized)
         return;
 
-    pProcessorL->init(LENPOINT, sampleRate);
-    pProcessorR->init(LENPOINT, sampleRate);
+    pProcessorL->init(LENPOINT, fftSampleRate(sampleRate));
+    pProcessorR->init(LENPOINT, fftSampleRate(sampleRate));
 
-    //Создать новый pScale
-    pScaleL = new ScaleBufferLogLog();
-    pScaleR = new ScaleBufferLogLog();
+    //Создать новый pScale (по умолчанию линейный X, логарифмический Y - как в WaterfallView)
+    pScaleL = new ScaleBufferLinLog();
+    pScaleR = new ScaleBufferLinLog();
 
     //Настроить на ширину картинки и маминимальную и максимальную частоту
-    pScaleL->setOutputWidth(1024, static_cast<float>(100), static_cast<float>(10000));
-    pScaleR->setOutputWidth(1024, static_cast<float>(100), static_cast<float>(10000));
+    pScaleL->setOutputWidth(1024, static_cast<float>(0), static_cast<float>(5000));
+    pScaleR->setOutputWidth(1024, static_cast<float>(0), static_cast<float>(5000));
 
     pScaleL->PreBuild(pProcessorL);
     pScaleR->PreBuild(pProcessorR);
@@ -191,21 +206,37 @@ JNIEXPORT void JNICALL
 Java_com_example_generator2_Spectrogram_sentToFloatRingBufferFFT(JNIEnv *env, jobject thiz,
                                                                  jfloatArray buf, jint len, jint samplerate) {
 
-    if (pProcessorL->m_sampleRate != samplerate) {
-        pProcessorL->m_sampleRate = samplerate;
+    const float rate = fftSampleRate(static_cast<float>(samplerate));
+
+    if (pProcessorL->m_sampleRate != rate) {
+        pProcessorL->m_sampleRate = rate;
         pScaleL->PreBuild(pProcessorL);
+        decimator.reset();
     }
 
-    if (pProcessorR->m_sampleRate != samplerate) {
-        pProcessorR->m_sampleRate = samplerate;
+    if (pProcessorR->m_sampleRate != rate) {
+        pProcessorR->m_sampleRate = rate;
         pScaleR->PreBuild(pProcessorR);
     }
 
     ///LOGD("!!! sentToFloatRingBufferFFT..start");
     jfloat *point = env->GetFloatArrayElements(buf, nullptr);
-    ringBufferFft.add(point, len);
+
+    const size_t inFrames = static_cast<size_t>(len) / 2;
+    const size_t capacity = DecimatorStereo::maxOutputFrames(inFrames) * 2;
+
+    if (decimated.size() < capacity) {
+        decimated.resize(capacity);
+    }
+
+    const size_t outFrames = decimator.process(point, inFrames, decimated.data());
+
     env->ReleaseFloatArrayElements(buf, point, 0);
-    sem_post(&context1.headwriteprotect);
+
+    if (outFrames > 0) {
+        ringBufferFft.add(decimated.data(), outFrames * 2);
+        sem_post(&context1.headwriteprotect);
+    }
     //LOGE("!!! sentToFloatRingBufferFFT..end");
 }
 
@@ -330,13 +361,33 @@ Java_com_example_generator2_Spectrogram_setBarsHeight(JNIEnv *env, jobject,
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_generator2_Spectrogram_setSampleRate(JNIEnv *env, jobject, jint samplerate) {
+    const float rate = fftSampleRate(static_cast<float>(samplerate));
+
     if (pProcessorL != nullptr){
-        pProcessorL->m_sampleRate = static_cast<float >(samplerate);
+        pProcessorL->m_sampleRate = rate;
     }
 
     if (pProcessorR != nullptr){
-        pProcessorR->m_sampleRate = static_cast<float >(samplerate);
+        pProcessorR->m_sampleRate = rate;
     }
+
+    decimator.reset();
+}
+
+/**
+ * Частота пика рядом с курсором с субbinной точностью.
+ *
+ * @param freq     частота под курсором, Гц
+ * @param searchHz полуширина окна поиска, Гц
+ * @return         частота пика в Гц либо -1
+ */
+extern "C" JNIEXPORT jfloat JNICALL
+Java_com_example_generator2_Spectrogram_findPeakFreq(JNIEnv *env, jobject,
+                                                     jdouble freq, jdouble searchHz) {
+    if (pProcessorL == nullptr)
+        return -1.0f;
+
+    return pProcessorL->findPeak(static_cast<float>(freq), static_cast<float>(searchHz));
 }
 
 ScaleBufferBase *GetScale(bool logX, bool logY) {

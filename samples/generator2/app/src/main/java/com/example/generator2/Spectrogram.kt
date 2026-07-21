@@ -27,6 +27,14 @@ object Spectrogram {
     external fun XToFreq(x: Double): Float
     external fun FreqToX(freq: Double): Float
 
+    /**
+     * Частота пика рядом с [freq] с субbinной точностью (парабола по трём точкам).
+     * Возвращает -1, если пик не найден.
+     *
+     * @param searchHz полуширина окна поиска в герцах
+     */
+    external fun findPeakFreq(freq: Double, searchHz: Double): Float
+
     external fun SetScaler(width: Int, min: Double, max: Double, bLogX: Boolean, bLogY: Boolean)
 
     external fun ResetScanline()
