@@ -27,7 +27,8 @@ enum class ROUTESTREAM {
     OFF,
 }
 
-val a48 = 44100
+/** Частота дискретизации аудиовыхода по умолчанию. */
+val a48 = 48000
 
 @androidx.media3.common.util.UnstableApi
 class AudioMixerPump

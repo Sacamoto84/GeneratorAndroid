@@ -77,7 +77,9 @@ enum class OSCILLSYNC {  NONE, R, L }
 
 class Scope {
 
-    var audioSampleRate = 44100
+    // Начальное значение: дальше AudioMixerPump подставит частоту,
+    // на которой реально открылся аудиовыход.
+    var audioSampleRate = 48000
 
     /**
      * Используем компонент или нет
