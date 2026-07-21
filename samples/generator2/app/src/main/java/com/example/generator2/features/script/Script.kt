@@ -59,6 +59,12 @@ import timber.log.Timber
  */
 private const val YIELD_EVERY = 256
 
+/**
+ * Как часто отдавать снимок регистров в UI. Сам массив движок правит на каждой
+ * инструкции, а перерисовывать экран сотни раз в секунду незачем.
+ */
+private const val REGISTER_PUBLISH_MS = 50L
+
 //Экраны для нижнего меню
 enum class StateCommandScript {
     START, PAUSE, RESUME, STOP, EDIT, //Перевести в режим редактирования
@@ -78,8 +84,17 @@ class Script(val gen: Generator) {
     //───────────────────────────────────────────────┐
     /**
      * ## Регистры Float 10 штук
+     *
+     * Обычный массив: правится на каждой инструкции, наблюдаемым делать дорого.
+     * Для экрана есть [registers].
      */
     var register = FloatArray(REGISTER_COUNT)
+
+    /**
+     * Снимок регистров для UI, обновляется не чаще [REGISTER_PUBLISH_MS]
+     * и обязательно в конце прогона
+     */
+    val registers = MutableStateFlow(List(REGISTER_COUNT) { 0f })
     //───────────────────────────────────────────────┘
 
     //───────────────────────────────────────────────┐
@@ -136,6 +151,7 @@ class Script(val gen: Generator) {
             StateCommandScript.START -> {
                 cancelRun()
                 register.fill(0f)
+                publishRegisters()
                 pc.value = 0
                 launchRun()
                 state = StateCommandScript.ISRUNNING
@@ -170,7 +186,13 @@ class Script(val gen: Generator) {
     private fun stop() {
         cancelRun()
         register.fill(0f)
+        publishRegisters()
         pc.value = 0
+    }
+
+    /** Отдать текущее содержимое регистров на экран */
+    private fun publishRegisters() {
+        registers.value = register.toList()
     }
 
     private fun cancelRun() {
@@ -192,6 +214,7 @@ class Script(val gen: Generator) {
                 runLoop(myGeneration)
                 //Дошли до END
                 if (isCurrent(myGeneration)) {
+                    publishRegisters()
                     pc.value = 0
                     state = StateCommandScript.ISTOPPING
                     log("Скрипт окончен")
@@ -201,12 +224,14 @@ class Script(val gen: Generator) {
             } catch (e: ScriptException) {
                 //pc оставляем на битой строке, регистры не чистим — для диагностики
                 if (isCurrent(myGeneration)) {
+                    publishRegisters()
                     state = StateCommandScript.ISTOPPING
                     log("Ошибка в строке ${e.line}: ${e.message}")
                 }
                 Timber.e(e, "Script: ошибка в строке ${e.line}")
             } catch (e: Exception) {
                 if (isCurrent(myGeneration)) {
+                    publishRegisters()
                     state = StateCommandScript.ISTOPPING
                     log("Ошибка в строке ${pc.value}: ${e.message}")
                 }
@@ -225,6 +250,8 @@ class Script(val gen: Generator) {
      */
     private suspend fun CoroutineScope.runLoop(myGeneration: Int) {
         var steps = 0
+        var lastPublish = 0L
+
         while (isActive && isCurrent(myGeneration)) {
 
             val snapshot = list.toList()
@@ -238,6 +265,12 @@ class Script(val gen: Generator) {
             if (cmd == Cmd.End) return
 
             execute(cmd, snapshot, current, myGeneration)
+
+            val now = System.currentTimeMillis()
+            if (now - lastPublish >= REGISTER_PUBLISH_MS) {
+                lastPublish = now
+                if (isCurrent(myGeneration)) publishRegisters()
+            }
 
             //Не занимать ядро, если в скрипте нет ни одного DELAY
             if (++steps % YIELD_EVERY == 0) delay(1)
@@ -278,8 +311,10 @@ class Script(val gen: Generator) {
             }
 
             is Cmd.Delay -> {
-                setPc(current + 1)
+                //Сначала ждём, потом двигаем pc: пока идёт задержка, на экране
+                //должна быть подсвечена сама строка DELAY, а не следующая
                 delay(cmd.ms)
+                setPc(current + 1)
             }
 
             is Cmd.Load -> {

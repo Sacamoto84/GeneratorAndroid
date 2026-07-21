@@ -32,7 +32,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.R
 import com.example.generator2.features.presets.Presets
 import com.example.generator2.features.presets.presetsGetListName
@@ -44,7 +43,7 @@ import java.io.File
 private val Corner = 8.dp
 
 @Composable
-fun DialogPresetsDeleteRename(name: String, vm: presetsVM = hiltViewModel()) {
+fun DialogPresetsDeleteRename(name: String, vm: presetsVM) {
 
     val context = LocalContext.current
 

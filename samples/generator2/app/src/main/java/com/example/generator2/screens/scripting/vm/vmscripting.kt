@@ -5,14 +5,13 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import com.example.generator2.features.script.Script
 import com.example.generator2.features.script.ScriptUtils
 import com.example.generator2.features.script.StateCommandScript
 import com.example.generator2.screens.scripting.ui.ScriptKeyboard
 import com.example.generator2.screens.scripting.ui.consoleLog
-import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,14 +19,13 @@ import javax.inject.Inject
 
 @Stable
 @SuppressLint("StaticFieldLeak")
-@HiltViewModel
 class VMScripting @Inject constructor(
     @ApplicationContext val contextActivity: Context,
     val script: Script,
     val utils: ScriptUtils,
     val keyboard: ScriptKeyboard
     //val keyboard: ScriptKeyboard
-) : ViewModel() {
+) : ScreenModel {
 
     val openDialogSaveAs = mutableStateOf(false)
     val openDialogDeleteRename = mutableStateOf(false)
@@ -36,7 +34,7 @@ class VMScripting @Inject constructor(
         //Сообщения движка идут в консоль экрана скриптов.
         //Движок пишет из своего потока, консоль — Compose-состояние: уводим в главный
         script.logger = { message ->
-            viewModelScope.launch(Dispatchers.Main) { consoleLog.println(message) }
+            screenModelScope.launch(Dispatchers.Main) { consoleLog.println(message) }
         }
     }
 

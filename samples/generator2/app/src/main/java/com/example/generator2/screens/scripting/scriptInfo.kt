@@ -1,7 +1,6 @@
 package com.example.generator2.screens.scripting
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
 import com.example.generator2.element.Console2
 
 //Экран описания языка

@@ -1,17 +1,15 @@
 package com.example.generator2.features.presets
 
-import androidx.lifecycle.ViewModel
+import cafe.adriel.voyager.core.model.ScreenModel
 import com.example.generator2.AppPath
 import com.example.generator2.features.generator.Generator
-import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 
-@HiltViewModel
 class presetsVM @Inject constructor(
     val gen: Generator,
     val appPath: AppPath
-) : ViewModel() {
+) : ScreenModel {
 
     /**
      * Чтение пресета по клику

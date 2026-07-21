@@ -35,6 +35,16 @@ fun ScriptConsole(
         indexSelect = selectLine // Или передавать нужное значение
     }
 
+    val lazyListState: LazyListState = rememberLazyListState()
+
+    //Держать текущую строку в поле зрения: при исполнении pc уходит вниз списка
+    LaunchedEffect(indexSelect, l.size) {
+        if (indexSelect !in 0..l.lastIndex) return@LaunchedEffect
+        val visible = lazyListState.layoutInfo.visibleItemsInfo
+        val onScreen = visible.any { it.index == indexSelect }
+        if (!onScreen) lazyListState.scrollToItem(indexSelect)
+    }
+
 //
    val lastIndex = l.lastIndex
 //
@@ -47,7 +57,6 @@ fun ScriptConsole(
 //        global.script.pc_ex.update { 1 }
 //    }
 
-    val lazyListState: LazyListState = rememberLazyListState()
     Box(
         Modifier
             .fillMaxSize()

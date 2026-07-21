@@ -7,9 +7,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.lifecycle.ViewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.transformer.EditedMediaItem
+import cafe.adriel.voyager.core.model.ScreenModel
 import com.example.generator2.AppPath
 import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.explorer.data.treeAllAudio
@@ -18,7 +18,6 @@ import com.example.generator2.features.explorer.domen.explorerMediaFormat
 import com.example.generator2.features.explorer.domen.tagInItemMp3
 import com.example.generator2.features.explorer.model.ExplorerItem
 import com.example.generator2.model.traverseTree
-import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
@@ -42,7 +41,6 @@ class ScreenExplorerViewModelDataRepository @Inject constructor() {
 
 @androidx.media3.common.util.UnstableApi
 @SuppressLint("StaticFieldLeak")
-@HiltViewModel
 class ScreenExplorerViewModel @Inject constructor(
     @ApplicationContext val context: Context,
     val appPath: AppPath,
@@ -53,15 +51,14 @@ class ScreenExplorerViewModel @Inject constructor(
 
     val dataRepository: ScreenExplorerViewModelDataRepository
 
-) : ViewModel() {
+) : ScreenModel {
 
     init {
         Timber.i("!!! init() ScreenExplorerViewModel()")
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        Timber.i("!!! onCleared() ScreenExplorerViewModel()")
+    override fun onDispose() {
+        Timber.i("!!! onDispose() ScreenExplorerViewModel()")
     }
 
 

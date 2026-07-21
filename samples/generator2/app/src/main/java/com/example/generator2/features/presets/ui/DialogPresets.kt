@@ -39,7 +39,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.R
 import com.example.generator2.features.presets.Presets
 import com.example.generator2.features.presets.presetsGetListName
@@ -50,7 +49,7 @@ import com.siddroid.holi.colors.MaterialColor
 val PresetsDialogRecompose = mutableIntStateOf(0)
 
 @Composable
-fun DialogPresets(vm: presetsVM = hiltViewModel()) {
+fun DialogPresets(vm: presetsVM) {
 
     Presets.presetList = presetsGetListName(vm.appPath)
 
@@ -67,11 +66,11 @@ fun DialogPresets(vm: presetsVM = hiltViewModel()) {
 
 
         if (Presets.isOpenDialogRename.collectAsState().value) {
-            DialogPresetsRename(Presets.isOpenDialogDeleteRenameName)
+            DialogPresetsRename(Presets.isOpenDialogDeleteRenameName, vm)
         }
 
         if (Presets.isOpenDialogDelete.collectAsState().value) {
-            DialogPresetsDelete(Presets.isOpenDialogDeleteRenameName)
+            DialogPresetsDelete(Presets.isOpenDialogDeleteRenameName, vm)
         }
 
 

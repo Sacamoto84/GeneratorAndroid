@@ -19,7 +19,7 @@ import com.example.generator2.screens.scripting.vm.VMScripting
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun RegisterViewDraw(register: FloatArray) {
+fun RegisterViewDraw(register: List<Float>) {
     FlowRow(
         modifier = Modifier.padding(start = 6.dp, end = 6.dp).fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,

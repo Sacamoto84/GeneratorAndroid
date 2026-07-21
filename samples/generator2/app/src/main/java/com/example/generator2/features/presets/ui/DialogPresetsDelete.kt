@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.features.presets.Presets
 import com.example.generator2.features.presets.presetsGetListName
 import com.example.generator2.features.presets.presetsVM
@@ -30,7 +29,7 @@ import java.io.File
 private val Corner = 8.dp
 
 @Composable
-fun DialogPresetsDelete(name: String , vm: presetsVM = hiltViewModel()) {
+fun DialogPresetsDelete(name: String , vm: presetsVM) {
 
     println("DialogDeleteRename name:$name")
 

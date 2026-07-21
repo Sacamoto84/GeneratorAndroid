@@ -31,7 +31,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.R
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.presets.Presets
@@ -44,7 +43,7 @@ import kotlinx.coroutines.delay
 private val Corner = 8.dp
 
 @Composable
-fun DialogPresetsNewFile(gen: Generator, vm: presetsVM = hiltViewModel()) {
+fun DialogPresetsNewFile(gen: Generator, vm: presetsVM) {
 
     val context = LocalContext.current
     var value by remember { mutableStateOf("") }

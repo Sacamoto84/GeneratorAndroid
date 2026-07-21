@@ -45,7 +45,6 @@ media3 = "1.10.1"
 appmetrica = "8.4.1"
 appmetricaNdkCrashes = "3.1.0"
 mp3agic = "0.9.1"
-navigationCompose = "2.9.8"
 okhttp = "5.4.0"
 orgJetbrainsKotlinPluginCompose = "2.2.10"
 profileinstaller = "1.4.1"
@@ -73,7 +72,6 @@ android = { group = "com.github.adrielcafe.pufferdb", name = "android", version.
 android-assetcopier = { group = "com.github.flipagram", name = "android-assetcopier", version.ref = "androidAssetcopier" }
 androidsvg-aar = { group = "com.caverock", name = "androidsvg-aar", version.ref = "androidsvgAar" }
 androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt" }
-androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }
 androidx-lifecycle-runtime-compose-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
@@ -88,7 +86,6 @@ androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplaye
 androidx-media3-transformer = { group = "androidx.media3", name = "media3-transformer", version.ref = "media3" }
 androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3" }
 androidx-media3-ui-leanback = { group = "androidx.media3", name = "media3-ui-leanback", version.ref = "media3" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtime" }
 androidx-runtime-tracing = { group = "androidx.compose.runtime", name = "runtime-tracing", version.ref = "runtime" }

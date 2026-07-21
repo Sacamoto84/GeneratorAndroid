@@ -9,7 +9,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat.startActivity
-import androidx.lifecycle.ViewModel
+import cafe.adriel.voyager.core.model.ScreenModel
 import com.example.generator2.Global
 import com.example.generator2.R
 import com.example.generator2.features.update.UPDATESTATE
@@ -17,20 +17,18 @@ import com.example.generator2.features.update.Update
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.noSQL.KEY_NOSQL_CONFIG2
 import com.yagmurerdogan.toasticlib.Toastic
-import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.skeptick.libres.LibresSettings
 import javax.inject.Inject
 
 @SuppressLint("StaticFieldLeak")
-@HiltViewModel
 class VMConfig @Inject constructor(
     @ApplicationContext
     private val context: Context,
     val gen: Generator,
     val update: Update,
     val global: Global
-) : ViewModel() {
+) : ScreenModel {
 
     val recompose = mutableStateOf(0)
 

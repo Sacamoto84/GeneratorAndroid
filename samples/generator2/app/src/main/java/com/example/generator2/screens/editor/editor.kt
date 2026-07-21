@@ -35,7 +35,6 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.generator2.R
 import com.example.generator2.screens.editor.dialog.DialogNew
 import com.example.generator2.screens.editor.ui.ButtonLine
@@ -55,7 +54,7 @@ private val strokeWidth = 6f
 val openDialogNew = mutableStateOf(false)
 
 @Composable
-fun ScreenEditor(global: VMMain4 = hiltViewModel()) {
+fun ScreenEditor(global: VMMain4) {
 
 
     Scaffold(bottomBar = { BottomBar(global) }) {
