@@ -3,8 +3,11 @@
 //
 
 #include "FloatDirectBuffer.h"
+#include "PhosphorGrid.h"
 
 #include <iostream>
+
+extern PhosphorGrid phosphorGrid;
 
 AudioHistoryBuffer audioHistoryBuffer;
 
@@ -55,6 +58,7 @@ Java_com_example_generator2_features_scope_NativeFloatDirectBuffer_add(
     }
 
     audioHistoryBuffer.add(elements, len, item_count);
+    phosphorGrid.appendFrames(elements, static_cast<std::size_t>(len) / 2);
     env->ReleaseFloatArrayElements(data, elements, JNI_ABORT);
 }
 

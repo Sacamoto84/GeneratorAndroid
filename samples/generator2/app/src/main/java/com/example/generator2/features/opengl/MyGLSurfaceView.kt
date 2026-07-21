@@ -21,8 +21,15 @@ class MyGLSurfaceView(context: Context) : GLSurfaceView(context) {
         preserveEGLContextOnPause = true
     }
 
+    /**
+     * @param mode RENDERMODE_WHEN_DIRTY экономит батарею, но привязывает
+     * частоту кадров к тому, кто зовёт requestRender(). Для непрерывно
+     * бегущей картинки нужен RENDERMODE_CONTINUOUSLY: иначе кадры ложатся
+     * мимо вертикальной синхронизации и появляется джаддер.
+     */
     fun setShaderRenderer(
-        renderer: Renderer
+        renderer: Renderer,
+        mode: Int = RENDERMODE_WHEN_DIRTY
     ) {
         if (hasSetShader.not()) {
             setRenderer(
@@ -30,7 +37,7 @@ class MyGLSurfaceView(context: Context) : GLSurfaceView(context) {
             )
             this.renderer = renderer
 
-            renderMode = RENDERMODE_WHEN_DIRTY
+            renderMode = mode
         }
         hasSetShader = true
     }
