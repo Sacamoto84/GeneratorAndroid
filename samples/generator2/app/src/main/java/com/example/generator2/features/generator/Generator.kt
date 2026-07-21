@@ -4,6 +4,9 @@ import com.example.generator2.model.itemList
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 
+//Минимально допустимая мгновенная частота несущей при FM модуляции, Гц
+const val FM_FREQ_MIN = 50f
+
 class Generator {
 
 
@@ -73,15 +76,49 @@ class Generator {
         return Pair(l, r)
     }
 
-    fun createFm(ch: Int) {
+    /**
+     * Максимально допустимая девиация для режима 0, при которой
+     * несущая не опускается ниже [FM_FREQ_MIN]
+     */
+    fun fmDevLimit(ch: Int): Float {
         val carrierFr = if (ch == 0) liveData.ch1_Carrier_Fr.value else liveData.ch2_Carrier_Fr.value
-        val fmDevFr = if (ch == 0) liveData.ch1_FM_Dev.value else liveData.ch2_FM_Dev.value
+        return (carrierFr - FM_FREQ_MIN).coerceAtLeast(0f)
+    }
+
+    fun createFm(ch: Int) {
         val buf = if (ch == 0) ch1.calculate_buffer_fm else ch2.calculate_buffer_fm
         val source = if (ch == 0) ch1.buffer_fm else ch2.buffer_fm
 
-        for (i in 0..1023) {
-            buf[i] = (carrierFr + (fmDevFr * source[i]))
+        //Режим выбора частот: 0 - несущая ± девиация, 1 - минимум/максимум
+        val mode = if (ch == 0) liveData.parameterInt0.value else liveData.parameterInt1.value
+
+        val center: Float
+        val deviation: Float
+
+        if (mode == 0) {
+            center = if (ch == 0) liveData.ch1_Carrier_Fr.value else liveData.ch2_Carrier_Fr.value
+            val fmDevFr = if (ch == 0) liveData.ch1_FM_Dev.value else liveData.ch2_FM_Dev.value
+            deviation = fmDevFr.coerceAtMost(fmDevLimit(ch))
+        } else {
+            val min = (if (ch == 0) liveData.ch1FmMin.value else liveData.ch2FmMin.value)
+                .coerceAtLeast(FM_FREQ_MIN)
+            val max = (if (ch == 0) liveData.ch1FmMax.value else liveData.ch2FmMax.value)
+                .coerceAtLeast(min)
+            center = (max + min) / 2f
+            deviation = (max - min) / 2f
         }
+
+        for (i in 0..1023) {
+            buf[i] = (center + (deviation * source[i]))
+        }
+    }
+
+    /** Пересчитать буфер FM и отдать его в нативный рендер */
+    fun updateFm(ch: Int) {
+        createFm(ch)
+        RenderChannel().sendBuffer(
+            ch, 2, if (ch == 0) ch1.calculate_buffer_fm else ch2.calculate_buffer_fm
+        )
     }
 
 

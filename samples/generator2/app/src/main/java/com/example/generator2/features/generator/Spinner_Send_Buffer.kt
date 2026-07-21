@@ -45,8 +45,7 @@ fun Spinner_Send_Buffer(
             }
             GeneratorMOD.FM -> {
                 gen.ch1.buffer_fm =  byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, -1f, 1f)//byteToFloatArrayLittleEndian4096(buf)
-                gen.createFm(0)
-                RenderChannel().sendBuffer(0, 2, gen.ch1.calculate_buffer_fm)
+                gen.updateFm(0)
             }
             else -> {
                 gen.ch1.buffer_carrier = byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, -1f, 1f)//byteToFloatArrayLittleEndian4096(buf)
@@ -62,8 +61,8 @@ fun Spinner_Send_Buffer(
             }
             //ArrayUtils.byteToShortArrayLittleEndian(buf)
             GeneratorMOD.FM -> {
-                gen.ch2.buffer_fm = byteToFloatArrayLittleEndian4096(buf)
-                RenderChannel().sendBuffer(1, 2, gen.ch2.calculate_buffer_fm)
+                gen.ch2.buffer_fm = byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, -1f, 1f)
+                gen.updateFm(1)
             }
             else -> {gen.ch2.buffer_carrier = byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, -1f, 1f)//byteToFloatArrayLittleEndian4096(buf)
                 RenderChannel().sendBuffer(1, 0, gen.ch2.buffer_carrier)
@@ -84,20 +83,6 @@ private fun byteToFloatArrayLittleEndianMap(bytes: ByteArray, inMin : Float, inM
 
     floats.forEachIndexed { index, _ ->
         floats[index] = maping( shorts[index].toFloat() , inMin, inMax, outMin, outMax)
-    }
-
-    return floats
-}
-
-private fun byteToFloatArrayLittleEndian4096(bytes: ByteArray): FloatArray {
-
-    val shorts = ShortArray(bytes.size / 2)
-    ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer()[shorts]
-
-    val floats = FloatArray(shorts.size)
-
-    floats.forEachIndexed { index, _ ->
-        floats[index] = (shorts[index] - 2048.0F) / 2048.0F
     }
 
     return floats

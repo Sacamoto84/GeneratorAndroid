@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.generator2.features.generator.FM_FREQ_MIN
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.model.LiveConstrain
 import com.example.generator2.screens.mainscreen4.atom.VolumeControl
@@ -344,6 +345,18 @@ private fun SecondLineMode0(str: String, gen: Generator) {
         gen.liveData.ch2_FM_Dev.collectAsState()
     }
 
+    //Девиация, при которой нижняя частота не опускается ниже FM_FREQ_MIN
+    val devLimit = (carrierFr.value!! - FM_FREQ_MIN).coerceAtLeast(0f)
+    val effectiveDev = fmDev.value!!.coerceAtMost(devLimit)
+
+    //Увеличение девиации выше предела игнорируем, уменьшение разрешено всегда
+    val onDevChange: (Float) -> Unit = { newDev ->
+        if (newDev <= devLimit || newDev < fmDev.value!!) {
+            if (str == "CH0") gen.liveData.ch1_FM_Dev.value = newDev
+            else gen.liveData.ch2_FM_Dev.value = newDev
+        }
+    }
+
     Row(
         Modifier
             .padding(start = 0.dp, end = 8.dp)
@@ -353,9 +366,9 @@ private fun SecondLineMode0(str: String, gen: Generator) {
     {
 
         MainscreenTextBoxPlus2Line(
-            String.format("± %d", fmDev.value!!.toInt()),
-            String.format("%d", carrierFr.value!!.toInt() + fmDev.value!!.toInt()),
-            String.format("%d", carrierFr.value!!.toInt() - fmDev.value!!.toInt()),
+            String.format("± %d", effectiveDev.toInt()),
+            String.format("%d", carrierFr.value!!.toInt() + effectiveDev.toInt()),
+            String.format("%d", carrierFr.value!!.toInt() - effectiveDev.toInt()),
             Modifier
                 .padding(start = 8.dp)
                 .fillMaxHeight()
@@ -367,10 +380,7 @@ private fun SecondLineMode0(str: String, gen: Generator) {
             value = fmDev.value,
             sensing = LiveConstrain.sensetingSliderFmDev.floatValue * 8,
             range = 1f..10000f,
-            onValueChange = {
-                if (str == "CH0") gen.liveData.ch1_FM_Dev.value =
-                    it else gen.liveData.ch2_FM_Dev.value = it
-            },
+            onValueChange = onDevChange,
             modifier = modifierInfinitySlider,
             vertical = true,
             invert = true,
@@ -381,10 +391,7 @@ private fun SecondLineMode0(str: String, gen: Generator) {
             value = fmDev.value,
             sensing = LiveConstrain.sensetingSliderFmDev.floatValue,
             range = 1f..10000f,
-            onValueChange = {
-                if (str == "CH0") gen.liveData.ch1_FM_Dev.value =
-                    it else gen.liveData.ch2_FM_Dev.value = it
-            },
+            onValueChange = onDevChange,
             modifier = modifierInfinitySlider,
             vertical = true,
             invert = true,
