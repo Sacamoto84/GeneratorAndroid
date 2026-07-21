@@ -10,6 +10,7 @@ object NativeFloatDirectBuffer {
 
     external fun add(data: FloatArray, len : Int, itemCount : Int)
     external fun getByteBuffer(len : Int):ByteBuffer
-    external fun getByteBufferSmallLissagu(len : Int = 4096):ByteBuffer
+    /** Возвращает null, пока в истории накоплено меньше [len] отсчётов. */
+    external fun getByteBufferSmallLissagu(len : Int = 4096):ByteBuffer?
 
 }
