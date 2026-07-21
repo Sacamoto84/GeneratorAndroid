@@ -25,6 +25,11 @@ public:
     // отсчётах на период отличается от синуса на доли бина.
     static constexpr int kCurveSteps = 4;
 
+    // Ведение луча по кривой. Выключено: после его появления просели высота
+    // следа на неимпульсных сигналах и форма при аналоговой модуляции.
+    // Связь с кривой не доказана — флаг стоит, чтобы её проверить.
+    static constexpr bool kUseCurve = false;
+
     // Столбец занимает kBins текселей по два float: канал 0 и канал 1.
     static constexpr std::size_t kColumnStride =
             static_cast<std::size_t>(kBins) * 2;
@@ -438,6 +443,12 @@ private:
      */
     void drawCurve(float columnA, float columnB, float p0, float p1, float p2,
                    float p3, int channel, float weight) {
+        if (!kUseCurve) {
+            drawSegment(columnA, binOf(p1, channel), columnB,
+                        binOf(p2, channel), channel, weight);
+            return;
+        }
+
         // Отклонение кривой от хорды задаётся второй разностью. Там, где
         // сигнал почти прямой, дробить нечего: хорда и так точнее половины
         // бина, а дробление стоило бы вчетверо дороже.

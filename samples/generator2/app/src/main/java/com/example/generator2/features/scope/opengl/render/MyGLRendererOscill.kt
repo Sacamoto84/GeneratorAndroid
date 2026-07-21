@@ -73,7 +73,16 @@ private const val MAX_COLUMNS = 4096
  * за ней не показываются: тот, в который аудиопоток пишет прямо сейчас,
  * накоплен лишь частично и выглядит тусклее соседей.
  */
-private const val RING_MARGIN = 8
+private const val RING_MARGIN = 128
+
+/**
+ * Насколько столбцов сглаженное смещение может уйти вперёд головы записи.
+ * Уходит оно всегда: цель стоит между пакетами и прыгает разом, а интегратор
+ * фильтра продолжает вести ленту равномерно. Столбцы впереди головы ещё не
+ * переписаны и хранят данные с прошлого оборота, поэтому опережение обязано
+ * оставаться внутри RING_MARGIN, который не показывается.
+ */
+private const val MAX_LEAD_COLUMNS = 64
 
 /**
  * Временная диагностика микрофризов: раз в 60 кадров пишет в logcat, сколько
@@ -372,6 +381,18 @@ void main() {
         smoothRate += delta * RATE_GAIN * dt
         smoothOffset += (smoothRate + delta * POSITION_GAIN) * dt
         smoothOffset -= floor(smoothOffset)
+
+        // Опережение ограничиваем: за головой лежат данные с прошлого оборота.
+        if (textureColumns > 0) {
+            val maxLead = MAX_LEAD_COLUMNS.toFloat() / textureColumns
+            var lead = smoothOffset - target
+            lead -= floor(lead + 0.5f)
+            if (lead > maxLead) {
+                smoothOffset = target + maxLead
+                smoothOffset -= floor(smoothOffset)
+                smoothRate = 0f
+            }
+        }
 
         return smoothOffset
     }
