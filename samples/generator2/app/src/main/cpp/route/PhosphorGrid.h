@@ -28,7 +28,7 @@ public:
     // Ведение луча по кривой. Флаг оставлен: через него проверяли, не кривая
     // ли портит форму при модуляции. Оказалось, что нет — виноват был столбец,
     // уходивший в текстуру пустым и не помеченный заново после заполнения.
-    static constexpr bool kUseCurve = true;
+    static constexpr bool kUseCurve = false;
 
     // Столбец занимает kBins текселей по два float: канал 0 и канал 1.
     static constexpr std::size_t kColumnStride =
