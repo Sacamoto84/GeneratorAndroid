@@ -44,9 +44,14 @@ class MyGLRendererLissagu: GLSurfaceView.Renderer {
 
     val bools = intArrayOf(0, 1, 1) //oneTwo 0-one 1-two, L 1-true, R
 
-    /** Сколько отсчётов показывает фигура. Задаётся снаружи, из Scope. */
-    @Volatile
-    var points: Int = 512
+    /**
+     * Сколько отсчётов показывает фигура.
+     *
+     * Замкнутую фигуру рисует один период биения между каналами, дальше она
+     * ложится поверх себя же. Тысяча отсчётов подобрана на слух: при 4410 Гц
+     * это 23 мс, фигура плотная и без лишних наложений.
+     */
+    private val points = 1024
 
     private val vertexShaderCode =
         """
