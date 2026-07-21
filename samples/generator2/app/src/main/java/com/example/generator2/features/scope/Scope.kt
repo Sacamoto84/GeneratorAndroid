@@ -6,6 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -235,10 +237,13 @@ class Scope {
                 Divider()
             }
             item {
+                // Кнопок больше, чем влезает в ширину экрана, поэтому строка
+                // прокручивается: иначе крайние просто обрезаются и до них
+                // не добраться.
                 Row(
                     Modifier
                         .fillMaxWidth()
-                    //.horizontalScroll(rememberScrollState())
+                        .horizontalScroll(rememberScrollState())
                 ) {
                     PanelButton()
                     //Spacer(modifier = Modifier.width(8.dp))
