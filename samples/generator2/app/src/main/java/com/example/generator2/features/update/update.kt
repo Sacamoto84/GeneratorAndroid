@@ -9,7 +9,7 @@ import com.example.generator2.features.update.mono.gitHubReleaseTags
 import com.example.generator2.features.update.mono.installAPK
 import com.example.generator2.features.noSQL.KEY_NOSQL_CONFIG2
 import com.kdownloader.KDownloader
-import com.yandex.metrica.YandexMetrica
+import io.appmetrica.analytics.AppMetrica
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -94,7 +94,7 @@ class Update @Inject constructor(
                 if (tags.isEmpty())
                     throw Exception("Отсутствуют теги")
             } catch (e: Exception) {
-                YandexMetrica.reportError("Update run Отсутствуют теги", e)
+                AppMetrica.reportError("Update run Отсутствуют теги", e)
                 Timber.e("Update.run " + e.localizedMessage)
                 return@launch
             }
@@ -113,7 +113,7 @@ class Update @Inject constructor(
                 Timber.i(url)
 
             } catch (e: Exception) {
-                YandexMetrica.reportError(
+                AppMetrica.reportError(
                     "Update run Отсутствуют файлы в текущем $externalVersion теге",
                     e
                 )
@@ -126,8 +126,9 @@ class Update @Inject constructor(
             if (ping(s3url))
                 url = s3url
             else
-                YandexMetrica.reportEvent(
-                    "Update", "Отсутствуют файл в S3 $externalVersion.Release.apk"
+                AppMetrica.reportEvent(
+                    "Update",
+                    mapOf<String, Any>("message" to "Отсутствуют файл в S3 $externalVersion.Release.apk")
                 )
 
             //url = "http://77.91.87.34:10000/gen3/2.4.0.0.Release.apk"
@@ -150,7 +151,7 @@ class Update @Inject constructor(
                 //visibleDialogNew.value = true //Показ диалога обновления
 
             } catch (e: Exception) {
-                YandexMetrica.reportError("Update run ошибка определения номера версии", e)
+                AppMetrica.reportError("Update run ошибка определения номера версии", e)
                 Timber.e(e.localizedMessage)
             }
 

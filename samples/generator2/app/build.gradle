@@ -172,7 +172,7 @@ android {
             version '3.22.1'
         }
     }
-    ndkVersion '26.1.10909125'
+    ndkVersion '29.0.14206865'
 
     defaultConfig {
         renderscriptTargetApi 24
@@ -403,8 +403,8 @@ dependencies {
 
     //f6c5d62e-e201-4d03-8322-b7e738a4759f
     // AppMetrica SDK.
-    implementation libs.mobmetricalib
-    implementation libs.mobmetricalib.ndk.crashes
+    implementation libs.appmetrica
+    implementation libs.appmetrica.ndk.crashes
 
     implementation libs.kdownloader
 

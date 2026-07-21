@@ -1,4 +1,4 @@
 -dontobfuscate
 
--keep class com.yandex.metrica.** { *; }
--dontwarn com.yandex.metrica.**
+-keep class io.appmetrica.analytics.** { *; }
+-dontwarn io.appmetrica.analytics.**
