@@ -4,7 +4,7 @@ import android.opengl.GLES30.GL_COLOR_BUFFER_BIT
 import android.opengl.GLES30.GL_COMPILE_STATUS
 import android.opengl.GLES30.GL_FLOAT
 import android.opengl.GLES30.GL_FRAGMENT_SHADER
-import android.opengl.GLES30.GL_POINTS
+import android.opengl.GLES30.GL_LINE_STRIP
 import android.opengl.GLES30.GL_VERTEX_SHADER
 import android.opengl.GLES30.glAttachShader
 import android.opengl.GLES30.glClear
@@ -55,7 +55,6 @@ class MyGLRendererLissagu: GLSurfaceView.Renderer {
     void main() {
         ourColor = vec4(0.0, 1.0, 0.2, 0.90001);
         gl_Position = vec4(aPosition, 0.0, 1.0);
-        gl_PointSize = 2.0;
     }
         
 """.trimIndent()
@@ -140,7 +139,10 @@ void main() {
 //
 //            //==========================================================================
 //            // Рендерим объект
-            glDrawArrays(GL_POINTS, 0, vertexBuffer.limit() / 2)
+            // Ломаной, а не точками: отсчёты идут подряд по времени, и луч
+            // между ними проходит непрерывно. На быстрых участках точки
+            // расходились, оставляя разрывы.
+            glDrawArrays(GL_LINE_STRIP, 0, vertexBuffer.limit() / 2)
 //            // Отключаем массивы вершинных атрибутов по завершении
             glDisableVertexAttribArray(positionHandle)
 
