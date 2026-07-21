@@ -20,7 +20,7 @@
 #include <cstring>
 #include <memory>
 
-#include "route/FloatRingBuffer.h"
+#include "FloatRingBuffer.h"
 
 // Функции JNI для работы с буфером
 

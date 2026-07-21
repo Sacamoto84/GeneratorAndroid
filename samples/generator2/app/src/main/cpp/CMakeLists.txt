@@ -12,29 +12,23 @@ option(DISABLE_FORTRAN "Disable Fortran wrapper routines" ON)
 add_subdirectory(fftw-3.3.9)
 INCLUDE_DIRECTORIES(fftw-3.3.9/api)
 
-#add_subdirectory(route)
-#INCLUDE_DIRECTORIES(route)
-
-
 add_library(${CMAKE_PROJECT_NAME} SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
-        canvas.cpp
-        generator2.cpp
-        scope.cpp
-        renderchannel.cpp
+        scope/canvas.cpp
+        scope/scope.cpp
+        scope/nativeLib.cpp
+        scope/FloatDirectBuffer.cpp
+        scope/PhosphorJni.cpp
 
-        plasma.cpp
-        colormaps.cpp
-        scale.cpp
-        waterfall.cpp
-        auformat.cpp
+        generator/renderchannel.cpp
 
-        route/global.cpp
-        route/jniFFT.cpp
-
-        route/FloatDirectBuffer.cpp
-        route/PhosphorJni.cpp
-
+        spectrogram/plasma.cpp
+        spectrogram/jniFFT.cpp
+        spectrogram/global.cpp
+        spectrogram/colormaps.cpp
+        spectrogram/scale.cpp
+        spectrogram/waterfall.cpp
+        spectrogram/auformat.cpp
 )
 
 # Specifies libraries CMake should link to your target library. You

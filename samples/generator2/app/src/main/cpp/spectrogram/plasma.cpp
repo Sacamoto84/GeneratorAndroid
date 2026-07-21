@@ -21,7 +21,7 @@
 #include <android/bitmap.h>
 #include <pthread.h>
 #include <semaphore.h>
-#include "route/global.h"
+#include "global.h"
 
 myFFT *pProcessorDeferred = nullptr;
 myFFT *pProcessor = nullptr;
