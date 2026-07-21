@@ -42,13 +42,10 @@ fun BottomAppBarScript(vm: VMScripting){
             //Пауза
             IconButton(onClick = {
 
-                if (vm.script.state != StateCommandScript.ISPAUSE) vm.script.command(
-                    StateCommandScript.PAUSE
-                )
-                else {
-                    vm.script.state = StateCommandScript.ISRUNNING
-                    vm.script.end = false
-                }
+                if (vm.script.state != StateCommandScript.ISPAUSE)
+                    vm.script.command(StateCommandScript.PAUSE)
+                else
+                    vm.script.command(StateCommandScript.RESUME)
 
             }) {
                 if (vm.script.state != StateCommandScript.ISPAUSE)

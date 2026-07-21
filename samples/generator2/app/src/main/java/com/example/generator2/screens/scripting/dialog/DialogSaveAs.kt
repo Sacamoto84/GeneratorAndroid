@@ -171,7 +171,8 @@ fun DialogSaveAs(
 
                         items(files) {
 
-                            val str = it.dropLast(3)
+                            //onScan отдаёт имена уже без расширения
+                            val str = it
                             Text(
                                 text = str,
                                 color = Color.DarkGray,

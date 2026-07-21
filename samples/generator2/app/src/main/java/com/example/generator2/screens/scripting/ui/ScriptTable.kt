@@ -25,14 +25,17 @@ import com.example.generator2.screens.scripting.dialog.DialogDeleteRename
 import com.example.generator2.screens.scripting.dialog.DialogSaveAs
 import com.example.generator2.features.script.StateCommandScript
 import com.example.generator2.theme.colorGreen
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.FileNotFoundException
-
-private val files: MutableList<String> = mutableListOf()
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ScriptTable(vm: VMScripting) {
+
+    //Имена скриптов из папки /Script. Compose-состояние, иначе список не перерисуется
+    val files = remember { mutableStateListOf<String>() }
 
     Box(modifier = Modifier.fillMaxSize(1f)) {
 
@@ -113,14 +116,21 @@ fun ScriptTable(vm: VMScripting) {
                             )
 
                             Spacer(modifier = Modifier.height(4.dp))
-                            // Создать список названий файлов из папки /Script
 
-                            if (vm.script.state == StateCommandScript.ISTOPPING) {
-                                println("Читаем файлы")
-                                files.clear()
-                                files.addAll(
-                                    vm.utils.filesInScriptToList().map { it.dropLast(3) }
-                                )
+                            // Создать список названий файлов из папки /Script.
+                            // Дисковый листинг только при смене состояния, не на каждой рекомпозиции
+                            LaunchedEffect(
+                                vm.script.state,
+                                vm.openDialogSaveAs.value,
+                                vm.openDialogDeleteRename.value
+                            ) {
+                                if (vm.script.state == StateCommandScript.ISTOPPING) {
+                                    val names = withContext(Dispatchers.IO) {
+                                        vm.utils.filesInScriptToList()
+                                    }
+                                    files.clear()
+                                    files.addAll(names)
+                                }
                             }
 
                             //Отображение списка названия скриптов

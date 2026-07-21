@@ -6,12 +6,16 @@ import android.widget.Toast
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.generator2.features.script.Script
 import com.example.generator2.features.script.ScriptUtils
 import com.example.generator2.features.script.StateCommandScript
 import com.example.generator2.screens.scripting.ui.ScriptKeyboard
+import com.example.generator2.screens.scripting.ui.consoleLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @Stable
@@ -27,6 +31,14 @@ class VMScripting @Inject constructor(
 
     val openDialogSaveAs = mutableStateOf(false)
     val openDialogDeleteRename = mutableStateOf(false)
+
+    init {
+        //Сообщения движка идут в консоль экрана скриптов.
+        //Движок пишет из своего потока, консоль — Compose-состояние: уводим в главный
+        script.logger = { message ->
+            viewModelScope.launch(Dispatchers.Main) { consoleLog.println(message) }
+        }
+    }
 
     fun bNewClick() {
         script.command(StateCommandScript.STOP)
@@ -116,6 +128,8 @@ class VMScripting @Inject constructor(
      */
     fun dialogRenameNewValue(value : String){
         utils.renameScriptFile(script.name, value)
+        //Иначе следующее сохранение уйдёт в файл со старым именем
+        script.name = value
         openDialogDeleteRename.value = false
     }
 

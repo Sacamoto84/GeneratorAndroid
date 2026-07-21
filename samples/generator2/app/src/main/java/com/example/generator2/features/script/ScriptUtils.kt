@@ -1,8 +1,8 @@
 package com.example.generator2.features.script
 
 import com.example.generator2.AppPath
+import timber.log.Timber
 import java.io.File
-import java.io.IOException
 
 class ScriptUtils(val appPath: AppPath) {
 
@@ -20,61 +20,61 @@ class ScriptUtils(val appPath: AppPath) {
     }
 
     /**
-     * Получить список файлов по пути
-     *
-     *  @return Текстовый список имен файлов
+     * Имена скриптов в папке /Script без расширения .sk
      */
-    fun filesInScriptToList(): List<String> {
-        val pathDocuments = File(appPath.script)
-        val r: MutableList<String> = mutableListOf()
-        pathDocuments.list()?.let { r.addAll(it) }
-        return r
-    }
+    fun filesInScriptToList(): List<String> =
+        File(appPath.script).list()
+            ?.filter { it.endsWith(SCRIPT_EXT) }
+            ?.map { it.removeSuffix(SCRIPT_EXT) }
+            ?.sorted()
+            ?: emptyList()
 
     /**
      * Сохранить list String в файл /Script/name.sk
      */
     fun saveListToScriptFile(list: List<String>, name: String) {
-        val pathDocuments  = appPath.script + "/${name}.sk"
-        var str = ""
-        for (i in list.indices) {
-            str += "$i:${list[i]}\n"
-        }
-        File(pathDocuments).writeText(str)
+        val text = list.mapIndexed { index, line -> "$index:$line" }.joinToString("\n", postfix = "\n")
+        File(appPath.script + "/${name}$SCRIPT_EXT").writeText(text)
     }
 
     /**
-     *  Прочитать файл скрипта и записать его в список
+     *  Прочитать файл скрипта и записать его в список.
+     *
+     *  Формат строки — "индекс:команда"; индекс необязателен и при чтении отбрасывается,
+     *  пустые строки пропускаются.
      */
-    fun readScriptFileToList(name: String): List<String> {
-        val pathDocuments = appPath.script + "/${name}.sk"
-
-        val list = File(pathDocuments).readText().split("\n").toMutableList()
-
-        if (list.last() == "")
-            list.removeAt(list.lastIndex)
-
-        for (i in list.indices) {
-            val l = list[i].split(":")
-            list[i] = l[1]
-        }
-
-        return list.toList()
-    }
+    fun readScriptFileToList(name: String): List<String> =
+        File(appPath.script + "/${name}$SCRIPT_EXT")
+            .readText()
+            .lineSequence()
+            .filter { it.isNotBlank() }
+            .map { it.replaceFirst(linePrefix, "").trim() }
+            .toList()
 
     fun deleteScriptFile(name: String) {
-        val pathDocuments = appPath.script + "/${name}.sk"
-        File(pathDocuments).delete()
+        File(appPath.script + "/${name}$SCRIPT_EXT").delete()
     }
 
+    /**
+     * Переименовать скрипт. Новый файл пишется до удаления старого,
+     * чтобы при ошибке записи скрипт не пропал.
+     */
     fun renameScriptFile(nameSource: String, nameDestination: String) {
+        if (nameSource == nameDestination) return
         try {
             val l = readScriptFileToList(nameSource)
-            deleteScriptFile(nameSource)
             saveListToScriptFile(l, nameDestination)
-        } catch (e: IOException) {
-            e.printStackTrace()
+            deleteScriptFile(nameSource)
+        } catch (e: Exception) {
+            Timber.e(e, "renameScriptFile($nameSource -> $nameDestination)")
         }
+    }
+
+    private companion object {
+        const val SCRIPT_EXT = ".sk"
+
+        /** Ведущий "12:" в строке файла */
+        val linePrefix = Regex("^\\s*\\d+\\s*:")
     }
 
 }
