@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
@@ -64,7 +63,7 @@ fun InfinitySlider(
                     onDragStart = { },
                     onDrag =
                     { change, dragAmount ->
-                        change.consumeAllChanges()
+                        change.consume()
                         icrementalAngle -= dragAmount.y * _sensing.value - dragAmount.x * _sensing.value
                         if (icrementalAngle > range.endInclusive) icrementalAngle =
                             range.endInclusive
