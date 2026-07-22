@@ -1,6 +1,8 @@
 package com.example.generator2.features.script
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -176,6 +178,43 @@ class ScriptCommandTest {
     @Test(expected = ScriptException::class)
     fun `отсутствие ENDIF это ошибка а не выход за границы`() {
         findPairLine(listOf("IF F1 < 5", "PLUS F1 1", "END"), 0, stopOnElse = true)
+    }
+
+    //╰───────────────────────────────────────────────────────────────────────╯
+
+    //╭─ Операнд наружу ──────────────────────────────────────────────────────╮
+
+    @Test
+    fun `parseOperand читает регистр и константу`() {
+        assertEquals(Operand.Reg(1), parseOperand("F1"))
+        assertEquals(Operand.Reg(1), parseOperand("R1"))
+        assertEquals(Operand.Const(50f), parseOperand("50"))
+        assertEquals(Operand.Const(1000f), parseOperand("1000.0"))
+    }
+
+    @Test
+    fun `parseOperand возвращает null на мусоре`() {
+        assertNull(parseOperand("Fl"))
+        assertNull(parseOperand("хрень"))
+        assertNull(parseOperand(""))
+    }
+
+    @Test
+    fun `parseOperand не берёт регистр вне диапазона`() {
+        assertNull(parseOperand("F10"))
+        assertNull(parseOperand("F99"))
+    }
+
+    @Test
+    fun `toToken и parseOperand обратны друг другу`() {
+        listOf(Operand.Reg(0), Operand.Reg(9), Operand.Const(0f), Operand.Const(1234.5f))
+            .forEach { assertEquals(it, parseOperand(it.toToken())) }
+    }
+
+    @Test
+    fun `регистр вне диапазона по-прежнему ошибка разбора команды`() {
+        val e = assertThrows(ScriptException::class.java) { parseCommand("LOAD F10 5", 7) }
+        assertEquals(7, e.line)
     }
 
     //╰───────────────────────────────────────────────────────────────────────╯
