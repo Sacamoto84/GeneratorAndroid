@@ -8,11 +8,25 @@ build/
 .idea/
 graphify-out/
 
-# Сторонняя библиотека FFT: тысячи файлов, к архитектуре проекта отношения не имеет
-app/src/main/cpp/fftw-3.3.9/
+# Нативный код целиком: интересует Kotlin-часть, а cpp/c/h тянут в граф
+# сотни узлов, которые только зашумляют сообщества
+*.c
+*.h
+*.cpp
+*.hpp
+*.cc
+*.cxx
+
+# Каталоги нативного кода: одних расширений мало, внутри ещё .f03, .sh,
+# configure и прочая обвязка сборки
+app/src/main/cpp/
+audiostreams/src/main/jni/
+resampler/src/main/cpp/
+
+# Ассеты HTML-справки: чужой js, к архитектуре приложения не относится
+app/src/main/assets/
 
 # Отложенный и неиспользуемый код
-app/src/main/cpp/attic/
 app/src/main/java/com/example/generator2/backup/
 
 # Тестовые и вспомогательные модули верхнего уровня
