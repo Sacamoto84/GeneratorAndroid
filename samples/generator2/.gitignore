@@ -16,3 +16,6 @@ local.properties
 
 # graphify: граф знаний и его кэш, пересобирается локально
 graphify-out/
+
+# superpowers: мокапы сессий брейншторма
+.superpowers/
