@@ -39,7 +39,10 @@ fun registerIndexOrNull(token: String): Int? {
 
 /**
  * Операнд из токена: "F1" -> Reg(1), "50" -> Const(50f).
- * null, если токен ни регистр, ни число.
+ *
+ * null и когда токен ни регистр, ни число, и когда это регистр вне
+ * F0..F[REGISTER_COUNT]-1 — различить эти два случая отсюда нельзя.
+ * Кому нужен внятный текст ошибки, тот проверяет [looksLikeRegister] сам.
  */
 fun parseOperand(token: String): Operand? {
     registerIndexOrNull(token)?.let { return Operand.Reg(it) }
@@ -169,8 +172,7 @@ fun parseCommand(source: String, line: Int = -1): Cmd {
 
     fun operand(token: String): Operand {
         registerIndex(token)?.let { return Operand.Reg(it) }
-        return token.toFloatOrNull()?.let { Operand.Const(it) }
-            ?: fail("не число и не регистр: $token")
+        return parseOperand(token) ?: fail("не число и не регистр: $token")
     }
 
     //CH1 CR1 AM1 FM1 -> номер канала

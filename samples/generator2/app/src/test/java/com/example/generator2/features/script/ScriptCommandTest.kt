@@ -1,6 +1,7 @@
 package com.example.generator2.features.script
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
@@ -207,8 +208,36 @@ class ScriptCommandTest {
 
     @Test
     fun `toToken и parseOperand обратны друг другу`() {
-        listOf(Operand.Reg(0), Operand.Reg(9), Operand.Const(0f), Operand.Const(1234.5f))
-            .forEach { assertEquals(it, parseOperand(it.toToken())) }
+        listOf(
+            Operand.Reg(0),
+            Operand.Reg(9),
+            Operand.Const(0f),
+            Operand.Const(-0f),
+            Operand.Const(1234.5f),
+            Operand.Const(-5000f),
+            Operand.Const(-0.001f),
+            Operand.Const(48000f),
+            Operand.Const(Float.MAX_VALUE),
+            Operand.Const(Float.MIN_VALUE),
+        ).forEach { assertEquals("токен ${it.toToken()}", it, parseOperand(it.toToken())) }
+    }
+
+    @Test
+    fun `looksLikeRegister смотрит только на форму токена`() {
+        assertTrue(looksLikeRegister("F0"))
+        assertTrue(looksLikeRegister("R9"))
+        assertTrue(looksLikeRegister("F99"))
+        assertFalse(looksLikeRegister("F"))
+        assertFalse(looksLikeRegister("5F"))
+        assertFalse(looksLikeRegister("1000"))
+    }
+
+    @Test
+    fun `registerIndexOrNull режет диапазон`() {
+        assertEquals(0, registerIndexOrNull("F0"))
+        assertEquals(9, registerIndexOrNull("R9"))
+        assertNull(registerIndexOrNull("F10"))
+        assertNull(registerIndexOrNull("5F"))
     }
 
     @Test
