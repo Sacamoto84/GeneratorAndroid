@@ -167,8 +167,11 @@ fun parseCommand(source: String, line: Int = -1): Cmd {
     fun register(token: String): Int =
         registerIndex(token) ?: fail("ожидался регистр F0..F${REGISTER_COUNT - 1}, получено $token")
 
-    fun operand(token: String): Operand =
-        parseOperand(token) ?: fail("не число и не регистр: $token")
+    fun operand(token: String): Operand {
+        registerIndex(token)?.let { return Operand.Reg(it) }
+        return token.toFloatOrNull()?.let { Operand.Const(it) }
+            ?: fail("не число и не регистр: $token")
+    }
 
     //CH1 CR1 AM1 FM1 -> номер канала
     fun channel(token: String): Int = when (token.last()) {

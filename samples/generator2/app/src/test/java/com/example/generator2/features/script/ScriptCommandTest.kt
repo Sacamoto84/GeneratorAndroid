@@ -217,5 +217,12 @@ class ScriptCommandTest {
         assertEquals(7, e.line)
     }
 
+    @Test
+    fun `регистр вне диапазона в операнде тоже ошибка с внятным текстом`() {
+        val e = assertThrows(ScriptException::class.java) { parseCommand("LOAD F1 F10", 3) }
+        assertEquals(3, e.line)
+        assertTrue(e.message!!.contains("вне диапазона"))
+    }
+
     //╰───────────────────────────────────────────────────────────────────────╯
 }
