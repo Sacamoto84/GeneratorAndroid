@@ -307,7 +307,7 @@ fun Operand.toToken(): String = when (this) {
     fun registerIndex(token: String): Int? {
         if (!looksLikeRegister(token)) return null
         return registerIndexOrNull(token)
-            ?: fail("регистр $token вне диапазона F0..${REGISTER_COUNT - 1}")
+            ?: fail("регистр $token вне диапазона F0..F${REGISTER_COUNT - 1}")
     }
 ```
 
