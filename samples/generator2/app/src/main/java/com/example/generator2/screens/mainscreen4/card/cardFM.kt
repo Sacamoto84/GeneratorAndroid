@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.generator2.features.generator.FM_FREQ_MIN
+import com.example.generator2.common.haptic.Haptic
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.model.LiveConstrain
 import com.example.generator2.screens.mainscreen4.atom.VolumeControl
@@ -96,6 +97,8 @@ fun CardFM(str: String = "CH0", gen: Generator) {
                         if (str == "CH0") gen.liveData.ch1_FM_EN.value =
                             !gen.liveData.ch1_FM_EN.value
                         else gen.liveData.ch2_FM_EN.value = !gen.liveData.ch2_FM_EN.value
+
+                        Haptic.confirm()
                     }), contentAlignment = Alignment.Center
             )
             {

@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.generator2.common.haptic.Haptic
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.theme.colorLightBackground2
 import com.example.generator2.util.format
@@ -88,6 +89,9 @@ fun VolumeControl(value: Float, onValueChange: (Float) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableIntStateOf(0) }
 
+    //Процент громкости на последнем щелчке виброотклика
+    var lastTickPercent by remember { mutableIntStateOf((value * 100f).toInt()) }
+
     Box(
         modifier = Modifier
             .padding(start = 8.dp, top = 0.dp)
@@ -103,10 +107,12 @@ fun VolumeControl(value: Float, onValueChange: (Float) -> Unit) {
                 detectVerticalDragGestures(
                     onDragStart = {
                         showInfo = true
+                        lastTickPercent = (volume * 100f).toInt()
                     },
 
                     onDragEnd = {
                         showInfo = false
+                        Haptic.gestureEnd()
                     },
 
                     onVerticalDrag = { _, dragAmount ->
@@ -122,6 +128,13 @@ fun VolumeControl(value: Float, onValueChange: (Float) -> Unit) {
                             (1f - (position - 2.dp.toPx()) / (H.toPx() - 16.dp.toPx() - 4.dp.toPx()))
 
                         onValueChangeState.value.invoke(volume)
+
+                        //Щелчок на каждый процент громкости — ровно то, что показано на индикаторе
+                        val percent = (volume * 100f).toInt()
+                        if (percent != lastTickPercent) {
+                            lastTickPercent = percent
+                            Haptic.segmentTick()
+                        }
                     }
                 )
 

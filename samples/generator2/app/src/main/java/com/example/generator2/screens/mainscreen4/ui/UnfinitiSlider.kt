@@ -22,6 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
+import com.example.generator2.common.haptic.Haptic
 import com.example.generator2.util.format
 
 @Composable
@@ -72,6 +73,7 @@ fun InfinitySlider(
                     },
                     onDragEnd = {
                         offX = 0f
+                        Haptic.gestureEnd()
                     },
                     onDragCancel = {
                         offX = 0f

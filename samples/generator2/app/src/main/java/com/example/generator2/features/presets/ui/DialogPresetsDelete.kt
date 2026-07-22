@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.generator2.common.snackbar.SnackBar
 import com.example.generator2.features.presets.Presets
 import com.example.generator2.features.presets.presetsGetListName
 import com.example.generator2.features.presets.presetsVM
@@ -49,7 +50,10 @@ fun DialogPresetsDelete(name: String , vm: presetsVM) {
                 onClick = {
 
                     val pathDocuments = vm.appPath.presets + "/${name}.txt"
-                    File(pathDocuments).delete()
+                    val deleted = File(pathDocuments).delete()
+
+                    if (deleted) SnackBar.success("Пресет «$name» удалён")
+                    else SnackBar.error("Не удалось удалить «$name»")
 
                     Presets.presetList.clear()
                     Presets.presetList = presetsGetListName(vm.appPath)

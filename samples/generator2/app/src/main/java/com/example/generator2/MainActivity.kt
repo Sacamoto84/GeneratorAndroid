@@ -44,6 +44,7 @@ import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import com.example.generator2.screens.root.ScreenRoot
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.presets.presetsSaveFile
@@ -270,7 +271,8 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .windowInsetsPadding(WindowInsets.systemBars)
                 ) {
-                    Navigator(AppScreen.Home)
+                    //Навигация вместе с корневым снекбаром
+                    ScreenRoot()
                 }
 
 

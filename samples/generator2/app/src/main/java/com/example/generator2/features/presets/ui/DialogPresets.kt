@@ -39,6 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.generator2.R
 import com.example.generator2.features.presets.Presets
 import com.example.generator2.features.presets.presetsGetListName
@@ -50,6 +52,8 @@ val PresetsDialogRecompose = mutableIntStateOf(0)
 
 @Composable
 fun DialogPresets(vm: presetsVM) {
+
+    val navigator = LocalNavigator.currentOrThrow
 
     Presets.presetList = presetsGetListName(vm.appPath)
 
@@ -78,7 +82,7 @@ fun DialogPresets(vm: presetsVM) {
 
         Scaffold(
             topBar = { TopBar() },
-            bottomBar = { BottomBar(onClickBack = {}) }
+            bottomBar = { BottomBar(onClickBack = { navigator.pop() }) }
         )
         {
             Box(
@@ -89,7 +93,8 @@ fun DialogPresets(vm: presetsVM) {
                         bottom = it.calculateBottomPadding()
                     )
             ) {
-                Content(vm)
+                //Пресет выбран — применяем и закрываем экран
+                Content(vm, onPresetApplied = { navigator.pop() })
             }
         }
     }
@@ -99,7 +104,7 @@ fun DialogPresets(vm: presetsVM) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun Content(vm: presetsVM) {
+private fun Content(vm: presetsVM, onPresetApplied: () -> Unit) {
 
     val state: LazyListState = rememberLazyListState()
 
@@ -155,6 +160,7 @@ private fun Content(vm: presetsVM) {
                         .combinedClickable(
                             onClick = {
                                 vm.onClickPresetsRead(item)
+                                onPresetApplied()
                             }, onLongClick = {
                                 //Presets.isOpenDialogDeleteRenameName = item
                                 //Presets.isOpenDialogDeleteRename.value = true

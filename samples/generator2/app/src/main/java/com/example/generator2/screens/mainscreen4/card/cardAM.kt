@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.generator2.common.haptic.Haptic
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.model.LiveConstrain
 import com.example.generator2.screens.mainscreen4.modifierInfinitySlider
@@ -79,6 +80,8 @@ fun CardAM(str: String = "CH0", gen: Generator) {
                         if (str == "CH0") gen.liveData.ch1_AM_EN.value =
                             !gen.liveData.ch1_AM_EN.value
                         else gen.liveData.ch2_AM_EN.value = !gen.liveData.ch2_AM_EN.value
+
+                        Haptic.confirm()
                     }) //.shadow(1.dp, shape = RoundedCornerShape(8.dp), ambientColor = Color.Blue)
                 , contentAlignment = Alignment.Center
             ) {

@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.generator2.R
+import com.example.generator2.common.snackbar.SnackBar
 import com.example.generator2.features.presets.Presets
 import com.example.generator2.features.presets.presetsGetListName
 import com.example.generator2.features.presets.presetsVM
@@ -92,11 +93,10 @@ fun DialogPresetsRename(name: String, vm: presetsVM) {
                         val oldFile = File(vm.appPath.presets + "/${name}.txt")
                         val newFile = File(vm.appPath.presets + "/${value}.txt")
 
-                        if (oldFile.renameTo(newFile)) {
-                            println("Файл успешно переименован.")
-                        } else {
-                            println("Не удалось переименовать файл.")
-                        }
+                        if (oldFile.renameTo(newFile))
+                            SnackBar.success("Пресет «$name» переименован в «$value»")
+                        else
+                            SnackBar.error("Не удалось переименовать «$name»")
 
                         Presets.presetList.clear()
                         Presets.presetList = presetsGetListName(vm.appPath)
