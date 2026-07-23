@@ -34,13 +34,15 @@ import com.example.generator2.features.nodes.model.withoutEdge
 import com.example.generator2.features.nodes.model.withoutNode
 import com.example.generator2.features.nodes.validate
 import com.example.generator2.features.script.CompareOp
+import com.example.generator2.features.script.GenBlock
+import com.example.generator2.features.script.GenParam
 import com.example.generator2.features.script.Operand
 import com.example.generator2.features.script.StateCommandScript
 import com.example.generator2.screens.nodes.canvas.Orientation
 import javax.inject.Inject
 
 /** Какую ноду создаёт «+» */
-enum class NodeKind { STEP, DELAY, REGISTER, CONDITION, STOP }
+enum class NodeKind { STEP, DELAY, REGISTER, READ, CONDITION, STOP }
 
 @Stable
 class VMNodes @Inject constructor(
@@ -399,6 +401,7 @@ class VMNodes @Inject constructor(
         NodeKind.STEP -> NodeBody.Step(StepParams(ChannelParams(), ChannelParams()), 0L)
         NodeKind.DELAY -> NodeBody.Delay(1000L)
         NodeKind.REGISTER -> NodeBody.Register(RegOp.LOAD, 0, Operand.Const(0f))
+        NodeKind.READ -> NodeBody.ReadGen(0, 1, GenBlock.CR, GenParam.FR)
         NodeKind.CONDITION -> NodeBody.Condition(0, CompareOp.LESS, Operand.Const(0f))
         NodeKind.STOP -> NodeBody.Stop
     }
@@ -407,6 +410,7 @@ class VMNodes @Inject constructor(
         NodeKind.STEP -> "Шаг ${id.value}"
         NodeKind.DELAY -> "Задержка ${id.value}"
         NodeKind.REGISTER -> "Регистр ${id.value}"
+        NodeKind.READ -> "Чтение ${id.value}"
         NodeKind.CONDITION -> "Условие ${id.value}"
         NodeKind.STOP -> "Стоп"
     }

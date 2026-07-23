@@ -112,6 +112,9 @@ sealed interface Cmd {
 
     /** CR[1 2] MOD 01_Sine */
     data class GenMod(val ch: Int, val block: GenBlock, val name: String) : Cmd
+
+    /** READ F1 CR1 FR — прочитать частоту блока генератора в регистр */
+    data class ReadGen(val dst: Int, val ch: Int, val block: GenBlock, val param: GenParam) : Cmd
 }
 
 /**
@@ -208,6 +211,29 @@ fun parseCommand(source: String, line: Int = -1): Cmd {
         "LOAD" -> Cmd.Load(register(arg(1)), operand(arg(2)))
 
         "PLUS", "MINUS" -> Cmd.Arith(head == "PLUS", register(arg(1)), operand(arg(2)))
+
+        //READ F1 CR1 FR — источник CR1/AM2/FM1..., параметр FR/BASE/DEV
+        "READ" -> {
+            val dst = register(arg(1))
+            val src = arg(2)
+            val genBlock = block(src.dropLast(1))
+            val ch = channel(src)
+            val param = when (val p = arg(3)) {
+                "FR" -> GenParam.FR
+                "BASE" -> {
+                    if (genBlock != GenBlock.FM) fail("READ: BASE есть только у FM")
+                    GenParam.BASE
+                }
+
+                "DEV" -> {
+                    if (genBlock != GenBlock.FM) fail("READ: DEV есть только у FM")
+                    GenParam.DEV
+                }
+
+                else -> fail("READ: неизвестный параметр $p")
+            }
+            Cmd.ReadGen(dst, ch, genBlock, param)
+        }
 
         "IF" -> {
             val op = CompareOp.entries.firstOrNull { it.text == arg(2) }

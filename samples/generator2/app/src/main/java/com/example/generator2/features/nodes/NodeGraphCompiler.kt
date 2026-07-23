@@ -99,6 +99,7 @@ private fun GraphNode.lineCount(): Int = when (val b = body) {
     is NodeBody.Start -> 0
     is NodeBody.Stop -> 1
     is NodeBody.Register -> 2
+    is NodeBody.ReadGen -> 2
     //DELAY? + GOTO
     is NodeBody.Delay -> (if (b.delayMs > 0) 1 else 0) + 1
     //(DELAY before?) + IF + (DELAY after?) + GOTO + ELSE + (DELAY after?) + GOTO + ENDIF
@@ -137,6 +138,11 @@ private fun emit(node: GraphNode, graph: NodeGraph, address: Map<NodeId, Int>): 
                 RegOp.PLUS -> "PLUS F${b.dst} ${b.src.toToken()}"
                 RegOp.MINUS -> "MINUS F${b.dst} ${b.src.toToken()}"
             },
+            jump(Port.OUT),
+        )
+
+        is NodeBody.ReadGen -> listOf(
+            "READ F${b.dst} ${b.block}${b.ch} ${b.param}",
             jump(Port.OUT),
         )
 

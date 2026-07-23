@@ -1,6 +1,8 @@
 package com.example.generator2.features.nodes.model
 
 import com.example.generator2.features.script.CompareOp
+import com.example.generator2.features.script.GenBlock
+import com.example.generator2.features.script.GenParam
 import com.example.generator2.features.script.Operand
 import com.example.generator2.features.script.parseOperand
 import com.example.generator2.features.script.toToken
@@ -41,6 +43,11 @@ data class NodeDto(
     val regOp: String? = null,
     val regDst: Int? = null,
     val regSrc: String? = null,
+    // READ_GEN
+    val readDst: Int? = null,
+    val readCh: Int? = null,
+    val readBlock: String? = null,
+    val readParam: String? = null,
     // CONDITION
     val condLeft: Int? = null,
     val condOp: String? = null,
@@ -103,6 +110,15 @@ private fun NodeDto.toDomain(): GraphNode {
             )
 
             "DELAY" -> NodeBody.Delay(delayMs = delayMs ?: 0L)
+
+            "READ_GEN" -> NodeBody.ReadGen(
+                dst = readDst ?: throw GraphFormatException("нода $nodeId: нет readDst"),
+                ch = readCh ?: throw GraphFormatException("нода $nodeId: нет readCh"),
+                block = GenBlock.entries.firstOrNull { it.name == readBlock }
+                    ?: throw GraphFormatException("нода $nodeId: неизвестный блок $readBlock"),
+                param = GenParam.entries.firstOrNull { it.name == readParam }
+                    ?: throw GraphFormatException("нода $nodeId: неизвестный параметр $readParam"),
+            )
 
             "REGISTER" -> NodeBody.Register(
                 op = RegOp.entries.firstOrNull { it.name == regOp }
@@ -178,6 +194,14 @@ private fun GraphNode.toDto(): NodeDto {
         is NodeBody.Delay -> base.copy(
             type = "DELAY",
             delayMs = b.delayMs,
+        )
+
+        is NodeBody.ReadGen -> base.copy(
+            type = "READ_GEN",
+            readDst = b.dst,
+            readCh = b.ch,
+            readBlock = b.block.name,
+            readParam = b.param.name,
         )
 
         is NodeBody.Register -> base.copy(

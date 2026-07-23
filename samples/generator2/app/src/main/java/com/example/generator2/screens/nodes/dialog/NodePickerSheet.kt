@@ -22,6 +22,7 @@ fun NodePickerSheet(onPick: (NodeKind) -> Unit, onDismiss: () -> Unit) {
                 NodeKind.STEP to "Шаг — параметры генератора и задержка",
                 NodeKind.DELAY to "Задержка — только пауза",
                 NodeKind.REGISTER to "Регистр — присвоить, прибавить, вычесть",
+                NodeKind.READ to "Чтение — частота генератора в регистр",
                 NodeKind.CONDITION to "Условие — два выхода: да и нет",
                 NodeKind.STOP to "Стоп — конец прогона",
             ).forEach { (kind, text) ->

@@ -1,6 +1,8 @@
 package com.example.generator2.features.nodes.model
 
 import com.example.generator2.features.script.CompareOp
+import com.example.generator2.features.script.GenBlock
+import com.example.generator2.features.script.GenParam
 import com.example.generator2.features.script.Operand
 
 /** Идентификатор ноды. Не переиспользуется: новый всегда больше всех бывших. */
@@ -58,6 +60,17 @@ sealed interface NodeBody {
     data class Register(val op: RegOp, val dst: Int, val src: Operand) : NodeBody
 
     /**
+     * Чтение частоты блока генератора в регистр: F<dst> = <block><ch> <param>.
+     * Только присваивание — сложить частоту с чем-то можно уже обычным Регистром.
+     */
+    data class ReadGen(
+        val dst: Int,
+        val ch: Int,
+        val block: GenBlock,
+        val param: GenParam,
+    ) : NodeBody
+
+    /**
      * @param delayBeforeMs пауза перед проверкой условия
      * @param delayAfterMs пауза после проверки, в обеих ветках перед переходом
      */
@@ -76,6 +89,7 @@ fun NodeBody.ports(): List<Port> = when (this) {
     is NodeBody.Step -> listOf(Port.OUT)
     is NodeBody.Delay -> listOf(Port.OUT)
     is NodeBody.Register -> listOf(Port.OUT)
+    is NodeBody.ReadGen -> listOf(Port.OUT)
     is NodeBody.Condition -> listOf(Port.YES, Port.NO)
     is NodeBody.Stop -> emptyList()
 }

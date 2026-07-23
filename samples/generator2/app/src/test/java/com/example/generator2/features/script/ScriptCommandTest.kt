@@ -183,6 +183,22 @@ class ScriptCommandTest {
 
     //╰───────────────────────────────────────────────────────────────────────╯
 
+    //╭─ READ ────────────────────────────────────────────────────────────────╮
+
+    @Test
+    fun `READ разбирает частотный источник`() {
+        assertEquals(Cmd.ReadGen(1, 1, GenBlock.CR, GenParam.FR), parseCommand("READ F1 CR1 FR"))
+        assertEquals(Cmd.ReadGen(2, 2, GenBlock.AM, GenParam.FR), parseCommand("READ F2 AM2 FR"))
+        assertEquals(Cmd.ReadGen(0, 1, GenBlock.FM, GenParam.DEV), parseCommand("READ F0 FM1 DEV"))
+        assertEquals(Cmd.ReadGen(3, 2, GenBlock.FM, GenParam.BASE), parseCommand("READ F3 FM2 BASE"))
+    }
+
+    @Test
+    fun `READ BASE и DEV только у FM`() {
+        assertThrows(ScriptException::class.java) { parseCommand("READ F1 CR1 BASE", 0) }
+        assertThrows(ScriptException::class.java) { parseCommand("READ F1 AM1 DEV", 0) }
+    }
+
     //╭─ Операнд наружу ──────────────────────────────────────────────────────╮
 
     @Test

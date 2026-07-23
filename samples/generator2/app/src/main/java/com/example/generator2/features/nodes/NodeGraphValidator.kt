@@ -102,6 +102,11 @@ private fun registerAndDelayErrors(node: GraphNode): List<Issue> = buildList {
                 add(Issue(node.id, Severity.ERROR, "Регистр F${b.dst} $outOfRange"))
             }
 
+        is NodeBody.ReadGen ->
+            if (b.dst !in range) {
+                add(Issue(node.id, Severity.ERROR, "Регистр F${b.dst} $outOfRange"))
+            }
+
         is NodeBody.Condition -> {
             if (b.left !in range) {
                 add(Issue(node.id, Severity.ERROR, "Регистр F${b.left} $outOfRange"))

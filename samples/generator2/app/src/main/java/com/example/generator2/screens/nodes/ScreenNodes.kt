@@ -32,6 +32,7 @@ import com.example.generator2.screens.nodes.dialog.ConditionDialog
 import com.example.generator2.screens.nodes.dialog.DelayDialog
 import com.example.generator2.screens.nodes.dialog.DialogOpenGraph
 import com.example.generator2.screens.nodes.dialog.NodePickerSheet
+import com.example.generator2.screens.nodes.dialog.ReadGenDialog
 import com.example.generator2.screens.nodes.dialog.RegisterDialog
 import com.example.generator2.screens.nodes.dialog.StepDialog
 import com.example.generator2.screens.nodes.top.NodesTopBar
@@ -176,6 +177,17 @@ fun ScreenNodes(vm: VMNodes) {
     if (editing != null && editing.body is NodeBody.Register) {
         RegisterDialog(
             body = editing.body as NodeBody.Register,
+            onDone = {
+                vm.replaceBody(editing.id, it)
+                vm.closeParams()
+            },
+            onDismiss = { vm.closeParams() },
+        )
+    }
+
+    if (editing != null && editing.body is NodeBody.ReadGen) {
+        ReadGenDialog(
+            body = editing.body as NodeBody.ReadGen,
             onDone = {
                 vm.replaceBody(editing.id, it)
                 vm.closeParams()

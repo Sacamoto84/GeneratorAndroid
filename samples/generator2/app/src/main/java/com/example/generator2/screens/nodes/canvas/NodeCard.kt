@@ -38,6 +38,7 @@ private val ColorCondition = Color(0xFFFF9F0A)
 private val ColorStart = Color(0xFF34C759)
 private val ColorStop = Color(0xFFE5553A)
 private val ColorDelay = Color(0xFF5AC8FA)
+private val ColorReadGen = Color(0xFF64D2FF)
 
 fun NodeBody.accent(): Color = when (this) {
     is NodeBody.Start -> ColorStart
@@ -45,6 +46,7 @@ fun NodeBody.accent(): Color = when (this) {
     is NodeBody.Step -> ColorStep
     is NodeBody.Delay -> ColorDelay
     is NodeBody.Register -> ColorRegister
+    is NodeBody.ReadGen -> ColorReadGen
     is NodeBody.Condition -> ColorCondition
 }
 
@@ -117,6 +119,8 @@ private fun summary(node: GraphNode): List<String> = when (val b = node.body) {
             RegOp.MINUS -> "F${b.dst} -= ${b.src.toToken()}"
         }
     )
+
+    is NodeBody.ReadGen -> listOf("F${b.dst} = ${b.block}${b.ch} ${b.param}")
 
     is NodeBody.Condition -> buildList {
         add("F${b.left} ${b.op.text} ${b.right.toToken()}")
