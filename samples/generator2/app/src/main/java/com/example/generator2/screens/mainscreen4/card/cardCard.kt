@@ -3,6 +3,7 @@ package com.example.generator2.screens.mainscreen4.card
 import CardAM
 import CardCarrier
 import CardFM
+import CardMaster
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ fun CardCard(str: String = "CH0", gen: Generator) {
             CardCarrier(str, gen = gen)
             CardAM(str, gen = gen)
             CardFM(str, gen = gen)
+            CardMaster(str, gen = gen)
         }
     }
 }
