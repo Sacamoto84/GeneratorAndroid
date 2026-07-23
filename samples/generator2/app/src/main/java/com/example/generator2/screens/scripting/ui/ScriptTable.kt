@@ -21,8 +21,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.generator2.R
 import com.example.generator2.screens.scripting.vm.VMScripting
 import com.example.generator2.screens.scripting.atom.OutlinedButtonTextAndIcon
-import com.example.generator2.screens.scripting.dialog.DialogDeleteRename
-import com.example.generator2.screens.scripting.dialog.DialogSaveAs
+import com.example.generator2.screens.common.dialog.DialogDeleteRename
+import com.example.generator2.screens.common.dialog.DialogSaveAs
 import com.example.generator2.features.script.StateCommandScript
 import com.example.generator2.theme.colorGreen
 import kotlinx.coroutines.Dispatchers
