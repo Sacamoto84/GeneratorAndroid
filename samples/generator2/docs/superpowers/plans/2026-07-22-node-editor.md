@@ -490,6 +490,12 @@ data class GraphNode(
 data class NodeGraph(
     val nodes: List<GraphNode> = emptyList(),
     val edges: List<GraphEdge> = emptyList(),
+    /**
+     * Максимальный когда-либо выданный id. Удаление ноды его не опускает,
+     * поэтому освободившийся номер второй раз не выдаётся и новая нода
+     * не наследует связи мёртвой.
+     */
+    val lastId: Int = nodes.maxOfOrNull { it.id.value } ?: 0,
 )
 
 //╭─ Чтение ──────────────────────────────────────────────────────────────╮
@@ -502,16 +508,22 @@ fun NodeGraph.target(from: NodeId, port: Port): NodeId? =
     edges.firstOrNull { it.from == from && it.port == port }?.to
 
 /**
- * Следующий свободный id. Считается от максимального когда-либо занятого
- * в текущем графе, поэтому после удаления ноды её номер не всплывает заново
- * и связи не прилипают к чужой ноде.
+ * Следующий свободный id. Берётся от счётчика, а не от текущего списка нод:
+ * иначе удаление ноды с максимальным номером тут же освобождало бы его,
+ * и новая нода наследовала бы связи мёртвой.
  */
-fun NodeGraph.nextId(): NodeId = NodeId((nodes.maxOfOrNull { it.id.value } ?: 0) + 1)
+fun NodeGraph.nextId(): NodeId = NodeId(lastId + 1)
 
 //╭─ Правка ──────────────────────────────────────────────────────────────╮
 
-fun NodeGraph.withNode(node: GraphNode): NodeGraph =
-    copy(nodes = nodes.filterNot { it.id == node.id } + node)
+/**
+ * Вставка или правка ноды. Счётчик берёт максимум, а не увеличивается:
+ * правка существующей ноды (сдвиг, смена параметров) не должна его двигать.
+ */
+fun NodeGraph.withNode(node: GraphNode): NodeGraph = copy(
+    nodes = nodes.filterNot { it.id == node.id } + node,
+    lastId = maxOf(lastId, node.id.value),
+)
 
 /** Один порт — одна связь: новая молча заменяет прежнюю */
 fun NodeGraph.withEdge(from: NodeId, port: Port, to: NodeId): NodeGraph =
@@ -621,6 +633,16 @@ class GraphDtoTest {
     }
 
     @Test
+    fun `счётчик id переживает поездку даже когда больше максимального номера`() {
+        //После удаления ноды lastId выше любого живого id — он обязан
+        //сохраниться, иначе удалённый номер выдастся заново после перезагрузки
+        val afterDelete = sample.withoutNode(NodeId(5))
+        val back = gson.fromJson(gson.toJson(afterDelete.toDto()), GraphDto::class.java).toDomain()
+        assertEquals(5, back.lastId)
+        assertEquals(NodeId(6), back.nextId())
+    }
+
+    @Test
     fun `снятая галочка не попадает в json`() {
         val json = gson.toJson(sample.toDto())
         assertFalse(json.contains("fmDev"))
@@ -697,6 +719,8 @@ data class GraphDto(
     val version: Int? = null,
     val nodes: List<NodeDto>? = null,
     val edges: List<EdgeDto>? = null,
+    /** Счётчик выданных id. Нет в файле — берём максимум по нодам. */
+    val lastId: Int? = null,
 )
 
 data class NodeDto(
@@ -742,9 +766,14 @@ fun GraphDto.toDomain(): NodeGraph {
     if (v > GRAPH_FORMAT_VERSION) {
         throw GraphFormatException("файл версии $v, приложение понимает до $GRAPH_FORMAT_VERSION")
     }
+    val domainNodes = (nodes ?: emptyList()).map { it.toDomain() }
+    val maxNodeId = domainNodes.maxOfOrNull { it.id.value } ?: 0
     return NodeGraph(
-        nodes = (nodes ?: emptyList()).map { it.toDomain() },
+        nodes = domainNodes,
         edges = (edges ?: emptyList()).map { it.toDomain() },
+        //Старый файл без lastId — берём максимум по нодам; заодно защищаемся
+        //от битого файла, где счётчик меньше номера какой-то ноды
+        lastId = maxOf(lastId ?: 0, maxNodeId),
     )
 }
 
@@ -819,6 +848,7 @@ fun NodeGraph.toDto(): GraphDto = GraphDto(
     version = GRAPH_FORMAT_VERSION,
     nodes = nodes.map { it.toDto() },
     edges = edges.map { EdgeDto(it.from.value, it.port.name, it.to.value) },
+    lastId = lastId,
 )
 
 private fun GraphNode.toDto(): NodeDto {
