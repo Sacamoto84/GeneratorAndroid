@@ -1459,7 +1459,7 @@ class NodeGraphCompilerTest {
                 "CR1 FR 1000.0",
                 "CH1 CR ON",
                 "DELAY 500",
-                "GOTO 4",
+                "GOTO 5",
                 "END",
             ),
             r.lines,
