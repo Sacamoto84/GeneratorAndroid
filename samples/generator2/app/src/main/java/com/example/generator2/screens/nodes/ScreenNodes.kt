@@ -34,6 +34,9 @@ fun ScreenNodes(vm: VMNodes) {
     val activeNode by vm.runner.activeNode.collectAsState(initial = null)
 
     Scaffold(
+        //Тёмный фон под цвет холста: иначе при появлении и исчезании
+        //нижней панели на миг просвечивает светлый фон темы — мигание
+        containerColor = Color(0xFF1D1D1F),
         floatingActionButton = {
             if (vm.linkFrom == null) {
                 FloatingActionButton(onClick = { pickerOpen = true }) {
