@@ -43,6 +43,7 @@ import com.example.generator2.features.presets.ui.DialogPresetsNewFile
 import com.example.generator2.features.update.ui.WidgetUpdate
 import com.example.generator2.screens.mainscreen4.bottom.M4BottomAppBarComponent
 import com.example.generator2.screens.mainscreen4.card.CardCard
+import com.example.generator2.screens.mainscreen4.card.MasterButton
 import com.example.generator2.screens.mainscreen4.top.TopBarAudioSource
 import com.example.generator2.theme.colorDarkBackground
 import timber.log.Timber
@@ -164,6 +165,7 @@ fun Mainsreen4(vm: VMMain4, vmPresets: presetsVM) {
                 Column()
                 {
                     //CardCarrier("CH0")
+                    MasterButton(vm.audioMixerPump.gen)
                     CardCard("CH0", vm.audioMixerPump.gen)
                     Spacer(modifier = Modifier.height(8.dp))
 
