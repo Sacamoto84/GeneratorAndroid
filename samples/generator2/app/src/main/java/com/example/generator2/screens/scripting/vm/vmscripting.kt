@@ -7,6 +7,8 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.example.generator2.features.nodes.GeneratorArbiter
+import com.example.generator2.features.nodes.RunOwner
 import com.example.generator2.features.script.Script
 import com.example.generator2.features.script.ScriptUtils
 import com.example.generator2.features.script.StateCommandScript
@@ -23,8 +25,8 @@ class VMScripting @Inject constructor(
     @ApplicationContext val contextActivity: Context,
     val script: Script,
     val utils: ScriptUtils,
-    val keyboard: ScriptKeyboard
-    //val keyboard: ScriptKeyboard
+    val keyboard: ScriptKeyboard,
+    private val arbiter: GeneratorArbiter,
 ) : ScreenModel {
 
     val openDialogSaveAs = mutableStateOf(false)
@@ -48,6 +50,20 @@ class VMScripting @Inject constructor(
 
     fun bEditClick() {
        script.command(StateCommandScript.EDIT)
+    }
+
+    /**
+     * Запуск скрипта забирает генератор у графа: писать в gen.liveData
+     * одновременно с двух прогонов нельзя
+     */
+    fun bStartClick() {
+        arbiter.acquire(RunOwner.SCRIPT)
+        script.command(StateCommandScript.START)
+    }
+
+    fun bResumeClick() {
+        arbiter.acquire(RunOwner.SCRIPT)
+        script.command(StateCommandScript.RESUME)
     }
 
     fun bSaveClick() {
