@@ -21,7 +21,9 @@ import com.example.generator2.features.nodes.model.NodeBody
 import com.example.generator2.features.nodes.model.node
 import com.example.generator2.screens.nodes.bottom.NodeActionBar
 import com.example.generator2.screens.nodes.canvas.NodeCanvas
+import com.example.generator2.screens.nodes.dialog.ConditionDialog
 import com.example.generator2.screens.nodes.dialog.NodePickerSheet
+import com.example.generator2.screens.nodes.dialog.RegisterDialog
 import com.example.generator2.screens.nodes.dialog.StepDialog
 import com.example.generator2.screens.nodes.vm.VMNodes
 
@@ -107,6 +109,28 @@ fun ScreenNodes(vm: VMNodes) {
             onDone = { newTitle, newStep ->
                 vm.rename(editing.id, newTitle)
                 vm.replaceBody(editing.id, newStep)
+                vm.closeParams()
+            },
+            onDismiss = { vm.closeParams() },
+        )
+    }
+
+    if (editing != null && editing.body is NodeBody.Register) {
+        RegisterDialog(
+            body = editing.body as NodeBody.Register,
+            onDone = {
+                vm.replaceBody(editing.id, it)
+                vm.closeParams()
+            },
+            onDismiss = { vm.closeParams() },
+        )
+    }
+
+    if (editing != null && editing.body is NodeBody.Condition) {
+        ConditionDialog(
+            body = editing.body as NodeBody.Condition,
+            onDone = {
+                vm.replaceBody(editing.id, it)
                 vm.closeParams()
             },
             onDismiss = { vm.closeParams() },
