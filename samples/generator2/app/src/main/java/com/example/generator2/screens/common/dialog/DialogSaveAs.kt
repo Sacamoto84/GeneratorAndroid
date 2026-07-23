@@ -1,4 +1,4 @@
-package com.example.generator2.screens.scripting.dialog
+package com.example.generator2.screens.common.dialog
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -52,7 +52,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.generator2.R
-import com.example.generator2.screens.scripting.vm.VMScripting
 import com.example.generator2.theme.colorLightBackground2
 import kotlinx.coroutines.delay
 

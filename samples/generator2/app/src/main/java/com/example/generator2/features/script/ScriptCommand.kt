@@ -18,6 +18,46 @@ private val whitespace = Regex("\\s+")
 class ScriptException(val line: Int, message: String) : Exception(message)
 
 /**
+ * Токен похож на регистр: префикс F или R, дальше целое число.
+ * Диапазон не проверяется — этим занимается вызывающий.
+ */
+fun looksLikeRegister(token: String): Boolean {
+    val prefix = token.firstOrNull() ?: return false
+    if (prefix != 'F' && prefix != 'R') return false
+    return token.drop(1).toIntOrNull() != null
+}
+
+/**
+ * Индекс регистра из токена F1 или R1.
+ * null — токен не регистр либо номер вне F0..F[REGISTER_COUNT]-1.
+ */
+fun registerIndexOrNull(token: String): Int? {
+    if (!looksLikeRegister(token)) return null
+    val index = token.drop(1).toIntOrNull() ?: return null
+    return if (index in 0 until REGISTER_COUNT) index else null
+}
+
+/**
+ * Операнд из токена: "F1" -> Reg(1), "50" -> Const(50f).
+ *
+ * null и когда токен ни регистр, ни число, и когда это регистр вне
+ * F0..F[REGISTER_COUNT]-1 — различить эти два случая отсюда нельзя.
+ * Кому нужен внятный текст ошибки, тот проверяет [looksLikeRegister] сам.
+ */
+fun parseOperand(token: String): Operand? {
+    registerIndexOrNull(token)?.let { return Operand.Reg(it) }
+    return token.toFloatOrNull()?.let { Operand.Const(it) }
+}
+
+/**
+ * Обратно в токен скрипта. Const(50f) -> "50.0", Reg(1) -> "F1".
+ */
+fun Operand.toToken(): String = when (this) {
+    is Operand.Const -> value.toString()
+    is Operand.Reg -> "F$index"
+}
+
+/**
  * Операнд команды: константа или регистр
  */
 sealed interface Operand {
@@ -72,6 +112,9 @@ sealed interface Cmd {
 
     /** CR[1 2] MOD 01_Sine */
     data class GenMod(val ch: Int, val block: GenBlock, val name: String) : Cmd
+
+    /** READ F1 CR1 FR — прочитать частоту блока генератора в регистр */
+    data class ReadGen(val dst: Int, val ch: Int, val block: GenBlock, val param: GenParam) : Cmd
 }
 
 /**
@@ -122,13 +165,9 @@ fun parseCommand(source: String, line: Int = -1): Cmd {
 
     //F1 R1 -> индекс регистра, иначе null
     fun registerIndex(token: String): Int? {
-        val prefix = token.firstOrNull() ?: return null
-        if (prefix != 'F' && prefix != 'R') return null
-        val index = token.drop(1).toIntOrNull() ?: return null
-        if (index !in 0 until REGISTER_COUNT) {
-            fail("регистр $token вне диапазона F0..F${REGISTER_COUNT - 1}")
-        }
-        return index
+        if (!looksLikeRegister(token)) return null
+        return registerIndexOrNull(token)
+            ?: fail("регистр $token вне диапазона F0..F${REGISTER_COUNT - 1}")
     }
 
     fun register(token: String): Int =
@@ -136,8 +175,7 @@ fun parseCommand(source: String, line: Int = -1): Cmd {
 
     fun operand(token: String): Operand {
         registerIndex(token)?.let { return Operand.Reg(it) }
-        val value = token.toFloatOrNull() ?: fail("не число и не регистр: $token")
-        return Operand.Const(value)
+        return parseOperand(token) ?: fail("не число и не регистр: $token")
     }
 
     //CH1 CR1 AM1 FM1 -> номер канала
@@ -173,6 +211,29 @@ fun parseCommand(source: String, line: Int = -1): Cmd {
         "LOAD" -> Cmd.Load(register(arg(1)), operand(arg(2)))
 
         "PLUS", "MINUS" -> Cmd.Arith(head == "PLUS", register(arg(1)), operand(arg(2)))
+
+        //READ F1 CR1 FR — источник CR1/AM2/FM1..., параметр FR/BASE/DEV
+        "READ" -> {
+            val dst = register(arg(1))
+            val src = arg(2)
+            val genBlock = block(src.dropLast(1))
+            val ch = channel(src)
+            val param = when (val p = arg(3)) {
+                "FR" -> GenParam.FR
+                "BASE" -> {
+                    if (genBlock != GenBlock.FM) fail("READ: BASE есть только у FM")
+                    GenParam.BASE
+                }
+
+                "DEV" -> {
+                    if (genBlock != GenBlock.FM) fail("READ: DEV есть только у FM")
+                    GenParam.DEV
+                }
+
+                else -> fail("READ: неизвестный параметр $p")
+            }
+            Cmd.ReadGen(dst, ch, genBlock, param)
+        }
 
         "IF" -> {
             val op = CompareOp.entries.firstOrNull { it.text == arg(2) }

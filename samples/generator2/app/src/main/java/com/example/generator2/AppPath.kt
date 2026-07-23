@@ -9,6 +9,7 @@ private enum class Folder(val value: String) {
     CARRIER("Carrier"),
     MOD("Mod"),
     SCRIPT("Script"),
+    NODES("Nodes"),
     CONFIG("Config"),
     DOWNLOAD("Download"),
     PRESETS("Presets"),
@@ -53,6 +54,7 @@ class AppPath(
     val carrier = envoriment?.absolutePath  + "/${appMain}/${Folder.CARRIER.value}"
     val mod = envoriment?.absolutePath  + "/${appMain}/${Folder.MOD.value}"
     val script = envoriment?.absolutePath + "/${appMain}/${Folder.SCRIPT.value}"
+    val nodes = envoriment?.absolutePath + "/${appMain}/${Folder.NODES.value}"
     val config = envoriment?.absolutePath + "/${appMain}/${Folder.CONFIG.value}"
     val download = envoriment?.absolutePath + "/${appMain}/${Folder.DOWNLOAD.value}"
     val presets = envoriment?.absolutePath + "/${appMain}/${Folder.PRESETS.value}"
@@ -69,6 +71,7 @@ class AppPath(
         File(carrier).mkdirs()
         File(mod).mkdirs()
         File(script).mkdirs()
+        File(nodes).mkdirs()
         File(config).mkdirs()
         File(download).mkdirs()
         File(presets).mkdirs()

@@ -7,6 +7,7 @@ import com.example.generator2.features.playlist.VMPlayList
 import com.example.generator2.features.presets.presetsVM
 import com.example.generator2.screens.config.vm.VMConfig
 import com.example.generator2.screens.mainscreen4.VMMain4
+import com.example.generator2.screens.nodes.vm.VMNodes
 import com.example.generator2.screens.scripting.vm.VMScripting
 import dagger.Binds
 import dagger.Module
@@ -55,4 +56,9 @@ abstract class ScreenModelModule {
     @IntoMap
     @ScreenModelKey(VMPlayList::class)
     abstract fun bindVMPlayList(screenModel: VMPlayList): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(VMNodes::class)
+    abstract fun bindVMNodes(screenModel: VMNodes): ScreenModel
 }

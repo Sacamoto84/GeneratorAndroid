@@ -357,6 +357,11 @@ class Script(val gen: Generator) {
                 genMod(cmd)
                 setPc(current + 1)
             }
+
+            is Cmd.ReadGen -> {
+                setRegister(cmd.dst, genRead(cmd))
+                setPc(current + 1)
+            }
         }
     }
 
@@ -427,6 +432,22 @@ class Script(val gen: Generator) {
             GenBlock.FM ->
                 if (first) gen.liveData.ch1_FM_Filename.update { cmd.name }
                 else gen.liveData.ch2_FM_Filename.update { cmd.name }
+        }
+    }
+
+    /** Прочитать частоту блока генератора. Зеркало genValue: те же поля. */
+    private fun genRead(cmd: Cmd.ReadGen): Float {
+        val first = cmd.ch == 1
+        val d = gen.liveData
+        return when (cmd.block) {
+            GenBlock.CR -> if (first) d.ch1_Carrier_Fr.value else d.ch2_Carrier_Fr.value
+            GenBlock.AM -> if (first) d.ch1_AM_Fr.value else d.ch2_AM_Fr.value
+            GenBlock.FM -> when (cmd.param) {
+                //BASE — та же несущая, что у CR
+                GenParam.BASE -> if (first) d.ch1_Carrier_Fr.value else d.ch2_Carrier_Fr.value
+                GenParam.DEV -> if (first) d.ch1_FM_Dev.value else d.ch2_FM_Dev.value
+                GenParam.FR -> if (first) d.ch1_FM_Fr.value else d.ch2_FM_Fr.value
+            }
         }
     }
 

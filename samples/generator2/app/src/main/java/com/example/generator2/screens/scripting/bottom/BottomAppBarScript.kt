@@ -45,7 +45,7 @@ fun BottomAppBarScript(vm: VMScripting){
                 if (vm.script.state != StateCommandScript.ISPAUSE)
                     vm.script.command(StateCommandScript.PAUSE)
                 else
-                    vm.script.command(StateCommandScript.RESUME)
+                    vm.bResumeClick()
 
             }) {
                 if (vm.script.state != StateCommandScript.ISPAUSE)
@@ -64,7 +64,7 @@ fun BottomAppBarScript(vm: VMScripting){
         } else {
             //Старт
             IconButton(onClick = {
-                vm.script.command(StateCommandScript.START)
+                vm.bStartClick()
             }) {
                 Icon(painter = painterResource(R.drawable.play), contentDescription = null)
             }

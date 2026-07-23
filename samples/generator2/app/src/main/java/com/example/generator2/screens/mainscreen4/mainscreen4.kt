@@ -86,7 +86,8 @@ fun Mainsreen4(vm: VMMain4, vmPresets: presetsVM) {
             M4BottomAppBarComponent(vm,
                 navigateToConfig = { navigator.push(AppScreen.Config) },
                 navigateToPresets = { navigator.push(AppScreen.Presets) },
-                navigateToScript = { navigator.push(AppScreen.Script) }
+                navigateToScript = { navigator.push(AppScreen.Script) },
+                navigateToNodes = { navigator.push(AppScreen.Nodes) }
 
             )
 

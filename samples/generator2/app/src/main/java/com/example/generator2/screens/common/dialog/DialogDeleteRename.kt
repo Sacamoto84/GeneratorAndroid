@@ -1,4 +1,4 @@
-package com.example.generator2.screens.scripting.dialog
+package com.example.generator2.screens.common.dialog
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*

@@ -1,6 +1,9 @@
 package com.example.generator2.features.script
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -176,6 +179,95 @@ class ScriptCommandTest {
     @Test(expected = ScriptException::class)
     fun `отсутствие ENDIF это ошибка а не выход за границы`() {
         findPairLine(listOf("IF F1 < 5", "PLUS F1 1", "END"), 0, stopOnElse = true)
+    }
+
+    //╰───────────────────────────────────────────────────────────────────────╯
+
+    //╭─ READ ────────────────────────────────────────────────────────────────╮
+
+    @Test
+    fun `READ разбирает частотный источник`() {
+        assertEquals(Cmd.ReadGen(1, 1, GenBlock.CR, GenParam.FR), parseCommand("READ F1 CR1 FR"))
+        assertEquals(Cmd.ReadGen(2, 2, GenBlock.AM, GenParam.FR), parseCommand("READ F2 AM2 FR"))
+        assertEquals(Cmd.ReadGen(0, 1, GenBlock.FM, GenParam.DEV), parseCommand("READ F0 FM1 DEV"))
+        assertEquals(Cmd.ReadGen(3, 2, GenBlock.FM, GenParam.BASE), parseCommand("READ F3 FM2 BASE"))
+    }
+
+    @Test
+    fun `READ BASE и DEV только у FM`() {
+        assertThrows(ScriptException::class.java) { parseCommand("READ F1 CR1 BASE", 0) }
+        assertThrows(ScriptException::class.java) { parseCommand("READ F1 AM1 DEV", 0) }
+    }
+
+    //╭─ Операнд наружу ──────────────────────────────────────────────────────╮
+
+    @Test
+    fun `parseOperand читает регистр и константу`() {
+        assertEquals(Operand.Reg(1), parseOperand("F1"))
+        assertEquals(Operand.Reg(1), parseOperand("R1"))
+        assertEquals(Operand.Const(50f), parseOperand("50"))
+        assertEquals(Operand.Const(1000f), parseOperand("1000.0"))
+    }
+
+    @Test
+    fun `parseOperand возвращает null на мусоре`() {
+        assertNull(parseOperand("Fl"))
+        assertNull(parseOperand("хрень"))
+        assertNull(parseOperand(""))
+    }
+
+    @Test
+    fun `parseOperand не берёт регистр вне диапазона`() {
+        assertNull(parseOperand("F10"))
+        assertNull(parseOperand("F99"))
+    }
+
+    @Test
+    fun `toToken и parseOperand обратны друг другу`() {
+        listOf(
+            Operand.Reg(0),
+            Operand.Reg(9),
+            Operand.Const(0f),
+            Operand.Const(-0f),
+            Operand.Const(1234.5f),
+            Operand.Const(-5000f),
+            Operand.Const(-0.001f),
+            Operand.Const(48000f),
+            Operand.Const(Float.MAX_VALUE),
+            Operand.Const(Float.MIN_VALUE),
+        ).forEach { assertEquals("токен ${it.toToken()}", it, parseOperand(it.toToken())) }
+    }
+
+    @Test
+    fun `looksLikeRegister смотрит только на форму токена`() {
+        assertTrue(looksLikeRegister("F0"))
+        assertTrue(looksLikeRegister("R9"))
+        assertTrue(looksLikeRegister("F99"))
+        assertFalse(looksLikeRegister("F"))
+        assertFalse(looksLikeRegister("5F"))
+        assertFalse(looksLikeRegister("1000"))
+    }
+
+    @Test
+    fun `registerIndexOrNull режет диапазон`() {
+        assertEquals(0, registerIndexOrNull("F0"))
+        assertEquals(9, registerIndexOrNull("R9"))
+        assertNull(registerIndexOrNull("F10"))
+        assertNull(registerIndexOrNull("5F"))
+    }
+
+    @Test
+    fun `регистр вне диапазона по-прежнему ошибка разбора команды`() {
+        val e = assertThrows(ScriptException::class.java) { parseCommand("LOAD F10 5", 7) }
+        assertEquals(7, e.line)
+        assertTrue(e.message!!.contains("F0..F9"))
+    }
+
+    @Test
+    fun `регистр вне диапазона в операнде тоже ошибка с внятным текстом`() {
+        val e = assertThrows(ScriptException::class.java) { parseCommand("LOAD F1 F10", 3) }
+        assertEquals(3, e.line)
+        assertTrue(e.message!!.contains("F0..F9"))
     }
 
     //╰───────────────────────────────────────────────────────────────────────╯

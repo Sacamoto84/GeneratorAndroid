@@ -17,6 +17,8 @@ import com.example.generator2.screens.editor.ScreenEditor
 import com.example.generator2.screens.html.ScreenHtml
 import com.example.generator2.screens.mainscreen4.Mainsreen4
 import com.example.generator2.screens.mainscreen4.VMMain4
+import com.example.generator2.screens.nodes.ScreenNodes
+import com.example.generator2.screens.nodes.vm.VMNodes
 import com.example.generator2.screens.scripting.ScreenScriptCommon
 import com.example.generator2.screens.scripting.ScreenScriptInfo
 import com.example.generator2.screens.scripting.vm.VMScripting
@@ -83,6 +85,17 @@ sealed class AppScreen : Screen {
         override fun Content() {
             val screenModel: VMMain4 = getScreenModel()
             ScreenEditor(screenModel)
+        }
+    }
+
+    data object Nodes : AppScreen() {
+        private fun readResolve(): Any = Nodes
+
+        @OptIn(UnstableApi::class)
+        @Composable
+        override fun Content() {
+            val screenModel: VMNodes = getScreenModel()
+            ScreenNodes(screenModel)
         }
     }
 
