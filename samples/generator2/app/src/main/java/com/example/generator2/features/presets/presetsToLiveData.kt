@@ -51,6 +51,20 @@ fun presetsToLiveData(data: DataLiveData, gen: Generator) {
     gen.liveData.ch1AmDepth.value = data.ch1AmDepth.value
     gen.liveData.ch2AmDepth.value = data.ch2AmDepth.value
 
+    gen.liveData.ch1_Master_EN.value = data.ch1_Master_EN.value
+    gen.liveData.ch1_Master_Mode.value = data.ch1_Master_Mode.value
+    gen.liveData.ch1_Master_Period.value = data.ch1_Master_Period.value
+    gen.liveData.ch1_Master_Filename.value = data.ch1_Master_Filename.value
+    gen.liveData.ch1_Master_TOn.value = data.ch1_Master_TOn.value
+    gen.liveData.ch1_Master_TOff.value = data.ch1_Master_TOff.value
+
+    gen.liveData.ch2_Master_EN.value = data.ch2_Master_EN.value
+    gen.liveData.ch2_Master_Mode.value = data.ch2_Master_Mode.value
+    gen.liveData.ch2_Master_Period.value = data.ch2_Master_Period.value
+    gen.liveData.ch2_Master_Filename.value = data.ch2_Master_Filename.value
+    gen.liveData.ch2_Master_TOn.value = data.ch2_Master_TOn.value
+    gen.liveData.ch2_Master_TOff.value = data.ch2_Master_TOff.value
+
     //Количество звезд
     gen.liveData.star.value = data.star.value
 

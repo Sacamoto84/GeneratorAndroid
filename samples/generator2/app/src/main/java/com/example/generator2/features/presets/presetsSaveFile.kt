@@ -74,6 +74,20 @@ fun presetsSaveFile(name: String, path: String, gen: Generator): String {
     satchel["ch1AmDepth"] = gen.liveData.ch1AmDepth.value  //Глубина AM модуляции
     satchel["ch2AmDepth"] = gen.liveData.ch2AmDepth.value  //Глубина AM модуляции
 
+    satchel["ch1_Master_EN"] = gen.liveData.ch1_Master_EN.value
+    satchel["ch1_Master_Mode"] = gen.liveData.ch1_Master_Mode.value
+    satchel["ch1_Master_Period"] = gen.liveData.ch1_Master_Period.value
+    satchel["ch1_Master_Filename"] = gen.liveData.ch1_Master_Filename.value
+    satchel["ch1_Master_TOn"] = gen.liveData.ch1_Master_TOn.value
+    satchel["ch1_Master_TOff"] = gen.liveData.ch1_Master_TOff.value
+
+    satchel["ch2_Master_EN"] = gen.liveData.ch2_Master_EN.value
+    satchel["ch2_Master_Mode"] = gen.liveData.ch2_Master_Mode.value
+    satchel["ch2_Master_Period"] = gen.liveData.ch2_Master_Period.value
+    satchel["ch2_Master_Filename"] = gen.liveData.ch2_Master_Filename.value
+    satchel["ch2_Master_TOn"] = gen.liveData.ch2_Master_TOn.value
+    satchel["ch2_Master_TOff"] = gen.liveData.ch2_Master_TOff.value
+
     satchel["ch1FmMin"] = gen.liveData.ch1FmMin.value
     satchel["ch1FmMax"] = gen.liveData.ch1FmMax.value
     satchel["ch2FmMin"] = gen.liveData.ch2FmMin.value

@@ -72,6 +72,20 @@ fun presetsReadFile(name: String, path: String): DataLiveData {
     data.ch1AmDepth.value = satchel.getOrDefault("ch1AmDepth", 1f)  //Глубина AM модуляции
     data.ch2AmDepth.value = satchel.getOrDefault("ch2AmDepth", 1f)  //Глубина AM модуляции
 
+    data.ch1_Master_EN.value = satchel.getOrDefault("ch1_Master_EN", false)
+    data.ch1_Master_Mode.value = satchel.getOrDefault("ch1_Master_Mode", 1)
+    data.ch1_Master_Period.value = satchel.getOrDefault("ch1_Master_Period", 2f)
+    data.ch1_Master_Filename.value = satchel.getOrDefault("ch1_Master_Filename", "09_Ramp")
+    data.ch1_Master_TOn.value = satchel.getOrDefault("ch1_Master_TOn", 1f)
+    data.ch1_Master_TOff.value = satchel.getOrDefault("ch1_Master_TOff", 1f)
+
+    data.ch2_Master_EN.value = satchel.getOrDefault("ch2_Master_EN", false)
+    data.ch2_Master_Mode.value = satchel.getOrDefault("ch2_Master_Mode", 1)
+    data.ch2_Master_Period.value = satchel.getOrDefault("ch2_Master_Period", 2f)
+    data.ch2_Master_Filename.value = satchel.getOrDefault("ch2_Master_Filename", "09_Ramp")
+    data.ch2_Master_TOn.value = satchel.getOrDefault("ch2_Master_TOn", 1f)
+    data.ch2_Master_TOff.value = satchel.getOrDefault("ch2_Master_TOff", 1f)
+
     data.ch1FmMin.value = satchel.getOrDefault("ch1FmMin", 1000.0F) //CH1 FM min
     data.ch1FmMax.value = satchel.getOrDefault("ch1FmMax", 2000.0F) //CH1 FM max
     data.ch2FmMin.value = satchel.getOrDefault("parameterFloat2", 1000.0F) //CH2 FM min
