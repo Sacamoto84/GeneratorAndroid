@@ -6,11 +6,15 @@ import com.example.generator2.features.nodes.model.NodeBody
 import com.example.generator2.features.nodes.model.NodeGraph
 import com.example.generator2.features.nodes.model.NodeId
 import com.example.generator2.features.nodes.model.Port
+import com.example.generator2.features.nodes.model.RegOp
 import com.example.generator2.features.nodes.model.StepParams
 import com.example.generator2.features.nodes.model.node
 import com.example.generator2.features.nodes.model.ports
 import com.example.generator2.features.nodes.model.startNode
 import com.example.generator2.features.nodes.model.target
+import com.example.generator2.features.script.Cmd
+import com.example.generator2.features.script.ScriptException
+import com.example.generator2.features.script.parseCommand
 import com.example.generator2.features.script.toToken
 
 sealed interface CompileResult {
@@ -66,6 +70,8 @@ fun compile(
         repeat(block.size) { owners.add(node.id) }
     }
 
+    selfCheck(lines, owners)?.let { return CompileResult.Failed(listOf(it), warnings) }
+
     return CompileResult.Ok(lines, owners, warnings)
 }
 
@@ -116,8 +122,26 @@ private fun emit(node: GraphNode, graph: NodeGraph, address: Map<NodeId, Int>): 
             add(jump(Port.OUT))
         }
 
-        is NodeBody.Register -> error("Регистр появится в следующей задаче")
-        is NodeBody.Condition -> error("Условие появится в следующей задаче")
+        is NodeBody.Register -> listOf(
+            when (b.op) {
+                RegOp.LOAD -> "LOAD F${b.dst} ${b.src.toToken()}"
+                RegOp.PLUS -> "PLUS F${b.dst} ${b.src.toToken()}"
+                RegOp.MINUS -> "MINUS F${b.dst} ${b.src.toToken()}"
+            },
+            jump(Port.OUT),
+        )
+
+        //Пять строк не от щедрости: на истинном условии движок ставит
+        //pc = current + 1 и попадает на переход ветки «да», на ложном
+        //через findPairLine попадает на строку после ELSE. ENDIF не
+        //исполняется никогда, но без него findPairLine бросит исключение.
+        is NodeBody.Condition -> listOf(
+            "IF F${b.left} ${b.op.text} ${b.right.toToken()}",
+            jump(Port.YES),
+            "ELSE",
+            jump(Port.NO),
+            "ENDIF",
+        )
     }
 }
 
@@ -143,4 +167,34 @@ private fun ChannelParams.lines(ch: Int): List<String> = buildList {
     carrierEnabled?.let { add("CH$ch CR ${if (it) "ON" else "OFF"}") }
     amEnabled?.let { add("CH$ch AM ${if (it) "ON" else "OFF"}") }
     fmEnabled?.let { add("CH$ch FM ${if (it) "ON" else "OFF"}") }
+}
+
+/**
+ * Строки печатал компилятор, поэтому любая ошибка разбора в рантайме —
+ * его баг, а не пользователя. Дешёвая проверка на выходе ловит регрессию
+ * на устройстве, а в тестах становится сильным инвариантом.
+ *
+ * @return замечание, если что-то не сошлось; null, если всё в порядке
+ */
+private fun selfCheck(lines: List<String>, owners: List<NodeId>): Issue? {
+
+    fun internal(text: String) =
+        Issue(null, Severity.ERROR, "Внутренняя ошибка компилятора: $text")
+
+    if (lines.size != owners.size) {
+        return internal("строк ${lines.size}, владельцев ${owners.size}")
+    }
+
+    lines.forEachIndexed { i, line ->
+        val cmd = try {
+            parseCommand(line, i)
+        } catch (e: ScriptException) {
+            return internal("строка $i не разбирается: $line (${e.message})")
+        }
+        if (cmd is Cmd.Goto && cmd.target !in lines.indices) {
+            return internal("GOTO ${cmd.target} вне диапазона 0..${lines.lastIndex}")
+        }
+    }
+
+    return null
 }
