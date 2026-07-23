@@ -17,10 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.generator2.features.nodes.model.NodeBody
 import com.example.generator2.features.nodes.model.node
 import com.example.generator2.screens.nodes.bottom.NodeActionBar
 import com.example.generator2.screens.nodes.canvas.NodeCanvas
 import com.example.generator2.screens.nodes.dialog.NodePickerSheet
+import com.example.generator2.screens.nodes.dialog.StepDialog
 import com.example.generator2.screens.nodes.vm.VMNodes
 
 @Composable
@@ -91,6 +93,23 @@ fun ScreenNodes(vm: VMNodes) {
                 pickerOpen = false
             },
             onDismiss = { pickerOpen = false },
+        )
+    }
+
+    val editing = vm.paramsFor?.let { vm.graph.node(it) }
+    if (editing != null && editing.body is NodeBody.Step) {
+        StepDialog(
+            title = editing.title,
+            step = editing.body as NodeBody.Step,
+            carrierNames = vm.carrierNames().sorted(),
+            modNames = vm.modNames().sorted(),
+            onSnapshot = { vm.snapshotFromGenerator() },
+            onDone = { newTitle, newStep ->
+                vm.rename(editing.id, newTitle)
+                vm.replaceBody(editing.id, newStep)
+                vm.closeParams()
+            },
+            onDismiss = { vm.closeParams() },
         )
     }
 }

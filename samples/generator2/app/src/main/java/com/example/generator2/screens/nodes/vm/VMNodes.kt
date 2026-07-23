@@ -79,6 +79,44 @@ class VMNodes @Inject constructor(
     /** Имена форм модуляции: у AM и FM список общий */
     fun modNames(): Set<String> = gen.itemlistAM.map { it.name }.toSet()
 
+    /**
+     * Текущее состояние генератора в параметры Шага: накрутил на главном
+     * экране — зашёл в ноду — нажал. Ставятся все галочки сразу.
+     */
+    fun snapshotFromGenerator(): StepParams {
+        val d = gen.liveData
+        return StepParams(
+            ch1 = ChannelParams(
+                carrierEnabled = d.ch1_EN.value,
+                carrierFr = Operand.Const(d.ch1_Carrier_Fr.value),
+                carrierMod = d.ch1_Carrier_Filename.value,
+                amEnabled = d.ch1_AM_EN.value,
+                amFr = Operand.Const(d.ch1_AM_Fr.value),
+                amMod = d.ch1_AM_Filename.value,
+                fmEnabled = d.ch1_FM_EN.value,
+                //BASE и есть частота несущей: движок пишет их в одно поле,
+                //поэтому в снимке её не дублируем
+                fmBase = null,
+                fmDev = Operand.Const(d.ch1_FM_Dev.value),
+                fmFr = Operand.Const(d.ch1_FM_Fr.value),
+                fmMod = d.ch1_FM_Filename.value,
+            ),
+            ch2 = ChannelParams(
+                carrierEnabled = d.ch2_EN.value,
+                carrierFr = Operand.Const(d.ch2_Carrier_Fr.value),
+                carrierMod = d.ch2_Carrier_Filename.value,
+                amEnabled = d.ch2_AM_EN.value,
+                amFr = Operand.Const(d.ch2_AM_Fr.value),
+                amMod = d.ch2_AM_Filename.value,
+                fmEnabled = d.ch2_FM_EN.value,
+                fmBase = null,
+                fmDev = Operand.Const(d.ch2_FM_Dev.value),
+                fmFr = Operand.Const(d.ch2_FM_Fr.value),
+                fmMod = d.ch2_FM_Filename.value,
+            ),
+        )
+    }
+
     //╭─ Правка графа ────────────────────────────────────────────────────╮
 
     private fun edit(mutate: (NodeGraph) -> NodeGraph) {
