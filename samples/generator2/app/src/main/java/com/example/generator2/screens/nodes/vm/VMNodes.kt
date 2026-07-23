@@ -140,6 +140,20 @@ class VMNodes @Inject constructor(
         selected = id
     }
 
+    //╭─ Диалог параметров ───────────────────────────────────────────────╮
+
+    /** Какой ноде открыт диалог параметров */
+    var paramsFor by mutableStateOf<NodeId?>(null)
+        private set
+
+    fun openParams(id: NodeId) {
+        paramsFor = id
+    }
+
+    fun closeParams() {
+        paramsFor = null
+    }
+
     //╭─ Связи ───────────────────────────────────────────────────────────╮
 
     fun startLink(port: Port) {

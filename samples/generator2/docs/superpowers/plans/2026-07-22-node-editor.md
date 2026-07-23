@@ -3519,8 +3519,10 @@ private fun LinkAction(
     val connected = graph.target(node.id, port) != null
     val suffix = label?.let { " «$it»" }.orEmpty()
 
-    Action(if (connected) "→ Переподключить$suffix" else "→ Связь$suffix") { onLink(port) }
-    if (connected) Action("✕ Отвязать$suffix") { onUnlink(port) }
+    //onClick передаём явным аргументом, а не trailing-лямбдой: последний
+    //параметр Action — это color, и лямбда ушла бы в него
+    Action(if (connected) "→ Переподключить$suffix" else "→ Связь$suffix", { onLink(port) })
+    if (connected) Action("✕ Отвязать$suffix", { onUnlink(port) })
 }
 
 @Composable

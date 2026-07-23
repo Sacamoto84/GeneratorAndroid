@@ -1,5 +1,6 @@
 package com.example.generator2.screens.nodes
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FloatingActionButton
@@ -11,8 +12,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.generator2.features.nodes.model.node
+import com.example.generator2.screens.nodes.bottom.NodeActionBar
 import com.example.generator2.screens.nodes.canvas.NodeCanvas
 import com.example.generator2.screens.nodes.dialog.NodePickerSheet
 import com.example.generator2.screens.nodes.vm.VMNodes
@@ -29,6 +35,20 @@ fun ScreenNodes(vm: VMNodes) {
                 FloatingActionButton(onClick = { pickerOpen = true }) {
                     Text("+", fontSize = 24.sp)
                 }
+            }
+        },
+        bottomBar = {
+            val node = vm.selected?.let { vm.graph.node(it) }
+            if (node != null && vm.linkFrom == null) {
+                NodeActionBar(
+                    graph = vm.graph,
+                    node = node,
+                    onParams = { vm.openParams(node.id) },
+                    onLink = { vm.startLink(it) },
+                    onUnlink = { vm.unlink(it) },
+                    onDuplicate = { vm.duplicateSelected() },
+                    onDelete = { vm.deleteSelected() },
+                )
             }
         },
     ) { padding ->
@@ -48,6 +68,19 @@ fun ScreenNodes(vm: VMNodes) {
                 },
                 onMove = vm::moveNode,
             )
+
+            if (vm.linkFrom != null) {
+                Text(
+                    "Выберите ноду, куда ведёт связь. Тап по пустому месту — отмена",
+                    color = Color.White,
+                    fontSize = 13.sp,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(12.dp)
+                        .background(Color(0xCC2D2D2F))
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                )
+            }
         }
     }
 
