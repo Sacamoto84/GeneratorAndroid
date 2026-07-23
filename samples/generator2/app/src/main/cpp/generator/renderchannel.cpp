@@ -46,6 +46,14 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
                                                                               jfloat volume,
                                                                               jfloat am_depth,
 
+                                                                              jboolean master_en,
+                                                                              jint master_mode,
+                                                                              jint r_master,
+                                                                              jint on_samples,
+                                                                              jint off_samples,
+                                                                              jboolean button_active,
+                                                                              jboolean button_pressed,
+
                                                                               jint channel,
                                                                               jfloatArray m_buffer
 
@@ -138,6 +146,39 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
 
     }
 
+    // Мастер-громкость: огибающая 0..1 поверх канала, с фейдом ~5 мс от щелчков
+    float master_step = 1.0f / (0.005f * (float) sample_rate);
+    for (int i = 0; i < num_frames; i++) {
+        float target;
+        if (button_active) {
+            target = button_pressed ? 1.0f : 0.0f;          // общий оверрайд обоих каналов
+        } else if (!master_en) {
+            target = 1.0f;
+        } else if (master_mode == 1) {                       // Плавный
+            target = pStructureCh->buffer_master[pStructureCh->phase_accumulator_master >> 22];
+            pStructureCh->phase_accumulator_master += (uint32_t) r_master;
+        } else if (master_mode == 2) {                       // Вкл/Выкл
+            target = pStructureCh->master_onoff_on ? 1.0f : 0.0f;
+            uint32_t limit = pStructureCh->master_onoff_on ? (uint32_t) on_samples
+                                                           : (uint32_t) off_samples;
+            if (++pStructureCh->master_onoff_counter >= limit) {
+                pStructureCh->master_onoff_on = !pStructureCh->master_onoff_on;
+                pStructureCh->master_onoff_counter = 0;
+            }
+        } else {                                             // Кнопка (mode==3): недостижимо при button_active==false
+            target = button_pressed ? 1.0f : 0.0f;
+        }
+
+        float g = pStructureCh->master_current_gain;
+        float d = target - g;
+        if (d > master_step) d = master_step;
+        else if (d < -master_step) d = -master_step;
+        g += d;
+        pStructureCh->master_current_gain = g;
+
+        tempArrayElements[i] *= g;
+    }
+
     // Заполнение jfloatArray данными из tempArray
     env->SetFloatArrayRegion(m_buffer, 0, num_frames, tempArrayElements.get());
 
@@ -172,6 +213,10 @@ Java_com_example_generator2_features_generator_RenderChannel_sendBuffer(JNIEnv *
         }
         case 2 : {
             destination = pStructureCh->buffer_fm;
+            break;
+        }
+        case 3 : {
+            destination = pStructureCh->buffer_master;
             break;
         }
 

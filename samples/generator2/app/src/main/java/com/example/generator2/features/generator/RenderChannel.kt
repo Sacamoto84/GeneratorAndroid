@@ -25,6 +25,14 @@ class RenderChannel {
         volume: Float,
         amDepth: Float,
 
+        masterEN: Boolean,
+        masterMode: Int,
+        rMaster: Int,
+        onSamples: Int,
+        offSamples: Int,
+        buttonActive: Boolean,
+        buttonPressed: Boolean,
+
         channel: Int,// 0 1 номер канала
 
         mBuffer: FloatArray
@@ -51,6 +59,12 @@ class RenderChannel {
         val volume: Float
         val amDepth: Float
 
+        val masterEN: Boolean
+        val masterMode: Int
+        val masterPeriod: Float
+        val masterTOn: Float
+        val masterTOff: Float
+
 //        val startTime1 = System.nanoTime()
 //        enCH = liveData.ch2_EN.value
 //        enAM = liveData.ch2_AM_EN.value
@@ -70,6 +84,11 @@ class RenderChannel {
             enFM = liveData.ch1_FM_EN.value
             volume = liveData.volume0.value
             amDepth = liveData.ch1AmDepth.value
+            masterEN = liveData.ch1_Master_EN.value
+            masterMode = liveData.ch1_Master_Mode.value
+            masterPeriod = liveData.ch1_Master_Period.value
+            masterTOn = liveData.ch1_Master_TOn.value
+            masterTOff = liveData.ch1_Master_TOff.value
         } else {
             rC = convertHzToR(liveData.ch2_Carrier_Fr.value, sampleRate).toUInt()
             rAM = convertHzToR(liveData.ch2_AM_Fr.value, sampleRate).toUInt()
@@ -79,9 +98,23 @@ class RenderChannel {
             enFM = liveData.ch2_FM_EN.value
             volume = liveData.volume1.value
             amDepth = liveData.ch2AmDepth.value
+            masterEN = liveData.ch2_Master_EN.value
+            masterMode = liveData.ch2_Master_Mode.value
+            masterPeriod = liveData.ch2_Master_Period.value
+            masterTOn = liveData.ch2_Master_TOn.value
+            masterTOff = liveData.ch2_Master_TOff.value
         }
 
         val mBuffer = FloatArray(numFrames)
+
+        val rMaster = masterPeriodToR(masterPeriod, sampleRate)
+        val onSamples = secToSamples(masterTOn, sampleRate)
+        val offSamples = secToSamples(masterTOff, sampleRate)
+        val buttonActive = masterButtonActive(
+            liveData.ch1_Master_EN.value, liveData.ch1_Master_Mode.value,
+            liveData.ch2_Master_EN.value, liveData.ch2_Master_Mode.value
+        )
+        val buttonPressed = liveData.masterButton.value
 
         //val endTime1 = System.nanoTime()
         //val duration1 = endTime1 - startTime1
@@ -104,6 +137,15 @@ class RenderChannel {
 
             volume,
             amDepth,
+
+            masterEN,
+            masterMode,
+            rMaster,
+            onSamples,
+            offSamples,
+            buttonActive,
+            buttonPressed,
+
             ch.ch, //номер канала
             mBuffer
         )
