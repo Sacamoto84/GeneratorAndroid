@@ -11,6 +11,7 @@ import com.example.generator2.element.Console2
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.nodes.CompileResult
 import com.example.generator2.features.nodes.Issue
+import com.example.generator2.features.nodes.NodeGraphSession
 import com.example.generator2.features.nodes.NodeGraphUtils
 import com.example.generator2.features.nodes.NodeRunner
 import com.example.generator2.features.nodes.Severity
@@ -46,16 +47,18 @@ class VMNodes @Inject constructor(
     private val utils: NodeGraphUtils,
     val runner: NodeRunner,
     private val gen: Generator,
+    private val session: NodeGraphSession,
 ) : ScreenModel {
 
-    var graph by mutableStateOf(newGraph())
+    //Восстанавливаемся из сессии: вернувшись на экран, видим тот же граф, а не New
+    var graph by mutableStateOf(session.graph)
         private set
 
-    var name by mutableStateOf(NEW_NAME)
+    var name by mutableStateOf(session.name)
         internal set
 
     /** Есть несохранённые правки. Взводится и перемещением ноды: координаты в файле. */
-    var dirty by mutableStateOf(false)
+    var dirty by mutableStateOf(session.dirty)
         internal set
 
     var selected by mutableStateOf<NodeId?>(null)
@@ -198,6 +201,14 @@ class VMNodes @Inject constructor(
     private fun edit(mutate: (NodeGraph) -> NodeGraph) {
         graph = mutate(graph)
         dirty = true
+        persist()
+    }
+
+    /** Сложить текущее состояние в сессию, чтобы пережить пересоздание экрана */
+    private fun persist() {
+        session.graph = graph
+        session.name = name
+        session.dirty = dirty
     }
 
     /**
@@ -351,6 +362,7 @@ class VMNodes @Inject constructor(
             name = fileName
             dirty = false
             openDialogSaveAs = false
+            persist()
             SnackBar.success("Сохранено")
         } catch (e: Exception) {
             //dirty остаётся взведён: правки не в файле
@@ -362,6 +374,7 @@ class VMNodes @Inject constructor(
         utils.rename(name, fileName)
         name = fileName
         openDialogDeleteRename = false
+        persist()
     }
 
     fun deleteFile() {
@@ -378,6 +391,7 @@ class VMNodes @Inject constructor(
         selected = null
         linkFrom = null
         dirty = false
+        persist()
         requestFit()
     }
 
