@@ -45,6 +45,8 @@ data class NodeDto(
     val condLeft: Int? = null,
     val condOp: String? = null,
     val condRight: String? = null,
+    val condDelayBefore: Long? = null,
+    val condDelayAfter: Long? = null,
 )
 
 data class ChannelDto(
@@ -100,6 +102,8 @@ private fun NodeDto.toDomain(): GraphNode {
                 delayMs = delayMs ?: 0L,
             )
 
+            "DELAY" -> NodeBody.Delay(delayMs = delayMs ?: 0L)
+
             "REGISTER" -> NodeBody.Register(
                 op = RegOp.entries.firstOrNull { it.name == regOp }
                     ?: throw GraphFormatException("нода $nodeId: неизвестная операция regOp=$regOp"),
@@ -112,6 +116,9 @@ private fun NodeDto.toDomain(): GraphNode {
                 op = CompareOp.entries.firstOrNull { it.text == condOp }
                     ?: throw GraphFormatException("нода $nodeId: неизвестное сравнение condOp=$condOp"),
                 right = operand(condRight, nodeId, "condRight"),
+                //Старый файл без этих полей — задержки нулевые
+                delayBeforeMs = condDelayBefore ?: 0L,
+                delayAfterMs = condDelayAfter ?: 0L,
             )
 
             else -> throw GraphFormatException("нода $nodeId: неизвестный тип $type")
@@ -168,6 +175,11 @@ private fun GraphNode.toDto(): NodeDto {
             ch2 = b.params.ch2.toDto(),
         )
 
+        is NodeBody.Delay -> base.copy(
+            type = "DELAY",
+            delayMs = b.delayMs,
+        )
+
         is NodeBody.Register -> base.copy(
             type = "REGISTER",
             regOp = b.op.name,
@@ -180,6 +192,9 @@ private fun GraphNode.toDto(): NodeDto {
             condLeft = b.left,
             condOp = b.op.text,
             condRight = b.right.toToken(),
+            //0 не пишем: у большинства условий задержек нет, файл чище
+            condDelayBefore = b.delayBeforeMs.takeIf { it > 0 },
+            condDelayAfter = b.delayAfterMs.takeIf { it > 0 },
         )
     }
 }

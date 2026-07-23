@@ -92,15 +92,24 @@ private fun registerAndDelayErrors(node: GraphNode): List<Issue> = buildList {
                 add(Issue(node.id, Severity.ERROR, "Отрицательная задержка ${b.delayMs}"))
             }
 
+        is NodeBody.Delay ->
+            if (b.delayMs < 0) {
+                add(Issue(node.id, Severity.ERROR, "Отрицательная задержка ${b.delayMs}"))
+            }
+
         is NodeBody.Register ->
             if (b.dst !in range) {
                 add(Issue(node.id, Severity.ERROR, "Регистр F${b.dst} $outOfRange"))
             }
 
-        is NodeBody.Condition ->
+        is NodeBody.Condition -> {
             if (b.left !in range) {
                 add(Issue(node.id, Severity.ERROR, "Регистр F${b.left} $outOfRange"))
             }
+            if (b.delayBeforeMs < 0 || b.delayAfterMs < 0) {
+                add(Issue(node.id, Severity.ERROR, "Отрицательная задержка в условии"))
+            }
+        }
 
         else -> Unit
     }
@@ -131,9 +140,14 @@ private fun warnings(
     //Цикл без единой задержки. Устройство не повиснет — в Script есть
     //YIELD_EVERY, — но ядро будет греться, поэтому предупреждение, не ошибка
     stronglyConnected(graph).forEach { component ->
-        val delaySum = component
-            .mapNotNull { graph.node(it)?.body as? NodeBody.Step }
-            .sumOf { it.delayMs }
+        val delaySum = component.sumOf { id ->
+            when (val b = graph.node(id)?.body) {
+                is NodeBody.Step -> b.delayMs
+                is NodeBody.Delay -> b.delayMs
+                is NodeBody.Condition -> b.delayBeforeMs + b.delayAfterMs
+                else -> 0L
+            }
+        }
         if (delaySum == 0L) {
             component.forEach {
                 add(Issue(it, Severity.WARNING, "Цикл без задержки: будет крутиться на полной скорости"))

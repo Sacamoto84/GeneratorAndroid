@@ -37,11 +37,13 @@ private val ColorRegister = Color(0xFFA06CD5)
 private val ColorCondition = Color(0xFFFF9F0A)
 private val ColorStart = Color(0xFF34C759)
 private val ColorStop = Color(0xFFE5553A)
+private val ColorDelay = Color(0xFF5AC8FA)
 
 fun NodeBody.accent(): Color = when (this) {
     is NodeBody.Start -> ColorStart
     is NodeBody.Stop -> ColorStop
     is NodeBody.Step -> ColorStep
+    is NodeBody.Delay -> ColorDelay
     is NodeBody.Register -> ColorRegister
     is NodeBody.Condition -> ColorCondition
 }
@@ -106,6 +108,8 @@ private fun summary(node: GraphNode): List<String> = when (val b = node.body) {
         if (b.delayMs > 0) add("задержка ${b.delayMs} мс")
     }
 
+    is NodeBody.Delay -> listOf("пауза ${b.delayMs} мс")
+
     is NodeBody.Register -> listOf(
         when (b.op) {
             RegOp.LOAD -> "F${b.dst} = ${b.src.toToken()}"
@@ -114,8 +118,12 @@ private fun summary(node: GraphNode): List<String> = when (val b = node.body) {
         }
     )
 
-    is NodeBody.Condition -> listOf(
-        "F${b.left} ${b.op.text} ${b.right.toToken()}",
-        "да ↗   нет ↘",
-    )
+    is NodeBody.Condition -> buildList {
+        add("F${b.left} ${b.op.text} ${b.right.toToken()}")
+        val delays = buildList {
+            if (b.delayBeforeMs > 0) add("до ${b.delayBeforeMs}")
+            if (b.delayAfterMs > 0) add("после ${b.delayAfterMs}")
+        }
+        add(if (delays.isEmpty()) "да ↗   нет ↘" else "⏱ " + delays.joinToString("  "))
+    }
 }

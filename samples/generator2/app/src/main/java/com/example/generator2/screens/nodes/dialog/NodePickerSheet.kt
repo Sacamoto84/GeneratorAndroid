@@ -20,6 +20,7 @@ fun NodePickerSheet(onPick: (NodeKind) -> Unit, onDismiss: () -> Unit) {
         Column(Modifier.padding(bottom = 32.dp)) {
             listOf(
                 NodeKind.STEP to "Шаг — параметры генератора и задержка",
+                NodeKind.DELAY to "Задержка — только пауза",
                 NodeKind.REGISTER to "Регистр — присвоить, прибавить, вычесть",
                 NodeKind.CONDITION to "Условие — два выхода: да и нет",
                 NodeKind.STOP to "Стоп — конец прогона",

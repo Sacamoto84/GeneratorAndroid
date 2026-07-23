@@ -29,6 +29,7 @@ import com.example.generator2.screens.nodes.bottom.NodeActionBar
 import com.example.generator2.screens.nodes.bottom.RunSheet
 import com.example.generator2.screens.nodes.canvas.NodeCanvas
 import com.example.generator2.screens.nodes.dialog.ConditionDialog
+import com.example.generator2.screens.nodes.dialog.DelayDialog
 import com.example.generator2.screens.nodes.dialog.DialogOpenGraph
 import com.example.generator2.screens.nodes.dialog.NodePickerSheet
 import com.example.generator2.screens.nodes.dialog.RegisterDialog
@@ -152,6 +153,17 @@ fun ScreenNodes(vm: VMNodes) {
             onDone = { newTitle, newStep ->
                 vm.rename(editing.id, newTitle)
                 vm.replaceBody(editing.id, newStep)
+                vm.closeParams()
+            },
+            onDismiss = { vm.closeParams() },
+        )
+    }
+
+    if (editing != null && editing.body is NodeBody.Delay) {
+        DelayDialog(
+            body = editing.body as NodeBody.Delay,
+            onDone = {
+                vm.replaceBody(editing.id, it)
                 vm.closeParams()
             },
             onDismiss = { vm.closeParams() },

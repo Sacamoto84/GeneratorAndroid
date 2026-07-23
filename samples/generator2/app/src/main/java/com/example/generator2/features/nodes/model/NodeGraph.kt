@@ -51,14 +51,30 @@ sealed interface NodeBody {
     data object Start : NodeBody
     data object Stop : NodeBody
     data class Step(val params: StepParams, val delayMs: Long) : NodeBody
+
+    /** Отдельная нода-пауза: только задержка, без параметров генератора */
+    data class Delay(val delayMs: Long) : NodeBody
+
     data class Register(val op: RegOp, val dst: Int, val src: Operand) : NodeBody
-    data class Condition(val left: Int, val op: CompareOp, val right: Operand) : NodeBody
+
+    /**
+     * @param delayBeforeMs пауза перед проверкой условия
+     * @param delayAfterMs пауза после проверки, в обеих ветках перед переходом
+     */
+    data class Condition(
+        val left: Int,
+        val op: CompareOp,
+        val right: Operand,
+        val delayBeforeMs: Long = 0L,
+        val delayAfterMs: Long = 0L,
+    ) : NodeBody
 }
 
 /** Выходы ноды в порядке обхода компилятором */
 fun NodeBody.ports(): List<Port> = when (this) {
     is NodeBody.Start -> listOf(Port.OUT)
     is NodeBody.Step -> listOf(Port.OUT)
+    is NodeBody.Delay -> listOf(Port.OUT)
     is NodeBody.Register -> listOf(Port.OUT)
     is NodeBody.Condition -> listOf(Port.YES, Port.NO)
     is NodeBody.Stop -> emptyList()

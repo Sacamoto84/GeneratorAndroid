@@ -2,6 +2,7 @@ package com.example.generator2.screens.nodes.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -33,6 +35,8 @@ fun ConditionDialog(
     var left by remember { mutableStateOf(body.left) }
     var op by remember { mutableStateOf(body.op) }
     var right by remember { mutableStateOf(body.right) }
+    var before by remember { mutableStateOf(TextFieldValue(body.delayBeforeMs.toString())) }
+    var after by remember { mutableStateOf(TextFieldValue(body.delayAfterMs.toString())) }
 
     Dialog(onDismissRequest = onDismiss) {
         Column(
@@ -59,11 +63,38 @@ fun ConditionDialog(
                 modifier = Modifier.padding(top = 10.dp),
             )
 
+            //Задержки прямо в Условии — чтобы не ставить ноду Задержки лишний раз
+            Row(
+                Modifier.fillMaxWidth().padding(top = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text("Пауза до, мс", color = Color.White, fontSize = 13.sp)
+                Box(Modifier.weight(1f))
+                MsField(before) { before = it }
+            }
+
+            Row(
+                Modifier.fillMaxWidth().padding(top = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text("Пауза после, мс", color = Color.White, fontSize = 13.sp)
+                Box(Modifier.weight(1f))
+                MsField(after) { after = it }
+            }
+
             Row(Modifier.fillMaxWidth().padding(top = 12.dp), horizontalArrangement = Arrangement.End) {
                 TextButton(onClick = onDismiss) { Text("Отмена", color = Color(0xFF9A9AA0)) }
-                TextButton(onClick = { onDone(NodeBody.Condition(left, op, right)) }) {
-                    Text("Готово", color = Color.White)
-                }
+                TextButton(
+                    onClick = {
+                        onDone(
+                            NodeBody.Condition(
+                                left, op, right,
+                                delayBeforeMs = before.text.toLongOrNull() ?: 0L,
+                                delayAfterMs = after.text.toLongOrNull() ?: 0L,
+                            )
+                        )
+                    }
+                ) { Text("Готово", color = Color.White) }
             }
         }
     }

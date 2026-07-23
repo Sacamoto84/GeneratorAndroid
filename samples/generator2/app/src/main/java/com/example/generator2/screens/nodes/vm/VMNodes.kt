@@ -38,7 +38,7 @@ import com.example.generator2.features.script.StateCommandScript
 import javax.inject.Inject
 
 /** Какую ноду создаёт «+» */
-enum class NodeKind { STEP, REGISTER, CONDITION, STOP }
+enum class NodeKind { STEP, DELAY, REGISTER, CONDITION, STOP }
 
 @Stable
 class VMNodes @Inject constructor(
@@ -379,6 +379,7 @@ class VMNodes @Inject constructor(
 
     private fun defaultBody(kind: NodeKind): NodeBody = when (kind) {
         NodeKind.STEP -> NodeBody.Step(StepParams(ChannelParams(), ChannelParams()), 0L)
+        NodeKind.DELAY -> NodeBody.Delay(1000L)
         NodeKind.REGISTER -> NodeBody.Register(RegOp.LOAD, 0, Operand.Const(0f))
         NodeKind.CONDITION -> NodeBody.Condition(0, CompareOp.LESS, Operand.Const(0f))
         NodeKind.STOP -> NodeBody.Stop
@@ -386,6 +387,7 @@ class VMNodes @Inject constructor(
 
     private fun defaultTitle(kind: NodeKind, id: NodeId): String = when (kind) {
         NodeKind.STEP -> "Шаг ${id.value}"
+        NodeKind.DELAY -> "Задержка ${id.value}"
         NodeKind.REGISTER -> "Регистр ${id.value}"
         NodeKind.CONDITION -> "Условие ${id.value}"
         NodeKind.STOP -> "Стоп"

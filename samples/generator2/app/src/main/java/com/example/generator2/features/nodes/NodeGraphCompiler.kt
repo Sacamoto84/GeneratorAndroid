@@ -99,7 +99,11 @@ private fun GraphNode.lineCount(): Int = when (val b = body) {
     is NodeBody.Start -> 0
     is NodeBody.Stop -> 1
     is NodeBody.Register -> 2
-    is NodeBody.Condition -> 5
+    //DELAY? + GOTO
+    is NodeBody.Delay -> (if (b.delayMs > 0) 1 else 0) + 1
+    //(DELAY before?) + IF + (DELAY after?) + GOTO + ELSE + (DELAY after?) + GOTO + ENDIF
+    is NodeBody.Condition ->
+        (if (b.delayBeforeMs > 0) 1 else 0) + 5 + 2 * (if (b.delayAfterMs > 0) 1 else 0)
     is NodeBody.Step -> b.params.assignmentLines().size + (if (b.delayMs > 0) 1 else 0) + 1
 }
 
@@ -122,6 +126,11 @@ private fun emit(node: GraphNode, graph: NodeGraph, address: Map<NodeId, Int>): 
             add(jump(Port.OUT))
         }
 
+        is NodeBody.Delay -> buildList {
+            if (b.delayMs > 0) add("DELAY ${b.delayMs}")
+            add(jump(Port.OUT))
+        }
+
         is NodeBody.Register -> listOf(
             when (b.op) {
                 RegOp.LOAD -> "LOAD F${b.dst} ${b.src.toToken()}"
@@ -135,13 +144,21 @@ private fun emit(node: GraphNode, graph: NodeGraph, address: Map<NodeId, Int>): 
         //pc = current + 1 и попадает на переход ветки «да», на ложном
         //через findPairLine попадает на строку после ELSE. ENDIF не
         //исполняется никогда, но без него findPairLine бросит исключение.
-        is NodeBody.Condition -> listOf(
-            "IF F${b.left} ${b.op.text} ${b.right.toToken()}",
-            jump(Port.YES),
-            "ELSE",
-            jump(Port.NO),
-            "ENDIF",
-        )
+        //
+        //Задержка «после» стоит в обеих ветках: на истинном pc = current+1
+        //попадает на DELAY сразу за IF, на ложном findPairLine отдаёт строку
+        //за ELSE — тоже DELAY. findPairLine считает вложенность только по
+        //IF/ELSE/ENDIF, поэтому DELAY между ними поиск пары не ломает.
+        is NodeBody.Condition -> buildList {
+            if (b.delayBeforeMs > 0) add("DELAY ${b.delayBeforeMs}")
+            add("IF F${b.left} ${b.op.text} ${b.right.toToken()}")
+            if (b.delayAfterMs > 0) add("DELAY ${b.delayAfterMs}")
+            add(jump(Port.YES))
+            add("ELSE")
+            if (b.delayAfterMs > 0) add("DELAY ${b.delayAfterMs}")
+            add(jump(Port.NO))
+            add("ENDIF")
+        }
     }
 }
 
