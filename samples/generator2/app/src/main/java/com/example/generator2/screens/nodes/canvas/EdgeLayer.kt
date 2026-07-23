@@ -7,6 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -82,17 +84,25 @@ fun EdgeLayer(graph: NodeGraph, orientation: Orientation, modifier: Modifier = M
         }
 
         //───── значки портов ─────
+        //Все треугольники смотрят вдоль потока: наружу выхода = внутрь входа
+        //следующей ноды, поэтому направление у входа и выхода одно.
+        val flow = when (orientation) {
+            Orientation.LR -> Offset(1f, 0f)
+            Orientation.RL -> Offset(-1f, 0f)
+            Orientation.TB -> Offset(0f, 1f)
+            Orientation.BT -> Offset(0f, -1f)
+        }
+
         graph.nodes.forEach { node ->
             val tl = topLeft(node)
 
-            //вход: есть у всех, кроме Старта. Кольцо, чтобы отличать от выхода
+            //вход: есть у всех, кроме Старта. Контурный треугольник
             if (node.body !is NodeBody.Start) {
                 val p = tl + orientation.entryAnchor(cardW, cardH)
-                drawCircle(CanvasBg, portR, p)
-                drawCircle(EntryColor, portR, p, style = Stroke(width = stroke))
+                drawTriangle(p, flow, portR, EntryColor, filled = false, stroke)
             }
 
-            //выходы: залитые кружки цвета порта
+            //выходы: залитые треугольники цвета порта
             node.body.ports().forEach { port ->
                 val p = tl + orientation.exitAnchor(port, cardW, cardH)
                 val color = when (port) {
@@ -100,9 +110,37 @@ fun EdgeLayer(graph: NodeGraph, orientation: Orientation, modifier: Modifier = M
                     Port.YES -> YesColor
                     Port.NO -> NoColor
                 }
-                drawCircle(CanvasBg, portR + stroke, p)
-                drawCircle(color, portR, p)
+                //подложка цвета холста, чтобы провод не просвечивал сквозь значок
+                drawTriangle(p, flow, portR + stroke, CanvasBg, filled = true, stroke)
+                drawTriangle(p, flow, portR, color, filled = true, stroke)
             }
         }
     }
+}
+
+/** Треугольник с вершиной в направлении dir, центром в center */
+private fun DrawScope.drawTriangle(
+    center: Offset,
+    dir: Offset,
+    size: Float,
+    color: Color,
+    filled: Boolean,
+    stroke: Float,
+) {
+    val forward = dir * size
+    //перпендикуляр к dir той же длины — боковые вершины основания
+    val perp = Offset(-dir.y, dir.x) * size
+
+    val tip = center + forward
+    val a = center - forward + perp
+    val b = center - forward - perp
+
+    val path = Path().apply {
+        moveTo(tip.x, tip.y)
+        lineTo(a.x, a.y)
+        lineTo(b.x, b.y)
+        close()
+    }
+
+    drawPath(path, color, style = if (filled) Fill else Stroke(width = stroke))
 }
