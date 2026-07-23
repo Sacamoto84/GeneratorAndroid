@@ -2,6 +2,7 @@ package com.example.generator2.screens.nodes
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FloatingActionButton
@@ -25,6 +26,7 @@ import com.example.generator2.screens.common.dialog.DialogDeleteRename
 import com.example.generator2.screens.common.dialog.DialogSaveAs
 import com.example.generator2.screens.nodes.bottom.IssuesSheet
 import com.example.generator2.screens.nodes.bottom.NodeActionBar
+import com.example.generator2.screens.nodes.bottom.RunSheet
 import com.example.generator2.screens.nodes.canvas.NodeCanvas
 import com.example.generator2.screens.nodes.dialog.ConditionDialog
 import com.example.generator2.screens.nodes.dialog.DialogOpenGraph
@@ -75,17 +77,22 @@ fun ScreenNodes(vm: VMNodes) {
             }
         },
         bottomBar = {
-            val node = vm.selected?.let { vm.graph.node(it) }
-            if (node != null && vm.linkFrom == null) {
-                NodeActionBar(
-                    graph = vm.graph,
-                    node = node,
-                    onParams = { vm.openParams(node.id) },
-                    onLink = { vm.startLink(it) },
-                    onUnlink = { vm.unlink(it) },
-                    onDuplicate = { vm.duplicateSelected() },
-                    onDelete = { vm.deleteSelected() },
-                )
+            Column {
+                val registers by vm.runner.registers.collectAsState()
+                RunSheet(registers = registers, console = vm.console)
+
+                val node = vm.selected?.let { vm.graph.node(it) }
+                if (node != null && vm.linkFrom == null) {
+                    NodeActionBar(
+                        graph = vm.graph,
+                        node = node,
+                        onParams = { vm.openParams(node.id) },
+                        onLink = { vm.startLink(it) },
+                        onUnlink = { vm.unlink(it) },
+                        onDuplicate = { vm.duplicateSelected() },
+                        onDelete = { vm.deleteSelected() },
+                    )
+                }
             }
         },
     ) { padding ->
