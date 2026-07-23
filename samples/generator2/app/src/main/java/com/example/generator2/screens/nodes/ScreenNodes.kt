@@ -23,6 +23,7 @@ import com.example.generator2.features.nodes.model.NodeBody
 import com.example.generator2.features.nodes.model.node
 import com.example.generator2.screens.common.dialog.DialogDeleteRename
 import com.example.generator2.screens.common.dialog.DialogSaveAs
+import com.example.generator2.screens.nodes.bottom.IssuesSheet
 import com.example.generator2.screens.nodes.bottom.NodeActionBar
 import com.example.generator2.screens.nodes.canvas.NodeCanvas
 import com.example.generator2.screens.nodes.dialog.ConditionDialog
@@ -37,6 +38,8 @@ import com.example.generator2.screens.nodes.vm.VMNodes
 fun ScreenNodes(vm: VMNodes) {
 
     var pickerOpen by remember { mutableStateOf(false) }
+    var issuesOpen by remember { mutableStateOf(false) }
+    var scriptOpen by remember { mutableStateOf(false) }
     val activeNode by vm.runner.activeNode.collectAsState(initial = null)
 
     Scaffold(
@@ -47,6 +50,15 @@ fun ScreenNodes(vm: VMNodes) {
             NodesTopBar(
                 name = vm.name,
                 dirty = vm.dirty,
+                isRunning = vm.isRunning,
+                isPaused = vm.isPaused,
+                errorCount = vm.errors.size,
+                warningCount = vm.issues.size - vm.errors.size,
+                onRun = { vm.run() },
+                onPauseResume = { vm.pauseOrResume() },
+                onStop = { vm.stop() },
+                onShowIssues = { issuesOpen = true },
+                onShowScript = { scriptOpen = true },
                 onNew = { vm.newFile() },
                 onOpen = { vm.openDialogOpen = true },
                 onSave = { vm.save() },
@@ -85,6 +97,8 @@ fun ScreenNodes(vm: VMNodes) {
                 linking = vm.linkFrom != null,
                 canBeTarget = vm::canBeTarget,
                 fitKey = vm.fitRequest,
+                focusNode = vm.focusNode,
+                focusKey = vm.focusRequest,
                 onSelect = { id ->
                     if (vm.linkFrom != null) vm.completeLink(id) else vm.selected = id
                 },
@@ -197,6 +211,17 @@ fun ScreenNodes(vm: VMNodes) {
             dismissButton = {
                 TextButton(onClick = { vm.cancelDiscard() }) { Text("Отмена") }
             },
+        )
+    }
+
+    if (issuesOpen) {
+        IssuesSheet(
+            issues = vm.issues,
+            onPick = { issue ->
+                issuesOpen = false
+                issue.nodeId?.let { vm.focusOn(it) }
+            },
+            onDismiss = { issuesOpen = false },
         )
     }
 }

@@ -51,6 +51,8 @@ fun NodeCanvas(
     linking: Boolean,
     canBeTarget: (NodeId) -> Boolean,
     fitKey: Any,
+    focusNode: NodeId?,
+    focusKey: Int,
     onSelect: (NodeId) -> Unit,
     onTapEmpty: () -> Unit,
     onMove: (NodeId, Float, Float) -> Unit,
@@ -80,6 +82,17 @@ fun NodeCanvas(
             x = margin - with(density) { minX.dp.toPx() } * scale,
             y = margin - with(density) { minY.dp.toPx() } * scale,
         )
+    }
+
+    //Навести холст на конкретную ноду: тап по проблеме в списке
+    LaunchedEffect(focusKey) {
+        val n = focusNode?.let { id -> graph.nodes.firstOrNull { it.id == id } } ?: return@LaunchedEffect
+        if (viewport.width == 0) return@LaunchedEffect
+
+        val cx = with(density) { n.x.dp.toPx() } + with(density) { CARD_W.toPx() } / 2f
+        val cy = with(density) { n.y.dp.toPx() } + with(density) { CARD_H.toPx() } / 2f
+
+        offset = Offset(viewport.width / 2f - cx * scale, viewport.height / 2f - cy * scale)
     }
 
     Box(

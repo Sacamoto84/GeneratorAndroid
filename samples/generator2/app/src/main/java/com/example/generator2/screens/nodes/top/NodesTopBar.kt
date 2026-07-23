@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
@@ -24,6 +25,15 @@ import androidx.compose.ui.unit.sp
 fun NodesTopBar(
     name: String,
     dirty: Boolean,
+    isRunning: Boolean,
+    isPaused: Boolean,
+    errorCount: Int,
+    warningCount: Int,
+    onRun: () -> Unit,
+    onPauseResume: () -> Unit,
+    onStop: () -> Unit,
+    onShowIssues: () -> Unit,
+    onShowScript: () -> Unit,
     onNew: () -> Unit,
     onOpen: () -> Unit,
     onSave: () -> Unit,
@@ -44,6 +54,53 @@ fun NodesTopBar(
             if (dirty) "$name •" else name,
             color = Color.White,
             fontSize = 16.sp,
+        )
+
+        Box(Modifier.width(12.dp))
+
+        if (errorCount + warningCount > 0) {
+            Text(
+                if (errorCount > 0) "⛔ $errorCount" else "⚠ $warningCount",
+                color = if (errorCount > 0) Color(0xFFE5553A) else Color(0xFFFF9F0A),
+                fontSize = 14.sp,
+                modifier = Modifier.clickable(onClick = onShowIssues).padding(6.dp),
+            )
+        }
+
+        //Пуск неактивен, пока есть ошибки: гонять генератор по половине графа
+        //не стоит
+        Text(
+            "▶",
+            color = if (errorCount == 0 && !isRunning) Color(0xFF34C759) else Color(0xFF6B6B70),
+            fontSize = 18.sp,
+            modifier = Modifier
+                .clickable(enabled = errorCount == 0 && !isRunning, onClick = onRun)
+                .padding(8.dp),
+        )
+
+        Text(
+            if (isPaused) "▷" else "❚❚",
+            color = if (isRunning || isPaused) Color(0xFFFF9F0A) else Color(0xFF6B6B70),
+            fontSize = 16.sp,
+            modifier = Modifier
+                .clickable(enabled = isRunning || isPaused, onClick = onPauseResume)
+                .padding(8.dp),
+        )
+
+        Text(
+            "■",
+            color = if (isRunning || isPaused) Color(0xFFE5553A) else Color(0xFF6B6B70),
+            fontSize = 16.sp,
+            modifier = Modifier
+                .clickable(enabled = isRunning || isPaused, onClick = onStop)
+                .padding(8.dp),
+        )
+
+        Text(
+            "{ }",
+            color = Color.White,
+            fontSize = 14.sp,
+            modifier = Modifier.clickable(onClick = onShowScript).padding(8.dp),
         )
 
         Box(Modifier.weight(1f))

@@ -9,10 +9,12 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import com.example.generator2.common.snackbar.SnackBar
 import com.example.generator2.element.Console2
 import com.example.generator2.features.generator.Generator
+import com.example.generator2.features.nodes.CompileResult
 import com.example.generator2.features.nodes.Issue
 import com.example.generator2.features.nodes.NodeGraphUtils
 import com.example.generator2.features.nodes.NodeRunner
 import com.example.generator2.features.nodes.Severity
+import com.example.generator2.features.nodes.compile
 import com.example.generator2.features.nodes.model.ChannelParams
 import com.example.generator2.features.nodes.model.GraphFormatException
 import com.example.generator2.features.nodes.model.GraphNode
@@ -32,6 +34,7 @@ import com.example.generator2.features.nodes.model.withoutNode
 import com.example.generator2.features.nodes.validate
 import com.example.generator2.features.script.CompareOp
 import com.example.generator2.features.script.Operand
+import com.example.generator2.features.script.StateCommandScript
 import javax.inject.Inject
 
 /** Какую ноду создаёт «+» */
@@ -73,6 +76,65 @@ class VMNodes @Inject constructor(
 
     init {
         runner.logger = { console.println(it) }
+    }
+
+    //╭─ Прогон ──────────────────────────────────────────────────────────╮
+
+    var compiled by mutableStateOf<CompileResult.Ok?>(null)
+        private set
+
+    /** Нода, на которую просят навести холст, и счётчик просьб */
+    var focusNode by mutableStateOf<NodeId?>(null)
+        private set
+
+    var focusRequest by mutableStateOf(0)
+        private set
+
+    val isRunning: Boolean get() = runner.state == StateCommandScript.ISRUNNING
+    val isPaused: Boolean get() = runner.state == StateCommandScript.ISPAUSE
+
+    fun focusOn(id: NodeId) {
+        selected = id
+        focusNode = id
+        focusRequest++
+    }
+
+    /**
+     * Правка во время прогона запрещена: движок исполняет уже скомпилированные
+     * строки, и менять граф под ними бессмысленно — изменения всё равно не
+     * доедут до текущего прогона
+     */
+    fun requireStopped(): Boolean {
+        if (isRunning || isPaused) {
+            SnackBar.warning("Сначала остановите прогон")
+            return false
+        }
+        return true
+    }
+
+    fun run() {
+        when (val result = compile(graph, carrierNames(), modNames())) {
+            is CompileResult.Ok -> {
+                compiled = result
+                result.warnings.forEach { console.println("! ${it.text}") }
+                console.println("Пуск графа «$name»")
+                runner.start(result)
+            }
+
+            is CompileResult.Failed -> {
+                compiled = null
+                result.errors.forEach { console.println(it.text) }
+                SnackBar.error(result.errors.first().text)
+            }
+        }
+    }
+
+    fun pauseOrResume() {
+        if (isRunning) runner.pause() else runner.resume()
+    }
+
+    fun stop() {
+        runner.stop()
     }
 
     /** Имена форм несущей, известные генератору */
@@ -132,6 +194,7 @@ class VMNodes @Inject constructor(
      * экрана» положить нечем, да и предсказуемое место удобнее случайного.
      */
     fun addNode(kind: NodeKind) {
+        if (!requireStopped()) return
         val anchor = selected?.let { graph.node(it) }
         val x = (anchor?.x ?: graph.nodes.maxOfOrNull { it.x } ?: 0f) + 220f
         val y = anchor?.y ?: graph.nodes.minOfOrNull { it.y } ?: 0f
@@ -165,6 +228,7 @@ class VMNodes @Inject constructor(
     }
 
     fun deleteSelected() {
+        if (!requireStopped()) return
         val id = selected ?: return
         edit { it.withoutNode(id) }
         selected = null
@@ -172,6 +236,7 @@ class VMNodes @Inject constructor(
 
     /** Копия тела без связей, со смещением, чтобы не легла ровно поверх оригинала */
     fun duplicateSelected() {
+        if (!requireStopped()) return
         val source = selected?.let { graph.node(it) } ?: return
         val id = graph.nextId()
         edit {
@@ -187,6 +252,7 @@ class VMNodes @Inject constructor(
         private set
 
     fun openParams(id: NodeId) {
+        if (!requireStopped()) return
         paramsFor = id
     }
 
