@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.ScreenModel
+import com.example.generator2.common.snackbar.SnackBar
 import com.example.generator2.element.Console2
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.nodes.Issue
@@ -13,6 +14,7 @@ import com.example.generator2.features.nodes.NodeGraphUtils
 import com.example.generator2.features.nodes.NodeRunner
 import com.example.generator2.features.nodes.Severity
 import com.example.generator2.features.nodes.model.ChannelParams
+import com.example.generator2.features.nodes.model.GraphFormatException
 import com.example.generator2.features.nodes.model.GraphNode
 import com.example.generator2.features.nodes.model.NodeBody
 import com.example.generator2.features.nodes.model.NodeGraph
@@ -215,6 +217,79 @@ class VMNodes @Inject constructor(
     fun unlink(port: Port) {
         val from = selected ?: return
         edit { it.withoutEdge(from, port) }
+    }
+
+    //╭─ Файлы ───────────────────────────────────────────────────────────╮
+
+    var openDialogSaveAs by mutableStateOf(false)
+    var openDialogDeleteRename by mutableStateOf(false)
+    var openDialogOpen by mutableStateOf(false)
+
+    /** Действие, которое ждёт ответа «а несохранённое куда?» */
+    var pendingDiscard by mutableStateOf<(() -> Unit)?>(null)
+        private set
+
+    fun graphNames(): List<String> = utils.list()
+
+    /** Всё, что теряет текущий граф, проходит через это */
+    private fun guard(action: () -> Unit) {
+        if (dirty) pendingDiscard = action else action()
+    }
+
+    fun discardAndRun() {
+        val action = pendingDiscard ?: return
+        pendingDiscard = null
+        action()
+    }
+
+    fun cancelDiscard() {
+        pendingDiscard = null
+    }
+
+    fun newFile() = guard { replaceGraph(newGraph(), NEW_NAME) }
+
+    fun openFile(fileName: String) = guard {
+        try {
+            replaceGraph(utils.read(fileName), fileName)
+        } catch (e: GraphFormatException) {
+            //Текущий граф не трогаем: неудачное открытие не должно стирать работу
+            SnackBar.error(e.message ?: "Файл $fileName не читается")
+        } catch (e: Exception) {
+            SnackBar.error("Не удалось открыть $fileName: ${e.message}")
+        }
+    }
+
+    fun save() {
+        if (name == NEW_NAME) {
+            openDialogSaveAs = true
+            return
+        }
+        saveAs(name)
+    }
+
+    fun saveAs(fileName: String) {
+        try {
+            utils.save(graph, fileName)
+            name = fileName
+            dirty = false
+            openDialogSaveAs = false
+            SnackBar.success("Сохранено")
+        } catch (e: Exception) {
+            //dirty остаётся взведён: правки не в файле
+            SnackBar.error("Не удалось сохранить: ${e.message}")
+        }
+    }
+
+    fun renameFile(fileName: String) {
+        utils.rename(name, fileName)
+        name = fileName
+        openDialogDeleteRename = false
+    }
+
+    fun deleteFile() {
+        utils.delete(name)
+        openDialogDeleteRename = false
+        replaceGraph(newGraph(), NEW_NAME)
     }
 
     //╭─ Загрузка графа целиком ──────────────────────────────────────────╮

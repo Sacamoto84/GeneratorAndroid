@@ -3,9 +3,11 @@ package com.example.generator2.screens.nodes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,12 +21,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.generator2.features.nodes.model.NodeBody
 import com.example.generator2.features.nodes.model.node
+import com.example.generator2.screens.common.dialog.DialogDeleteRename
+import com.example.generator2.screens.common.dialog.DialogSaveAs
 import com.example.generator2.screens.nodes.bottom.NodeActionBar
 import com.example.generator2.screens.nodes.canvas.NodeCanvas
 import com.example.generator2.screens.nodes.dialog.ConditionDialog
+import com.example.generator2.screens.nodes.dialog.DialogOpenGraph
 import com.example.generator2.screens.nodes.dialog.NodePickerSheet
 import com.example.generator2.screens.nodes.dialog.RegisterDialog
 import com.example.generator2.screens.nodes.dialog.StepDialog
+import com.example.generator2.screens.nodes.top.NodesTopBar
 import com.example.generator2.screens.nodes.vm.VMNodes
 
 @Composable
@@ -37,6 +43,18 @@ fun ScreenNodes(vm: VMNodes) {
         //Тёмный фон под цвет холста: иначе при появлении и исчезании
         //нижней панели на миг просвечивает светлый фон темы — мигание
         containerColor = Color(0xFF1D1D1F),
+        topBar = {
+            NodesTopBar(
+                name = vm.name,
+                dirty = vm.dirty,
+                onNew = { vm.newFile() },
+                onOpen = { vm.openDialogOpen = true },
+                onSave = { vm.save() },
+                onSaveAs = { vm.openDialogSaveAs = true },
+                onDeleteRename = { vm.openDialogDeleteRename = true },
+                onFit = { vm.requestFit() },
+            )
+        },
         floatingActionButton = {
             if (vm.linkFrom == null) {
                 FloatingActionButton(onClick = { pickerOpen = true }) {
@@ -137,6 +155,48 @@ fun ScreenNodes(vm: VMNodes) {
                 vm.closeParams()
             },
             onDismiss = { vm.closeParams() },
+        )
+    }
+
+    if (vm.openDialogOpen) {
+        DialogOpenGraph(
+            names = vm.graphNames(),
+            onPick = {
+                vm.openDialogOpen = false
+                vm.openFile(it)
+            },
+            onDismiss = { vm.openDialogOpen = false },
+        )
+    }
+
+    if (vm.openDialogSaveAs) {
+        DialogSaveAs(
+            onDismissRequest = { vm.openDialogSaveAs = false },
+            onDone = { vm.saveAs(it) },
+            onScan = { vm.graphNames() },
+        )
+    }
+
+    if (vm.openDialogDeleteRename) {
+        DialogDeleteRename(
+            name = vm.name,
+            onDone = { vm.renameFile(it) },
+            onDismissRequest = { vm.openDialogDeleteRename = false },
+            onClickDelete = { vm.deleteFile() },
+        )
+    }
+
+    if (vm.pendingDiscard != null) {
+        AlertDialog(
+            onDismissRequest = { vm.cancelDiscard() },
+            title = { Text("Граф не сохранён") },
+            text = { Text("Правки в «${vm.name}» потеряются") },
+            confirmButton = {
+                TextButton(onClick = { vm.discardAndRun() }) { Text("Не сохранять") }
+            },
+            dismissButton = {
+                TextButton(onClick = { vm.cancelDiscard() }) { Text("Отмена") }
+            },
         )
     }
 }
