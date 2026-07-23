@@ -217,6 +217,25 @@ data class DataLiveData(
 
     var ch2AmDepth: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC Глубина AM модуляции
 
+    // Мастер-громкость CH1
+    var ch1_Master_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),        //PR PS PC
+    var ch1_Master_Mode: MutableStateFlow<Int> = MutableStateFlow(1),              //PR PS PC 1=Плавный 2=Вкл/Выкл 3=Кнопка
+    var ch1_Master_Period: MutableStateFlow<Float> = MutableStateFlow(2f),         //PR PS PC сек 0.1..100
+    var ch1_Master_Filename: MutableStateFlow<String> = MutableStateFlow("09_Ramp"),//PR PS PC форма Плавного
+    var ch1_Master_TOn: MutableStateFlow<Float> = MutableStateFlow(1f),            //PR PS PC сек 0.1..100
+    var ch1_Master_TOff: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC сек 0.1..100
+
+    // Мастер-громкость CH2
+    var ch2_Master_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),        //PR PS PC
+    var ch2_Master_Mode: MutableStateFlow<Int> = MutableStateFlow(1),              //PR PS PC
+    var ch2_Master_Period: MutableStateFlow<Float> = MutableStateFlow(2f),         //PR PS PC
+    var ch2_Master_Filename: MutableStateFlow<String> = MutableStateFlow("09_Ramp"),//PR PS PC
+    var ch2_Master_TOn: MutableStateFlow<Float> = MutableStateFlow(1f),            //PR PS PC
+    var ch2_Master_TOff: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC
+
+    // Общая кнопка мастер-громкости (runtime, НЕ в пресетах)
+    var masterButton: MutableStateFlow<Boolean> = MutableStateFlow(false),
+
     //Количество звезд
     val star: MutableStateFlow<Int> = MutableStateFlow(0),                    //PR PS PC
 
@@ -245,6 +264,9 @@ data class StructureCh(
 
     //0..4095 -> 0..1
     var buffer_am: FloatArray = FloatArray(1024),      //0..1
+
+    //Форма Плавного режима мастер-громкости, 0..1 (дефолт 1.0 = пропуск сигнала)
+    var buffer_master: FloatArray = FloatArray(1024) { 1f },
 
     var buffer_fm: FloatArray = FloatArray(1024),      //-1..1
 
