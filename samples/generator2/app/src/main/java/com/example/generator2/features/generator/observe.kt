@@ -14,6 +14,8 @@ fun observe(gen: Generator) {
     GlobalScope.launch(dispatchers) { gen.liveData.ch2_Carrier_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH1, GeneratorMOD.CR, it, gen ) } }
     GlobalScope.launch(dispatchers) { gen.liveData.ch1_AM_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH0, GeneratorMOD.AM, it, gen ) } }
     GlobalScope.launch(dispatchers) { gen.liveData.ch2_AM_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH1, GeneratorMOD.AM, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.ch1_Master_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH0, GeneratorMOD.MASTER, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.ch2_Master_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH1, GeneratorMOD.MASTER, it, gen ) } }
     GlobalScope.launch(dispatchers) { gen.liveData.ch1_FM_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH0, GeneratorMOD.FM, it, gen ) } }
     GlobalScope.launch(dispatchers) { gen.liveData.ch2_FM_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH1, GeneratorMOD.FM, it, gen ) } }
 

@@ -7,7 +7,7 @@ import java.nio.ByteOrder
 
 enum class GeneratorCH { CH0, CH1 }
 
-enum class GeneratorMOD { CR, AM, FM }
+enum class GeneratorMOD { CR, AM, FM, MASTER }
 
 //Для спиннера, отсылка массива
 fun Spinner_Send_Buffer(
@@ -43,6 +43,10 @@ fun Spinner_Send_Buffer(
                 gen.ch1.buffer_am =  byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, 0f, 1f)
                 RenderChannel().sendBuffer(0, 1, gen.ch1.buffer_am)
             }
+            GeneratorMOD.MASTER -> {
+                gen.ch1.buffer_master = byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, 0f, 1f)
+                RenderChannel().sendBuffer(0, 3, gen.ch1.buffer_master)
+            }
             GeneratorMOD.FM -> {
                 gen.ch1.buffer_fm =  byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, -1f, 1f)//byteToFloatArrayLittleEndian4096(buf)
                 gen.updateFm(0)
@@ -58,6 +62,10 @@ fun Spinner_Send_Buffer(
             GeneratorMOD.AM -> {
                 gen.ch2.buffer_am = byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, 0f, 1f) //byteToFloatArrayLittleEndianAM(buf)
                 RenderChannel().sendBuffer(1, 1, gen.ch2.buffer_am)
+            }
+            GeneratorMOD.MASTER -> {
+                gen.ch2.buffer_master = byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, 0f, 1f)
+                RenderChannel().sendBuffer(1, 3, gen.ch2.buffer_master)
             }
             //ArrayUtils.byteToShortArrayLittleEndian(buf)
             GeneratorMOD.FM -> {

@@ -50,6 +50,7 @@ object UIspinner {
             "CR" -> itemlist = gen.itemlistCarrier
             "AM" -> itemlist = gen.itemlistAM
             "FM" -> itemlist = gen.itemlistFM
+            "MASTER" -> itemlist = gen.itemlistAM
         }
 
         //Текущий текст
@@ -60,12 +61,14 @@ object UIspinner {
                 "CR" -> currentValue = gen.liveData.ch1_Carrier_Filename.value
                 "AM" -> currentValue = gen.liveData.ch1_AM_Filename.value
                 "FM" -> currentValue = gen.liveData.ch1_FM_Filename.value
+                "MASTER" -> currentValue = gen.liveData.ch1_Master_Filename.value
             }
         } else {
             when (Mod) {
                 "CR" -> currentValue = gen.liveData.ch2_Carrier_Filename.value
                 "AM" -> currentValue = gen.liveData.ch2_AM_Filename.value
                 "FM" -> currentValue = gen.liveData.ch2_FM_Filename.value
+                "MASTER" -> currentValue = gen.liveData.ch2_Master_Filename.value
             }
         }
 
@@ -148,6 +151,7 @@ object UIspinner {
 
                                         "AM" -> gen.liveData.ch1_AM_Filename.value = currentValue
                                         "FM" -> gen.liveData.ch1_FM_Filename.value = currentValue
+                                        "MASTER" -> gen.liveData.ch1_Master_Filename.value = currentValue
                                     }
                                 } else {
                                     when (Mod) {
@@ -156,6 +160,7 @@ object UIspinner {
 
                                         "AM" -> gen.liveData.ch2_AM_Filename.value = currentValue
                                         "FM" -> gen.liveData.ch2_FM_Filename.value = currentValue
+                                        "MASTER" -> gen.liveData.ch2_Master_Filename.value = currentValue
 
                                     }
                                 }
