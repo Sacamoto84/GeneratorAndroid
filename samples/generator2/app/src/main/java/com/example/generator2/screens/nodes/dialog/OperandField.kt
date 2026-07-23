@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -80,15 +81,18 @@ fun OperandField(
 
 @Composable
 private fun ConstInput(value: Float, onChange: (Float) -> Unit) {
-    //Своя строка нужна, чтобы промежуточные "10." и "-" не затирались
-    //обратной конвертацией через Float
-    var text by remember(value) { mutableStateOf(value.toString()) }
+    //TextFieldValue, а не String: со строкой Compose пересоздавал бы поле из
+    //value на каждый ввод ("1" -> onChange -> "1.0"), и курсор прыгал бы в
+    //конец. TextFieldValue хранит и текст, и позицию курсора, поэтому ввод
+    //ведёт себя как обычно. Ключа remember нет: source of truth — само поле,
+    //а при смене чипа 123/F весь ConstInput пересоздаётся заново.
+    var tfv by remember { mutableStateOf(TextFieldValue(value.toString())) }
 
     BasicTextField(
-        value = text,
+        value = tfv,
         onValueChange = {
-            text = it
-            it.toFloatOrNull()?.let(onChange)
+            tfv = it
+            it.text.toFloatOrNull()?.let(onChange)
         },
         singleLine = true,
         textStyle = TextStyle(color = Color.White, fontSize = 13.sp, textAlign = TextAlign.End),
