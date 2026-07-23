@@ -36,6 +36,7 @@ fun M4BottomAppBarComponent(
     navigateToConfig: ()->Unit = {},
     navigateToPresets: ()->Unit = {},
     navigateToScript:  ()->Unit = {},
+    navigateToNodes:   ()->Unit = {},
 ) {
 
     val context = LocalContext.current
@@ -99,6 +100,11 @@ fun M4BottomAppBarComponent(
 
         IconButton(modifier = Modifier.testTag("buttonM4GoToScript"),
             onClick = navigateToScript ) {
+            Icon(painter = painterResource(R.drawable.script3), contentDescription = null)
+        }
+
+        IconButton(modifier = Modifier.testTag("buttonM4GoToNodes"),
+            onClick = navigateToNodes ) {
             Icon(painter = painterResource(R.drawable.script3), contentDescription = null)
         }
 
