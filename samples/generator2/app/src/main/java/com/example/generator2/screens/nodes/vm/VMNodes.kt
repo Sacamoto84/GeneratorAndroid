@@ -137,6 +137,14 @@ class VMNodes @Inject constructor(
         runner.stop()
     }
 
+    fun compileNow(): CompileResult = compile(graph, carrierNames(), modNames())
+
+    /** Имя ноды, которой принадлежит строка последней компиляции */
+    fun nodeTitleOfLine(line: Int): String {
+        val id = compiled?.lineToNode?.getOrNull(line) ?: return ""
+        return graph.node(id)?.title.orEmpty()
+    }
+
     /** Имена форм несущей, известные генератору */
     fun carrierNames(): Set<String> = gen.itemlistCarrier.map { it.name }.toSet()
 

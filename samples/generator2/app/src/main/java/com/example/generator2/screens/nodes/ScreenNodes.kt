@@ -34,6 +34,7 @@ import com.example.generator2.screens.nodes.dialog.NodePickerSheet
 import com.example.generator2.screens.nodes.dialog.RegisterDialog
 import com.example.generator2.screens.nodes.dialog.StepDialog
 import com.example.generator2.screens.nodes.top.NodesTopBar
+import com.example.generator2.screens.nodes.ui.GeneratedScriptView
 import com.example.generator2.screens.nodes.vm.VMNodes
 
 @Composable
@@ -229,6 +230,17 @@ fun ScreenNodes(vm: VMNodes) {
                 issue.nodeId?.let { vm.focusOn(it) }
             },
             onDismiss = { issuesOpen = false },
+        )
+    }
+
+    if (scriptOpen) {
+        val pc by vm.runner.pc.collectAsState()
+        GeneratedScriptView(
+            //Показываем свежую компиляцию: граф мог измениться после прогона
+            result = vm.compileNow(),
+            pc = pc,
+            nodeTitleOfLine = { vm.nodeTitleOfLine(it) },
+            onDismiss = { scriptOpen = false },
         )
     }
 }
