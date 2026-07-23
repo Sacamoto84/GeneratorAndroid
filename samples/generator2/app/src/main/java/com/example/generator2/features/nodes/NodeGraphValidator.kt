@@ -1,5 +1,6 @@
 package com.example.generator2.features.nodes
 
+import com.example.generator2.features.nodes.model.ChannelParams
 import com.example.generator2.features.nodes.model.GraphNode
 import com.example.generator2.features.nodes.model.NodeBody
 import com.example.generator2.features.nodes.model.NodeGraph
@@ -30,7 +31,7 @@ fun validate(
     graph: NodeGraph,
     carrierNames: Set<String> = emptySet(),
     modNames: Set<String> = emptySet(),
-): List<Issue> = structureErrors(graph)
+): List<Issue> = structureErrors(graph) + warnings(graph, carrierNames, modNames)
 
 //╭─ Ошибки ──────────────────────────────────────────────────────────────╮
 
@@ -117,4 +118,117 @@ internal fun reachableFrom(graph: NodeGraph, start: NodeId): Set<NodeId> {
         }
     }
     return seen
+}
+
+//╭─ Предупреждения ──────────────────────────────────────────────────────╮
+
+private fun warnings(
+    graph: NodeGraph,
+    carrierNames: Set<String>,
+    modNames: Set<String>,
+): List<Issue> = buildList {
+
+    //Цикл без единой задержки. Устройство не повиснет — в Script есть
+    //YIELD_EVERY, — но ядро будет греться, поэтому предупреждение, не ошибка
+    stronglyConnected(graph).forEach { component ->
+        val delaySum = component
+            .mapNotNull { graph.node(it)?.body as? NodeBody.Step }
+            .sumOf { it.delayMs }
+        if (delaySum == 0L) {
+            component.forEach {
+                add(Issue(it, Severity.WARNING, "Цикл без задержки: будет крутиться на полной скорости"))
+            }
+        }
+    }
+
+    graph.nodes.forEach { n ->
+        val step = n.body as? NodeBody.Step ?: return@forEach
+
+        if (step.params.checkedCount == 0 && step.delayMs == 0L) {
+            add(Issue(n.id, Severity.WARNING, "Шаг ничего не делает: ни одного параметра, задержка ноль"))
+        }
+
+        listOf(1 to step.params.ch1, 2 to step.params.ch2).forEach { (ch, p) ->
+            if (p.carrierFr != null && p.fmBase != null) {
+                add(
+                    Issue(
+                        n.id, Severity.WARNING,
+                        "CR$ch FR и FM$ch BASE пишут одно и то же поле, победит второе",
+                    )
+                )
+            }
+            unknownWaveforms(p, carrierNames, modNames).forEach { name ->
+                add(Issue(n.id, Severity.WARNING, "Форма «$name» генератору неизвестна"))
+            }
+        }
+    }
+}
+
+/**
+ * Имена форм, которых генератор не знает.
+ *
+ * Несущая ищется в gen.itemlistCarrier, AM и FM — оба в gen.itemlistAM
+ * (см. Spinner_Send_Buffer). Неизвестное имя движок молча игнорирует,
+ * поэтому и предупреждение, а не ошибка.
+ */
+private fun unknownWaveforms(
+    p: ChannelParams,
+    carrierNames: Set<String>,
+    modNames: Set<String>,
+): List<String> = buildList {
+    p.carrierMod?.let { if (carrierNames.isNotEmpty() && it !in carrierNames) add(it) }
+    p.amMod?.let { if (modNames.isNotEmpty() && it !in modNames) add(it) }
+    p.fmMod?.let { if (modNames.isNotEmpty() && it !in modNames) add(it) }
+}
+
+/**
+ * Нетривиальные сильно связные компоненты по Тарьяну: больше одной ноды
+ * либо петля на себя. Ровно они и есть циклы графа, без перебора самих циклов.
+ */
+internal fun stronglyConnected(graph: NodeGraph): List<Set<NodeId>> {
+    var counter = 0
+    val index = HashMap<NodeId, Int>()
+    val low = HashMap<NodeId, Int>()
+    val stack = ArrayDeque<NodeId>()
+    val onStack = HashSet<NodeId>()
+    val result = mutableListOf<Set<NodeId>>()
+
+    fun successors(id: NodeId): List<NodeId> {
+        val node = graph.node(id) ?: return emptyList()
+        return node.body.ports().mapNotNull { graph.target(id, it) }
+    }
+
+    fun strongConnect(v: NodeId) {
+        index[v] = counter
+        low[v] = counter
+        counter++
+        stack.addLast(v)
+        onStack.add(v)
+
+        successors(v).forEach { w ->
+            when {
+                w !in index -> {
+                    strongConnect(w)
+                    low[v] = minOf(low.getValue(v), low.getValue(w))
+                }
+
+                w in onStack -> low[v] = minOf(low.getValue(v), index.getValue(w))
+            }
+        }
+
+        if (low.getValue(v) == index.getValue(v)) {
+            val component = linkedSetOf<NodeId>()
+            while (true) {
+                val w = stack.removeLast()
+                onStack.remove(w)
+                component.add(w)
+                if (w == v) break
+            }
+            val isLoop = component.size == 1 && v in successors(v)
+            if (component.size > 1 || isLoop) result.add(component)
+        }
+    }
+
+    graph.nodes.forEach { if (it.id !in index) strongConnect(it.id) }
+    return result
 }
