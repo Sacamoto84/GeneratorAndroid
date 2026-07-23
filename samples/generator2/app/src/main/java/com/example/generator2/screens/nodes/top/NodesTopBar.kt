@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.generator2.screens.nodes.canvas.Orientation
 
 @Composable
 fun NodesTopBar(
@@ -34,6 +35,8 @@ fun NodesTopBar(
     onStop: () -> Unit,
     onShowIssues: () -> Unit,
     onShowScript: () -> Unit,
+    orientation: Orientation,
+    onOrientation: (Orientation) -> Unit,
     onNew: () -> Unit,
     onOpen: () -> Unit,
     onSave: () -> Unit,
@@ -42,6 +45,7 @@ fun NodesTopBar(
     onFit: () -> Unit,
 ) {
     var menu by remember { mutableStateOf(false) }
+    var rotateMenu by remember { mutableStateOf(false) }
 
     Row(
         Modifier
@@ -106,6 +110,33 @@ fun NodesTopBar(
         Box(Modifier.weight(1f))
 
         Text("⤢", color = Color.White, fontSize = 18.sp, modifier = Modifier.clickable(onClick = onFit).padding(8.dp))
+
+        //Поворот входа-выхода: значок оси текущей ориентации
+        Box {
+            Text(
+                when (orientation) {
+                    Orientation.LR -> "⇥"
+                    Orientation.RL -> "⇤"
+                    Orientation.TB -> "⤓"
+                    Orientation.BT -> "⤒"
+                },
+                color = Color.White,
+                fontSize = 18.sp,
+                modifier = Modifier.clickable { rotateMenu = true }.padding(8.dp),
+            )
+
+            DropdownMenu(expanded = rotateMenu, onDismissRequest = { rotateMenu = false }) {
+                Orientation.entries.forEach { o ->
+                    DropdownMenuItem(
+                        text = { Text(o.label) },
+                        onClick = {
+                            rotateMenu = false
+                            onOrientation(o)
+                        },
+                    )
+                }
+            }
+        }
 
         Box {
             Text("☰", color = Color.White, fontSize = 18.sp,

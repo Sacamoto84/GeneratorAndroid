@@ -35,6 +35,7 @@ import com.example.generator2.features.nodes.validate
 import com.example.generator2.features.script.CompareOp
 import com.example.generator2.features.script.Operand
 import com.example.generator2.features.script.StateCommandScript
+import com.example.generator2.screens.nodes.canvas.Orientation
 import javax.inject.Inject
 
 /** Какую ноду создаёт «+» */
@@ -58,6 +59,9 @@ class VMNodes @Inject constructor(
         internal set
 
     var selected by mutableStateOf<NodeId?>(null)
+
+    /** Куда смотрят вход и выход нод. Вид, а не данные — в файл не пишется. */
+    var orientation by mutableStateOf(Orientation.LR)
 
     /** Не null — идёт выбор цели для связи из этого порта */
     var linkFrom by mutableStateOf<Pair<NodeId, Port>?>(null)

@@ -50,6 +50,7 @@ fun NodeCanvas(
     activeNode: NodeId?,
     linking: Boolean,
     canBeTarget: (NodeId) -> Boolean,
+    orientation: Orientation,
     fitKey: Any,
     focusNode: NodeId?,
     focusKey: Int,
@@ -123,7 +124,7 @@ fun NodeCanvas(
                     transformOrigin = TransformOrigin(0f, 0f),
                 )
         ) {
-            EdgeLayer(graph)
+            EdgeLayer(graph, orientation)
 
             graph.nodes.forEach { node ->
                 val dimmed = linking && !canBeTarget(node.id)
