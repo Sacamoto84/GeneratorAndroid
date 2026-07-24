@@ -157,7 +157,9 @@ else if (wrapped) {
 Библиотека форм несущей (`app/src/main/assets/Carrier/`): `Sine`, `Square`, `Ramp`, `Dnramp`,
 `HWave`, `HWave2`.
 
-### 5.2 Kotlin-хелперы (`RenderChannel.kt`), чистые и тестируемые
+### 5.2 Kotlin-хелперы (`CarrierMorph.kt`), чистые и тестируемые
+
+Отдельный файл рядом с `MasterVolume.kt`, вызываются из `RenderChannel.kt`.
 
 ```kotlin
 fun morphSteps(time: Float, sampleRate: Int): Int      // max(1, round(time*sampleRate))
