@@ -29,6 +29,11 @@ struct StructureCh {
     uint32_t phase_accumulator_am = 0;
     uint32_t phase_accumulator_fm = 0;
 
+    // Метаморфоза несущей
+    float    buffer_morph[3][1024] = {{0.0f}};  // 3 слота форм несущей, -1..1
+    uint8_t  morph_slot = 0;                    // текущий активный слот (0..2)
+    uint32_t morph_counter = 0;                 // сэмплов пройдено в текущем шаге
+
     StructureCh() {
         for (float &v : buffer_master) v = 1.0f; // до загрузки формы — пропуск сигнала
     }

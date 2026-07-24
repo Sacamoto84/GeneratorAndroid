@@ -219,6 +219,12 @@ Java_com_example_generator2_features_generator_RenderChannel_sendBuffer(JNIEnv *
             destination = pStructureCh->buffer_master;
             break;
         }
+        case 4 :
+        case 5 :
+        case 6 : {
+            destination = pStructureCh->buffer_morph[modulation - 4];
+            break;
+        }
 
         default:
             break;
