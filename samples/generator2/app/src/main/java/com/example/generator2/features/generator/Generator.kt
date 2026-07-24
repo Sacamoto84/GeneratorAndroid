@@ -233,6 +233,28 @@ data class DataLiveData(
     var ch2_Master_TOn: MutableStateFlow<Float> = MutableStateFlow(1f),            //PR PS PC
     var ch2_Master_TOff: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC
 
+    // Метаморфоза несущей CH1
+    var ch1_Morph_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),               //PR PS PC
+    var ch1_Morph_Mode: MutableStateFlow<Int> = MutableStateFlow(1),                     //PR PS PC 0=Ступень 1=Плавно
+    var ch1_Morph_Time: MutableStateFlow<Float> = MutableStateFlow(2f),                  //PR PS PC сек 0.1..100, длительность шага
+    var ch1_Morph_Slot0_EN: MutableStateFlow<Boolean> = MutableStateFlow(true),          //PR PS PC
+    var ch1_Morph_Slot1_EN: MutableStateFlow<Boolean> = MutableStateFlow(true),          //PR PS PC
+    var ch1_Morph_Slot2_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),         //PR PS PC
+    var ch1_Morph_Slot0_Filename: MutableStateFlow<String> = MutableStateFlow("Sine"),   //PR PS PC
+    var ch1_Morph_Slot1_Filename: MutableStateFlow<String> = MutableStateFlow("Square"), //PR PS PC
+    var ch1_Morph_Slot2_Filename: MutableStateFlow<String> = MutableStateFlow("Ramp"),   //PR PS PC
+
+    // Метаморфоза несущей CH2
+    var ch2_Morph_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),               //PR PS PC
+    var ch2_Morph_Mode: MutableStateFlow<Int> = MutableStateFlow(1),                     //PR PS PC 0=Ступень 1=Плавно
+    var ch2_Morph_Time: MutableStateFlow<Float> = MutableStateFlow(2f),                  //PR PS PC сек 0.1..100, длительность шага
+    var ch2_Morph_Slot0_EN: MutableStateFlow<Boolean> = MutableStateFlow(true),          //PR PS PC
+    var ch2_Morph_Slot1_EN: MutableStateFlow<Boolean> = MutableStateFlow(true),          //PR PS PC
+    var ch2_Morph_Slot2_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),         //PR PS PC
+    var ch2_Morph_Slot0_Filename: MutableStateFlow<String> = MutableStateFlow("Sine"),   //PR PS PC
+    var ch2_Morph_Slot1_Filename: MutableStateFlow<String> = MutableStateFlow("Square"), //PR PS PC
+    var ch2_Morph_Slot2_Filename: MutableStateFlow<String> = MutableStateFlow("Ramp"),   //PR PS PC
+
     // Общая кнопка мастер-громкости (runtime, НЕ в пресетах)
     var masterButton: MutableStateFlow<Boolean> = MutableStateFlow(false),
 
@@ -269,6 +291,9 @@ data class StructureCh(
     var buffer_master: FloatArray = FloatArray(1024) { 1f },
 
     var buffer_fm: FloatArray = FloatArray(1024),      //-1..1
+
+    //Слоты форм несущей для метаморфозы, -1..1
+    var buffer_morph: Array<FloatArray> = Array(3) { FloatArray(1024) },
 
     //Содержит частоты которые уже промодулированы
     var calculate_buffer_fm: FloatArray = FloatArray(1024), //100..10000//Используется для перерасчета модуляции
