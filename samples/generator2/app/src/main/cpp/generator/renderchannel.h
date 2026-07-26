@@ -31,8 +31,9 @@ struct StructureCh {
 
     // Метаморфоза несущей
     float    buffer_morph[3][1024] = {{0.0f}};  // 3 слота форм несущей, -1..1
-    uint8_t  morph_slot = 0;                    // текущий активный слот (0..2)
-    uint32_t morph_counter = 0;                 // сэмплов пройдено в текущем шаге
+    uint8_t  morph_slot = 0;                    // форма, из которой перетекаем (0..2)
+    uint8_t  morph_slot_next = 0;               // форма, в которую перетекаем (0..2)
+    uint32_t morph_phase = 0;                   // DDS-фаза шага, полный оборот = один шаг
 
     StructureCh() {
         for (float &v : buffer_master) v = 1.0f; // до загрузки формы — пропуск сигнала

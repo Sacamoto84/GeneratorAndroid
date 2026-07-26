@@ -31,11 +31,9 @@ float map(float x, float in_min, float in_max, float out_min, float out_max) {
 // Режим метаморфозы, зеркало MORPH_MODE_* из CarrierMorph.kt
 static const int MORPH_MODE_SMOOTH_C = 1;
 
-/** Первый активный слот в маске. Вызывается только при mask != 0. */
-static inline uint8_t firstMorphSlot(int mask) {
-    for (uint8_t s = 0; s < 3; s++) if (mask & (1 << s)) return s;
-    return 0;
-}
+// Длительность кроссфейда Ступени, сэмплов (~5 мс при 48 кГц).
+// Столько же берёт анти-щелчок мастер-громкости ниже по файлу.
+static const uint32_t MORPH_FADE_SAMPLES = 240;
 
 /** Следующий активный слот по кругу. При единственном активном возвращает его же. */
 static inline uint8_t nextMorphSlot(uint8_t slot, int mask) {
@@ -47,75 +45,102 @@ static inline uint8_t nextMorphSlot(uint8_t slot, int mask) {
 }
 
 /**
- * Метаморфоза несущей: держит пару таблиц (текущая и следующая форма)
- * и продвигает состояние на каждый сэмпл.
- * Когда метаморфоза выключена, обе таблицы — обычный buffer_carrier,
- * коэффициент смешивания нулевой, поведение точно как раньше.
+ * Метаморфоза несущей: держит пару таблиц (форма, из которой перетекаем, и форма,
+ * в которую) и продвигает фазу шага на каждый сэмпл.
+ *
+ * Шаг считается своей DDS-фазой: полный оборот morph_phase = один шаг длиной T.
+ * Поэтому смена T во время генерации не сдвигает коэффициент смешивания — меняется
+ * прирост фазы, а сама фаза остаётся на месте.
+ *
+ * Плавно:  t идёт линейно 0..1 через весь шаг.
+ * Ступень: t держится на нуле почти весь шаг, потом за ~5 мс уходит в единицу.
+ *          На слух это мгновенное переключение, но щелчка нет ни для какой пары
+ *          форм — таблицы библиотеки начинаются с разных значений (§4.4 спеки).
+ *
+ * Когда метаморфоза выключена, обе таблицы — обычный buffer_carrier, коэффициент
+ * нулевой, поведение точно как раньше.
  */
 struct MorphRunner {
-    StructureCh *s = nullptr;
+    StructureCh *ch = nullptr;
     bool on = false;
     bool smooth = false;
     int mask = 0;
-    uint32_t steps = 1;
-    float inv_steps = 0.0f;
+
+    uint32_t inc = 1;          // прирост фазы шага на сэмпл
+    uint32_t fade_start = 0;   // фаза, с которой начинается кроссфейд Ступени
+    float inv_fade = 0.0f;     // 1 / длина кроссфейда в единицах фазы
+
     const float *pA = nullptr;
     const float *pB = nullptr;
 
-    void init(StructureCh *ch, bool en, int mode, int st, int msk) {
-        s = ch;
+    void init(StructureCh *c, bool en, int mode, int steps, int msk) {
+        ch = c;
         mask = msk;
         on = en && msk != 0;
         smooth = (mode == MORPH_MODE_SMOOTH_C);
-        steps = (uint32_t) (st > 0 ? st : 1);
-        inv_steps = 1.0f / (float) steps;
+
+        auto st = (uint32_t) (steps > 0 ? steps : 1);
+        inc = (uint32_t) (MAX32 / st);
+        if (inc == 0) inc = 1;
+
+        uint32_t fade = MORPH_FADE_SAMPLES < st ? MORPH_FADE_SAMPLES : st;
+        auto fade_phase = (uint32_t) ((uint64_t) fade * inc);
+        if (fade_phase == 0) fade_phase = 1;
+        fade_start = (uint32_t) (MAX32 - fade_phase);
+        inv_fade = 1.0f / (float) fade_phase;
+
+        // Цель ещё не задана: либо только что включили метаморфозу, либо активным был
+        // один слот, а стало больше. Шаг начинаем с нуля — иначе подстановка новой цели
+        // при уже набежавшем t дала бы скачок.
+        if (on && ch->morph_slot_next == ch->morph_slot) {
+            uint8_t n = nextMorphSlot(ch->morph_slot, mask);
+            if (n != ch->morph_slot) {
+                ch->morph_slot_next = n;
+                ch->morph_phase = 0;
+            }
+        }
+
         refresh();
     }
 
+    /** Подтянуть указатели к текущей паре слотов. */
     void refresh() {
         if (!on) {
-            pA = s->buffer_carrier;
-            pB = s->buffer_carrier;
+            pA = ch->buffer_carrier;
+            pB = ch->buffer_carrier;
             return;
         }
-        pA = s->buffer_morph[s->morph_slot];
-        pB = smooth ? s->buffer_morph[nextMorphSlot(s->morph_slot, mask)] : pA;
+        pA = ch->buffer_morph[ch->morph_slot];
+        pB = ch->buffer_morph[ch->morph_slot_next];
     }
 
-    /** Значение несущей по фазовому индексу + продвижение состояния на сэмпл. */
-    inline float sample(uint32_t idx, bool wrapped) {
+    /** Значение несущей по фазовому индексу + продвижение шага на сэмпл. */
+    inline float sample(uint32_t idx) {
         float t = 0.0f;
-        if (on && smooth) {
-            t = (float) s->morph_counter * inv_steps;
-            if (t > 1.0f) t = 1.0f;
+        if (on) {
+            if (smooth) {
+                t = (float) ch->morph_phase * (1.0f / 4294967296.0f);
+            } else if (ch->morph_phase >= fade_start) {
+                t = (float) (ch->morph_phase - fade_start) * inv_fade;
+                if (t > 1.0f) t = 1.0f;
+            }
         }
+
         float c = pA[idx] + t * (pB[idx] - pA[idx]);
-        if (on) advance(wrapped);
+
+        if (on) advance();
         return c;
     }
 
-    inline void advance(bool wrapped) {
-        // Слот мог погаснуть, пока играли — уходим с него, но только по обороту фазы
-        bool slot_invalid = !(mask & (1 << s->morph_slot));
-
-        if (smooth && !slot_invalid) {
-            if (++s->morph_counter >= steps) {
-                s->morph_counter = 0;
-                s->morph_slot = nextMorphSlot(s->morph_slot, mask);
-                refresh();
-            }
-            return;
-        }
-
-        if (!slot_invalid && s->morph_counter < steps) {
-            s->morph_counter++;
-            return;
-        }
-
-        if (wrapped) {
-            s->morph_counter = 0;
-            s->morph_slot = slot_invalid ? firstMorphSlot(mask)
-                                         : nextMorphSlot(s->morph_slot, mask);
+    /** Продвинуть фазу шага; на переполнении взять следующую пару форм. */
+    inline void advance() {
+        uint32_t prev = ch->morph_phase;
+        ch->morph_phase += inc;
+        if (ch->morph_phase < prev) {
+            // Форма, в которую перетекали, становится текущей — поэтому стыка нет:
+            // в конце шага играла ровно она при t→1, в начале следующего играет она же при t=0
+            ch->morph_slot = ch->morph_slot_next;
+            ch->morph_slot_next = nextMorphSlot(ch->morph_slot, mask);
             refresh();
         }
     }
@@ -198,23 +223,17 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
 
     if (!en_fm && !en_am) {
         for (int i = 0; i < num_frames; i++) {
-            uint32_t prev = pStructureCh->phase_accumulator_carrier;
             pStructureCh->phase_accumulator_carrier += r_c32;
-            bool wrapped = pStructureCh->phase_accumulator_carrier < prev;
-            uint32_t idx = pStructureCh->phase_accumulator_carrier >> 22;
-            tempArrayElements[i] = volume * morph.sample(idx, wrapped);
+            tempArrayElements[i] = volume * morph.sample(pStructureCh->phase_accumulator_carrier >> 22);
         }
     }
 
     if (!en_fm && en_am) {
         for (int i = 0; i < num_frames; i++) {
-            uint32_t prev = pStructureCh->phase_accumulator_carrier;
             pStructureCh->phase_accumulator_carrier += r_c32;
-            bool wrapped = pStructureCh->phase_accumulator_carrier < prev;
-            uint32_t idx = pStructureCh->phase_accumulator_carrier >> 22;
 
             pStructureCh->phase_accumulator_am += r_am32;
-            tempArrayElements[i] = volume * morph.sample(idx, wrapped)
+            tempArrayElements[i] = volume * morph.sample(pStructureCh->phase_accumulator_carrier >> 22)
                                    * (pStructureCh->buffer_am[pStructureCh->phase_accumulator_am >> 22] * am_depth + 1.0f - am_depth);
         }
     }
@@ -224,16 +243,11 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
         for (int i = 0; i < num_frames; i++) {
             pStructureCh->phase_accumulator_fm += r_fm32;
 
-            uint32_t prev = pStructureCh->phase_accumulator_carrier;
-
             pStructureCh->phase_accumulator_carrier +=
                     static_cast<unsigned int>(convertHzToR(
                             pStructureCh->buffer_fm[pStructureCh->phase_accumulator_fm >> 22], sampleRate));
 
-            bool wrapped = pStructureCh->phase_accumulator_carrier < prev;
-            uint32_t idx = pStructureCh->phase_accumulator_carrier >> 22;
-
-            tempArrayElements[i] = volume * morph.sample(idx, wrapped);
+            tempArrayElements[i] = volume * morph.sample(pStructureCh->phase_accumulator_carrier >> 22);
         }
     }
 
@@ -245,14 +259,10 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
 
             delta = MAX32/sampleRate;
 
-            uint32_t prev = pStructureCh->phase_accumulator_carrier;
             pStructureCh->phase_accumulator_carrier += static_cast<uint32_t>(static_cast<float>(delta) * pStructureCh->buffer_fm[pStructureCh->phase_accumulator_fm >> 22]);
-            bool wrapped = pStructureCh->phase_accumulator_carrier < prev;
-            uint32_t idx = pStructureCh->phase_accumulator_carrier >> 22;
-
             pStructureCh->phase_accumulator_am += r_am32;
 
-            tempArrayElements[i] = volume * morph.sample(idx, wrapped) *
+            tempArrayElements[i] = volume * morph.sample(pStructureCh->phase_accumulator_carrier >> 22) *
                            (pStructureCh->buffer_am[pStructureCh->phase_accumulator_am >> 22] * am_depth + 1.0f - am_depth);
         }
 
