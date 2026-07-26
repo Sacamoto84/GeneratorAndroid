@@ -33,6 +33,11 @@ class RenderChannel {
         buttonActive: Boolean,
         buttonPressed: Boolean,
 
+        morphEN: Boolean,
+        morphMode: Int,
+        morphSteps: Int,
+        morphMask: Int,
+
         channel: Int,// 0 1 номер канала
 
         mBuffer: FloatArray
@@ -65,6 +70,11 @@ class RenderChannel {
         val masterTOn: Float
         val masterTOff: Float
 
+        val morphEN: Boolean
+        val morphMode: Int
+        val morphTime: Float
+        val morphSlotMask: Int
+
 //        val startTime1 = System.nanoTime()
 //        enCH = liveData.ch2_EN.value
 //        enAM = liveData.ch2_AM_EN.value
@@ -89,6 +99,14 @@ class RenderChannel {
             masterPeriod = liveData.ch1_Master_Period.value
             masterTOn = liveData.ch1_Master_TOn.value
             masterTOff = liveData.ch1_Master_TOff.value
+            morphEN = liveData.ch1_Morph_EN.value
+            morphMode = liveData.ch1_Morph_Mode.value
+            morphTime = liveData.ch1_Morph_Time.value
+            morphSlotMask = morphMask(
+                liveData.ch1_Morph_Slot0_EN.value,
+                liveData.ch1_Morph_Slot1_EN.value,
+                liveData.ch1_Morph_Slot2_EN.value
+            )
         } else {
             rC = convertHzToR(liveData.ch2_Carrier_Fr.value, sampleRate).toUInt()
             rAM = convertHzToR(liveData.ch2_AM_Fr.value, sampleRate).toUInt()
@@ -103,6 +121,14 @@ class RenderChannel {
             masterPeriod = liveData.ch2_Master_Period.value
             masterTOn = liveData.ch2_Master_TOn.value
             masterTOff = liveData.ch2_Master_TOff.value
+            morphEN = liveData.ch2_Morph_EN.value
+            morphMode = liveData.ch2_Morph_Mode.value
+            morphTime = liveData.ch2_Morph_Time.value
+            morphSlotMask = morphMask(
+                liveData.ch2_Morph_Slot0_EN.value,
+                liveData.ch2_Morph_Slot1_EN.value,
+                liveData.ch2_Morph_Slot2_EN.value
+            )
         }
 
         val mBuffer = FloatArray(numFrames)
@@ -115,6 +141,9 @@ class RenderChannel {
             liveData.ch2_Master_EN.value, liveData.ch2_Master_Mode.value
         )
         val buttonPressed = liveData.masterButton.value
+
+        val morphStepSamples = morphSteps(morphTime, sampleRate)
+        val morphOn = morphEffective(morphEN, morphSlotMask)
 
         //val endTime1 = System.nanoTime()
         //val duration1 = endTime1 - startTime1
@@ -145,6 +174,11 @@ class RenderChannel {
             offSamples,
             buttonActive,
             buttonPressed,
+
+            morphOn,
+            morphMode,
+            morphStepSamples,
+            morphSlotMask,
 
             ch.ch, //номер канала
             mBuffer

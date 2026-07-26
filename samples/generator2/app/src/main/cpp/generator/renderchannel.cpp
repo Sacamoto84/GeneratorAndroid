@@ -28,6 +28,99 @@ float map(float x, float in_min, float in_max, float out_min, float out_max) {
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+// Режим метаморфозы, зеркало MORPH_MODE_* из CarrierMorph.kt
+static const int MORPH_MODE_SMOOTH_C = 1;
+
+/** Первый активный слот в маске. Вызывается только при mask != 0. */
+static inline uint8_t firstMorphSlot(int mask) {
+    for (uint8_t s = 0; s < 3; s++) if (mask & (1 << s)) return s;
+    return 0;
+}
+
+/** Следующий активный слот по кругу. При единственном активном возвращает его же. */
+static inline uint8_t nextMorphSlot(uint8_t slot, int mask) {
+    for (int i = 1; i <= 3; i++) {
+        auto s = (uint8_t) ((slot + i) % 3);
+        if (mask & (1 << s)) return s;
+    }
+    return slot;
+}
+
+/**
+ * Метаморфоза несущей: держит пару таблиц (текущая и следующая форма)
+ * и продвигает состояние на каждый сэмпл.
+ * Когда метаморфоза выключена, обе таблицы — обычный buffer_carrier,
+ * коэффициент смешивания нулевой, поведение точно как раньше.
+ */
+struct MorphRunner {
+    StructureCh *s = nullptr;
+    bool on = false;
+    bool smooth = false;
+    int mask = 0;
+    uint32_t steps = 1;
+    float inv_steps = 0.0f;
+    const float *pA = nullptr;
+    const float *pB = nullptr;
+
+    void init(StructureCh *ch, bool en, int mode, int st, int msk) {
+        s = ch;
+        mask = msk;
+        on = en && msk != 0;
+        smooth = (mode == MORPH_MODE_SMOOTH_C);
+        steps = (uint32_t) (st > 0 ? st : 1);
+        inv_steps = 1.0f / (float) steps;
+        refresh();
+    }
+
+    void refresh() {
+        if (!on) {
+            pA = s->buffer_carrier;
+            pB = s->buffer_carrier;
+            return;
+        }
+        pA = s->buffer_morph[s->morph_slot];
+        pB = smooth ? s->buffer_morph[nextMorphSlot(s->morph_slot, mask)] : pA;
+    }
+
+    /** Значение несущей по фазовому индексу + продвижение состояния на сэмпл. */
+    inline float sample(uint32_t idx, bool wrapped) {
+        float t = 0.0f;
+        if (on && smooth) {
+            t = (float) s->morph_counter * inv_steps;
+            if (t > 1.0f) t = 1.0f;
+        }
+        float c = pA[idx] + t * (pB[idx] - pA[idx]);
+        if (on) advance(wrapped);
+        return c;
+    }
+
+    inline void advance(bool wrapped) {
+        // Слот мог погаснуть, пока играли — уходим с него, но только по обороту фазы
+        bool slot_invalid = !(mask & (1 << s->morph_slot));
+
+        if (smooth && !slot_invalid) {
+            if (++s->morph_counter >= steps) {
+                s->morph_counter = 0;
+                s->morph_slot = nextMorphSlot(s->morph_slot, mask);
+                refresh();
+            }
+            return;
+        }
+
+        if (!slot_invalid && s->morph_counter < steps) {
+            s->morph_counter++;
+            return;
+        }
+
+        if (wrapped) {
+            s->morph_counter = 0;
+            s->morph_slot = slot_invalid ? firstMorphSlot(mask)
+                                         : nextMorphSlot(s->morph_slot, mask);
+            refresh();
+        }
+    }
+};
+
 
 extern "C"
 JNIEXPORT void JNICALL
@@ -53,6 +146,11 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
                                                                               jint off_samples,
                                                                               jboolean button_active,
                                                                               jboolean button_pressed,
+
+                                                                              jboolean morph_en,
+                                                                              jint morph_mode,
+                                                                              jint morph_steps,
+                                                                              jint morph_mask,
 
                                                                               jint channel,
                                                                               jfloatArray m_buffer
@@ -95,19 +193,28 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
 
     uint64_t delta = 0;
 
+    MorphRunner morph;
+    morph.init(pStructureCh, morph_en, morph_mode, morph_steps, morph_mask);
+
     if (!en_fm && !en_am) {
         for (int i = 0; i < num_frames; i++) {
+            uint32_t prev = pStructureCh->phase_accumulator_carrier;
             pStructureCh->phase_accumulator_carrier += r_c32;
-            tempArrayElements[i] = volume * pStructureCh->buffer_carrier[pStructureCh->phase_accumulator_carrier >> 22];
+            bool wrapped = pStructureCh->phase_accumulator_carrier < prev;
+            uint32_t idx = pStructureCh->phase_accumulator_carrier >> 22;
+            tempArrayElements[i] = volume * morph.sample(idx, wrapped);
         }
     }
 
     if (!en_fm && en_am) {
         for (int i = 0; i < num_frames; i++) {
+            uint32_t prev = pStructureCh->phase_accumulator_carrier;
             pStructureCh->phase_accumulator_carrier += r_c32;
+            bool wrapped = pStructureCh->phase_accumulator_carrier < prev;
+            uint32_t idx = pStructureCh->phase_accumulator_carrier >> 22;
 
             pStructureCh->phase_accumulator_am += r_am32;
-            tempArrayElements[i] = volume * pStructureCh->buffer_carrier[pStructureCh->phase_accumulator_carrier >> 22]
+            tempArrayElements[i] = volume * morph.sample(idx, wrapped)
                                    * (pStructureCh->buffer_am[pStructureCh->phase_accumulator_am >> 22] * am_depth + 1.0f - am_depth);
         }
     }
@@ -117,15 +224,16 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
         for (int i = 0; i < num_frames; i++) {
             pStructureCh->phase_accumulator_fm += r_fm32;
 
+            uint32_t prev = pStructureCh->phase_accumulator_carrier;
+
             pStructureCh->phase_accumulator_carrier +=
-
                     static_cast<unsigned int>(convertHzToR(
-                    pStructureCh->buffer_fm[pStructureCh->phase_accumulator_fm >> 22], sampleRate)
+                            pStructureCh->buffer_fm[pStructureCh->phase_accumulator_fm >> 22], sampleRate));
 
+            bool wrapped = pStructureCh->phase_accumulator_carrier < prev;
+            uint32_t idx = pStructureCh->phase_accumulator_carrier >> 22;
 
-                            );
-
-            tempArrayElements[i] = volume * pStructureCh->buffer_carrier[pStructureCh->phase_accumulator_carrier >> 22];
+            tempArrayElements[i] = volume * morph.sample(idx, wrapped);
         }
     }
 
@@ -137,10 +245,14 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
 
             delta = MAX32/sampleRate;
 
-            pStructureCh->phase_accumulator_carrier += static_cast<uint32_t>(static_cast<float>(delta) * pStructureCh->buffer_fm[pStructureCh->phase_accumulator_fm >> 22]);   //(unsigned int)(convertHzToR(pStructureCh->buffer_fm[pStructureCh->phase_accumulator_fm >> 22], sampleRate));
+            uint32_t prev = pStructureCh->phase_accumulator_carrier;
+            pStructureCh->phase_accumulator_carrier += static_cast<uint32_t>(static_cast<float>(delta) * pStructureCh->buffer_fm[pStructureCh->phase_accumulator_fm >> 22]);
+            bool wrapped = pStructureCh->phase_accumulator_carrier < prev;
+            uint32_t idx = pStructureCh->phase_accumulator_carrier >> 22;
+
             pStructureCh->phase_accumulator_am += r_am32;
 
-            tempArrayElements[i] = volume * pStructureCh->buffer_carrier[pStructureCh->phase_accumulator_carrier >> 22] *
+            tempArrayElements[i] = volume * morph.sample(idx, wrapped) *
                            (pStructureCh->buffer_am[pStructureCh->phase_accumulator_am >> 22] * am_depth + 1.0f - am_depth);
         }
 
