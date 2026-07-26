@@ -19,6 +19,13 @@ fun observe(gen: Generator) {
     GlobalScope.launch(dispatchers) { gen.liveData.ch1_FM_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH0, GeneratorMOD.FM, it, gen ) } }
     GlobalScope.launch(dispatchers) { gen.liveData.ch2_FM_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH1, GeneratorMOD.FM, it, gen ) } }
 
+    GlobalScope.launch(dispatchers) { gen.liveData.ch1_Morph_Slot0_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH0, GeneratorMOD.MORPH0, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.ch1_Morph_Slot1_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH0, GeneratorMOD.MORPH1, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.ch1_Morph_Slot2_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH0, GeneratorMOD.MORPH2, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.ch2_Morph_Slot0_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH1, GeneratorMOD.MORPH0, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.ch2_Morph_Slot1_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH1, GeneratorMOD.MORPH1, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.ch2_Morph_Slot2_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH1, GeneratorMOD.MORPH2, it, gen ) } }
+
     //Любой параметр, влияющий на буфер FM, требует его пересчёта
     GlobalScope.launch(dispatchers) { gen.liveData.ch1_FM_Dev.collect { gen.updateFm(0) } }
     GlobalScope.launch(dispatchers) { gen.liveData.ch2_FM_Dev.collect { gen.updateFm(1) } }

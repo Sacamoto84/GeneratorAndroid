@@ -7,7 +7,7 @@ import java.nio.ByteOrder
 
 enum class GeneratorCH { CH0, CH1 }
 
-enum class GeneratorMOD { CR, AM, FM, MASTER }
+enum class GeneratorMOD { CR, AM, FM, MASTER, MORPH0, MORPH1, MORPH2 }
 
 //Для спиннера, отсылка массива
 fun Spinner_Send_Buffer(
@@ -23,19 +23,21 @@ fun Spinner_Send_Buffer(
     //val buf = readFileMod2048byte(path) //Здесь должны прочитать файл и записать в массив;
 
 
-    val index = if (Mod == GeneratorMOD.CR)
-        gen.itemlistCarrier.indexOfFirst { it.name == name }
-    else
-        gen.itemlistAM.indexOfFirst { it.name == name }
+    //Несущая и все слоты метаморфозы берутся из библиотеки несущих
+    val list = when (Mod) {
+        GeneratorMOD.CR, GeneratorMOD.MORPH0, GeneratorMOD.MORPH1, GeneratorMOD.MORPH2 ->
+            gen.itemlistCarrier
+
+        else -> gen.itemlistAM
+    }
+
+    val index = list.indexOfFirst { it.name == name }
 
     if (index == -1) {
         return
     }
 
-    val buf = if (Mod == GeneratorMOD.CR)
-        gen.itemlistCarrier[index].buf
-    else
-        gen.itemlistAM[index].buf
+    val buf = list[index].buf
 
     if (CH == GeneratorCH.CH0) {
         when (Mod) {
@@ -50,6 +52,12 @@ fun Spinner_Send_Buffer(
             GeneratorMOD.FM -> {
                 gen.ch1.buffer_fm =  byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, -1f, 1f)//byteToFloatArrayLittleEndian4096(buf)
                 gen.updateFm(0)
+            }
+            GeneratorMOD.MORPH0, GeneratorMOD.MORPH1, GeneratorMOD.MORPH2 -> {
+                val slot = Mod.ordinal - GeneratorMOD.MORPH0.ordinal
+                gen.ch1.buffer_morph[slot] =
+                    byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, -1f, 1f)
+                RenderChannel().sendBuffer(0, 4 + slot, gen.ch1.buffer_morph[slot])
             }
             else -> {
                 gen.ch1.buffer_carrier = byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, -1f, 1f)//byteToFloatArrayLittleEndian4096(buf)
@@ -71,6 +79,12 @@ fun Spinner_Send_Buffer(
             GeneratorMOD.FM -> {
                 gen.ch2.buffer_fm = byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, -1f, 1f)
                 gen.updateFm(1)
+            }
+            GeneratorMOD.MORPH0, GeneratorMOD.MORPH1, GeneratorMOD.MORPH2 -> {
+                val slot = Mod.ordinal - GeneratorMOD.MORPH0.ordinal
+                gen.ch2.buffer_morph[slot] =
+                    byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, -1f, 1f)
+                RenderChannel().sendBuffer(1, 4 + slot, gen.ch2.buffer_morph[slot])
             }
             else -> {gen.ch2.buffer_carrier = byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, -1f, 1f)//byteToFloatArrayLittleEndian4096(buf)
                 RenderChannel().sendBuffer(1, 0, gen.ch2.buffer_carrier)
