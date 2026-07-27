@@ -204,7 +204,12 @@ void ProcessChunk1() {
                 }
 
                 // draw line
-                if (context1.pixels != nullptr) {
+                // Защита от рассинхрона ширины: в release assert внутри
+                // drawWaterFallLine вырезан, и несовпадение размера буфера
+                // скалера с шириной битмапа читало бы за границей буфера
+                // (окно между SetScaler(newWidth) и Init(newBitmap)).
+                if (context1.pixels != nullptr && pScaleL->GetBuffer() != nullptr &&
+                    pScaleL->GetBuffer()->GetSize() == static_cast<int>(context1.info.width)) {
                     drawWaterFallLine(&context1.info, context1.waterFallRaw, context1.pixels,
                                       pScaleL->GetBuffer());
                 }
