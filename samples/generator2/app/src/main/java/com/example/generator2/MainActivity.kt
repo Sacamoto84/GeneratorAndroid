@@ -214,18 +214,6 @@ class MainActivity : ComponentActivity() {
 
         Utils.ContextMainActivity = applicationContext
 
-        // Запускаем корутину в потоке с высоким приоритетом
-        val highPriorityThread = Thread {
-            runBlocking {
-                val highPriorityCoroutine = launch(Dispatchers.Default) {
-                    android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO)
-                    audioMixerPump.run()
-                }
-                highPriorityCoroutine.join()
-            }
-        }
-        highPriorityThread.start()
-
         //play()
 
         //GlobalScope.launch(Dispatchers.IO) {
@@ -238,9 +226,7 @@ class MainActivity : ComponentActivity() {
         //var a = 5
         //a = a/0
 
-        Spectrogram.startFFTLoop()
-
-        startForegroundService()
+        startSoundService()
 
         setContent {
 
@@ -290,36 +276,42 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun startForegroundService() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                val intent = Intent(this, SoundService::class.java)
-                startForegroundService(intent)
-            } else {
-                Timber.w("Notification permission not granted: Requesting permission...")
-                // Запрашиваем разрешение через launcher
-                requestPermissionLauncher.launch(POST_NOTIFICATIONS)
-            }
-        } else {
-            val intent = Intent(this, SoundService::class.java)
-            startForegroundService(intent)
+    /**
+     * Старт сервиса со звуком.
+     *
+     * POST_NOTIFICATIONS на запуск foreground service не влияет: при отказе
+     * сервис работает, просто нотификация не отображается. Поэтому старт
+     * безусловный, а разрешение запрашивается отдельно и только ради
+     * видимости нотификации с кнопкой «Закрыть».
+     */
+    private fun startSoundService() {
+        val intent = Intent(this, SoundService::class.java).apply {
+            action = SoundService.ACTION_START
+        }
+        startForegroundService(intent)
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            Timber.w("POST_NOTIFICATIONS не выдано: звук работает, нотификация не показывается")
+            requestPermissionLauncher.launch(POST_NOTIFICATIONS)
         }
     }
 
-    // Создаем launcher для запроса разрешений
+    // Лаунчер запроса разрешения на нотификации
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            // Разрешение предоставлено, запускаем сервис
-            val intent = Intent(this, SoundService::class.java)
+            // Сервис уже работает; повторный ACTION_START перевыставляет
+            // нотификацию, которая до выдачи разрешения была подавлена.
+            val intent = Intent(this, SoundService::class.java).apply {
+                action = SoundService.ACTION_START
+            }
             startForegroundService(intent)
         } else {
-            Timber.w("Notification permission denied: Foreground service cannot start")
+            Timber.w("POST_NOTIFICATIONS отклонено: кнопка «Закрыть» недоступна")
         }
     }
 
