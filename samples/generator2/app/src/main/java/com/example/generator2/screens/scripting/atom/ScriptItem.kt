@@ -15,6 +15,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.generator2.R
+import com.example.generator2.theme.colorChL
+import com.example.generator2.theme.colorChR
 
 class ScriptItem {
 
@@ -59,20 +61,25 @@ class ScriptItem {
         /////////////////////
         when (listCMD[0]) {
 
-            "CH1", "CH2" -> {
-                color = Color(0xFFFFDF30)
+            "CHL", "CH1" -> {
+                color = colorChL
                 background = Color(0xFF012F50)
             }
 
-            "CR1", "CR2" -> {
+            "CHR", "CH2" -> {
+                color = colorChR
+                background = Color(0xFF012F50)
+            }
+
+            "CRL", "CRR", "CR1", "CR2" -> {
                 color = Color(0xFF00FFFF)
             }
 
-            "AM1", "AM2" -> {
+            "AML", "AMR", "AM1", "AM2" -> {
                 color = Color.Green
             }
 
-            "FM1", "FM2" -> {
+            "FML", "FMR", "FM1", "FM2" -> {
                 color = Color(0xFFFF7A21)
             }
 

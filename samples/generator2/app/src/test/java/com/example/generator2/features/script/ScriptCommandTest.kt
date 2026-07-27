@@ -74,6 +74,32 @@ class ScriptCommandTest {
         )
     }
 
+    @Test
+    fun `новые имена каналов CHL CHR`() {
+        assertEquals(Cmd.GenSwitch(1, GenBlock.CR, true), parseCommand("CHL CR ON"))
+        assertEquals(Cmd.GenSwitch(2, GenBlock.FM, false), parseCommand("CHR FM OFF"))
+        assertEquals(
+            Cmd.GenValue(1, GenBlock.CR, GenParam.FR, Operand.Const(440f)),
+            parseCommand("CRL FR 440")
+        )
+        assertEquals(
+            Cmd.GenValue(2, GenBlock.FM, GenParam.DEV, Operand.Const(100f)),
+            parseCommand("FMR DEV 100")
+        )
+        assertEquals(Cmd.GenMod(2, GenBlock.AM, "Sine"), parseCommand("AMR MOD Sine"))
+        assertEquals(
+            Cmd.ReadGen(0, 1, GenBlock.CR, GenParam.FR), parseCommand("READ F0 CRL FR")
+        )
+    }
+
+    @Test
+    fun `легаси-алиасы CH1 CH2 продолжают работать`() {
+        assertEquals(parseCommand("CHL CR ON"), parseCommand("CH1 CR ON"))
+        assertEquals(parseCommand("CHR CR ON"), parseCommand("CH2 CR ON"))
+        assertEquals(parseCommand("CRL FR 440"), parseCommand("CR1 FR 440"))
+        assertEquals(parseCommand("FMR DEV 100"), parseCommand("FM2 DEV 100"))
+    }
+
     //╰───────────────────────────────────────────────────────────────────────╯
 
     //╭─ Ошибки разбора ──────────────────────────────────────────────────────╮

@@ -38,6 +38,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.script.Script
 import com.example.generator2.screens.scripting.atom.TemplateButtonBottomBar
+import com.example.generator2.theme.colorChL
+import com.example.generator2.theme.colorChR
 import com.example.generator2.theme.colorDarkBackground
 import kotlinx.coroutines.flow.update
 import timber.log.Timber
@@ -181,9 +183,9 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
     //route перейти на экран с нужным именем
     //Выполнить действие, выполняется или действие или onClick
     @Composable
-    fun KeyX(label: String, onClick: () -> Unit) {
+    fun KeyX(label: String, color: Color = Color.White, onClick: () -> Unit) {
 
-        TemplateButtonBottomBar(str = label, onClick = {
+        TemplateButtonBottomBar(str = label, contentColor = color, onClick = {
             onClick()
         })
     }
@@ -264,58 +266,58 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
 
 
         Draw(k0 = {
-            KeyX("CH1", onClick = {
+            KeyX("CHL", color = colorChL, onClick = {
                 listCommand.clear()
-                listCommandAddToIndex(0, "CH1")
+                listCommandAddToIndex(0, "CHL")
                 list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(1, RouteKeyboardEnum.CRAMFM))
             })
         }, k1 = {
-            KeyX("CR1", onClick = {
+            KeyX("CRL", color = colorChL, onClick = {
                 listCommand.clear()
-                listCommandAddToIndex(0, "CR1")
+                listCommandAddToIndex(0, "CRL")
                 list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(1, RouteKeyboardEnum.CRAMValue))
             })
         }, k2 = {
-            KeyX("AM1", onClick = {
+            KeyX("AML", color = colorChL, onClick = {
                 listCommand.clear()
-                listCommandAddToIndex(0, "AM1")
+                listCommandAddToIndex(0, "AML")
                 list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(1, RouteKeyboardEnum.CRAMValue))
             })
         }, k3 = {
-            KeyX("FM1", onClick = {
+            KeyX("FML", color = colorChL, onClick = {
                 listCommand.clear()
-                listCommandAddToIndex(0, "FM1")
+                listCommandAddToIndex(0, "FML")
                 list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(1, RouteKeyboardEnum.FMValue))
             })
         }, k4 = {
-            KeyX("CH2", onClick = {
+            KeyX("CHR", color = colorChR, onClick = {
                 listCommand.clear()
-                listCommandAddToIndex(0, "CH2")
+                listCommandAddToIndex(0, "CHR")
                 list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(1, RouteKeyboardEnum.CRAMFM))
             })
         }, k5 = {
-            KeyX("CR2", onClick = {
+            KeyX("CRR", color = colorChR, onClick = {
                 listCommand.clear()
-                listCommandAddToIndex(0, "CR2")
+                listCommandAddToIndex(0, "CRR")
                 list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(1, RouteKeyboardEnum.CRAMValue))
             })
         }, k6 = {
-            KeyX("AM2", onClick = {
+            KeyX("AMR", color = colorChR, onClick = {
                 listCommand.clear()
-                listCommandAddToIndex(0, "AM2")
+                listCommandAddToIndex(0, "AMR")
                 list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(1, RouteKeyboardEnum.CRAMValue))
             })
         }, k7 = {
-            KeyX("FM2", onClick = {
+            KeyX("FMR", color = colorChR, onClick = {
                 listCommand.clear()
-                listCommandAddToIndex(0, "FM2")
+                listCommandAddToIndex(0, "FMR")
                 list.update(selectIndex, listCommandToText())
                 routeTo(RouteKeyboard(1, RouteKeyboardEnum.FMValue))
             })
@@ -870,7 +872,7 @@ class ScriptKeyboard(private val s: Script, val gen: Generator) {
                     listCommandRemoveToIndex(arg)
                     listCommandAddToIndex(arg, "MOD")
                     list.update(selectIndex,  listCommandToText())
-                    if ((listCommand[0] == "CR1") || (listCommand[0] == "CR2"))
+                    if (listCommand[0] in listOf("CRL", "CRR", "CR1", "CR2"))
                         routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.MODCR))
                     else
                         routeTo(RouteKeyboard(arg + 1, RouteKeyboardEnum.MODAM))

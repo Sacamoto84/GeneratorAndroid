@@ -178,10 +178,11 @@ fun parseCommand(source: String, line: Int = -1): Cmd {
         return parseOperand(token) ?: fail("не число и не регистр: $token")
     }
 
-    //CH1 CR1 AM1 FM1 -> номер канала
+    //CHL CRL AML FML -> канал 1 (левый), CHR CRR AMR FMR -> канал 2 (правый).
+    //Цифры 1/2 — легаси-алиасы старых скриптов.
     fun channel(token: String): Int = when (token.last()) {
-        '1' -> 1
-        '2' -> 2
+        'L', '1' -> 1
+        'R', '2' -> 2
         else -> fail("не разобран номер канала: $token")
     }
 
@@ -241,14 +242,15 @@ fun parseCommand(source: String, line: Int = -1): Cmd {
             Cmd.If(register(arg(1)), op, operand(arg(3)))
         }
 
-        //CH[1 2] [CR AM FM] [ON OFF]
-        "CH1", "CH2" -> {
+        //CH[L R] [CR AM FM] [ON OFF]; CH1/CH2 — легаси
+        "CHL", "CHR", "CH1", "CH2" -> {
             val onoff = arg(2)
             if (onoff != "ON" && onoff != "OFF") fail("$head: ожидалось ON или OFF, получено $onoff")
             Cmd.GenSwitch(channel(head), block(arg(1)), onoff == "ON")
         }
 
-        //CR[1 2] AM[1 2] FM[1 2]
+        //CR[L R] AM[L R] FM[L R]; цифры — легаси
+        "CRL", "CRR", "AML", "AMR", "FML", "FMR",
         "CR1", "CR2", "AM1", "AM2", "FM1", "FM2" -> {
             val genBlock = block(head.dropLast(1))
             val ch = channel(head)
