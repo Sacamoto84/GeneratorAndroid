@@ -3,7 +3,7 @@ package com.example.generator2.features.generator
 import kotlin.math.roundToInt
 
 // Режимы метаморфозы несущей (ch*_Morph_Mode)
-const val MORPH_MODE_STEP = 0    // Ступень: резкая смена формы по обороту фазы
+const val MORPH_MODE_STEP = 0    // Ступень: форма держится шаг, затем кроссфейд ~5 мс
 const val MORPH_MODE_SMOOTH = 1  // Плавно: линейный морфинг текущей формы в следующую
 
 /** Длительность одного шага в секундах (зажим 0.1..100) -> число сэмплов, не меньше 1. */

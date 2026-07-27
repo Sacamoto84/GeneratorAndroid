@@ -31,9 +31,10 @@ float map(float x, float in_min, float in_max, float out_min, float out_max) {
 // Режим метаморфозы, зеркало MORPH_MODE_* из CarrierMorph.kt
 static const int MORPH_MODE_SMOOTH_C = 1;
 
-// Длительность кроссфейда Ступени, сэмплов (~5 мс при 48 кГц).
-// Столько же берёт анти-щелчок мастер-громкости ниже по файлу.
-static const uint32_t MORPH_FADE_SAMPLES = 240;
+// Длительность кроссфейда Ступени, секунд. Столько же берёт анти-щелчок мастер-громкости
+// ниже по файлу, и так же считается от частоты дискретизации: приложение переключается
+// на 192 кГц там, где устройство тянет, и фиксированное число сэмплов дало бы 1.25 мс.
+static const float MORPH_FADE_SEC = 0.005f;
 
 /** Следующий активный слот по кругу. При единственном активном возвращает его же. */
 static inline uint8_t nextMorphSlot(uint8_t slot, int mask) {
@@ -66,14 +67,15 @@ struct MorphRunner {
     bool smooth = false;
     int mask = 0;
 
-    uint32_t inc = 1;          // прирост фазы шага на сэмпл
-    uint32_t fade_start = 0;   // фаза, с которой начинается кроссфейд Ступени
-    float inv_fade = 0.0f;     // 1 / длина кроссфейда в единицах фазы
+    uint32_t inc = 1;               // прирост фазы шага на сэмпл
+    uint32_t fade_phase_wanted = 1; // окно кроссфейда по текущему T, вступит в силу на границе
+    uint32_t fade_start = 0;        // фаза, с которой начинается кроссфейд Ступени
+    float inv_fade = 0.0f;          // 1 / длина кроссфейда в единицах фазы
 
     const float *pA = nullptr;
     const float *pB = nullptr;
 
-    void init(StructureCh *c, bool en, int mode, int steps, int msk) {
+    void init(StructureCh *c, bool en, int mode, int steps, int msk, int sample_rate) {
         ch = c;
         mask = msk;
         on = en && msk != 0;
@@ -83,24 +85,49 @@ struct MorphRunner {
         inc = (uint32_t) (MAX32 / st);
         if (inc == 0) inc = 1;
 
-        uint32_t fade = MORPH_FADE_SAMPLES < st ? MORPH_FADE_SAMPLES : st;
-        auto fade_phase = (uint32_t) ((uint64_t) fade * inc);
-        if (fade_phase == 0) fade_phase = 1;
-        fade_start = (uint32_t) (MAX32 - fade_phase);
-        inv_fade = 1.0f / (float) fade_phase;
+        auto fade = (uint32_t) (MORPH_FADE_SEC * (float) sample_rate);
+        if (fade == 0) fade = 1;
+        if (fade > st) fade = st;
+        fade_phase_wanted = (uint32_t) ((uint64_t) fade * inc);
+        if (fade_phase_wanted == 0) fade_phase_wanted = 1;
 
-        // Цель ещё не задана: либо только что включили метаморфозу, либо активным был
-        // один слот, а стало больше. Шаг начинаем с нуля — иначе подстановка новой цели
-        // при уже набежавшем t дала бы скачок.
-        if (on && ch->morph_slot_next == ch->morph_slot) {
-            uint8_t n = nextMorphSlot(ch->morph_slot, mask);
-            if (n != ch->morph_slot) {
-                ch->morph_slot_next = n;
+        if (on) {
+            // Идти некуда: и текущая форма, и цель вне маски. Снимаемся на активную сразу —
+            // доигрывать нечего, а ждать границы значит держать снятую пользователем форму
+            // (при T до 100 с это надолго).
+            if (!(mask & (1 << ch->morph_slot)) && !(mask & (1 << ch->morph_slot_next))) {
+                ch->morph_slot = nextMorphSlot(ch->morph_slot, mask);
+                ch->morph_slot_next = ch->morph_slot;
                 ch->morph_phase = 0;
+            }
+
+            // Цель ещё не задана: либо только что включили метаморфозу, либо активным был
+            // один слот, а стало больше. Шаг начинаем с нуля — иначе подстановка новой цели
+            // при уже набежавшем t дала бы скачок.
+            if (ch->morph_slot_next == ch->morph_slot) {
+                uint8_t n = nextMorphSlot(ch->morph_slot, mask);
+                if (n != ch->morph_slot) {
+                    ch->morph_slot_next = n;
+                    ch->morph_phase = 0;
+                }
             }
         }
 
+        // Новая длина шага действует сразу, а окно кроссфейда — только со следующего шага.
+        // Иначе сдвиг окна под неподвижной фазой скачком меняет t: смена T в момент, когда
+        // фаза уже внутри окна, дала бы щелчок. В начале шага t всё равно ноль, там можно.
+        if (ch->morph_fade_phase == 0 || ch->morph_phase == 0)
+            ch->morph_fade_phase = fade_phase_wanted;
+        applyFade();
+
         refresh();
+    }
+
+    /** Пересчитать границы кроссфейда по зафиксированному на шаг окну. */
+    void applyFade() {
+        if (ch->morph_fade_phase == 0) ch->morph_fade_phase = 1;
+        fade_start = (uint32_t) (MAX32 - ch->morph_fade_phase);
+        inv_fade = 1.0f / (float) ch->morph_fade_phase;
     }
 
     /** Подтянуть указатели к текущей паре слотов. */
@@ -141,6 +168,8 @@ struct MorphRunner {
             // в конце шага играла ровно она при t→1, в начале следующего играет она же при t=0
             ch->morph_slot = ch->morph_slot_next;
             ch->morph_slot_next = nextMorphSlot(ch->morph_slot, mask);
+            ch->morph_fade_phase = fade_phase_wanted;   // новое T вступает в силу здесь
+            applyFade();
             refresh();
         }
     }
@@ -219,7 +248,7 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
     uint64_t delta = 0;
 
     MorphRunner morph;
-    morph.init(pStructureCh, morph_en, morph_mode, morph_steps, morph_mask);
+    morph.init(pStructureCh, morph_en, morph_mode, morph_steps, morph_mask, sample_rate);
 
     if (!en_fm && !en_am) {
         for (int i = 0; i < num_frames; i++) {
