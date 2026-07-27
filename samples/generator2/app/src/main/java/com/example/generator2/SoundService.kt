@@ -141,7 +141,8 @@ class SoundService : Service() {
      * иначе sentToFloatRingBufferFFT сделает sem_post в уже присоединённый
      * поток.
      *
-     * Идемпотентен: onDestroy вызовет его повторно после closeApp.
+     * Идемпотентен: защита на случай, если onDestroy придёт по независимому
+     * пути (системное уничтожение сервиса).
      */
     private fun shutdown() {
         if (shuttingDown) return
@@ -152,9 +153,11 @@ class SoundService : Service() {
         // Дожидаемся выхода из цикла пампа: он может быть внутри блокирующей
         // записи в AudioTrack длиной до ~200 мс. Освобождать AudioOut раньше
         // выхода нельзя — запись в освобождённый AudioTrack валит процесс.
-        runBlocking {
+        val joined = runBlocking {
             withTimeoutOrNull(1500) { serviceJob.cancelAndJoin() }
         }
+        if (joined == null)
+            Timber.w("Памп не завершился за 1500 мс, продолжаем принудительно")
 
         audioMixerPump.shutdown()
         Spectrogram.stopFFTLoop()
@@ -166,7 +169,11 @@ class SoundService : Service() {
         Timber.i("SoundService shutdown: движок остановлен")
     }
 
-    /** Убирает карточку приложения из недавних, иначе она останется мёртвой. */
+    /**
+     * Убирает карточку приложения из недавних. При смахивании она уже удалена
+     * (appTasks пуст) — метод нужен для закрытия из нотификации, иначе
+     * карточка останется висеть мёртвой.
+     */
     private fun removeTaskFromRecents() {
         try {
             val am = getSystemService(ACTIVITY_SERVICE) as ActivityManager
