@@ -1,5 +1,6 @@
 package com.example.generator2
 
+import android.app.ActivityManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -15,10 +16,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 import java.util.concurrent.Executors
 import javax.inject.Inject
+import kotlin.system.exitProcess
 
 /**
  * Владелец жизненного цикла звука.
@@ -58,6 +63,9 @@ class SoundService : Service() {
     /** Движок запущен. Защита от второго пампа при повторном onStartCommand. */
     private var engineRunning = false
 
+    /** Остановка уже идёт. Защита от повторного shutdown из onDestroy. */
+    private var shuttingDown = false
+
     override fun onCreate() {
         super.onCreate()
         Timber.i("SoundService onCreate")
@@ -93,12 +101,80 @@ class SoundService : Service() {
         return START_NOT_STICKY
     }
 
+    /**
+     * Пользователь смахнул приложение из недавних. Foreground service
+     * пережил бы это и продолжил играть — именно поэтому раньше звук
+     * оставался вечным.
+     */
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        Timber.i("SoundService onTaskRemoved: закрываем приложение")
+        super.onTaskRemoved(rootIntent)
+        closeApp()
+    }
+
     override fun onDestroy() {
         Timber.i("SoundService onDestroy")
+        shutdown()
         super.onDestroy()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
+
+    /**
+     * Полное закрытие: глушим звук, убираем нотификацию и карточку из
+     * недавних, уводим процесс.
+     *
+     * exitProcess нужен потому, что Hilt-синглтоны переживают уничтожение
+     * сервиса: без него AudioMixerPump остался бы в процессе с уничтоженным
+     * AudioOut и освобождённым ExoPlayer, и следующий запуск получил бы
+     * поломанное состояние.
+     */
+    private fun closeApp() {
+        shutdown()
+        removeTaskFromRecents()
+        stopSelf()
+        exitProcess(0)
+    }
+
+    /**
+     * Остановка движка. Порядок обязателен: сначала памп, потом FFT —
+     * иначе sentToFloatRingBufferFFT сделает sem_post в уже присоединённый
+     * поток.
+     *
+     * Идемпотентен: onDestroy вызовет его повторно после closeApp.
+     */
+    private fun shutdown() {
+        if (shuttingDown) return
+        shuttingDown = true
+
+        Timber.i("SoundService shutdown: остановка движка")
+
+        // Дожидаемся выхода из цикла пампа: он может быть внутри блокирующей
+        // записи в AudioTrack длиной до ~200 мс. Освобождать AudioOut раньше
+        // выхода нельзя — запись в освобождённый AudioTrack валит процесс.
+        runBlocking {
+            withTimeoutOrNull(1500) { serviceJob.cancelAndJoin() }
+        }
+
+        audioMixerPump.shutdown()
+        Spectrogram.stopFFTLoop()
+        audioExecutor.shutdownNow()
+
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
+        engineRunning = false
+
+        Timber.i("SoundService shutdown: движок остановлен")
+    }
+
+    /** Убирает карточку приложения из недавних, иначе она останется мёртвой. */
+    private fun removeTaskFromRecents() {
+        try {
+            val am = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+            am.appTasks.forEach { it.finishAndRemoveTask() }
+        } catch (e: Exception) {
+            Timber.e(e, "Не удалось убрать задачу из недавних")
+        }
+    }
 
     private fun createNotification(): Notification {
         return NotificationCompat.Builder(this, CHANNEL_ID)
