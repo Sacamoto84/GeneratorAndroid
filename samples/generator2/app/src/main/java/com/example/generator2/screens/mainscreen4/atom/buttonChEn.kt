@@ -19,14 +19,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.generator2.common.haptic.Haptic
 import com.example.generator2.features.generator.Generator
+import com.example.generator2.features.generator.GeneratorCH
 import com.example.generator2.screens.mainscreen4.ms4SwitchWidth
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.screens.common.modifier.noRippleClickable
 
 @Composable
-fun ButtonChEn(str: String = "CH0", gen: Generator) {
+fun ButtonChEn(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
 
-    val chEN: State<Boolean> = if (str == "CH0") {
+    val chEN: State<Boolean> = if (ch == GeneratorCH.CHL) {
         gen.liveData.chL_EN.collectAsState()
     } else {
         gen.liveData.chR_EN.collectAsState()
@@ -48,7 +49,7 @@ fun ButtonChEn(str: String = "CH0", gen: Generator) {
                 color = if (chEN.value) Color(0xFF4DD0E1) else colorDarkBackground
             )
             .noRippleClickable(onClick = {
-                if (str == "CH0") gen.liveData.chL_EN.value =
+                if (ch == GeneratorCH.CHL) gen.liveData.chL_EN.value =
                     !gen.liveData.chL_EN.value
                 else gen.liveData.chR_EN.value = !gen.liveData.chR_EN.value
 

@@ -5,7 +5,7 @@ import com.example.generator2.util.maping
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-enum class GeneratorCH { CH0, CH1 }
+enum class GeneratorCH { CHL, CHR }
 
 enum class GeneratorMOD { CR, AM, FM, MASTER, MORPH0, MORPH1, MORPH2 }
 
@@ -39,7 +39,7 @@ fun Spinner_Send_Buffer(
 
     val buf = list[index].buf
 
-    if (CH == GeneratorCH.CH0) {
+    if (CH == GeneratorCH.CHL) {
         when (Mod) {
             GeneratorMOD.AM -> {
                 gen.chL.buffer_am =  byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, 0f, 1f)

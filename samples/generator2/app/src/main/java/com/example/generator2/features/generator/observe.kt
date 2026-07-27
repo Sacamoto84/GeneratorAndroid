@@ -10,21 +10,21 @@ import timber.log.Timber
 fun observe(gen: Generator) {
     Timber.i("observe()-------------------------------------------------------------- Start")
     val dispatchers = Dispatchers.IO
-    GlobalScope.launch(dispatchers) { gen.liveData.chL_Carrier_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH0, GeneratorMOD.CR, it, gen ) } }
-    GlobalScope.launch(dispatchers) { gen.liveData.chR_Carrier_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH1, GeneratorMOD.CR, it, gen ) } }
-    GlobalScope.launch(dispatchers) { gen.liveData.chL_AM_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH0, GeneratorMOD.AM, it, gen ) } }
-    GlobalScope.launch(dispatchers) { gen.liveData.chR_AM_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH1, GeneratorMOD.AM, it, gen ) } }
-    GlobalScope.launch(dispatchers) { gen.liveData.chL_Master_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH0, GeneratorMOD.MASTER, it, gen ) } }
-    GlobalScope.launch(dispatchers) { gen.liveData.chR_Master_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH1, GeneratorMOD.MASTER, it, gen ) } }
-    GlobalScope.launch(dispatchers) { gen.liveData.chL_FM_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH0, GeneratorMOD.FM, it, gen ) } }
-    GlobalScope.launch(dispatchers) { gen.liveData.chR_FM_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH1, GeneratorMOD.FM, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.chL_Carrier_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CHL, GeneratorMOD.CR, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.chR_Carrier_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CHR, GeneratorMOD.CR, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.chL_AM_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CHL, GeneratorMOD.AM, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.chR_AM_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CHR, GeneratorMOD.AM, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.chL_Master_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CHL, GeneratorMOD.MASTER, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.chR_Master_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CHR, GeneratorMOD.MASTER, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.chL_FM_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CHL, GeneratorMOD.FM, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.chR_FM_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CHR, GeneratorMOD.FM, it, gen ) } }
 
-    GlobalScope.launch(dispatchers) { gen.liveData.chL_Morph_Slot0_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH0, GeneratorMOD.MORPH0, it, gen ) } }
-    GlobalScope.launch(dispatchers) { gen.liveData.chL_Morph_Slot1_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH0, GeneratorMOD.MORPH1, it, gen ) } }
-    GlobalScope.launch(dispatchers) { gen.liveData.chL_Morph_Slot2_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH0, GeneratorMOD.MORPH2, it, gen ) } }
-    GlobalScope.launch(dispatchers) { gen.liveData.chR_Morph_Slot0_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH1, GeneratorMOD.MORPH0, it, gen ) } }
-    GlobalScope.launch(dispatchers) { gen.liveData.chR_Morph_Slot1_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH1, GeneratorMOD.MORPH1, it, gen ) } }
-    GlobalScope.launch(dispatchers) { gen.liveData.chR_Morph_Slot2_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CH1, GeneratorMOD.MORPH2, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.chL_Morph_Slot0_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CHL, GeneratorMOD.MORPH0, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.chL_Morph_Slot1_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CHL, GeneratorMOD.MORPH1, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.chL_Morph_Slot2_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CHL, GeneratorMOD.MORPH2, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.chR_Morph_Slot0_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CHR, GeneratorMOD.MORPH0, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.chR_Morph_Slot1_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CHR, GeneratorMOD.MORPH1, it, gen ) } }
+    GlobalScope.launch(dispatchers) { gen.liveData.chR_Morph_Slot2_Filename.collect { Spinner_Send_Buffer( GeneratorCH.CHR, GeneratorMOD.MORPH2, it, gen ) } }
 
     //Любой параметр, влияющий на буфер FM, требует его пересчёта
     GlobalScope.launch(dispatchers) { gen.liveData.chL_FM_Dev.collect { gen.updateFm(0) } }

@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.generator2.common.haptic.Haptic
 import com.example.generator2.features.generator.Generator
+import com.example.generator2.features.generator.GeneratorCH
 import com.example.generator2.features.generator.MORPH_MODE_SMOOTH
 import com.example.generator2.features.generator.MORPH_MODE_STEP
 import com.example.generator2.screens.common.modifier.noRippleClickable
@@ -32,13 +33,13 @@ import com.example.generator2.theme.colorDarkBackground
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun CardMorph(str: String = "CH0", gen: Generator) {
+fun CardMorph(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
 
-    val isCh0 = str == "CH0"
+    val isChL = ch == GeneratorCH.CHL
 
-    val en by (if (isCh0) gen.liveData.chL_Morph_EN else gen.liveData.chR_Morph_EN).collectAsState()
-    val mode by (if (isCh0) gen.liveData.chL_Morph_Mode else gen.liveData.chR_Morph_Mode).collectAsState()
-    val time by (if (isCh0) gen.liveData.chL_Morph_Time else gen.liveData.chR_Morph_Time).collectAsState()
+    val en by (if (isChL) gen.liveData.chL_Morph_EN else gen.liveData.chR_Morph_EN).collectAsState()
+    val mode by (if (isChL) gen.liveData.chL_Morph_Mode else gen.liveData.chR_Morph_Mode).collectAsState()
+    val time by (if (isChL) gen.liveData.chL_Morph_Time else gen.liveData.chR_Morph_Time).collectAsState()
 
     Column {
 
@@ -53,12 +54,12 @@ fun CardMorph(str: String = "CH0", gen: Generator) {
         Row(Modifier.padding(top = 0.dp), verticalAlignment = Alignment.CenterVertically) {
 
             MorphButton("MOR", en, Modifier.width(ms4SwitchWidth)) {
-                if (isCh0) gen.liveData.chL_Morph_EN.value = !gen.liveData.chL_Morph_EN.value
+                if (isChL) gen.liveData.chL_Morph_EN.value = !gen.liveData.chL_Morph_EN.value
                 else gen.liveData.chR_Morph_EN.value = !gen.liveData.chR_Morph_EN.value
             }
 
             fun setMode(m: Int) {
-                if (isCh0) gen.liveData.chL_Morph_Mode.value = m
+                if (isChL) gen.liveData.chL_Morph_Mode.value = m
                 else gen.liveData.chR_Morph_Mode.value = m
             }
 
@@ -75,7 +76,7 @@ fun CardMorph(str: String = "CH0", gen: Generator) {
                 items = listOf("0.1", "0.5", "1.0", "2.0", "5.0", "10.0", "60.0"),
                 value = time,
                 onChange = {
-                    if (isCh0) gen.liveData.chL_Morph_Time.value = it
+                    if (isChL) gen.liveData.chL_Morph_Time.value = it
                     else gen.liveData.chR_Morph_Time.value = it
                 },
                 sensing = 0.05f,
@@ -85,19 +86,19 @@ fun CardMorph(str: String = "CH0", gen: Generator) {
 
         // Строка 2: три слота форм — галочка участия + выбор формы
         Row(Modifier.padding(top = 2.dp), verticalAlignment = Alignment.CenterVertically) {
-            MorphSlot(str, 0, gen, Modifier.weight(1f))
-            MorphSlot(str, 1, gen, Modifier.weight(1f))
-            MorphSlot(str, 2, gen, Modifier.weight(1f))
+            MorphSlot(ch, 0, gen, Modifier.weight(1f))
+            MorphSlot(ch, 1, gen, Modifier.weight(1f))
+            MorphSlot(ch, 2, gen, Modifier.weight(1f))
         }
     }
 }
 
 @Composable
-private fun MorphSlot(str: String, slot: Int, gen: Generator, modifier: Modifier = Modifier) {
+private fun MorphSlot(ch: GeneratorCH, slot: Int, gen: Generator, modifier: Modifier = Modifier) {
 
-    val isCh0 = str == "CH0"
+    val isChL = ch == GeneratorCH.CHL
 
-    val enFlow: MutableStateFlow<Boolean> = if (isCh0) when (slot) {
+    val enFlow: MutableStateFlow<Boolean> = if (isChL) when (slot) {
         0 -> gen.liveData.chL_Morph_Slot0_EN
         1 -> gen.liveData.chL_Morph_Slot1_EN
         else -> gen.liveData.chL_Morph_Slot2_EN
@@ -107,7 +108,7 @@ private fun MorphSlot(str: String, slot: Int, gen: Generator, modifier: Modifier
         else -> gen.liveData.chR_Morph_Slot2_EN
     }
 
-    val nameFlow: MutableStateFlow<String> = if (isCh0) when (slot) {
+    val nameFlow: MutableStateFlow<String> = if (isChL) when (slot) {
         0 -> gen.liveData.chL_Morph_Slot0_Filename
         1 -> gen.liveData.chL_Morph_Slot1_Filename
         else -> gen.liveData.chL_Morph_Slot2_Filename
@@ -126,7 +127,7 @@ private fun MorphSlot(str: String, slot: Int, gen: Generator, modifier: Modifier
         }
 
         UIspinner.Spinner(
-            CH = str,
+            CH = ch,
             Mod = "MORPH$slot",
             modifier = Modifier
                 .padding(start = 4.dp, end = 4.dp)

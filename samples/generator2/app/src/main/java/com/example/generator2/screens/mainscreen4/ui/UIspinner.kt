@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import com.example.generator2.features.generator.Generator
+import com.example.generator2.features.generator.GeneratorCH
 import com.example.generator2.model.itemList
 
 object UIspinner {
@@ -35,7 +36,7 @@ object UIspinner {
     @SuppressLint("ModifierParameter", "StateFlowValueCalledInComposition")
     @Composable
     fun Spinner(
-        CH: String,
+        CH: GeneratorCH,
         Mod: String,
         transparent: Boolean = false,
         modifier: Modifier = Modifier,
@@ -59,7 +60,7 @@ object UIspinner {
         //Текущий текст
         var currentValue = "---"
 
-        if (CH == "CH0") {
+        if (CH == GeneratorCH.CHL) {
             when (Mod) {
                 "CR" -> currentValue = gen.liveData.chL_Carrier_Filename.value
                 "AM" -> currentValue = gen.liveData.chL_AM_Filename.value
@@ -154,7 +155,7 @@ object UIspinner {
                             onClick = {
                                 currentValue = it.name
                                 expanded.value = false
-                                if (CH == "CH0") {
+                                if (CH == GeneratorCH.CHL) {
                                     when (Mod) {
                                         "CR" -> gen.liveData.chL_Carrier_Filename.value =
                                             currentValue

@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.example.generator2.features.generator.FM_FREQ_MIN
 import com.example.generator2.common.haptic.Haptic
 import com.example.generator2.features.generator.Generator
+import com.example.generator2.features.generator.GeneratorCH
 import com.example.generator2.model.LiveConstrain
 import com.example.generator2.screens.mainscreen4.atom.VolumeControl
 import com.example.generator2.screens.mainscreen4.modifierInfinitySlider
@@ -55,12 +56,12 @@ import kotlinx.coroutines.flow.update
 
 
 @Composable
-fun CardFM(str: String = "CH0", gen: Generator) {
+fun CardFM(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
 
     val fmEN: State<Boolean?> =
-        if (str == "CH0") gen.liveData.chL_FM_EN.collectAsState() else gen.liveData.chR_FM_EN.collectAsState()
+        if (ch == GeneratorCH.CHL) gen.liveData.chL_FM_EN.collectAsState() else gen.liveData.chR_FM_EN.collectAsState()
     val fmFr: State<Float?> =
-        if (str == "CH0") gen.liveData.chL_FM_Fr.collectAsState() else gen.liveData.chR_FM_Fr.collectAsState()
+        if (ch == GeneratorCH.CHL) gen.liveData.chL_FM_Fr.collectAsState() else gen.liveData.chR_FM_Fr.collectAsState()
 
     Column()
     {
@@ -94,7 +95,7 @@ fun CardFM(str: String = "CH0", gen: Generator) {
                         color = if (fmEN.value!!) Color(0xFF01AE0F) else colorDarkBackground
                     )
                     .noRippleClickable(onClick = {
-                        if (str == "CH0") gen.liveData.chL_FM_EN.value =
+                        if (ch == GeneratorCH.CHL) gen.liveData.chL_FM_EN.value =
                             !gen.liveData.chL_FM_EN.value
                         else gen.liveData.chR_FM_EN.value = !gen.liveData.chR_FM_EN.value
 
@@ -136,7 +137,7 @@ fun CardFM(str: String = "CH0", gen: Generator) {
                     sensing = if (fmFr.value!! < 10.0F) LiveConstrain.sensetingSliderAmFm.floatValue else LiveConstrain.sensetingSliderAmFm.floatValue * 10f,
                     range = 0.1f..200f,
                     onValueChange = {
-                        if (str == "CH0") gen.liveData.chL_FM_Fr.value =
+                        if (ch == GeneratorCH.CHL) gen.liveData.chL_FM_Fr.value =
                             it else gen.liveData.chR_FM_Fr.value = it
                     },
                     fontSize = textStyleEditFontSize,
@@ -162,7 +163,7 @@ fun CardFM(str: String = "CH0", gen: Generator) {
                             selectedIndex = index
                             expanded = false
 
-                            if (str == "CH0") {
+                            if (ch == GeneratorCH.CHL) {
                                 gen.liveData.chL_FM_Fr.value = s.toFloat()
                             } else {
                                 gen.liveData.chR_FM_Fr.value = s.toFloat()
@@ -178,7 +179,7 @@ fun CardFM(str: String = "CH0", gen: Generator) {
             //////////////////////////////////////////////////////////////////////////////////////////////////////
 
             UIspinner.Spinner(
-                str,
+                ch,
                 "FM",
                 modifier = Modifier
                     .padding(start = 8.dp, end = 8.dp)
@@ -186,7 +187,7 @@ fun CardFM(str: String = "CH0", gen: Generator) {
                     .clip(shape = RoundedCornerShape(4.dp))
                     .background(Color.Black),
 
-                filename = if (str == "CH0") gen.liveData.chL_FM_Filename.collectAsState()
+                filename = if (ch == GeneratorCH.CHL) gen.liveData.chL_FM_Filename.collectAsState()
                 else gen.liveData.chR_FM_Filename.collectAsState(), gen = gen
             )
 
@@ -201,28 +202,28 @@ fun CardFM(str: String = "CH0", gen: Generator) {
                 .height(1.dp)
                 .fillMaxWidth()
         )
-        SecondLine(str, gen = gen)
+        SecondLine(ch, gen = gen)
 
     }
 }
 
 @Composable
-private fun SecondLine(str: String = "CH0", gen: Generator) {
+private fun SecondLine(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
 
-    val fmSelectMode: State<Int?> = if (str == "CH0") {
-        gen.liveData.parameterInt0.collectAsState() //CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс
+    val fmSelectMode: State<Int?> = if (ch == GeneratorCH.CHL) {
+        gen.liveData.parameterInt0.collectAsState() //CHL режим выбора частот FM модуляции 0-обычный 1-минимум макс
     } else {
-        gen.liveData.parameterInt1.collectAsState() //CH2 режим выбора частот FM модуляции 0-обычный 1-минимум макс
+        gen.liveData.parameterInt1.collectAsState() //CHR режим выбора частот FM модуляции 0-обычный 1-минимум макс
     }
 
     Row {
 
-        Volume(str, gen = gen)
+        Volume(ch, gen = gen)
 
         //Переключение режима
 
         Button(
-            onClick = { gen.switchFmMode(if (str == "CH0") 0 else 1) },
+            onClick = { gen.switchFmMode(if (ch == GeneratorCH.CHL) 0 else 1) },
 
             modifier = Modifier
                 .padding(start = 8.dp)
@@ -235,8 +236,8 @@ private fun SecondLine(str: String = "CH0", gen: Generator) {
 
         }
 
-        if (fmSelectMode.value == 0) SecondLineMode0(str, gen = gen) else SecondLineMode1(
-            str,
+        if (fmSelectMode.value == 0) SecondLineMode0(ch, gen = gen) else SecondLineMode1(
+            ch,
             gen = gen
         )
 
@@ -244,12 +245,12 @@ private fun SecondLine(str: String = "CH0", gen: Generator) {
 }
 
 @Composable
-private fun SecondLineMode1(str: String, gen: Generator) {
+private fun SecondLineMode1(ch: GeneratorCH, gen: Generator) {
 
     val fmMin: State<Float> =
-        if (str == "CH0") gen.liveData.chLFmMin.collectAsState() else gen.liveData.chRFmMin.collectAsState()
+        if (ch == GeneratorCH.CHL) gen.liveData.chLFmMin.collectAsState() else gen.liveData.chRFmMin.collectAsState()
     val fmMax: State<Float> =
-        if (str == "CH0") gen.liveData.chLFmMax.collectAsState() else gen.liveData.chRFmMax.collectAsState()
+        if (ch == GeneratorCH.CHL) gen.liveData.chLFmMax.collectAsState() else gen.liveData.chRFmMax.collectAsState()
 
     Row(
         Modifier
@@ -273,12 +274,12 @@ private fun SecondLineMode1(str: String, gen: Generator) {
             value = fmMin.value,
             onChange = {
                 if (it <= fmMax.value) {
-                    if (str == "CH0")
+                    if (ch == GeneratorCH.CHL)
                         gen.liveData.chLFmMin.value = it
                     else
                         gen.liveData.chRFmMin.value = it
                 } else {
-                    if (str == "CH0")
+                    if (ch == GeneratorCH.CHL)
                         gen.liveData.chLFmMin.value = fmMax.value
                     else
                         gen.liveData.chRFmMin.value = fmMax.value
@@ -309,7 +310,7 @@ private fun SecondLineMode1(str: String, gen: Generator) {
             value = fmMax.value,
             onChange = {
                 if (it >= fmMin.value)
-                    if (str == "CH0") gen.liveData.chLFmMax.value =
+                    if (ch == GeneratorCH.CHL) gen.liveData.chLFmMax.value =
                         it else gen.liveData.chRFmMax.value = it
             },
             range = 50f..10000f
@@ -320,15 +321,15 @@ private fun SecondLineMode1(str: String, gen: Generator) {
 }
 
 @Composable
-private fun SecondLineMode0(str: String, gen: Generator) {
+private fun SecondLineMode0(ch: GeneratorCH, gen: Generator) {
 
-    val carrierFr: State<Float?> = if (str == "CH0") {
+    val carrierFr: State<Float?> = if (ch == GeneratorCH.CHL) {
         gen.liveData.chL_Carrier_Fr.collectAsState()
     } else {
         gen.liveData.chR_Carrier_Fr.collectAsState()
     }
 
-    val fmDev: State<Float?> = if (str == "CH0") {
+    val fmDev: State<Float?> = if (ch == GeneratorCH.CHL) {
         gen.liveData.chL_FM_Dev.collectAsState()
     } else {
         gen.liveData.chR_FM_Dev.collectAsState()
@@ -341,7 +342,7 @@ private fun SecondLineMode0(str: String, gen: Generator) {
     //Увеличение девиации выше предела игнорируем, уменьшение разрешено всегда
     val onDevChange: (Float) -> Unit = { newDev ->
         if (newDev <= devLimit || newDev < fmDev.value!!) {
-            if (str == "CH0") gen.liveData.chL_FM_Dev.value = newDev
+            if (ch == GeneratorCH.CHL) gen.liveData.chL_FM_Dev.value = newDev
             else gen.liveData.chR_FM_Dev.value = newDev
         }
     }
@@ -392,10 +393,10 @@ private fun SecondLineMode0(str: String, gen: Generator) {
 }
 
 @Composable
-private fun Volume(str: String = "CH0", gen: Generator) {
+private fun Volume(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
     VolumeControl(
 
-        value = if (str == "CH0")
+        value = if (ch == GeneratorCH.CHL)
             gen.liveData.currentVolume0.collectAsState().value
         else
             gen.liveData.currentVolume1.collectAsState().value,
@@ -404,7 +405,7 @@ private fun Volume(str: String = "CH0", gen: Generator) {
 
             println("onValueChange $it1")
 
-            if (str == "CH0") {
+            if (ch == GeneratorCH.CHL) {
                 gen.liveData.currentVolume0.update { it1 }
                 gen.liveData.volume0.update { it1 * gen.liveData.maxVolume0.value }
             } else {

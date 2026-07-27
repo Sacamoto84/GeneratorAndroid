@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.generator2.common.haptic.Haptic
 import com.example.generator2.features.generator.Generator
+import com.example.generator2.features.generator.GeneratorCH
 import com.example.generator2.model.LiveConstrain
 import com.example.generator2.screens.mainscreen4.modifierInfinitySlider
 import com.example.generator2.screens.mainscreen4.ms4SwitchWidth
@@ -33,9 +34,9 @@ import com.example.generator2.screens.common.modifier.noRippleClickable
 
 
 @Composable
-fun CardAM(str: String = "CH0", gen: Generator) {
+fun CardAM(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
 
-    val amEN: State<Boolean?> = if (str == "CH0") {
+    val amEN: State<Boolean?> = if (ch == GeneratorCH.CHL) {
         gen.liveData.chL_AM_EN.collectAsState()
     } else {
         gen.liveData.chR_AM_EN.collectAsState()
@@ -54,7 +55,7 @@ fun CardAM(str: String = "CH0", gen: Generator) {
             Modifier.padding(top = 0.dp), verticalAlignment = Alignment.CenterVertically
         ) {
 
-            val amFr: State<Float?> = if (str == "CH0") {
+            val amFr: State<Float?> = if (ch == GeneratorCH.CHL) {
                 gen.liveData.chL_AM_Fr.collectAsState()
             } else {
                 gen.liveData.chR_AM_Fr.collectAsState()
@@ -77,7 +78,7 @@ fun CardAM(str: String = "CH0", gen: Generator) {
                         color = if (amEN.value!!) Color(0xFF01AE0F) else colorDarkBackground
                     )
                     .noRippleClickable(onClick = {
-                        if (str == "CH0") gen.liveData.chL_AM_EN.value =
+                        if (ch == GeneratorCH.CHL) gen.liveData.chL_AM_EN.value =
                             !gen.liveData.chL_AM_EN.value
                         else gen.liveData.chR_AM_EN.value = !gen.liveData.chR_AM_EN.value
 
@@ -106,14 +107,14 @@ fun CardAM(str: String = "CH0", gen: Generator) {
                 items = listOf("0.1", "1.0", "5.5", "10.0", "40.0", "100.0"),
                 value = amFr.value!!,
                 onChange = {
-                    if (str == "CH0") gen.liveData.chL_AM_Fr.value =
+                    if (ch == GeneratorCH.CHL) gen.liveData.chL_AM_Fr.value =
                         it else gen.liveData.chR_AM_Fr.value = it
                 },
                 sensing = sensing,
                 range = 0.1f..200f,
             )
 
-            val amDepth: State<Float?> = if (str == "CH0") {
+            val amDepth: State<Float?> = if (ch == GeneratorCH.CHL) {
                 gen.liveData.chLAmDepth.collectAsState()
             } else {
                 gen.liveData.chRAmDepth.collectAsState()
@@ -124,7 +125,7 @@ fun CardAM(str: String = "CH0", gen: Generator) {
                 sensing = 0.001f,
                 range = 0f..1f,
                 onValueChange = {
-                    if (str == "CH0") gen.liveData.chLAmDepth.value =
+                    if (ch == GeneratorCH.CHL) gen.liveData.chLAmDepth.value =
                         it else gen.liveData.chRAmDepth.value = it
                 },
                 modifier = modifierInfinitySlider,
@@ -136,13 +137,13 @@ fun CardAM(str: String = "CH0", gen: Generator) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
             UIspinner.Spinner(
-                str,
+                ch,
                 "AM",
                 modifier = Modifier
                     .padding(top = 0.dp, start = 8.dp, end = 8.dp)
                     .wrapContentWidth()
                     .clip(shape = RoundedCornerShape(4.dp)),
-                filename = if (str == "CH0") gen.liveData.chL_AM_Filename.collectAsState()
+                filename = if (ch == GeneratorCH.CHL) gen.liveData.chL_AM_Filename.collectAsState()
                 else gen.liveData.chL_AM_Filename.collectAsState(), gen = gen
 
             )

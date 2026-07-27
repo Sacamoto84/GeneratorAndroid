@@ -12,20 +12,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.generator2.features.generator.Generator
+import com.example.generator2.features.generator.GeneratorCH
 import com.example.generator2.theme.colorLightBackground
 
 @Composable
-fun CardCard(str: String = "CH0", gen: Generator) {
+fun CardCard(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
     Box(modifier = Modifier
         .fillMaxWidth()
         .background(colorLightBackground))
     {
         Column {
-            CardCarrier(str, gen = gen)
-            CardMorph(str, gen = gen)
-            CardAM(str, gen = gen)
-            CardFM(str, gen = gen)
-            CardMaster(str, gen = gen)
+            CardCarrier(ch, gen = gen)
+            CardMorph(ch, gen = gen)
+            CardAM(ch, gen = gen)
+            CardFM(ch, gen = gen)
+            CardMaster(ch, gen = gen)
         }
     }
 }

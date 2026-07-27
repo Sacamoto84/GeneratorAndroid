@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.generator2.common.haptic.Haptic
 import com.example.generator2.features.generator.Generator
+import com.example.generator2.features.generator.GeneratorCH
 import com.example.generator2.model.LiveConstrain
 import com.example.generator2.screens.mainscreen4.modifierInfinitySlider
 import com.example.generator2.screens.mainscreen4.ms4SwitchWidth
@@ -35,35 +36,35 @@ import com.example.generator2.screens.common.modifier.noRippleClickable
 
 
 @Composable
-fun CardCarrier(str: String = "CH0", gen: Generator) {
+fun CardCarrier(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
 
     val chEN: State<Boolean> =
-        if (str == "CH0") gen.liveData.chL_EN.collectAsState() else gen.liveData.chR_EN.collectAsState()
+        if (ch == GeneratorCH.CHL) gen.liveData.chL_EN.collectAsState() else gen.liveData.chR_EN.collectAsState()
 
     val carrierFr: State<Float> =
-        if (str == "CH0") gen.liveData.chL_Carrier_Fr.collectAsState() else gen.liveData.chR_Carrier_Fr.collectAsState()
+        if (ch == GeneratorCH.CHL) gen.liveData.chL_Carrier_Fr.collectAsState() else gen.liveData.chR_Carrier_Fr.collectAsState()
 
-    val fmSelectMode: State<Int?> = if (str == "CH0")
+    val fmSelectMode: State<Int?> = if (ch == GeneratorCH.CHL)
         gen.liveData.parameterInt0.collectAsState() //CHL режим выбора частот FM модуляции 0-обычный 1-минимум макс
     else
         gen.liveData.parameterInt1.collectAsState() //CHR режим выбора частот FM модуляции 0-обычный 1-минимум макс
 
     val fmEN: State<Boolean> =
-        if (str == "CH0") gen.liveData.chL_FM_EN.collectAsState() else gen.liveData.chR_FM_EN.collectAsState()
+        if (ch == GeneratorCH.CHL) gen.liveData.chL_FM_EN.collectAsState() else gen.liveData.chR_FM_EN.collectAsState()
 
     //Несущая заблокирована только когда FM включена в режиме минимум/максимум
     val carrierEnable = fmSelectMode.value == 0 || !fmEN.value
 
     //Форму несущей задаёт метаморфоза, пока она включена
     val morphEN: State<Boolean> =
-        if (str == "CH0") gen.liveData.chL_Morph_EN.collectAsState()
+        if (ch == GeneratorCH.CHL) gen.liveData.chL_Morph_EN.collectAsState()
         else gen.liveData.chR_Morph_EN.collectAsState()
 
     Column {
 
         Box(
             modifier = Modifier
-                .background(if (str == "CH0") colorGreen else colorOrange)
+                .background(if (ch == GeneratorCH.CHL) colorGreen else colorOrange)
                 .height(8.dp)
                 .fillMaxWidth(), contentAlignment = Alignment.Center
         ) {}
@@ -89,7 +90,7 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
                         color = if (chEN.value) Color(0xFF4DD0E1) else colorDarkBackground
                     )
                     .noRippleClickable(onClick = {
-                        if (str == "CH0") gen.liveData.chL_EN.value = !gen.liveData.chL_EN.value
+                        if (ch == GeneratorCH.CHL) gen.liveData.chL_EN.value = !gen.liveData.chL_EN.value
                         else gen.liveData.chR_EN.value = !gen.liveData.chR_EN.value
 
                         Haptic.confirm()
@@ -134,7 +135,7 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
                 onChange = {
 
                     if (carrierEnable)
-                        if (str == "CH0") gen.liveData.chL_Carrier_Fr.value =
+                        if (ch == GeneratorCH.CHL) gen.liveData.chL_Carrier_Fr.value =
                             it else gen.liveData.chR_Carrier_Fr.value = it
                 },
                 range = 50f..10000f
@@ -147,7 +148,7 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
                 sensing = LiveConstrain.sensetingSliderCr.floatValue / 4,
                 range = 50f..100000f,
                 onValueChange = {
-                    if (carrierEnable) if (str == "CH0") gen.liveData.chL_Carrier_Fr.value =
+                    if (carrierEnable) if (ch == GeneratorCH.CHL) gen.liveData.chL_Carrier_Fr.value =
                         it else gen.liveData.chR_Carrier_Fr.value = it
                 },
                 modifier = modifierInfinitySlider,
@@ -157,13 +158,13 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
             )
 
             UIspinner.Spinner(
-                CH = str,
+                CH = ch,
                 Mod = "CR",
                 modifier = Modifier
                     .padding(start = 8.dp, end = 8.dp)
                     .wrapContentWidth()
                     .clip(shape = RoundedCornerShape(4.dp)),
-                filename = if (str == "CH0") gen.liveData.chL_Carrier_Filename.collectAsState()
+                filename = if (ch == GeneratorCH.CHL) gen.liveData.chL_Carrier_Filename.collectAsState()
                 else gen.liveData.chR_Carrier_Filename.collectAsState(), gen = gen,
                 enable = !morphEN.value
             )
