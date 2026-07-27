@@ -430,15 +430,27 @@ JNIEXPORT void JNICALL
 Java_com_example_generator2_Spectrogram_setSampleRate(JNIEnv *env, jobject, jint samplerate) {
     const float rate = fftSampleRate(static_cast<float>(samplerate));
 
+    // Под scaleLock, как и остальные писатели m_sampleRate: иначе гонка
+    // с Build/PreBuild воркера и аудиопути. PreBuild здесь обязателен —
+    // без него sentToFloatRingBufferFFT увидит совпавшую частоту и бины
+    // останутся построенными под старую навсегда.
+    pthread_mutex_lock(&context1.scaleLock);
+
     if (pProcessorL != nullptr){
         pProcessorL->m_sampleRate = rate;
+        if (pScaleL != nullptr)
+            pScaleL->PreBuild(pProcessorL);
     }
 
     if (pProcessorR != nullptr){
         pProcessorR->m_sampleRate = rate;
+        if (pScaleR != nullptr)
+            pScaleR->PreBuild(pProcessorR);
     }
 
     decimator.reset();
+
+    pthread_mutex_unlock(&context1.scaleLock);
 }
 
 /**
