@@ -24,6 +24,8 @@ import com.example.generator2.features.nodes.model.NodeBody
 import com.example.generator2.features.script.GenBlock
 import com.example.generator2.features.script.GenParam
 import com.example.generator2.features.script.REGISTER_COUNT
+import com.example.generator2.theme.colorChL
+import com.example.generator2.theme.colorChR
 
 @Composable
 fun ReadGenDialog(
@@ -59,7 +61,11 @@ fun ReadGenDialog(
                     //сменили блок на не-FM — BASE/DEV недоступны, откатываем на FR
                     if (block != GenBlock.FM) param = GenParam.FR
                 }
-                Picker(chLabel(ch), listOf("CHL", "CHR")) { ch = it + 1 }
+                Picker(
+                    chLabel(ch),
+                    listOf("CHL", "CHR"),
+                    color = if (ch == 1) colorChL else colorChR,
+                ) { ch = it + 1 }
                 Picker(param.name, params.map { it.name }) { param = params[it] }
             }
 

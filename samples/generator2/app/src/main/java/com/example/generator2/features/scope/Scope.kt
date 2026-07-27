@@ -63,6 +63,8 @@ import com.example.generator2.features.scope.opengl.render.GLShaderOscill
 import com.example.generator2.features.scope.opengl.render.MyGLRendererLissagu
 import com.example.generator2.features.scope.opengl.render.MyGLRendererOscill
 import com.example.generator2.theme.Generator2Theme
+import com.example.generator2.theme.colorChL
+import com.example.generator2.theme.colorChR
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
@@ -432,7 +434,7 @@ class Scope {
                 ) {
                     Text(
                         text = "L",
-                        color = if (stateIsVisibleL) Color.Yellow else colorTextDisabled,
+                        color = if (stateIsVisibleL) colorChL else colorTextDisabled,
                         fontSize = fontSize,
                         fontWeight = FontWeight.Bold
                     )
@@ -447,7 +449,7 @@ class Scope {
                 ) {
                     Text(
                         text = "R",
-                        color = if (stateIsVisibleR) Color.Magenta else colorTextDisabled,
+                        color = if (stateIsVisibleR) colorChR else colorTextDisabled,
                         fontSize = fontSize,
                         fontWeight = FontWeight.Bold
                     )
@@ -649,7 +651,7 @@ class Scope {
             ) {
                 Text(
                     text = "L",
-                    color = if (oscillSync.value == OSCILLSYNC.L) colorTextEnabled else colorTextDisabled
+                    color = if (oscillSync.value == OSCILLSYNC.L) colorChL else colorTextDisabled
                 )
             }
 
@@ -663,7 +665,7 @@ class Scope {
             ) {
                 Text(
                     text = "R",
-                    color = if (oscillSync.value == OSCILLSYNC.R) colorTextEnabled else colorTextDisabled
+                    color = if (oscillSync.value == OSCILLSYNC.R) colorChR else colorTextDisabled
                 )
             }
 

@@ -79,12 +79,17 @@ internal fun chLabel(ch: Int) = if (ch == 1) "CHL" else "CHR"
 
 /** Список коротких вариантов; наружу отдаёт индекс выбранного */
 @Composable
-internal fun Picker(current: String, options: List<String>, onPick: (Int) -> Unit) {
+internal fun Picker(
+    current: String,
+    options: List<String>,
+    color: Color = Color.White,
+    onPick: (Int) -> Unit,
+) {
     var open by remember { mutableStateOf(false) }
 
     Text(
         "$current ▾",
-        color = Color.White,
+        color = color,
         fontSize = 14.sp,
         modifier = Modifier
             .background(Color(0xFF3D3D3F), RoundedCornerShape(5.dp))

@@ -17,8 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.generator2.common.haptic.Haptic
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.generator.GeneratorCH
@@ -30,9 +32,9 @@ import com.example.generator2.screens.mainscreen4.textStyleButtonOnOff
 import com.example.generator2.screens.mainscreen4.ui.InfinitySlider
 import com.example.generator2.screens.mainscreen4.ui.MainscreenTextBoxAndDropdownMenu
 import com.example.generator2.screens.mainscreen4.ui.UIspinner
+import com.example.generator2.theme.colorChL
+import com.example.generator2.theme.colorChR
 import com.example.generator2.theme.colorDarkBackground
-import com.example.generator2.theme.colorGreen
-import com.example.generator2.theme.colorOrange
 import com.example.generator2.screens.common.modifier.noRippleClickable
 
 
@@ -65,10 +67,17 @@ fun CardCarrier(ch: GeneratorCH, gen: Generator) {
 
         Box(
             modifier = Modifier
-                .background(if (ch == GeneratorCH.CHL) colorGreen else colorOrange)
-                .height(8.dp)
+                .background(if (ch == GeneratorCH.CHL) colorChL else colorChR)
+                .height(16.dp)
                 .fillMaxWidth(), contentAlignment = Alignment.Center
-        ) {}
+        ) {
+            Text(
+                text = if (ch == GeneratorCH.CHL) "CHL" else "CHR",
+                color = Color.Black,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
 
 
         Row(
