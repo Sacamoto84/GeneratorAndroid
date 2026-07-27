@@ -88,6 +88,26 @@ fun presetsSaveFile(name: String, path: String, gen: Generator): String {
     satchel["ch2_Master_TOn"] = gen.liveData.ch2_Master_TOn.value
     satchel["ch2_Master_TOff"] = gen.liveData.ch2_Master_TOff.value
 
+    satchel["ch1_Morph_EN"] = gen.liveData.ch1_Morph_EN.value
+    satchel["ch1_Morph_Mode"] = gen.liveData.ch1_Morph_Mode.value
+    satchel["ch1_Morph_Time"] = gen.liveData.ch1_Morph_Time.value
+    satchel["ch1_Morph_Slot0_EN"] = gen.liveData.ch1_Morph_Slot0_EN.value
+    satchel["ch1_Morph_Slot1_EN"] = gen.liveData.ch1_Morph_Slot1_EN.value
+    satchel["ch1_Morph_Slot2_EN"] = gen.liveData.ch1_Morph_Slot2_EN.value
+    satchel["ch1_Morph_Slot0_Filename"] = gen.liveData.ch1_Morph_Slot0_Filename.value
+    satchel["ch1_Morph_Slot1_Filename"] = gen.liveData.ch1_Morph_Slot1_Filename.value
+    satchel["ch1_Morph_Slot2_Filename"] = gen.liveData.ch1_Morph_Slot2_Filename.value
+
+    satchel["ch2_Morph_EN"] = gen.liveData.ch2_Morph_EN.value
+    satchel["ch2_Morph_Mode"] = gen.liveData.ch2_Morph_Mode.value
+    satchel["ch2_Morph_Time"] = gen.liveData.ch2_Morph_Time.value
+    satchel["ch2_Morph_Slot0_EN"] = gen.liveData.ch2_Morph_Slot0_EN.value
+    satchel["ch2_Morph_Slot1_EN"] = gen.liveData.ch2_Morph_Slot1_EN.value
+    satchel["ch2_Morph_Slot2_EN"] = gen.liveData.ch2_Morph_Slot2_EN.value
+    satchel["ch2_Morph_Slot0_Filename"] = gen.liveData.ch2_Morph_Slot0_Filename.value
+    satchel["ch2_Morph_Slot1_Filename"] = gen.liveData.ch2_Morph_Slot1_Filename.value
+    satchel["ch2_Morph_Slot2_Filename"] = gen.liveData.ch2_Morph_Slot2_Filename.value
+
     satchel["ch1FmMin"] = gen.liveData.ch1FmMin.value
     satchel["ch1FmMax"] = gen.liveData.ch1FmMax.value
     satchel["ch2FmMin"] = gen.liveData.ch2FmMin.value

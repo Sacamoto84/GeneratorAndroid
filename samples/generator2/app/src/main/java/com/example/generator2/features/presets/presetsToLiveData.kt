@@ -65,6 +65,26 @@ fun presetsToLiveData(data: DataLiveData, gen: Generator) {
     gen.liveData.ch2_Master_TOn.value = data.ch2_Master_TOn.value
     gen.liveData.ch2_Master_TOff.value = data.ch2_Master_TOff.value
 
+    gen.liveData.ch1_Morph_EN.value = data.ch1_Morph_EN.value
+    gen.liveData.ch1_Morph_Mode.value = data.ch1_Morph_Mode.value
+    gen.liveData.ch1_Morph_Time.value = data.ch1_Morph_Time.value
+    gen.liveData.ch1_Morph_Slot0_EN.value = data.ch1_Morph_Slot0_EN.value
+    gen.liveData.ch1_Morph_Slot1_EN.value = data.ch1_Morph_Slot1_EN.value
+    gen.liveData.ch1_Morph_Slot2_EN.value = data.ch1_Morph_Slot2_EN.value
+    gen.liveData.ch1_Morph_Slot0_Filename.value = data.ch1_Morph_Slot0_Filename.value
+    gen.liveData.ch1_Morph_Slot1_Filename.value = data.ch1_Morph_Slot1_Filename.value
+    gen.liveData.ch1_Morph_Slot2_Filename.value = data.ch1_Morph_Slot2_Filename.value
+
+    gen.liveData.ch2_Morph_EN.value = data.ch2_Morph_EN.value
+    gen.liveData.ch2_Morph_Mode.value = data.ch2_Morph_Mode.value
+    gen.liveData.ch2_Morph_Time.value = data.ch2_Morph_Time.value
+    gen.liveData.ch2_Morph_Slot0_EN.value = data.ch2_Morph_Slot0_EN.value
+    gen.liveData.ch2_Morph_Slot1_EN.value = data.ch2_Morph_Slot1_EN.value
+    gen.liveData.ch2_Morph_Slot2_EN.value = data.ch2_Morph_Slot2_EN.value
+    gen.liveData.ch2_Morph_Slot0_Filename.value = data.ch2_Morph_Slot0_Filename.value
+    gen.liveData.ch2_Morph_Slot1_Filename.value = data.ch2_Morph_Slot1_Filename.value
+    gen.liveData.ch2_Morph_Slot2_Filename.value = data.ch2_Morph_Slot2_Filename.value
+
     //Количество звезд
     gen.liveData.star.value = data.star.value
 
