@@ -4,6 +4,7 @@ import CardAM
 import CardCarrier
 import CardFM
 import CardMaster
+import CardMorph
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ fun CardCard(str: String = "CH0", gen: Generator) {
     {
         Column {
             CardCarrier(str, gen = gen)
+            CardMorph(str, gen = gen)
             CardAM(str, gen = gen)
             CardFM(str, gen = gen)
             CardMaster(str, gen = gen)

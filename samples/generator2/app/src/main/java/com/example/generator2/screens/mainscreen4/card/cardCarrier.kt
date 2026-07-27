@@ -54,6 +54,11 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
     //Несущая заблокирована только когда FM включена в режиме минимум/максимум
     val carrierEnable = fmSelectMode.value == 0 || !fmEN.value
 
+    //Форму несущей задаёт метаморфоза, пока она включена
+    val morphEN: State<Boolean> =
+        if (str == "CH0") gen.liveData.ch1_Morph_EN.collectAsState()
+        else gen.liveData.ch2_Morph_EN.collectAsState()
+
     Column {
 
         Box(
@@ -159,7 +164,8 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
                     .wrapContentWidth()
                     .clip(shape = RoundedCornerShape(4.dp)),
                 filename = if (str == "CH0") gen.liveData.ch1_Carrier_Filename.collectAsState()
-                else gen.liveData.ch2_Carrier_Filename.collectAsState(), gen = gen
+                else gen.liveData.ch2_Carrier_Filename.collectAsState(), gen = gen,
+                enable = !morphEN.value
             )
 
         }
