@@ -42,7 +42,8 @@ class MyGLRendererLissagu: GLSurfaceView.Renderer {
 
     private var vertexBuffer: FloatBuffer
 
-    val bools = intArrayOf(0, 1, 1) //oneTwo 0-one 1-two, L 1-true, R
+    //Мёртвое поле: сюда никто не пишет (Scope управляет только bools осциллографа).
+    val bools = intArrayOf(0, 1, 1)
 
     /**
      * Сколько отсчётов показывает фигура.
