@@ -61,23 +61,23 @@ object UIspinner {
 
         if (CH == "CH0") {
             when (Mod) {
-                "CR" -> currentValue = gen.liveData.ch1_Carrier_Filename.value
-                "AM" -> currentValue = gen.liveData.ch1_AM_Filename.value
-                "FM" -> currentValue = gen.liveData.ch1_FM_Filename.value
-                "MASTER" -> currentValue = gen.liveData.ch1_Master_Filename.value
-                "MORPH0" -> currentValue = gen.liveData.ch1_Morph_Slot0_Filename.value
-                "MORPH1" -> currentValue = gen.liveData.ch1_Morph_Slot1_Filename.value
-                "MORPH2" -> currentValue = gen.liveData.ch1_Morph_Slot2_Filename.value
+                "CR" -> currentValue = gen.liveData.chL_Carrier_Filename.value
+                "AM" -> currentValue = gen.liveData.chL_AM_Filename.value
+                "FM" -> currentValue = gen.liveData.chL_FM_Filename.value
+                "MASTER" -> currentValue = gen.liveData.chL_Master_Filename.value
+                "MORPH0" -> currentValue = gen.liveData.chL_Morph_Slot0_Filename.value
+                "MORPH1" -> currentValue = gen.liveData.chL_Morph_Slot1_Filename.value
+                "MORPH2" -> currentValue = gen.liveData.chL_Morph_Slot2_Filename.value
             }
         } else {
             when (Mod) {
-                "CR" -> currentValue = gen.liveData.ch2_Carrier_Filename.value
-                "AM" -> currentValue = gen.liveData.ch2_AM_Filename.value
-                "FM" -> currentValue = gen.liveData.ch2_FM_Filename.value
-                "MASTER" -> currentValue = gen.liveData.ch2_Master_Filename.value
-                "MORPH0" -> currentValue = gen.liveData.ch2_Morph_Slot0_Filename.value
-                "MORPH1" -> currentValue = gen.liveData.ch2_Morph_Slot1_Filename.value
-                "MORPH2" -> currentValue = gen.liveData.ch2_Morph_Slot2_Filename.value
+                "CR" -> currentValue = gen.liveData.chR_Carrier_Filename.value
+                "AM" -> currentValue = gen.liveData.chR_AM_Filename.value
+                "FM" -> currentValue = gen.liveData.chR_FM_Filename.value
+                "MASTER" -> currentValue = gen.liveData.chR_Master_Filename.value
+                "MORPH0" -> currentValue = gen.liveData.chR_Morph_Slot0_Filename.value
+                "MORPH1" -> currentValue = gen.liveData.chR_Morph_Slot1_Filename.value
+                "MORPH2" -> currentValue = gen.liveData.chR_Morph_Slot2_Filename.value
             }
         }
 
@@ -156,27 +156,27 @@ object UIspinner {
                                 expanded.value = false
                                 if (CH == "CH0") {
                                     when (Mod) {
-                                        "CR" -> gen.liveData.ch1_Carrier_Filename.value =
+                                        "CR" -> gen.liveData.chL_Carrier_Filename.value =
                                             currentValue
 
-                                        "AM" -> gen.liveData.ch1_AM_Filename.value = currentValue
-                                        "FM" -> gen.liveData.ch1_FM_Filename.value = currentValue
-                                        "MASTER" -> gen.liveData.ch1_Master_Filename.value = currentValue
-                                        "MORPH0" -> gen.liveData.ch1_Morph_Slot0_Filename.value = currentValue
-                                        "MORPH1" -> gen.liveData.ch1_Morph_Slot1_Filename.value = currentValue
-                                        "MORPH2" -> gen.liveData.ch1_Morph_Slot2_Filename.value = currentValue
+                                        "AM" -> gen.liveData.chL_AM_Filename.value = currentValue
+                                        "FM" -> gen.liveData.chL_FM_Filename.value = currentValue
+                                        "MASTER" -> gen.liveData.chL_Master_Filename.value = currentValue
+                                        "MORPH0" -> gen.liveData.chL_Morph_Slot0_Filename.value = currentValue
+                                        "MORPH1" -> gen.liveData.chL_Morph_Slot1_Filename.value = currentValue
+                                        "MORPH2" -> gen.liveData.chL_Morph_Slot2_Filename.value = currentValue
                                     }
                                 } else {
                                     when (Mod) {
-                                        "CR" -> gen.liveData.ch2_Carrier_Filename.value =
+                                        "CR" -> gen.liveData.chR_Carrier_Filename.value =
                                             currentValue
 
-                                        "AM" -> gen.liveData.ch2_AM_Filename.value = currentValue
-                                        "FM" -> gen.liveData.ch2_FM_Filename.value = currentValue
-                                        "MASTER" -> gen.liveData.ch2_Master_Filename.value = currentValue
-                                        "MORPH0" -> gen.liveData.ch2_Morph_Slot0_Filename.value = currentValue
-                                        "MORPH1" -> gen.liveData.ch2_Morph_Slot1_Filename.value = currentValue
-                                        "MORPH2" -> gen.liveData.ch2_Morph_Slot2_Filename.value = currentValue
+                                        "AM" -> gen.liveData.chR_AM_Filename.value = currentValue
+                                        "FM" -> gen.liveData.chR_FM_Filename.value = currentValue
+                                        "MASTER" -> gen.liveData.chR_Master_Filename.value = currentValue
+                                        "MORPH0" -> gen.liveData.chR_Morph_Slot0_Filename.value = currentValue
+                                        "MORPH1" -> gen.liveData.chR_Morph_Slot1_Filename.value = currentValue
+                                        "MORPH2" -> gen.liveData.chR_Morph_Slot2_Filename.value = currentValue
                                     }
                                 }
 

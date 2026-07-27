@@ -3,31 +3,34 @@ package com.example.generator2.features.presets
 import com.example.generator2.features.generator.DataLiveData
 import com.example.generator2.features.generator.Generator
 
+//ВНИМАНИЕ: строковые ключи "ch1_*"/"ch2_*" — легаси-формат файлов пресетов.
+//НЕ переименовывать в chL_/chR_: сломаются пресеты пользователей.
+
 fun presetsToLiveData(data: DataLiveData, gen: Generator) {
 
     gen.liveData.presetsName.value = data.presetsName.value
 
-    gen.liveData.ch1_EN.value = data.ch1_EN.value
-    gen.liveData.ch1_Carrier_Filename.value = data.ch1_Carrier_Filename.value
-    gen.liveData.ch1_Carrier_Fr.value = data.ch1_Carrier_Fr.value
-    gen.liveData.ch1_AM_EN.value = data.ch1_AM_EN.value
-    gen.liveData.ch1_AM_Filename.value = data.ch1_AM_Filename.value
-    gen.liveData.ch1_AM_Fr.value = data.ch1_AM_Fr.value
-    gen.liveData.ch1_FM_EN.value = data.ch1_FM_EN.value
-    gen.liveData.ch1_FM_Filename.value = data.ch1_FM_Filename.value
-    gen.liveData.ch1_FM_Dev.value = data.ch1_FM_Dev.value
-    gen.liveData.ch1_FM_Fr.value = data.ch1_FM_Fr.value
+    gen.liveData.chL_EN.value = data.chL_EN.value
+    gen.liveData.chL_Carrier_Filename.value = data.chL_Carrier_Filename.value
+    gen.liveData.chL_Carrier_Fr.value = data.chL_Carrier_Fr.value
+    gen.liveData.chL_AM_EN.value = data.chL_AM_EN.value
+    gen.liveData.chL_AM_Filename.value = data.chL_AM_Filename.value
+    gen.liveData.chL_AM_Fr.value = data.chL_AM_Fr.value
+    gen.liveData.chL_FM_EN.value = data.chL_FM_EN.value
+    gen.liveData.chL_FM_Filename.value = data.chL_FM_Filename.value
+    gen.liveData.chL_FM_Dev.value = data.chL_FM_Dev.value
+    gen.liveData.chL_FM_Fr.value = data.chL_FM_Fr.value
 
-    gen.liveData.ch2_EN.value = data.ch2_EN.value
-    gen.liveData.ch2_Carrier_Filename.value = data.ch2_Carrier_Filename.value
-    gen.liveData.ch2_Carrier_Fr.value = data.ch2_Carrier_Fr.value
-    gen.liveData.ch2_AM_EN.value = data.ch2_AM_EN.value
-    gen.liveData.ch2_AM_Filename.value = data.ch2_AM_Filename.value
-    gen.liveData.ch2_AM_Fr.value = data.ch2_AM_Fr.value
-    gen.liveData.ch2_FM_EN.value = data.ch2_FM_EN.value
-    gen.liveData.ch2_FM_Filename.value = data.ch2_FM_Filename.value
-    gen.liveData.ch2_FM_Dev.value = data.ch2_FM_Dev.value
-    gen.liveData.ch2_FM_Fr.value = data.ch2_FM_Fr.value
+    gen.liveData.chR_EN.value = data.chR_EN.value
+    gen.liveData.chR_Carrier_Filename.value = data.chR_Carrier_Filename.value
+    gen.liveData.chR_Carrier_Fr.value = data.chR_Carrier_Fr.value
+    gen.liveData.chR_AM_EN.value = data.chR_AM_EN.value
+    gen.liveData.chR_AM_Filename.value = data.chR_AM_Filename.value
+    gen.liveData.chR_AM_Fr.value = data.chR_AM_Fr.value
+    gen.liveData.chR_FM_EN.value = data.chR_FM_EN.value
+    gen.liveData.chR_FM_Filename.value = data.chR_FM_Filename.value
+    gen.liveData.chR_FM_Dev.value = data.chR_FM_Dev.value
+    gen.liveData.chR_FM_Fr.value = data.chR_FM_Fr.value
 
 
     gen.liveData.volume0.value = data.volume0.value
@@ -48,50 +51,50 @@ fun presetsToLiveData(data: DataLiveData, gen: Generator) {
     gen.liveData.currentVolume0.value = data.currentVolume0.value
     gen.liveData.currentVolume1.value = data.currentVolume1.value
 
-    gen.liveData.ch1AmDepth.value = data.ch1AmDepth.value
-    gen.liveData.ch2AmDepth.value = data.ch2AmDepth.value
+    gen.liveData.chLAmDepth.value = data.chLAmDepth.value
+    gen.liveData.chRAmDepth.value = data.chRAmDepth.value
 
-    gen.liveData.ch1_Master_EN.value = data.ch1_Master_EN.value
-    gen.liveData.ch1_Master_Mode.value = data.ch1_Master_Mode.value
-    gen.liveData.ch1_Master_Period.value = data.ch1_Master_Period.value
-    gen.liveData.ch1_Master_Filename.value = data.ch1_Master_Filename.value
-    gen.liveData.ch1_Master_TOn.value = data.ch1_Master_TOn.value
-    gen.liveData.ch1_Master_TOff.value = data.ch1_Master_TOff.value
+    gen.liveData.chL_Master_EN.value = data.chL_Master_EN.value
+    gen.liveData.chL_Master_Mode.value = data.chL_Master_Mode.value
+    gen.liveData.chL_Master_Period.value = data.chL_Master_Period.value
+    gen.liveData.chL_Master_Filename.value = data.chL_Master_Filename.value
+    gen.liveData.chL_Master_TOn.value = data.chL_Master_TOn.value
+    gen.liveData.chL_Master_TOff.value = data.chL_Master_TOff.value
 
-    gen.liveData.ch2_Master_EN.value = data.ch2_Master_EN.value
-    gen.liveData.ch2_Master_Mode.value = data.ch2_Master_Mode.value
-    gen.liveData.ch2_Master_Period.value = data.ch2_Master_Period.value
-    gen.liveData.ch2_Master_Filename.value = data.ch2_Master_Filename.value
-    gen.liveData.ch2_Master_TOn.value = data.ch2_Master_TOn.value
-    gen.liveData.ch2_Master_TOff.value = data.ch2_Master_TOff.value
+    gen.liveData.chR_Master_EN.value = data.chR_Master_EN.value
+    gen.liveData.chR_Master_Mode.value = data.chR_Master_Mode.value
+    gen.liveData.chR_Master_Period.value = data.chR_Master_Period.value
+    gen.liveData.chR_Master_Filename.value = data.chR_Master_Filename.value
+    gen.liveData.chR_Master_TOn.value = data.chR_Master_TOn.value
+    gen.liveData.chR_Master_TOff.value = data.chR_Master_TOff.value
 
-    gen.liveData.ch1_Morph_EN.value = data.ch1_Morph_EN.value
-    gen.liveData.ch1_Morph_Mode.value = data.ch1_Morph_Mode.value
-    gen.liveData.ch1_Morph_Time.value = data.ch1_Morph_Time.value
-    gen.liveData.ch1_Morph_Slot0_EN.value = data.ch1_Morph_Slot0_EN.value
-    gen.liveData.ch1_Morph_Slot1_EN.value = data.ch1_Morph_Slot1_EN.value
-    gen.liveData.ch1_Morph_Slot2_EN.value = data.ch1_Morph_Slot2_EN.value
-    gen.liveData.ch1_Morph_Slot0_Filename.value = data.ch1_Morph_Slot0_Filename.value
-    gen.liveData.ch1_Morph_Slot1_Filename.value = data.ch1_Morph_Slot1_Filename.value
-    gen.liveData.ch1_Morph_Slot2_Filename.value = data.ch1_Morph_Slot2_Filename.value
+    gen.liveData.chL_Morph_EN.value = data.chL_Morph_EN.value
+    gen.liveData.chL_Morph_Mode.value = data.chL_Morph_Mode.value
+    gen.liveData.chL_Morph_Time.value = data.chL_Morph_Time.value
+    gen.liveData.chL_Morph_Slot0_EN.value = data.chL_Morph_Slot0_EN.value
+    gen.liveData.chL_Morph_Slot1_EN.value = data.chL_Morph_Slot1_EN.value
+    gen.liveData.chL_Morph_Slot2_EN.value = data.chL_Morph_Slot2_EN.value
+    gen.liveData.chL_Morph_Slot0_Filename.value = data.chL_Morph_Slot0_Filename.value
+    gen.liveData.chL_Morph_Slot1_Filename.value = data.chL_Morph_Slot1_Filename.value
+    gen.liveData.chL_Morph_Slot2_Filename.value = data.chL_Morph_Slot2_Filename.value
 
-    gen.liveData.ch2_Morph_EN.value = data.ch2_Morph_EN.value
-    gen.liveData.ch2_Morph_Mode.value = data.ch2_Morph_Mode.value
-    gen.liveData.ch2_Morph_Time.value = data.ch2_Morph_Time.value
-    gen.liveData.ch2_Morph_Slot0_EN.value = data.ch2_Morph_Slot0_EN.value
-    gen.liveData.ch2_Morph_Slot1_EN.value = data.ch2_Morph_Slot1_EN.value
-    gen.liveData.ch2_Morph_Slot2_EN.value = data.ch2_Morph_Slot2_EN.value
-    gen.liveData.ch2_Morph_Slot0_Filename.value = data.ch2_Morph_Slot0_Filename.value
-    gen.liveData.ch2_Morph_Slot1_Filename.value = data.ch2_Morph_Slot1_Filename.value
-    gen.liveData.ch2_Morph_Slot2_Filename.value = data.ch2_Morph_Slot2_Filename.value
+    gen.liveData.chR_Morph_EN.value = data.chR_Morph_EN.value
+    gen.liveData.chR_Morph_Mode.value = data.chR_Morph_Mode.value
+    gen.liveData.chR_Morph_Time.value = data.chR_Morph_Time.value
+    gen.liveData.chR_Morph_Slot0_EN.value = data.chR_Morph_Slot0_EN.value
+    gen.liveData.chR_Morph_Slot1_EN.value = data.chR_Morph_Slot1_EN.value
+    gen.liveData.chR_Morph_Slot2_EN.value = data.chR_Morph_Slot2_EN.value
+    gen.liveData.chR_Morph_Slot0_Filename.value = data.chR_Morph_Slot0_Filename.value
+    gen.liveData.chR_Morph_Slot1_Filename.value = data.chR_Morph_Slot1_Filename.value
+    gen.liveData.chR_Morph_Slot2_Filename.value = data.chR_Morph_Slot2_Filename.value
 
     //Количество звезд
     gen.liveData.star.value = data.star.value
 
-    gen.liveData.ch1FmMin.value = data.ch1FmMin.value
-    gen.liveData.ch1FmMax.value = data.ch1FmMax.value
-    gen.liveData.ch2FmMin.value = data.ch2FmMin.value
-    gen.liveData.ch2FmMax.value = data.ch2FmMax.value
+    gen.liveData.chLFmMin.value = data.chLFmMin.value
+    gen.liveData.chLFmMax.value = data.chLFmMax.value
+    gen.liveData.chRFmMin.value = data.chRFmMin.value
+    gen.liveData.chRFmMax.value = data.chRFmMax.value
     //gen.liveData.parameterFloat4.value =data.parameterFloat4.value
     //gen.liveData.parameterFloat5.value =data.parameterFloat5.value
     //gen.liveData.parameterFloat6.value =data.parameterFloat6.value

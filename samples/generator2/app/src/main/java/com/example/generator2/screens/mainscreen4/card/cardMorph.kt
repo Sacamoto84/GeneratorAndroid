@@ -36,9 +36,9 @@ fun CardMorph(str: String = "CH0", gen: Generator) {
 
     val isCh0 = str == "CH0"
 
-    val en by (if (isCh0) gen.liveData.ch1_Morph_EN else gen.liveData.ch2_Morph_EN).collectAsState()
-    val mode by (if (isCh0) gen.liveData.ch1_Morph_Mode else gen.liveData.ch2_Morph_Mode).collectAsState()
-    val time by (if (isCh0) gen.liveData.ch1_Morph_Time else gen.liveData.ch2_Morph_Time).collectAsState()
+    val en by (if (isCh0) gen.liveData.chL_Morph_EN else gen.liveData.chR_Morph_EN).collectAsState()
+    val mode by (if (isCh0) gen.liveData.chL_Morph_Mode else gen.liveData.chR_Morph_Mode).collectAsState()
+    val time by (if (isCh0) gen.liveData.chL_Morph_Time else gen.liveData.chR_Morph_Time).collectAsState()
 
     Column {
 
@@ -53,13 +53,13 @@ fun CardMorph(str: String = "CH0", gen: Generator) {
         Row(Modifier.padding(top = 0.dp), verticalAlignment = Alignment.CenterVertically) {
 
             MorphButton("MOR", en, Modifier.width(ms4SwitchWidth)) {
-                if (isCh0) gen.liveData.ch1_Morph_EN.value = !gen.liveData.ch1_Morph_EN.value
-                else gen.liveData.ch2_Morph_EN.value = !gen.liveData.ch2_Morph_EN.value
+                if (isCh0) gen.liveData.chL_Morph_EN.value = !gen.liveData.chL_Morph_EN.value
+                else gen.liveData.chR_Morph_EN.value = !gen.liveData.chR_Morph_EN.value
             }
 
             fun setMode(m: Int) {
-                if (isCh0) gen.liveData.ch1_Morph_Mode.value = m
-                else gen.liveData.ch2_Morph_Mode.value = m
+                if (isCh0) gen.liveData.chL_Morph_Mode.value = m
+                else gen.liveData.chR_Morph_Mode.value = m
             }
 
             MorphButton("Ступень", mode == MORPH_MODE_STEP, Modifier.weight(1f)) {
@@ -75,8 +75,8 @@ fun CardMorph(str: String = "CH0", gen: Generator) {
                 items = listOf("0.1", "0.5", "1.0", "2.0", "5.0", "10.0", "60.0"),
                 value = time,
                 onChange = {
-                    if (isCh0) gen.liveData.ch1_Morph_Time.value = it
-                    else gen.liveData.ch2_Morph_Time.value = it
+                    if (isCh0) gen.liveData.chL_Morph_Time.value = it
+                    else gen.liveData.chR_Morph_Time.value = it
                 },
                 sensing = 0.05f,
                 range = 0.1f..100f,
@@ -98,23 +98,23 @@ private fun MorphSlot(str: String, slot: Int, gen: Generator, modifier: Modifier
     val isCh0 = str == "CH0"
 
     val enFlow: MutableStateFlow<Boolean> = if (isCh0) when (slot) {
-        0 -> gen.liveData.ch1_Morph_Slot0_EN
-        1 -> gen.liveData.ch1_Morph_Slot1_EN
-        else -> gen.liveData.ch1_Morph_Slot2_EN
+        0 -> gen.liveData.chL_Morph_Slot0_EN
+        1 -> gen.liveData.chL_Morph_Slot1_EN
+        else -> gen.liveData.chL_Morph_Slot2_EN
     } else when (slot) {
-        0 -> gen.liveData.ch2_Morph_Slot0_EN
-        1 -> gen.liveData.ch2_Morph_Slot1_EN
-        else -> gen.liveData.ch2_Morph_Slot2_EN
+        0 -> gen.liveData.chR_Morph_Slot0_EN
+        1 -> gen.liveData.chR_Morph_Slot1_EN
+        else -> gen.liveData.chR_Morph_Slot2_EN
     }
 
     val nameFlow: MutableStateFlow<String> = if (isCh0) when (slot) {
-        0 -> gen.liveData.ch1_Morph_Slot0_Filename
-        1 -> gen.liveData.ch1_Morph_Slot1_Filename
-        else -> gen.liveData.ch1_Morph_Slot2_Filename
+        0 -> gen.liveData.chL_Morph_Slot0_Filename
+        1 -> gen.liveData.chL_Morph_Slot1_Filename
+        else -> gen.liveData.chL_Morph_Slot2_Filename
     } else when (slot) {
-        0 -> gen.liveData.ch2_Morph_Slot0_Filename
-        1 -> gen.liveData.ch2_Morph_Slot1_Filename
-        else -> gen.liveData.ch2_Morph_Slot2_Filename
+        0 -> gen.liveData.chR_Morph_Slot0_Filename
+        1 -> gen.liveData.chR_Morph_Slot1_Filename
+        else -> gen.liveData.chR_Morph_Slot2_Filename
     }
 
     val slotEn by enFlow.collectAsState()

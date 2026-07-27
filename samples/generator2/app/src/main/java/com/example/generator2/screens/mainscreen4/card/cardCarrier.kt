@@ -38,10 +38,10 @@ import com.example.generator2.screens.common.modifier.noRippleClickable
 fun CardCarrier(str: String = "CH0", gen: Generator) {
 
     val chEN: State<Boolean> =
-        if (str == "CH0") gen.liveData.ch1_EN.collectAsState() else gen.liveData.ch2_EN.collectAsState()
+        if (str == "CH0") gen.liveData.chL_EN.collectAsState() else gen.liveData.chR_EN.collectAsState()
 
     val carrierFr: State<Float> =
-        if (str == "CH0") gen.liveData.ch1_Carrier_Fr.collectAsState() else gen.liveData.ch2_Carrier_Fr.collectAsState()
+        if (str == "CH0") gen.liveData.chL_Carrier_Fr.collectAsState() else gen.liveData.chR_Carrier_Fr.collectAsState()
 
     val fmSelectMode: State<Int?> = if (str == "CH0")
         gen.liveData.parameterInt0.collectAsState() //CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс
@@ -49,15 +49,15 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
         gen.liveData.parameterInt1.collectAsState() //CH2 режим выбора частот FM модуляции 0-обычный 1-минимум макс
 
     val fmEN: State<Boolean> =
-        if (str == "CH0") gen.liveData.ch1_FM_EN.collectAsState() else gen.liveData.ch2_FM_EN.collectAsState()
+        if (str == "CH0") gen.liveData.chL_FM_EN.collectAsState() else gen.liveData.chR_FM_EN.collectAsState()
 
     //Несущая заблокирована только когда FM включена в режиме минимум/максимум
     val carrierEnable = fmSelectMode.value == 0 || !fmEN.value
 
     //Форму несущей задаёт метаморфоза, пока она включена
     val morphEN: State<Boolean> =
-        if (str == "CH0") gen.liveData.ch1_Morph_EN.collectAsState()
-        else gen.liveData.ch2_Morph_EN.collectAsState()
+        if (str == "CH0") gen.liveData.chL_Morph_EN.collectAsState()
+        else gen.liveData.chR_Morph_EN.collectAsState()
 
     Column {
 
@@ -89,8 +89,8 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
                         color = if (chEN.value) Color(0xFF4DD0E1) else colorDarkBackground
                     )
                     .noRippleClickable(onClick = {
-                        if (str == "CH0") gen.liveData.ch1_EN.value = !gen.liveData.ch1_EN.value
-                        else gen.liveData.ch2_EN.value = !gen.liveData.ch2_EN.value
+                        if (str == "CH0") gen.liveData.chL_EN.value = !gen.liveData.chL_EN.value
+                        else gen.liveData.chR_EN.value = !gen.liveData.chR_EN.value
 
                         Haptic.confirm()
                     }), contentAlignment = Alignment.Center
@@ -134,8 +134,8 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
                 onChange = {
 
                     if (carrierEnable)
-                        if (str == "CH0") gen.liveData.ch1_Carrier_Fr.value =
-                            it else gen.liveData.ch2_Carrier_Fr.value = it
+                        if (str == "CH0") gen.liveData.chL_Carrier_Fr.value =
+                            it else gen.liveData.chR_Carrier_Fr.value = it
                 },
                 range = 50f..10000f
             )
@@ -147,8 +147,8 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
                 sensing = LiveConstrain.sensetingSliderCr.floatValue / 4,
                 range = 50f..100000f,
                 onValueChange = {
-                    if (carrierEnable) if (str == "CH0") gen.liveData.ch1_Carrier_Fr.value =
-                        it else gen.liveData.ch2_Carrier_Fr.value = it
+                    if (carrierEnable) if (str == "CH0") gen.liveData.chL_Carrier_Fr.value =
+                        it else gen.liveData.chR_Carrier_Fr.value = it
                 },
                 modifier = modifierInfinitySlider,
                 vertical = true,
@@ -163,8 +163,8 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
                     .padding(start = 8.dp, end = 8.dp)
                     .wrapContentWidth()
                     .clip(shape = RoundedCornerShape(4.dp)),
-                filename = if (str == "CH0") gen.liveData.ch1_Carrier_Filename.collectAsState()
-                else gen.liveData.ch2_Carrier_Filename.collectAsState(), gen = gen,
+                filename = if (str == "CH0") gen.liveData.chL_Carrier_Filename.collectAsState()
+                else gen.liveData.chR_Carrier_Filename.collectAsState(), gen = gen,
                 enable = !morphEN.value
             )
 

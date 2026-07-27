@@ -27,9 +27,9 @@ import com.example.generator2.screens.common.modifier.noRippleClickable
 fun ButtonChEn(str: String = "CH0", gen: Generator) {
 
     val chEN: State<Boolean> = if (str == "CH0") {
-        gen.liveData.ch1_EN.collectAsState()
+        gen.liveData.chL_EN.collectAsState()
     } else {
-        gen.liveData.ch2_EN.collectAsState()
+        gen.liveData.chR_EN.collectAsState()
     }
 
 // Кнопка включения канала
@@ -48,9 +48,9 @@ fun ButtonChEn(str: String = "CH0", gen: Generator) {
                 color = if (chEN.value) Color(0xFF4DD0E1) else colorDarkBackground
             )
             .noRippleClickable(onClick = {
-                if (str == "CH0") gen.liveData.ch1_EN.value =
-                    !gen.liveData.ch1_EN.value
-                else gen.liveData.ch2_EN.value = !gen.liveData.ch2_EN.value
+                if (str == "CH0") gen.liveData.chL_EN.value =
+                    !gen.liveData.chL_EN.value
+                else gen.liveData.chR_EN.value = !gen.liveData.chR_EN.value
 
                 Haptic.confirm()
 

@@ -376,16 +376,16 @@ class Script(val gen: Generator) {
         val first = cmd.ch == 1
         when (cmd.block) {
             GenBlock.CR ->
-                if (first) gen.liveData.ch1_EN.update { cmd.on }
-                else gen.liveData.ch2_EN.update { cmd.on }
+                if (first) gen.liveData.chL_EN.update { cmd.on }
+                else gen.liveData.chR_EN.update { cmd.on }
 
             GenBlock.AM ->
-                if (first) gen.liveData.ch1_AM_EN.update { cmd.on }
-                else gen.liveData.ch2_AM_EN.update { cmd.on }
+                if (first) gen.liveData.chL_AM_EN.update { cmd.on }
+                else gen.liveData.chR_AM_EN.update { cmd.on }
 
             GenBlock.FM ->
-                if (first) gen.liveData.ch1_FM_EN.update { cmd.on }
-                else gen.liveData.ch2_FM_EN.update { cmd.on }
+                if (first) gen.liveData.chL_FM_EN.update { cmd.on }
+                else gen.liveData.chR_FM_EN.update { cmd.on }
         }
     }
 
@@ -394,26 +394,26 @@ class Script(val gen: Generator) {
         when (cmd.block) {
 
             GenBlock.CR ->
-                if (first) gen.liveData.ch1_Carrier_Fr.update { value }
-                else gen.liveData.ch2_Carrier_Fr.update { value }
+                if (first) gen.liveData.chL_Carrier_Fr.update { value }
+                else gen.liveData.chR_Carrier_Fr.update { value }
 
             GenBlock.AM ->
-                if (first) gen.liveData.ch1_AM_Fr.update { value }
-                else gen.liveData.ch2_AM_Fr.update { value }
+                if (first) gen.liveData.chL_AM_Fr.update { value }
+                else gen.liveData.chR_AM_Fr.update { value }
 
             GenBlock.FM -> when (cmd.param) {
                 //BASE — частота несущей, вокруг которой идёт девиация
                 GenParam.BASE ->
-                    if (first) gen.liveData.ch1_Carrier_Fr.update { value }
-                    else gen.liveData.ch2_Carrier_Fr.update { value }
+                    if (first) gen.liveData.chL_Carrier_Fr.update { value }
+                    else gen.liveData.chR_Carrier_Fr.update { value }
 
                 GenParam.DEV ->
-                    if (first) gen.liveData.ch1_FM_Dev.update { value }
-                    else gen.liveData.ch2_FM_Dev.update { value }
+                    if (first) gen.liveData.chL_FM_Dev.update { value }
+                    else gen.liveData.chR_FM_Dev.update { value }
 
                 GenParam.FR ->
-                    if (first) gen.liveData.ch1_FM_Fr.update { value }
-                    else gen.liveData.ch2_FM_Fr.update { value }
+                    if (first) gen.liveData.chL_FM_Fr.update { value }
+                    else gen.liveData.chR_FM_Fr.update { value }
             }
         }
     }
@@ -422,16 +422,16 @@ class Script(val gen: Generator) {
         val first = cmd.ch == 1
         when (cmd.block) {
             GenBlock.CR ->
-                if (first) gen.liveData.ch1_Carrier_Filename.update { cmd.name }
-                else gen.liveData.ch2_Carrier_Filename.update { cmd.name }
+                if (first) gen.liveData.chL_Carrier_Filename.update { cmd.name }
+                else gen.liveData.chR_Carrier_Filename.update { cmd.name }
 
             GenBlock.AM ->
-                if (first) gen.liveData.ch1_AM_Filename.update { cmd.name }
-                else gen.liveData.ch2_AM_Filename.update { cmd.name }
+                if (first) gen.liveData.chL_AM_Filename.update { cmd.name }
+                else gen.liveData.chR_AM_Filename.update { cmd.name }
 
             GenBlock.FM ->
-                if (first) gen.liveData.ch1_FM_Filename.update { cmd.name }
-                else gen.liveData.ch2_FM_Filename.update { cmd.name }
+                if (first) gen.liveData.chL_FM_Filename.update { cmd.name }
+                else gen.liveData.chR_FM_Filename.update { cmd.name }
         }
     }
 
@@ -440,13 +440,13 @@ class Script(val gen: Generator) {
         val first = cmd.ch == 1
         val d = gen.liveData
         return when (cmd.block) {
-            GenBlock.CR -> if (first) d.ch1_Carrier_Fr.value else d.ch2_Carrier_Fr.value
-            GenBlock.AM -> if (first) d.ch1_AM_Fr.value else d.ch2_AM_Fr.value
+            GenBlock.CR -> if (first) d.chL_Carrier_Fr.value else d.chR_Carrier_Fr.value
+            GenBlock.AM -> if (first) d.chL_AM_Fr.value else d.chR_AM_Fr.value
             GenBlock.FM -> when (cmd.param) {
                 //BASE — та же несущая, что у CR
-                GenParam.BASE -> if (first) d.ch1_Carrier_Fr.value else d.ch2_Carrier_Fr.value
-                GenParam.DEV -> if (first) d.ch1_FM_Dev.value else d.ch2_FM_Dev.value
-                GenParam.FR -> if (first) d.ch1_FM_Fr.value else d.ch2_FM_Fr.value
+                GenParam.BASE -> if (first) d.chL_Carrier_Fr.value else d.chR_Carrier_Fr.value
+                GenParam.DEV -> if (first) d.chL_FM_Dev.value else d.chR_FM_Dev.value
+                GenParam.FR -> if (first) d.chL_FM_Fr.value else d.chR_FM_Fr.value
             }
         }
     }

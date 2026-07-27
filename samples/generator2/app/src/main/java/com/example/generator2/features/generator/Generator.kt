@@ -43,7 +43,7 @@ class Generator {
 
         if (!liveData.mono.value) {
 
-            l = if (liveData.ch1_EN.value)
+            l = if (liveData.chL_EN.value)
                 RenderChannel().renderChanel(liveData, ch1, numFrames / 2, sampleRate)
             else {
                 if (numFrames / 2 != zeroBufferSize)
@@ -54,7 +54,7 @@ class Generator {
                 zeroBuffer
             }
 
-            r = if (liveData.ch2_EN.value)
+            r = if (liveData.chR_EN.value)
                 RenderChannel().renderChanel(liveData, ch2, numFrames / 2, sampleRate)
 
             else {
@@ -81,7 +81,7 @@ class Generator {
      * несущая не опускается ниже [FM_FREQ_MIN]
      */
     fun fmDevLimit(ch: Int): Float {
-        val carrierFr = if (ch == 0) liveData.ch1_Carrier_Fr.value else liveData.ch2_Carrier_Fr.value
+        val carrierFr = if (ch == 0) liveData.chL_Carrier_Fr.value else liveData.chR_Carrier_Fr.value
         return (carrierFr - FM_FREQ_MIN).coerceAtLeast(0f)
     }
 
@@ -96,13 +96,13 @@ class Generator {
         val deviation: Float
 
         if (mode == 0) {
-            center = if (ch == 0) liveData.ch1_Carrier_Fr.value else liveData.ch2_Carrier_Fr.value
-            val fmDevFr = if (ch == 0) liveData.ch1_FM_Dev.value else liveData.ch2_FM_Dev.value
+            center = if (ch == 0) liveData.chL_Carrier_Fr.value else liveData.chR_Carrier_Fr.value
+            val fmDevFr = if (ch == 0) liveData.chL_FM_Dev.value else liveData.chR_FM_Dev.value
             deviation = fmDevFr.coerceAtMost(fmDevLimit(ch))
         } else {
-            val min = (if (ch == 0) liveData.ch1FmMin.value else liveData.ch2FmMin.value)
+            val min = (if (ch == 0) liveData.chLFmMin.value else liveData.chRFmMin.value)
                 .coerceAtLeast(FM_FREQ_MIN)
-            val max = (if (ch == 0) liveData.ch1FmMax.value else liveData.ch2FmMax.value)
+            val max = (if (ch == 0) liveData.chLFmMax.value else liveData.chRFmMax.value)
                 .coerceAtLeast(min)
             center = (max + min) / 2f
             deviation = (max - min) / 2f
@@ -123,37 +123,37 @@ class Generator {
         if (mode.value == 0) {
             //несущая ± девиация -> минимум/максимум
             val carrier =
-                if (ch == 0) liveData.ch1_Carrier_Fr.value else liveData.ch2_Carrier_Fr.value
-            val dev = (if (ch == 0) liveData.ch1_FM_Dev.value else liveData.ch2_FM_Dev.value)
+                if (ch == 0) liveData.chL_Carrier_Fr.value else liveData.chR_Carrier_Fr.value
+            val dev = (if (ch == 0) liveData.chL_FM_Dev.value else liveData.chR_FM_Dev.value)
                 .coerceAtMost(fmDevLimit(ch))
 
             val min = (carrier - dev).coerceAtLeast(FM_FREQ_MIN)
             val max = carrier + dev
 
             if (ch == 0) {
-                liveData.ch1FmMin.value = min
-                liveData.ch1FmMax.value = max
+                liveData.chLFmMin.value = min
+                liveData.chLFmMax.value = max
             } else {
-                liveData.ch2FmMin.value = min
-                liveData.ch2FmMax.value = max
+                liveData.chRFmMin.value = min
+                liveData.chRFmMax.value = max
             }
             mode.value = 1
         } else {
             //минимум/максимум -> несущая ± девиация
-            val min = (if (ch == 0) liveData.ch1FmMin.value else liveData.ch2FmMin.value)
+            val min = (if (ch == 0) liveData.chLFmMin.value else liveData.chRFmMin.value)
                 .coerceAtLeast(FM_FREQ_MIN)
-            val max = (if (ch == 0) liveData.ch1FmMax.value else liveData.ch2FmMax.value)
+            val max = (if (ch == 0) liveData.chLFmMax.value else liveData.chRFmMax.value)
                 .coerceAtLeast(min)
 
             val carrier = (max + min) / 2f
             val dev = (max - min) / 2f
 
             if (ch == 0) {
-                liveData.ch1_Carrier_Fr.value = carrier
-                liveData.ch1_FM_Dev.value = dev
+                liveData.chL_Carrier_Fr.value = carrier
+                liveData.chL_FM_Dev.value = dev
             } else {
-                liveData.ch2_Carrier_Fr.value = carrier
-                liveData.ch2_FM_Dev.value = dev
+                liveData.chR_Carrier_Fr.value = carrier
+                liveData.chR_FM_Dev.value = dev
             }
             mode.value = 0
         }
@@ -172,28 +172,28 @@ class Generator {
 
 data class DataLiveData(
 
-    var ch1_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),              //PR PS PC
-    var ch1_Carrier_Filename: MutableStateFlow<String> = MutableStateFlow("Sine"),//PR PS PC
-    var ch1_Carrier_Fr: MutableStateFlow<Float> = MutableStateFlow(400.0f),       //PR PS PC //Частота несущей
-    var ch1_AM_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),           //PR PS PC
-    var ch1_AM_Filename: MutableStateFlow<String> = MutableStateFlow("09_Ramp"),  //PR PS PC
-    var ch1_AM_Fr: MutableStateFlow<Float> = MutableStateFlow(8.7f),              //PR PS PC
-    var ch1_FM_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),           //PR PS PC
-    var ch1_FM_Filename: MutableStateFlow<String> = MutableStateFlow("06_CHIRP"), //PR PS PC
-    var ch1_FM_Dev: MutableStateFlow<Float> = MutableStateFlow(1100f),            //PR PS PC //Частота базы
-    var ch1_FM_Fr: MutableStateFlow<Float> = MutableStateFlow(5.1f),              //PR PS PC
+    var chL_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),              //PR PS PC
+    var chL_Carrier_Filename: MutableStateFlow<String> = MutableStateFlow("Sine"),//PR PS PC
+    var chL_Carrier_Fr: MutableStateFlow<Float> = MutableStateFlow(400.0f),       //PR PS PC //Частота несущей
+    var chL_AM_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),           //PR PS PC
+    var chL_AM_Filename: MutableStateFlow<String> = MutableStateFlow("09_Ramp"),  //PR PS PC
+    var chL_AM_Fr: MutableStateFlow<Float> = MutableStateFlow(8.7f),              //PR PS PC
+    var chL_FM_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),           //PR PS PC
+    var chL_FM_Filename: MutableStateFlow<String> = MutableStateFlow("06_CHIRP"), //PR PS PC
+    var chL_FM_Dev: MutableStateFlow<Float> = MutableStateFlow(1100f),            //PR PS PC //Частота базы
+    var chL_FM_Fr: MutableStateFlow<Float> = MutableStateFlow(5.1f),              //PR PS PC
 
-    var ch2_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),
-    var ch2_Carrier_Filename: MutableStateFlow<String> = MutableStateFlow("Sine"), //PR PS PC
-    var ch2_Carrier_Fr: MutableStateFlow<Float> = MutableStateFlow(2000.0f),     //PR PS PC Частота несущей
-    var ch2_AM_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),          //PR PS PC
-    var ch2_AM_Filename: MutableStateFlow<String> = MutableStateFlow("09_Ramp"), //PR PS PC
-    var ch2_AM_Fr: MutableStateFlow<Float> = MutableStateFlow(8.7f),             //PR PS PC
-    var ch2_FM_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),          //PR PS PC
-    var ch2_FM_Filename: MutableStateFlow<String> = MutableStateFlow("06_CHIRP"),//PR PS PC
-    var ch2_FM_Dev: MutableStateFlow<Float> = MutableStateFlow(1100f),           //PR PS PC Частота базы
+    var chR_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),
+    var chR_Carrier_Filename: MutableStateFlow<String> = MutableStateFlow("Sine"), //PR PS PC
+    var chR_Carrier_Fr: MutableStateFlow<Float> = MutableStateFlow(2000.0f),     //PR PS PC Частота несущей
+    var chR_AM_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),          //PR PS PC
+    var chR_AM_Filename: MutableStateFlow<String> = MutableStateFlow("09_Ramp"), //PR PS PC
+    var chR_AM_Fr: MutableStateFlow<Float> = MutableStateFlow(8.7f),             //PR PS PC
+    var chR_FM_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),          //PR PS PC
+    var chR_FM_Filename: MutableStateFlow<String> = MutableStateFlow("06_CHIRP"),//PR PS PC
+    var chR_FM_Dev: MutableStateFlow<Float> = MutableStateFlow(1100f),           //PR PS PC Частота базы
 
-    var ch2_FM_Fr: MutableStateFlow<Float> = MutableStateFlow(5.1f),             //PR PS PC
+    var chR_FM_Fr: MutableStateFlow<Float> = MutableStateFlow(5.1f),             //PR PS PC
 
     var volume0: MutableStateFlow<Float> = MutableStateFlow(1f),              //PR PS PC Используется для AudioDevice = maxVolume0 * currentVolume0
     var volume1: MutableStateFlow<Float> = MutableStateFlow(1f),              //PR PS PC
@@ -213,47 +213,47 @@ data class DataLiveData(
     var currentVolume0: MutableStateFlow<Float> = MutableStateFlow(1.0f),     //PR PS PC Громкость канала на регуляторе 0 100 JsonConfig()
     var currentVolume1: MutableStateFlow<Float> = MutableStateFlow(1.0f),     //PR PS PC
 
-    var ch1AmDepth: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC Глубина AM модуляции
+    var chLAmDepth: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC Глубина AM модуляции
 
-    var ch2AmDepth: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC Глубина AM модуляции
+    var chRAmDepth: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC Глубина AM модуляции
 
     // Мастер-громкость CH1
-    var ch1_Master_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),        //PR PS PC
-    var ch1_Master_Mode: MutableStateFlow<Int> = MutableStateFlow(1),              //PR PS PC 1=Плавный 2=Вкл/Выкл 3=Кнопка
-    var ch1_Master_Period: MutableStateFlow<Float> = MutableStateFlow(2f),         //PR PS PC сек 0.1..100
-    var ch1_Master_Filename: MutableStateFlow<String> = MutableStateFlow("09_Ramp"),//PR PS PC форма Плавного
-    var ch1_Master_TOn: MutableStateFlow<Float> = MutableStateFlow(1f),            //PR PS PC сек 0.1..100
-    var ch1_Master_TOff: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC сек 0.1..100
+    var chL_Master_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),        //PR PS PC
+    var chL_Master_Mode: MutableStateFlow<Int> = MutableStateFlow(1),              //PR PS PC 1=Плавный 2=Вкл/Выкл 3=Кнопка
+    var chL_Master_Period: MutableStateFlow<Float> = MutableStateFlow(2f),         //PR PS PC сек 0.1..100
+    var chL_Master_Filename: MutableStateFlow<String> = MutableStateFlow("09_Ramp"),//PR PS PC форма Плавного
+    var chL_Master_TOn: MutableStateFlow<Float> = MutableStateFlow(1f),            //PR PS PC сек 0.1..100
+    var chL_Master_TOff: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC сек 0.1..100
 
     // Мастер-громкость CH2
-    var ch2_Master_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),        //PR PS PC
-    var ch2_Master_Mode: MutableStateFlow<Int> = MutableStateFlow(1),              //PR PS PC
-    var ch2_Master_Period: MutableStateFlow<Float> = MutableStateFlow(2f),         //PR PS PC
-    var ch2_Master_Filename: MutableStateFlow<String> = MutableStateFlow("09_Ramp"),//PR PS PC
-    var ch2_Master_TOn: MutableStateFlow<Float> = MutableStateFlow(1f),            //PR PS PC
-    var ch2_Master_TOff: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC
+    var chR_Master_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),        //PR PS PC
+    var chR_Master_Mode: MutableStateFlow<Int> = MutableStateFlow(1),              //PR PS PC
+    var chR_Master_Period: MutableStateFlow<Float> = MutableStateFlow(2f),         //PR PS PC
+    var chR_Master_Filename: MutableStateFlow<String> = MutableStateFlow("09_Ramp"),//PR PS PC
+    var chR_Master_TOn: MutableStateFlow<Float> = MutableStateFlow(1f),            //PR PS PC
+    var chR_Master_TOff: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC
 
     // Метаморфоза несущей CH1
-    var ch1_Morph_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),               //PR PS PC
-    var ch1_Morph_Mode: MutableStateFlow<Int> = MutableStateFlow(1),                     //PR PS PC 0=Ступень 1=Плавно
-    var ch1_Morph_Time: MutableStateFlow<Float> = MutableStateFlow(2f),                  //PR PS PC сек 0.1..100, длительность шага
-    var ch1_Morph_Slot0_EN: MutableStateFlow<Boolean> = MutableStateFlow(true),          //PR PS PC
-    var ch1_Morph_Slot1_EN: MutableStateFlow<Boolean> = MutableStateFlow(true),          //PR PS PC
-    var ch1_Morph_Slot2_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),         //PR PS PC
-    var ch1_Morph_Slot0_Filename: MutableStateFlow<String> = MutableStateFlow("Sine"),   //PR PS PC
-    var ch1_Morph_Slot1_Filename: MutableStateFlow<String> = MutableStateFlow("Square"), //PR PS PC
-    var ch1_Morph_Slot2_Filename: MutableStateFlow<String> = MutableStateFlow("Ramp"),   //PR PS PC
+    var chL_Morph_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),               //PR PS PC
+    var chL_Morph_Mode: MutableStateFlow<Int> = MutableStateFlow(1),                     //PR PS PC 0=Ступень 1=Плавно
+    var chL_Morph_Time: MutableStateFlow<Float> = MutableStateFlow(2f),                  //PR PS PC сек 0.1..100, длительность шага
+    var chL_Morph_Slot0_EN: MutableStateFlow<Boolean> = MutableStateFlow(true),          //PR PS PC
+    var chL_Morph_Slot1_EN: MutableStateFlow<Boolean> = MutableStateFlow(true),          //PR PS PC
+    var chL_Morph_Slot2_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),         //PR PS PC
+    var chL_Morph_Slot0_Filename: MutableStateFlow<String> = MutableStateFlow("Sine"),   //PR PS PC
+    var chL_Morph_Slot1_Filename: MutableStateFlow<String> = MutableStateFlow("Square"), //PR PS PC
+    var chL_Morph_Slot2_Filename: MutableStateFlow<String> = MutableStateFlow("Ramp"),   //PR PS PC
 
     // Метаморфоза несущей CH2
-    var ch2_Morph_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),               //PR PS PC
-    var ch2_Morph_Mode: MutableStateFlow<Int> = MutableStateFlow(1),                     //PR PS PC 0=Ступень 1=Плавно
-    var ch2_Morph_Time: MutableStateFlow<Float> = MutableStateFlow(2f),                  //PR PS PC сек 0.1..100, длительность шага
-    var ch2_Morph_Slot0_EN: MutableStateFlow<Boolean> = MutableStateFlow(true),          //PR PS PC
-    var ch2_Morph_Slot1_EN: MutableStateFlow<Boolean> = MutableStateFlow(true),          //PR PS PC
-    var ch2_Morph_Slot2_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),         //PR PS PC
-    var ch2_Morph_Slot0_Filename: MutableStateFlow<String> = MutableStateFlow("Sine"),   //PR PS PC
-    var ch2_Morph_Slot1_Filename: MutableStateFlow<String> = MutableStateFlow("Square"), //PR PS PC
-    var ch2_Morph_Slot2_Filename: MutableStateFlow<String> = MutableStateFlow("Ramp"),   //PR PS PC
+    var chR_Morph_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),               //PR PS PC
+    var chR_Morph_Mode: MutableStateFlow<Int> = MutableStateFlow(1),                     //PR PS PC 0=Ступень 1=Плавно
+    var chR_Morph_Time: MutableStateFlow<Float> = MutableStateFlow(2f),                  //PR PS PC сек 0.1..100, длительность шага
+    var chR_Morph_Slot0_EN: MutableStateFlow<Boolean> = MutableStateFlow(true),          //PR PS PC
+    var chR_Morph_Slot1_EN: MutableStateFlow<Boolean> = MutableStateFlow(true),          //PR PS PC
+    var chR_Morph_Slot2_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),         //PR PS PC
+    var chR_Morph_Slot0_Filename: MutableStateFlow<String> = MutableStateFlow("Sine"),   //PR PS PC
+    var chR_Morph_Slot1_Filename: MutableStateFlow<String> = MutableStateFlow("Square"), //PR PS PC
+    var chR_Morph_Slot2_Filename: MutableStateFlow<String> = MutableStateFlow("Ramp"),   //PR PS PC
 
     // Общая кнопка мастер-громкости (runtime, НЕ в пресетах)
     var masterButton: MutableStateFlow<Boolean> = MutableStateFlow(false),
@@ -264,10 +264,10 @@ data class DataLiveData(
     //Имя текущего пресета
     val presetsName: MutableStateFlow<String> = MutableStateFlow(""),         //PR PS(name) PC
 
-    val ch1FmMin: MutableStateFlow<Float> = MutableStateFlow(1000.0f), //PR PS PC CH1 FM min
-    val ch1FmMax: MutableStateFlow<Float> = MutableStateFlow(2000.0f), //PR PS PC CH1 FM max
-    val ch2FmMin: MutableStateFlow<Float> = MutableStateFlow(1500.0f), //PR PS PC CH2 FM min
-    val ch2FmMax: MutableStateFlow<Float> = MutableStateFlow(2500.0f), //PR PS PC CH2 FM max
+    val chLFmMin: MutableStateFlow<Float> = MutableStateFlow(1000.0f), //PR PS PC CH1 FM min
+    val chLFmMax: MutableStateFlow<Float> = MutableStateFlow(2000.0f), //PR PS PC CH1 FM max
+    val chRFmMin: MutableStateFlow<Float> = MutableStateFlow(1500.0f), //PR PS PC CH2 FM min
+    val chRFmMax: MutableStateFlow<Float> = MutableStateFlow(2500.0f), //PR PS PC CH2 FM max
 
 
     val parameterInt0: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс

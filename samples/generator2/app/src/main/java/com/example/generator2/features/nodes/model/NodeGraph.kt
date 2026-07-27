@@ -21,7 +21,7 @@ data class GraphEdge(val from: NodeId, val port: Port, val to: NodeId)
  * Параметры одного канала. null означает снятую галочку: поле не трогаем.
  *
  * carrierEnabled ложится на "CH1 CR ON|OFF" — в движке это включение
- * всего канала (gen.liveData.ch1_EN), а не только несущей.
+ * всего канала (gen.liveData.chL_EN), а не только несущей.
  */
 data class ChannelParams(
     val carrierEnabled: Boolean? = null,

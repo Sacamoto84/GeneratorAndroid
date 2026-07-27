@@ -58,9 +58,9 @@ import kotlinx.coroutines.flow.update
 fun CardFM(str: String = "CH0", gen: Generator) {
 
     val fmEN: State<Boolean?> =
-        if (str == "CH0") gen.liveData.ch1_FM_EN.collectAsState() else gen.liveData.ch2_FM_EN.collectAsState()
+        if (str == "CH0") gen.liveData.chL_FM_EN.collectAsState() else gen.liveData.chR_FM_EN.collectAsState()
     val fmFr: State<Float?> =
-        if (str == "CH0") gen.liveData.ch1_FM_Fr.collectAsState() else gen.liveData.ch2_FM_Fr.collectAsState()
+        if (str == "CH0") gen.liveData.chL_FM_Fr.collectAsState() else gen.liveData.chR_FM_Fr.collectAsState()
 
     Column()
     {
@@ -94,9 +94,9 @@ fun CardFM(str: String = "CH0", gen: Generator) {
                         color = if (fmEN.value!!) Color(0xFF01AE0F) else colorDarkBackground
                     )
                     .noRippleClickable(onClick = {
-                        if (str == "CH0") gen.liveData.ch1_FM_EN.value =
-                            !gen.liveData.ch1_FM_EN.value
-                        else gen.liveData.ch2_FM_EN.value = !gen.liveData.ch2_FM_EN.value
+                        if (str == "CH0") gen.liveData.chL_FM_EN.value =
+                            !gen.liveData.chL_FM_EN.value
+                        else gen.liveData.chR_FM_EN.value = !gen.liveData.chR_FM_EN.value
 
                         Haptic.confirm()
                     }), contentAlignment = Alignment.Center
@@ -136,8 +136,8 @@ fun CardFM(str: String = "CH0", gen: Generator) {
                     sensing = if (fmFr.value!! < 10.0F) LiveConstrain.sensetingSliderAmFm.floatValue else LiveConstrain.sensetingSliderAmFm.floatValue * 10f,
                     range = 0.1f..200f,
                     onValueChange = {
-                        if (str == "CH0") gen.liveData.ch1_FM_Fr.value =
-                            it else gen.liveData.ch2_FM_Fr.value = it
+                        if (str == "CH0") gen.liveData.chL_FM_Fr.value =
+                            it else gen.liveData.chR_FM_Fr.value = it
                     },
                     fontSize = textStyleEditFontSize,
                     fontFamily = textStyleEditFontFamily
@@ -163,9 +163,9 @@ fun CardFM(str: String = "CH0", gen: Generator) {
                             expanded = false
 
                             if (str == "CH0") {
-                                gen.liveData.ch1_FM_Fr.value = s.toFloat()
+                                gen.liveData.chL_FM_Fr.value = s.toFloat()
                             } else {
-                                gen.liveData.ch2_FM_Fr.value = s.toFloat()
+                                gen.liveData.chR_FM_Fr.value = s.toFloat()
                             }
 
                         })
@@ -186,8 +186,8 @@ fun CardFM(str: String = "CH0", gen: Generator) {
                     .clip(shape = RoundedCornerShape(4.dp))
                     .background(Color.Black),
 
-                filename = if (str == "CH0") gen.liveData.ch1_FM_Filename.collectAsState()
-                else gen.liveData.ch2_FM_Filename.collectAsState(), gen = gen
+                filename = if (str == "CH0") gen.liveData.chL_FM_Filename.collectAsState()
+                else gen.liveData.chR_FM_Filename.collectAsState(), gen = gen
             )
 
         }
@@ -247,9 +247,9 @@ private fun SecondLine(str: String = "CH0", gen: Generator) {
 private fun SecondLineMode1(str: String, gen: Generator) {
 
     val fmMin: State<Float> =
-        if (str == "CH0") gen.liveData.ch1FmMin.collectAsState() else gen.liveData.ch2FmMin.collectAsState()
+        if (str == "CH0") gen.liveData.chLFmMin.collectAsState() else gen.liveData.chRFmMin.collectAsState()
     val fmMax: State<Float> =
-        if (str == "CH0") gen.liveData.ch1FmMax.collectAsState() else gen.liveData.ch2FmMax.collectAsState()
+        if (str == "CH0") gen.liveData.chLFmMax.collectAsState() else gen.liveData.chRFmMax.collectAsState()
 
     Row(
         Modifier
@@ -274,14 +274,14 @@ private fun SecondLineMode1(str: String, gen: Generator) {
             onChange = {
                 if (it <= fmMax.value) {
                     if (str == "CH0")
-                        gen.liveData.ch1FmMin.value = it
+                        gen.liveData.chLFmMin.value = it
                     else
-                        gen.liveData.ch2FmMin.value = it
+                        gen.liveData.chRFmMin.value = it
                 } else {
                     if (str == "CH0")
-                        gen.liveData.ch1FmMin.value = fmMax.value
+                        gen.liveData.chLFmMin.value = fmMax.value
                     else
-                        gen.liveData.ch2FmMin.value = fmMax.value
+                        gen.liveData.chRFmMin.value = fmMax.value
                 }
             },
             range = 50f..10000f
@@ -309,8 +309,8 @@ private fun SecondLineMode1(str: String, gen: Generator) {
             value = fmMax.value,
             onChange = {
                 if (it >= fmMin.value)
-                    if (str == "CH0") gen.liveData.ch1FmMax.value =
-                        it else gen.liveData.ch2FmMax.value = it
+                    if (str == "CH0") gen.liveData.chLFmMax.value =
+                        it else gen.liveData.chRFmMax.value = it
             },
             range = 50f..10000f
         )
@@ -323,15 +323,15 @@ private fun SecondLineMode1(str: String, gen: Generator) {
 private fun SecondLineMode0(str: String, gen: Generator) {
 
     val carrierFr: State<Float?> = if (str == "CH0") {
-        gen.liveData.ch1_Carrier_Fr.collectAsState()
+        gen.liveData.chL_Carrier_Fr.collectAsState()
     } else {
-        gen.liveData.ch2_Carrier_Fr.collectAsState()
+        gen.liveData.chR_Carrier_Fr.collectAsState()
     }
 
     val fmDev: State<Float?> = if (str == "CH0") {
-        gen.liveData.ch1_FM_Dev.collectAsState()
+        gen.liveData.chL_FM_Dev.collectAsState()
     } else {
-        gen.liveData.ch2_FM_Dev.collectAsState()
+        gen.liveData.chR_FM_Dev.collectAsState()
     }
 
     //Девиация, при которой нижняя частота не опускается ниже FM_FREQ_MIN
@@ -341,8 +341,8 @@ private fun SecondLineMode0(str: String, gen: Generator) {
     //Увеличение девиации выше предела игнорируем, уменьшение разрешено всегда
     val onDevChange: (Float) -> Unit = { newDev ->
         if (newDev <= devLimit || newDev < fmDev.value!!) {
-            if (str == "CH0") gen.liveData.ch1_FM_Dev.value = newDev
-            else gen.liveData.ch2_FM_Dev.value = newDev
+            if (str == "CH0") gen.liveData.chL_FM_Dev.value = newDev
+            else gen.liveData.chR_FM_Dev.value = newDev
         }
     }
 

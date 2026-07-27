@@ -87,7 +87,7 @@ class NodeGraphEndToEndTest {
 
         val seen = mutableListOf<Float>()
         val collector = launch(Dispatchers.Default) {
-            gen.liveData.ch1_Carrier_Fr.collect { seen.add(it) }
+            gen.liveData.chL_Carrier_Fr.collect { seen.add(it) }
         }
 
         script.command(StateCommandScript.START)
@@ -116,13 +116,13 @@ class NodeGraphEndToEndTest {
 
         script.command(StateCommandScript.START)
         withTimeout(2_000) {
-            while (gen.liveData.ch1_Carrier_Fr.value < 1000f) delay(5)
+            while (gen.liveData.chL_Carrier_Fr.value < 1000f) delay(5)
         }
         script.command(StateCommandScript.STOP)
 
-        val frozen = gen.liveData.ch1_Carrier_Fr.value
+        val frozen = gen.liveData.chL_Carrier_Fr.value
         delay(400)
-        assertEquals(frozen, gen.liveData.ch1_Carrier_Fr.value)
+        assertEquals(frozen, gen.liveData.chL_Carrier_Fr.value)
         assertTrue(script.state == StateCommandScript.ISTOPPING)
     }
 }

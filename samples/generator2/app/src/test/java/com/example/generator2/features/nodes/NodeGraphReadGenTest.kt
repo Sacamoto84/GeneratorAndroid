@@ -69,7 +69,7 @@ class NodeGraphReadGenTest {
             .withEdge(NodeId(4), Port.NO, NodeId(2))
 
         val gen = Generator()
-        gen.liveData.ch1_Carrier_Fr.value = 1000f
+        gen.liveData.chL_Carrier_Fr.value = 1000f
         val script = Script(gen)
         val compiled = ok(g)
 

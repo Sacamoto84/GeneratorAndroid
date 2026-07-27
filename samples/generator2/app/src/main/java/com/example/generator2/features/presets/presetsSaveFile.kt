@@ -7,6 +7,9 @@ import cafe.adriel.satchel.storer.file.FileSatchelStorer
 import com.example.generator2.features.generator.Generator
 import java.io.File
 
+//ВНИМАНИЕ: строковые ключи "ch1_*"/"ch2_*" — легаси-формат файлов пресетов.
+//НЕ переименовывать в chL_/chR_: сломаются пресеты пользователей.
+
 /**
  * Создание пресета по имени
  */
@@ -29,27 +32,27 @@ fun presetsSaveFile(name: String, path: String, gen: Generator): String {
 
     satchel["presetsName"] = name
 
-    satchel["ch1_EN"] = gen.liveData.ch1_EN.value
-    satchel["ch1_Carrier_Filename"] = gen.liveData.ch1_Carrier_Filename.value
-    satchel["ch1_Carrier_Fr"] = gen.liveData.ch1_Carrier_Fr.value    //Частота несущей
-    satchel["ch1_AM_EN"] = gen.liveData.ch1_AM_EN.value
-    satchel["ch1_AM_Filename"] = gen.liveData.ch1_AM_Filename.value
-    satchel["ch1_AM_Fr"] = gen.liveData.ch1_AM_Fr.value
-    satchel["ch1_FM_EN"] = gen.liveData.ch1_FM_EN.value
-    satchel["ch1_FM_Filename"] = gen.liveData.ch1_FM_Filename.value
-    satchel["ch1_FM_Dev"] = gen.liveData.ch1_FM_Dev.value      //Частота базы
-    satchel["ch1_FM_Fr"] = gen.liveData.ch1_FM_Fr.value
+    satchel["ch1_EN"] = gen.liveData.chL_EN.value
+    satchel["ch1_Carrier_Filename"] = gen.liveData.chL_Carrier_Filename.value
+    satchel["ch1_Carrier_Fr"] = gen.liveData.chL_Carrier_Fr.value    //Частота несущей
+    satchel["ch1_AM_EN"] = gen.liveData.chL_AM_EN.value
+    satchel["ch1_AM_Filename"] = gen.liveData.chL_AM_Filename.value
+    satchel["ch1_AM_Fr"] = gen.liveData.chL_AM_Fr.value
+    satchel["ch1_FM_EN"] = gen.liveData.chL_FM_EN.value
+    satchel["ch1_FM_Filename"] = gen.liveData.chL_FM_Filename.value
+    satchel["ch1_FM_Dev"] = gen.liveData.chL_FM_Dev.value      //Частота базы
+    satchel["ch1_FM_Fr"] = gen.liveData.chL_FM_Fr.value
 
-    satchel["ch2_EN"] = gen.liveData.ch2_EN.value
-    satchel["ch2_Carrier_Filename"] = gen.liveData.ch2_Carrier_Filename.value
-    satchel["ch2_Carrier_Fr"] = gen.liveData.ch2_Carrier_Fr.value //Частота несущей
-    satchel["ch2_AM_EN"] = gen.liveData.ch2_AM_EN.value
-    satchel["ch2_AM_Filename"] = gen.liveData.ch2_AM_Filename.value
-    satchel["ch2_AM_Fr"] = gen.liveData.ch2_AM_Fr.value
-    satchel["ch2_FM_EN"] = gen.liveData.ch2_FM_EN.value
-    satchel["ch2_FM_Filename"] = gen.liveData.ch2_FM_Filename.value
-    satchel["ch2_FM_Dev"] = gen.liveData.ch2_FM_Dev.value //Частота базы
-    satchel["ch2_FM_Fr"] = gen.liveData.ch2_FM_Fr.value
+    satchel["ch2_EN"] = gen.liveData.chR_EN.value
+    satchel["ch2_Carrier_Filename"] = gen.liveData.chR_Carrier_Filename.value
+    satchel["ch2_Carrier_Fr"] = gen.liveData.chR_Carrier_Fr.value //Частота несущей
+    satchel["ch2_AM_EN"] = gen.liveData.chR_AM_EN.value
+    satchel["ch2_AM_Filename"] = gen.liveData.chR_AM_Filename.value
+    satchel["ch2_AM_Fr"] = gen.liveData.chR_AM_Fr.value
+    satchel["ch2_FM_EN"] = gen.liveData.chR_FM_EN.value
+    satchel["ch2_FM_Filename"] = gen.liveData.chR_FM_Filename.value
+    satchel["ch2_FM_Dev"] = gen.liveData.chR_FM_Dev.value //Частота базы
+    satchel["ch2_FM_Fr"] = gen.liveData.chR_FM_Fr.value
 
     satchel["mono"] = gen.liveData.mono.value //Режим повторения настроек второго канала с первым
     satchel["invert"] =
@@ -71,47 +74,47 @@ fun presetsSaveFile(name: String, path: String, gen: Generator): String {
     satchel["volume0"] = gen.liveData.volume0.value
     satchel["volume1"] = gen.liveData.volume1.value
 
-    satchel["ch1AmDepth"] = gen.liveData.ch1AmDepth.value  //Глубина AM модуляции
-    satchel["ch2AmDepth"] = gen.liveData.ch2AmDepth.value  //Глубина AM модуляции
+    satchel["ch1AmDepth"] = gen.liveData.chLAmDepth.value  //Глубина AM модуляции
+    satchel["ch2AmDepth"] = gen.liveData.chRAmDepth.value  //Глубина AM модуляции
 
-    satchel["ch1_Master_EN"] = gen.liveData.ch1_Master_EN.value
-    satchel["ch1_Master_Mode"] = gen.liveData.ch1_Master_Mode.value
-    satchel["ch1_Master_Period"] = gen.liveData.ch1_Master_Period.value
-    satchel["ch1_Master_Filename"] = gen.liveData.ch1_Master_Filename.value
-    satchel["ch1_Master_TOn"] = gen.liveData.ch1_Master_TOn.value
-    satchel["ch1_Master_TOff"] = gen.liveData.ch1_Master_TOff.value
+    satchel["ch1_Master_EN"] = gen.liveData.chL_Master_EN.value
+    satchel["ch1_Master_Mode"] = gen.liveData.chL_Master_Mode.value
+    satchel["ch1_Master_Period"] = gen.liveData.chL_Master_Period.value
+    satchel["ch1_Master_Filename"] = gen.liveData.chL_Master_Filename.value
+    satchel["ch1_Master_TOn"] = gen.liveData.chL_Master_TOn.value
+    satchel["ch1_Master_TOff"] = gen.liveData.chL_Master_TOff.value
 
-    satchel["ch2_Master_EN"] = gen.liveData.ch2_Master_EN.value
-    satchel["ch2_Master_Mode"] = gen.liveData.ch2_Master_Mode.value
-    satchel["ch2_Master_Period"] = gen.liveData.ch2_Master_Period.value
-    satchel["ch2_Master_Filename"] = gen.liveData.ch2_Master_Filename.value
-    satchel["ch2_Master_TOn"] = gen.liveData.ch2_Master_TOn.value
-    satchel["ch2_Master_TOff"] = gen.liveData.ch2_Master_TOff.value
+    satchel["ch2_Master_EN"] = gen.liveData.chR_Master_EN.value
+    satchel["ch2_Master_Mode"] = gen.liveData.chR_Master_Mode.value
+    satchel["ch2_Master_Period"] = gen.liveData.chR_Master_Period.value
+    satchel["ch2_Master_Filename"] = gen.liveData.chR_Master_Filename.value
+    satchel["ch2_Master_TOn"] = gen.liveData.chR_Master_TOn.value
+    satchel["ch2_Master_TOff"] = gen.liveData.chR_Master_TOff.value
 
-    satchel["ch1_Morph_EN"] = gen.liveData.ch1_Morph_EN.value
-    satchel["ch1_Morph_Mode"] = gen.liveData.ch1_Morph_Mode.value
-    satchel["ch1_Morph_Time"] = gen.liveData.ch1_Morph_Time.value
-    satchel["ch1_Morph_Slot0_EN"] = gen.liveData.ch1_Morph_Slot0_EN.value
-    satchel["ch1_Morph_Slot1_EN"] = gen.liveData.ch1_Morph_Slot1_EN.value
-    satchel["ch1_Morph_Slot2_EN"] = gen.liveData.ch1_Morph_Slot2_EN.value
-    satchel["ch1_Morph_Slot0_Filename"] = gen.liveData.ch1_Morph_Slot0_Filename.value
-    satchel["ch1_Morph_Slot1_Filename"] = gen.liveData.ch1_Morph_Slot1_Filename.value
-    satchel["ch1_Morph_Slot2_Filename"] = gen.liveData.ch1_Morph_Slot2_Filename.value
+    satchel["ch1_Morph_EN"] = gen.liveData.chL_Morph_EN.value
+    satchel["ch1_Morph_Mode"] = gen.liveData.chL_Morph_Mode.value
+    satchel["ch1_Morph_Time"] = gen.liveData.chL_Morph_Time.value
+    satchel["ch1_Morph_Slot0_EN"] = gen.liveData.chL_Morph_Slot0_EN.value
+    satchel["ch1_Morph_Slot1_EN"] = gen.liveData.chL_Morph_Slot1_EN.value
+    satchel["ch1_Morph_Slot2_EN"] = gen.liveData.chL_Morph_Slot2_EN.value
+    satchel["ch1_Morph_Slot0_Filename"] = gen.liveData.chL_Morph_Slot0_Filename.value
+    satchel["ch1_Morph_Slot1_Filename"] = gen.liveData.chL_Morph_Slot1_Filename.value
+    satchel["ch1_Morph_Slot2_Filename"] = gen.liveData.chL_Morph_Slot2_Filename.value
 
-    satchel["ch2_Morph_EN"] = gen.liveData.ch2_Morph_EN.value
-    satchel["ch2_Morph_Mode"] = gen.liveData.ch2_Morph_Mode.value
-    satchel["ch2_Morph_Time"] = gen.liveData.ch2_Morph_Time.value
-    satchel["ch2_Morph_Slot0_EN"] = gen.liveData.ch2_Morph_Slot0_EN.value
-    satchel["ch2_Morph_Slot1_EN"] = gen.liveData.ch2_Morph_Slot1_EN.value
-    satchel["ch2_Morph_Slot2_EN"] = gen.liveData.ch2_Morph_Slot2_EN.value
-    satchel["ch2_Morph_Slot0_Filename"] = gen.liveData.ch2_Morph_Slot0_Filename.value
-    satchel["ch2_Morph_Slot1_Filename"] = gen.liveData.ch2_Morph_Slot1_Filename.value
-    satchel["ch2_Morph_Slot2_Filename"] = gen.liveData.ch2_Morph_Slot2_Filename.value
+    satchel["ch2_Morph_EN"] = gen.liveData.chR_Morph_EN.value
+    satchel["ch2_Morph_Mode"] = gen.liveData.chR_Morph_Mode.value
+    satchel["ch2_Morph_Time"] = gen.liveData.chR_Morph_Time.value
+    satchel["ch2_Morph_Slot0_EN"] = gen.liveData.chR_Morph_Slot0_EN.value
+    satchel["ch2_Morph_Slot1_EN"] = gen.liveData.chR_Morph_Slot1_EN.value
+    satchel["ch2_Morph_Slot2_EN"] = gen.liveData.chR_Morph_Slot2_EN.value
+    satchel["ch2_Morph_Slot0_Filename"] = gen.liveData.chR_Morph_Slot0_Filename.value
+    satchel["ch2_Morph_Slot1_Filename"] = gen.liveData.chR_Morph_Slot1_Filename.value
+    satchel["ch2_Morph_Slot2_Filename"] = gen.liveData.chR_Morph_Slot2_Filename.value
 
-    satchel["ch1FmMin"] = gen.liveData.ch1FmMin.value
-    satchel["ch1FmMax"] = gen.liveData.ch1FmMax.value
-    satchel["ch2FmMin"] = gen.liveData.ch2FmMin.value
-    satchel["ch2FmMax"] = gen.liveData.ch2FmMax.value
+    satchel["ch1FmMin"] = gen.liveData.chLFmMin.value
+    satchel["ch1FmMax"] = gen.liveData.chLFmMax.value
+    satchel["ch2FmMin"] = gen.liveData.chRFmMin.value
+    satchel["ch2FmMax"] = gen.liveData.chRFmMax.value
     //satchel["parameterFloat4"] = gen.liveData.parameterFloat4.value
     //satchel["parameterFloat5"] = gen.liveData.parameterFloat5.value
     //satchel["parameterFloat6"] = gen.liveData.parameterFloat6.value

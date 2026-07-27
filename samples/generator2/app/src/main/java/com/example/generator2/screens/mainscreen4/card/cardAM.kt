@@ -36,9 +36,9 @@ import com.example.generator2.screens.common.modifier.noRippleClickable
 fun CardAM(str: String = "CH0", gen: Generator) {
 
     val amEN: State<Boolean?> = if (str == "CH0") {
-        gen.liveData.ch1_AM_EN.collectAsState()
+        gen.liveData.chL_AM_EN.collectAsState()
     } else {
-        gen.liveData.ch2_AM_EN.collectAsState()
+        gen.liveData.chR_AM_EN.collectAsState()
     }
 
     Column {
@@ -55,9 +55,9 @@ fun CardAM(str: String = "CH0", gen: Generator) {
         ) {
 
             val amFr: State<Float?> = if (str == "CH0") {
-                gen.liveData.ch1_AM_Fr.collectAsState()
+                gen.liveData.chL_AM_Fr.collectAsState()
             } else {
-                gen.liveData.ch2_AM_Fr.collectAsState()
+                gen.liveData.chR_AM_Fr.collectAsState()
             }
 
 
@@ -77,9 +77,9 @@ fun CardAM(str: String = "CH0", gen: Generator) {
                         color = if (amEN.value!!) Color(0xFF01AE0F) else colorDarkBackground
                     )
                     .noRippleClickable(onClick = {
-                        if (str == "CH0") gen.liveData.ch1_AM_EN.value =
-                            !gen.liveData.ch1_AM_EN.value
-                        else gen.liveData.ch2_AM_EN.value = !gen.liveData.ch2_AM_EN.value
+                        if (str == "CH0") gen.liveData.chL_AM_EN.value =
+                            !gen.liveData.chL_AM_EN.value
+                        else gen.liveData.chR_AM_EN.value = !gen.liveData.chR_AM_EN.value
 
                         Haptic.confirm()
                     }) //.shadow(1.dp, shape = RoundedCornerShape(8.dp), ambientColor = Color.Blue)
@@ -106,17 +106,17 @@ fun CardAM(str: String = "CH0", gen: Generator) {
                 items = listOf("0.1", "1.0", "5.5", "10.0", "40.0", "100.0"),
                 value = amFr.value!!,
                 onChange = {
-                    if (str == "CH0") gen.liveData.ch1_AM_Fr.value =
-                        it else gen.liveData.ch2_AM_Fr.value = it
+                    if (str == "CH0") gen.liveData.chL_AM_Fr.value =
+                        it else gen.liveData.chR_AM_Fr.value = it
                 },
                 sensing = sensing,
                 range = 0.1f..200f,
             )
 
             val amDepth: State<Float?> = if (str == "CH0") {
-                gen.liveData.ch1AmDepth.collectAsState()
+                gen.liveData.chLAmDepth.collectAsState()
             } else {
-                gen.liveData.ch2AmDepth.collectAsState()
+                gen.liveData.chRAmDepth.collectAsState()
             }
 
             InfinitySlider(
@@ -124,8 +124,8 @@ fun CardAM(str: String = "CH0", gen: Generator) {
                 sensing = 0.001f,
                 range = 0f..1f,
                 onValueChange = {
-                    if (str == "CH0") gen.liveData.ch1AmDepth.value =
-                        it else gen.liveData.ch2AmDepth.value = it
+                    if (str == "CH0") gen.liveData.chLAmDepth.value =
+                        it else gen.liveData.chRAmDepth.value = it
                 },
                 modifier = modifierInfinitySlider,
                 vertical = true,
@@ -142,8 +142,8 @@ fun CardAM(str: String = "CH0", gen: Generator) {
                     .padding(top = 0.dp, start = 8.dp, end = 8.dp)
                     .wrapContentWidth()
                     .clip(shape = RoundedCornerShape(4.dp)),
-                filename = if (str == "CH0") gen.liveData.ch1_AM_Filename.collectAsState()
-                else gen.liveData.ch1_AM_Filename.collectAsState(), gen = gen
+                filename = if (str == "CH0") gen.liveData.chL_AM_Filename.collectAsState()
+                else gen.liveData.chL_AM_Filename.collectAsState(), gen = gen
 
             )
 

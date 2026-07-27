@@ -76,58 +76,58 @@ class RenderChannel {
         val morphSlotMask: Int
 
 //        val startTime1 = System.nanoTime()
-//        enCH = liveData.ch2_EN.value
-//        enAM = liveData.ch2_AM_EN.value
-//        enFM = liveData.ch2_FM_EN.value
+//        enCH = liveData.chR_EN.value
+//        enAM = liveData.chR_AM_EN.value
+//        enFM = liveData.chR_FM_EN.value
 //        volume = liveData.volume1.value
-//        amDepth = liveData.ch2AmDepth.value
+//        amDepth = liveData.chRAmDepth.value
 //        val endTime1 = System.nanoTime()
 //        val duration1 = endTime1 - startTime1
 //        println("Time 1 >>>: ${duration1 / 1000} us")
 
         if (ch.ch == 0) {
-            rC = convertHzToR(liveData.ch1_Carrier_Fr.value, sampleRate).toUInt()
-            rAM = convertHzToR(liveData.ch1_AM_Fr.value, sampleRate).toUInt()
-            rFM = convertHzToR(liveData.ch1_FM_Fr.value, sampleRate).toUInt()
-            enCH = liveData.ch1_EN.value
-            enAM = liveData.ch1_AM_EN.value
-            enFM = liveData.ch1_FM_EN.value
+            rC = convertHzToR(liveData.chL_Carrier_Fr.value, sampleRate).toUInt()
+            rAM = convertHzToR(liveData.chL_AM_Fr.value, sampleRate).toUInt()
+            rFM = convertHzToR(liveData.chL_FM_Fr.value, sampleRate).toUInt()
+            enCH = liveData.chL_EN.value
+            enAM = liveData.chL_AM_EN.value
+            enFM = liveData.chL_FM_EN.value
             volume = liveData.volume0.value
-            amDepth = liveData.ch1AmDepth.value
-            masterEN = liveData.ch1_Master_EN.value
-            masterMode = liveData.ch1_Master_Mode.value
-            masterPeriod = liveData.ch1_Master_Period.value
-            masterTOn = liveData.ch1_Master_TOn.value
-            masterTOff = liveData.ch1_Master_TOff.value
-            morphEN = liveData.ch1_Morph_EN.value
-            morphMode = liveData.ch1_Morph_Mode.value
-            morphTime = liveData.ch1_Morph_Time.value
+            amDepth = liveData.chLAmDepth.value
+            masterEN = liveData.chL_Master_EN.value
+            masterMode = liveData.chL_Master_Mode.value
+            masterPeriod = liveData.chL_Master_Period.value
+            masterTOn = liveData.chL_Master_TOn.value
+            masterTOff = liveData.chL_Master_TOff.value
+            morphEN = liveData.chL_Morph_EN.value
+            morphMode = liveData.chL_Morph_Mode.value
+            morphTime = liveData.chL_Morph_Time.value
             morphSlotMask = morphMask(
-                liveData.ch1_Morph_Slot0_EN.value,
-                liveData.ch1_Morph_Slot1_EN.value,
-                liveData.ch1_Morph_Slot2_EN.value
+                liveData.chL_Morph_Slot0_EN.value,
+                liveData.chL_Morph_Slot1_EN.value,
+                liveData.chL_Morph_Slot2_EN.value
             )
         } else {
-            rC = convertHzToR(liveData.ch2_Carrier_Fr.value, sampleRate).toUInt()
-            rAM = convertHzToR(liveData.ch2_AM_Fr.value, sampleRate).toUInt()
-            rFM = convertHzToR(liveData.ch2_FM_Fr.value, sampleRate).toUInt()
-            enCH = liveData.ch2_EN.value
-            enAM = liveData.ch2_AM_EN.value
-            enFM = liveData.ch2_FM_EN.value
+            rC = convertHzToR(liveData.chR_Carrier_Fr.value, sampleRate).toUInt()
+            rAM = convertHzToR(liveData.chR_AM_Fr.value, sampleRate).toUInt()
+            rFM = convertHzToR(liveData.chR_FM_Fr.value, sampleRate).toUInt()
+            enCH = liveData.chR_EN.value
+            enAM = liveData.chR_AM_EN.value
+            enFM = liveData.chR_FM_EN.value
             volume = liveData.volume1.value
-            amDepth = liveData.ch2AmDepth.value
-            masterEN = liveData.ch2_Master_EN.value
-            masterMode = liveData.ch2_Master_Mode.value
-            masterPeriod = liveData.ch2_Master_Period.value
-            masterTOn = liveData.ch2_Master_TOn.value
-            masterTOff = liveData.ch2_Master_TOff.value
-            morphEN = liveData.ch2_Morph_EN.value
-            morphMode = liveData.ch2_Morph_Mode.value
-            morphTime = liveData.ch2_Morph_Time.value
+            amDepth = liveData.chRAmDepth.value
+            masterEN = liveData.chR_Master_EN.value
+            masterMode = liveData.chR_Master_Mode.value
+            masterPeriod = liveData.chR_Master_Period.value
+            masterTOn = liveData.chR_Master_TOn.value
+            masterTOff = liveData.chR_Master_TOff.value
+            morphEN = liveData.chR_Morph_EN.value
+            morphMode = liveData.chR_Morph_Mode.value
+            morphTime = liveData.chR_Morph_Time.value
             morphSlotMask = morphMask(
-                liveData.ch2_Morph_Slot0_EN.value,
-                liveData.ch2_Morph_Slot1_EN.value,
-                liveData.ch2_Morph_Slot2_EN.value
+                liveData.chR_Morph_Slot0_EN.value,
+                liveData.chR_Morph_Slot1_EN.value,
+                liveData.chR_Morph_Slot2_EN.value
             )
         }
 
@@ -137,8 +137,8 @@ class RenderChannel {
         val onSamples = secToSamples(masterTOn, sampleRate)
         val offSamples = secToSamples(masterTOff, sampleRate)
         val buttonActive = masterButtonActive(
-            liveData.ch1_Master_EN.value, liveData.ch1_Master_Mode.value,
-            liveData.ch2_Master_EN.value, liveData.ch2_Master_Mode.value
+            liveData.chL_Master_EN.value, liveData.chL_Master_Mode.value,
+            liveData.chR_Master_EN.value, liveData.chR_Master_Mode.value
         )
         val buttonPressed = liveData.masterButton.value
 
@@ -209,23 +209,23 @@ class RenderChannel {
 //        val amDepth: Float
 //
 //        if (CH.ch == 0) {
-//            rC = convertHzToR(liveData.ch1_Carrier_Fr.value).toUInt()
-//            rAM = convertHzToR(liveData.ch1_AM_Fr.value).toUInt()
-//            rFM = convertHzToR(liveData.ch1_FM_Fr.value).toUInt()
-//            enCH = liveData.ch1_EN.value
-//            enAM = liveData.ch1_AM_EN.value
-//            enFM = liveData.ch1_FM_EN.value
+//            rC = convertHzToR(liveData.chL_Carrier_Fr.value).toUInt()
+//            rAM = convertHzToR(liveData.chL_AM_Fr.value).toUInt()
+//            rFM = convertHzToR(liveData.chL_FM_Fr.value).toUInt()
+//            enCH = liveData.chL_EN.value
+//            enAM = liveData.chL_AM_EN.value
+//            enFM = liveData.chL_FM_EN.value
 //            volume = liveData.volume0.value
-//            amDepth = liveData.ch1AmDepth.value
+//            amDepth = liveData.chLAmDepth.value
 //        } else {
-//            rC = convertHzToR(liveData.ch2_Carrier_Fr.value).toUInt()
-//            rAM = convertHzToR(liveData.ch2_AM_Fr.value).toUInt()
-//            rFM = convertHzToR(liveData.ch1_FM_Fr.value).toUInt()
-//            enCH = liveData.ch2_EN.value
-//            enAM = liveData.ch2_AM_EN.value
-//            enFM = liveData.ch2_FM_EN.value
+//            rC = convertHzToR(liveData.chR_Carrier_Fr.value).toUInt()
+//            rAM = convertHzToR(liveData.chR_AM_Fr.value).toUInt()
+//            rFM = convertHzToR(liveData.chL_FM_Fr.value).toUInt()
+//            enCH = liveData.chR_EN.value
+//            enAM = liveData.chR_AM_EN.value
+//            enFM = liveData.chR_FM_EN.value
 //            volume = liveData.volume1.value
-//            amDepth = liveData.ch2AmDepth.value
+//            amDepth = liveData.chRAmDepth.value
 //        }
 //
 //        if (mBuffer.size != numFrames)
