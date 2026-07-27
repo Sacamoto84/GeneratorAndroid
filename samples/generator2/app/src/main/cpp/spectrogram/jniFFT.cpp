@@ -86,16 +86,28 @@ void initFTTLoop() {
     pProcessorL->init(LENPOINT, fftSampleRate(sampleRate));
     pProcessorR->init(LENPOINT, fftSampleRate(sampleRate));
 
-    //Создать новый pScale (по умолчанию линейный X, логарифмический Y - как в WaterfallView)
-    pScaleL = new ScaleBufferLinLog();
-    pScaleR = new ScaleBufferLinLog();
+    // Скалеры создаём только если UI ещё не успел вызвать SetScaler:
+    // startFFTLoop теперь приходит из SoundService асинхронно и может
+    // выполниться ПОСЛЕ SetScaler от WaterfallView. Безусловное пересоздание
+    // затирало ширину экрана дефолтной 1024 → assert в drawSpectrumBars.
+    pthread_mutex_lock(&context1.scaleLock);
 
-    //Настроить на ширину картинки и маминимальную и максимальную частоту
-    pScaleL->setOutputWidth(1024, static_cast<float>(0), static_cast<float>(5000));
-    pScaleR->setOutputWidth(1024, static_cast<float>(0), static_cast<float>(5000));
+    if (pScaleL == nullptr) {
+        //Создать новый pScale (по умолчанию линейный X, логарифмический Y - как в WaterfallView)
+        pScaleL = new ScaleBufferLinLog();
+        pScaleR = new ScaleBufferLinLog();
 
+        //Настроить на ширину картинки и маминимальную и максимальную частоту
+        pScaleL->setOutputWidth(1024, static_cast<float>(0), static_cast<float>(5000));
+        pScaleR->setOutputWidth(1024, static_cast<float>(0), static_cast<float>(5000));
+    }
+
+    // PreBuild всегда: если ранний SetScaler построил бины на ещё не
+    // инициализированных процессорах, здесь они пересчитываются заново.
     pScaleL->PreBuild(pProcessorL);
     pScaleR->PreBuild(pProcessorR);
+
+    pthread_mutex_unlock(&context1.scaleLock);
 
     context1.exit = false;
     sem_init(&context1.headwriteprotect, 0, 0);
@@ -322,7 +334,10 @@ Java_com_example_generator2_Spectrogram_Lock(JNIEnv *env, jobject, jobject bitma
     pthread_mutex_lock(&context1.scaleLock);
 //    LOGE("Begin Lock");
 
-    if (pScaleL != nullptr) {
+    // Защита от рассинхрона ширины: в release assert внутри drawSpectrumBars
+    // вырезан, и несовпадение размеров писало бы мимо буфера битмапа.
+    if (pScaleL != nullptr && pScaleL->GetBuffer() != nullptr &&
+        pScaleL->GetBuffer()->GetSize() == static_cast<int>(context1.info.width)) {
         drawSpectrumBars(&context1.info, context1.pixels, context1.barsHeight, pScaleL->GetBuffer());
     }
 
