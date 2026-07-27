@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.generator.GeneratorCH
+import com.example.generator2.features.generator.GeneratorMOD
 import com.example.generator2.model.itemList
 
 object UIspinner {
@@ -36,8 +37,8 @@ object UIspinner {
     @SuppressLint("ModifierParameter", "StateFlowValueCalledInComposition")
     @Composable
     fun Spinner(
-        CH: GeneratorCH,
-        Mod: String,
+        ch: GeneratorCH,
+        mod: GeneratorMOD,
         transparent: Boolean = false,
         modifier: Modifier = Modifier,
         filename: State<String>,
@@ -49,36 +50,36 @@ object UIspinner {
 
         //Выбор с каким списком работать
         var itemlist: ArrayList<itemList> = gen.itemlistCarrier
-        when (Mod) {
-            "CR" -> itemlist = gen.itemlistCarrier
-            "AM" -> itemlist = gen.itemlistAM
-            "FM" -> itemlist = gen.itemlistFM
-            "MASTER" -> itemlist = gen.itemlistAM
-            "MORPH0", "MORPH1", "MORPH2" -> itemlist = gen.itemlistCarrier
+        when (mod) {
+            GeneratorMOD.CR -> itemlist = gen.itemlistCarrier
+            GeneratorMOD.AM -> itemlist = gen.itemlistAM
+            GeneratorMOD.FM -> itemlist = gen.itemlistFM
+            GeneratorMOD.MASTER -> itemlist = gen.itemlistAM
+            GeneratorMOD.MORPH0, GeneratorMOD.MORPH1, GeneratorMOD.MORPH2 -> itemlist = gen.itemlistCarrier
         }
 
         //Текущий текст
         var currentValue = "---"
 
-        if (CH == GeneratorCH.CHL) {
-            when (Mod) {
-                "CR" -> currentValue = gen.liveData.chL_Carrier_Filename.value
-                "AM" -> currentValue = gen.liveData.chL_AM_Filename.value
-                "FM" -> currentValue = gen.liveData.chL_FM_Filename.value
-                "MASTER" -> currentValue = gen.liveData.chL_Master_Filename.value
-                "MORPH0" -> currentValue = gen.liveData.chL_Morph_Slot0_Filename.value
-                "MORPH1" -> currentValue = gen.liveData.chL_Morph_Slot1_Filename.value
-                "MORPH2" -> currentValue = gen.liveData.chL_Morph_Slot2_Filename.value
+        if (ch == GeneratorCH.CHL) {
+            when (mod) {
+                GeneratorMOD.CR -> currentValue = gen.liveData.chL_Carrier_Filename.value
+                GeneratorMOD.AM -> currentValue = gen.liveData.chL_AM_Filename.value
+                GeneratorMOD.FM -> currentValue = gen.liveData.chL_FM_Filename.value
+                GeneratorMOD.MASTER -> currentValue = gen.liveData.chL_Master_Filename.value
+                GeneratorMOD.MORPH0 -> currentValue = gen.liveData.chL_Morph_Slot0_Filename.value
+                GeneratorMOD.MORPH1 -> currentValue = gen.liveData.chL_Morph_Slot1_Filename.value
+                GeneratorMOD.MORPH2 -> currentValue = gen.liveData.chL_Morph_Slot2_Filename.value
             }
         } else {
-            when (Mod) {
-                "CR" -> currentValue = gen.liveData.chR_Carrier_Filename.value
-                "AM" -> currentValue = gen.liveData.chR_AM_Filename.value
-                "FM" -> currentValue = gen.liveData.chR_FM_Filename.value
-                "MASTER" -> currentValue = gen.liveData.chR_Master_Filename.value
-                "MORPH0" -> currentValue = gen.liveData.chR_Morph_Slot0_Filename.value
-                "MORPH1" -> currentValue = gen.liveData.chR_Morph_Slot1_Filename.value
-                "MORPH2" -> currentValue = gen.liveData.chR_Morph_Slot2_Filename.value
+            when (mod) {
+                GeneratorMOD.CR -> currentValue = gen.liveData.chR_Carrier_Filename.value
+                GeneratorMOD.AM -> currentValue = gen.liveData.chR_AM_Filename.value
+                GeneratorMOD.FM -> currentValue = gen.liveData.chR_FM_Filename.value
+                GeneratorMOD.MASTER -> currentValue = gen.liveData.chR_Master_Filename.value
+                GeneratorMOD.MORPH0 -> currentValue = gen.liveData.chR_Morph_Slot0_Filename.value
+                GeneratorMOD.MORPH1 -> currentValue = gen.liveData.chR_Morph_Slot1_Filename.value
+                GeneratorMOD.MORPH2 -> currentValue = gen.liveData.chR_Morph_Slot2_Filename.value
             }
         }
 
@@ -155,29 +156,29 @@ object UIspinner {
                             onClick = {
                                 currentValue = it.name
                                 expanded.value = false
-                                if (CH == GeneratorCH.CHL) {
-                                    when (Mod) {
-                                        "CR" -> gen.liveData.chL_Carrier_Filename.value =
+                                if (ch == GeneratorCH.CHL) {
+                                    when (mod) {
+                                        GeneratorMOD.CR -> gen.liveData.chL_Carrier_Filename.value =
                                             currentValue
 
-                                        "AM" -> gen.liveData.chL_AM_Filename.value = currentValue
-                                        "FM" -> gen.liveData.chL_FM_Filename.value = currentValue
-                                        "MASTER" -> gen.liveData.chL_Master_Filename.value = currentValue
-                                        "MORPH0" -> gen.liveData.chL_Morph_Slot0_Filename.value = currentValue
-                                        "MORPH1" -> gen.liveData.chL_Morph_Slot1_Filename.value = currentValue
-                                        "MORPH2" -> gen.liveData.chL_Morph_Slot2_Filename.value = currentValue
+                                        GeneratorMOD.AM -> gen.liveData.chL_AM_Filename.value = currentValue
+                                        GeneratorMOD.FM -> gen.liveData.chL_FM_Filename.value = currentValue
+                                        GeneratorMOD.MASTER -> gen.liveData.chL_Master_Filename.value = currentValue
+                                        GeneratorMOD.MORPH0 -> gen.liveData.chL_Morph_Slot0_Filename.value = currentValue
+                                        GeneratorMOD.MORPH1 -> gen.liveData.chL_Morph_Slot1_Filename.value = currentValue
+                                        GeneratorMOD.MORPH2 -> gen.liveData.chL_Morph_Slot2_Filename.value = currentValue
                                     }
                                 } else {
-                                    when (Mod) {
-                                        "CR" -> gen.liveData.chR_Carrier_Filename.value =
+                                    when (mod) {
+                                        GeneratorMOD.CR -> gen.liveData.chR_Carrier_Filename.value =
                                             currentValue
 
-                                        "AM" -> gen.liveData.chR_AM_Filename.value = currentValue
-                                        "FM" -> gen.liveData.chR_FM_Filename.value = currentValue
-                                        "MASTER" -> gen.liveData.chR_Master_Filename.value = currentValue
-                                        "MORPH0" -> gen.liveData.chR_Morph_Slot0_Filename.value = currentValue
-                                        "MORPH1" -> gen.liveData.chR_Morph_Slot1_Filename.value = currentValue
-                                        "MORPH2" -> gen.liveData.chR_Morph_Slot2_Filename.value = currentValue
+                                        GeneratorMOD.AM -> gen.liveData.chR_AM_Filename.value = currentValue
+                                        GeneratorMOD.FM -> gen.liveData.chR_FM_Filename.value = currentValue
+                                        GeneratorMOD.MASTER -> gen.liveData.chR_Master_Filename.value = currentValue
+                                        GeneratorMOD.MORPH0 -> gen.liveData.chR_Morph_Slot0_Filename.value = currentValue
+                                        GeneratorMOD.MORPH1 -> gen.liveData.chR_Morph_Slot1_Filename.value = currentValue
+                                        GeneratorMOD.MORPH2 -> gen.liveData.chR_Morph_Slot2_Filename.value = currentValue
                                     }
                                 }
 

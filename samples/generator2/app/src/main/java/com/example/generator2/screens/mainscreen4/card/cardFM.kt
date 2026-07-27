@@ -37,6 +37,7 @@ import com.example.generator2.features.generator.FM_FREQ_MIN
 import com.example.generator2.common.haptic.Haptic
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.generator.GeneratorCH
+import com.example.generator2.features.generator.GeneratorMOD
 import com.example.generator2.model.LiveConstrain
 import com.example.generator2.screens.mainscreen4.atom.VolumeControl
 import com.example.generator2.screens.mainscreen4.modifierInfinitySlider
@@ -56,7 +57,7 @@ import kotlinx.coroutines.flow.update
 
 
 @Composable
-fun CardFM(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
+fun CardFM(ch: GeneratorCH, gen: Generator) {
 
     val fmEN: State<Boolean?> =
         if (ch == GeneratorCH.CHL) gen.liveData.chL_FM_EN.collectAsState() else gen.liveData.chR_FM_EN.collectAsState()
@@ -180,7 +181,7 @@ fun CardFM(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
 
             UIspinner.Spinner(
                 ch,
-                "FM",
+                GeneratorMOD.FM,
                 modifier = Modifier
                     .padding(start = 8.dp, end = 8.dp)
                     .wrapContentWidth()
@@ -208,7 +209,7 @@ fun CardFM(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
 }
 
 @Composable
-private fun SecondLine(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
+private fun SecondLine(ch: GeneratorCH, gen: Generator) {
 
     val fmSelectMode: State<Int?> = if (ch == GeneratorCH.CHL) {
         gen.liveData.parameterInt0.collectAsState() //CHL режим выбора частот FM модуляции 0-обычный 1-минимум макс
@@ -393,7 +394,7 @@ private fun SecondLineMode0(ch: GeneratorCH, gen: Generator) {
 }
 
 @Composable
-private fun Volume(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
+private fun Volume(ch: GeneratorCH, gen: Generator) {
     VolumeControl(
 
         value = if (ch == GeneratorCH.CHL)

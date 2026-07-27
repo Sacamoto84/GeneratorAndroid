@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.example.generator2.common.haptic.Haptic
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.generator.GeneratorCH
+import com.example.generator2.features.generator.GeneratorMOD
 import com.example.generator2.model.LiveConstrain
 import com.example.generator2.screens.mainscreen4.modifierInfinitySlider
 import com.example.generator2.screens.mainscreen4.ms4SwitchWidth
@@ -36,7 +37,7 @@ import com.example.generator2.screens.common.modifier.noRippleClickable
 
 
 @Composable
-fun CardCarrier(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
+fun CardCarrier(ch: GeneratorCH, gen: Generator) {
 
     val chEN: State<Boolean> =
         if (ch == GeneratorCH.CHL) gen.liveData.chL_EN.collectAsState() else gen.liveData.chR_EN.collectAsState()
@@ -158,8 +159,8 @@ fun CardCarrier(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
             )
 
             UIspinner.Spinner(
-                CH = ch,
-                Mod = "CR",
+                ch = ch,
+                mod = GeneratorMOD.CR,
                 modifier = Modifier
                     .padding(start = 8.dp, end = 8.dp)
                     .wrapContentWidth()

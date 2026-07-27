@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.example.generator2.common.haptic.Haptic
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.generator.GeneratorCH
+import com.example.generator2.features.generator.GeneratorMOD
 import com.example.generator2.model.LiveConstrain
 import com.example.generator2.screens.mainscreen4.modifierInfinitySlider
 import com.example.generator2.screens.mainscreen4.ms4SwitchWidth
@@ -34,7 +35,7 @@ import com.example.generator2.screens.common.modifier.noRippleClickable
 
 
 @Composable
-fun CardAM(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
+fun CardAM(ch: GeneratorCH, gen: Generator) {
 
     val amEN: State<Boolean?> = if (ch == GeneratorCH.CHL) {
         gen.liveData.chL_AM_EN.collectAsState()
@@ -138,7 +139,7 @@ fun CardAM(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
 
             UIspinner.Spinner(
                 ch,
-                "AM",
+                GeneratorMOD.AM,
                 modifier = Modifier
                     .padding(top = 0.dp, start = 8.dp, end = 8.dp)
                     .wrapContentWidth()

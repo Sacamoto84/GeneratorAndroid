@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.example.generator2.common.haptic.Haptic
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.generator.GeneratorCH
+import com.example.generator2.features.generator.GeneratorMOD
 import com.example.generator2.features.generator.MASTER_MODE_BUTTON
 import com.example.generator2.features.generator.MASTER_MODE_ONOFF
 import com.example.generator2.features.generator.MASTER_MODE_SLOW
@@ -33,7 +34,7 @@ import com.example.generator2.screens.mainscreen4.ui.UIspinner
 import com.example.generator2.theme.colorDarkBackground
 
 @Composable
-fun CardMaster(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
+fun CardMaster(ch: GeneratorCH, gen: Generator) {
 
     val isChL = ch == GeneratorCH.CHL
 
@@ -111,7 +112,7 @@ fun CardMaster(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
                     )
                     UIspinner.Spinner(
                         ch,
-                        "MASTER",
+                        GeneratorMOD.MASTER,
                         modifier = Modifier
                             .padding(top = 0.dp, start = 8.dp, end = 8.dp)
                             .wrapContentWidth()

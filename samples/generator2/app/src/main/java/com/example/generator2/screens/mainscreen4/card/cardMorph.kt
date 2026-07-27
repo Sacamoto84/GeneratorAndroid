@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.example.generator2.common.haptic.Haptic
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.generator.GeneratorCH
+import com.example.generator2.features.generator.GeneratorMOD
 import com.example.generator2.features.generator.MORPH_MODE_SMOOTH
 import com.example.generator2.features.generator.MORPH_MODE_STEP
 import com.example.generator2.screens.common.modifier.noRippleClickable
@@ -33,7 +34,7 @@ import com.example.generator2.theme.colorDarkBackground
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun CardMorph(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
+fun CardMorph(ch: GeneratorCH, gen: Generator) {
 
     val isChL = ch == GeneratorCH.CHL
 
@@ -127,8 +128,8 @@ private fun MorphSlot(ch: GeneratorCH, slot: Int, gen: Generator, modifier: Modi
         }
 
         UIspinner.Spinner(
-            CH = ch,
-            Mod = "MORPH$slot",
+            ch = ch,
+            mod = GeneratorMOD.entries[GeneratorMOD.MORPH0.ordinal + slot],
             modifier = Modifier
                 .padding(start = 4.dp, end = 4.dp)
                 .wrapContentWidth()

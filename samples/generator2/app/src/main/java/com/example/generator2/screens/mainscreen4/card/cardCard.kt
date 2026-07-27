@@ -16,7 +16,7 @@ import com.example.generator2.features.generator.GeneratorCH
 import com.example.generator2.theme.colorLightBackground
 
 @Composable
-fun CardCard(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
+fun CardCard(ch: GeneratorCH, gen: Generator) {
     Box(modifier = Modifier
         .fillMaxWidth()
         .background(colorLightBackground))

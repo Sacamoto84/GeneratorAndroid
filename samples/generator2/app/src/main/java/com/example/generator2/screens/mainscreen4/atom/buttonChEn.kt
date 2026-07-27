@@ -25,7 +25,7 @@ import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.screens.common.modifier.noRippleClickable
 
 @Composable
-fun ButtonChEn(ch: GeneratorCH = GeneratorCH.CHL, gen: Generator) {
+fun ButtonChEn(ch: GeneratorCH, gen: Generator) {
 
     val chEN: State<Boolean> = if (ch == GeneratorCH.CHL) {
         gen.liveData.chL_EN.collectAsState()
