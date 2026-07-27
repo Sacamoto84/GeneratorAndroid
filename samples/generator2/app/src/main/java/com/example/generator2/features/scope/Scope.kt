@@ -632,7 +632,8 @@ class Scope {
                 modifier = m
                     .clip(RoundedCornerShape(topStart = a, bottomStart = a))
                     .border(
-                        1.dp,
+                        //Толщина, а не только цвет: активная кнопка различима без цветовосприятия
+                        if (oscillSync.value == OSCILLSYNC.NONE) 2.dp else 1.dp,
                         if (oscillSync.value == OSCILLSYNC.NONE) colorTextEnabled else Color.Gray,
                         RoundedCornerShape(topStart = a, bottomStart = a)
                     )
@@ -648,7 +649,10 @@ class Scope {
 
             Box(
                 modifier = m
-                    .border(1.dp, if (oscillSync.value == OSCILLSYNC.L) colorChL else Color.Gray)
+                    .border(
+                        if (oscillSync.value == OSCILLSYNC.L) 2.dp else 1.dp,
+                        if (oscillSync.value == OSCILLSYNC.L) colorChL else Color.Gray
+                    )
                     .clickable(onClick = { oscillSync.value = OSCILLSYNC.L })
                     .background(if (oscillSync.value == OSCILLSYNC.L) colorEnabled else Color.Black),
                 contentAlignment = Alignment.Center
@@ -663,7 +667,7 @@ class Scope {
                 modifier = m
                     .clip(RoundedCornerShape(topEnd = a, bottomEnd = a))
                     .border(
-                        1.dp,
+                        if (oscillSync.value == OSCILLSYNC.R) 2.dp else 1.dp,
                         if (oscillSync.value == OSCILLSYNC.R) colorChR else Color.Gray,
                         RoundedCornerShape(topEnd = a, bottomEnd = a)
                     )
