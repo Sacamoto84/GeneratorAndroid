@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -91,6 +92,7 @@ internal fun Picker(
         "$current ▾",
         color = color,
         fontSize = 14.sp,
+        fontWeight = if (color == Color.White) FontWeight.Normal else FontWeight.Bold,
         modifier = Modifier
             .background(Color(0xFF3D3D3F), RoundedCornerShape(5.dp))
             .clickable { open = true }

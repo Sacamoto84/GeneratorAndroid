@@ -631,7 +631,11 @@ class Scope {
             Box(
                 modifier = m
                     .clip(RoundedCornerShape(topStart = a, bottomStart = a))
-                    .border(1.dp, Color.Gray, RoundedCornerShape(topStart = a, bottomStart = a))
+                    .border(
+                        1.dp,
+                        if (oscillSync.value == OSCILLSYNC.NONE) colorTextEnabled else Color.Gray,
+                        RoundedCornerShape(topStart = a, bottomStart = a)
+                    )
                     .clickable(onClick = { oscillSync.value = OSCILLSYNC.NONE })
                     .background(if (oscillSync.value == OSCILLSYNC.NONE) colorEnabled else Color.Black),
                 contentAlignment = Alignment.Center
@@ -644,7 +648,7 @@ class Scope {
 
             Box(
                 modifier = m
-                    .border(1.dp, Color.Gray)
+                    .border(1.dp, if (oscillSync.value == OSCILLSYNC.L) colorChL else Color.Gray)
                     .clickable(onClick = { oscillSync.value = OSCILLSYNC.L })
                     .background(if (oscillSync.value == OSCILLSYNC.L) colorEnabled else Color.Black),
                 contentAlignment = Alignment.Center
@@ -658,7 +662,11 @@ class Scope {
             Box(
                 modifier = m
                     .clip(RoundedCornerShape(topEnd = a, bottomEnd = a))
-                    .border(1.dp, Color.Gray, RoundedCornerShape(topEnd = a, bottomEnd = a))
+                    .border(
+                        1.dp,
+                        if (oscillSync.value == OSCILLSYNC.R) colorChR else Color.Gray,
+                        RoundedCornerShape(topEnd = a, bottomEnd = a)
+                    )
                     .clickable(onClick = { oscillSync.value = OSCILLSYNC.R })
                     .background(if (oscillSync.value == OSCILLSYNC.R) colorEnabled else Color.Black),
                 contentAlignment = Alignment.Center

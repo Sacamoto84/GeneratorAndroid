@@ -47,7 +47,7 @@ fun CardAM(ch: GeneratorCH, gen: Generator) {
 
         Box(
             modifier = Modifier
-                .background(Color.DarkGray) //colorGreen else colorOrange)
+                .background(Color.DarkGray)
                 .height(1.dp)
                 .fillMaxWidth()
         )

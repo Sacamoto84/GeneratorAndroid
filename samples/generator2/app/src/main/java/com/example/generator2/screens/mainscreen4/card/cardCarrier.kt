@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -68,11 +69,12 @@ fun CardCarrier(ch: GeneratorCH, gen: Generator) {
         Box(
             modifier = Modifier
                 .background(if (ch == GeneratorCH.CHL) colorChL else colorChR)
-                .height(16.dp)
+                .heightIn(min = 16.dp)
                 .fillMaxWidth(), contentAlignment = Alignment.Center
         ) {
+            val mono = gen.liveData.mono.collectAsState().value
             Text(
-                text = if (ch == GeneratorCH.CHL) "CHL" else "CHR",
+                text = if (mono) "MONO" else if (ch == GeneratorCH.CHL) "CHL" else "CHR",
                 color = Color.Black,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold
