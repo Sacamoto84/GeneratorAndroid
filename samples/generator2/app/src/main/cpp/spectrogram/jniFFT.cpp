@@ -105,6 +105,27 @@ void initFTTLoop() {
     LOGE("!!! initFTTLoop isInitialized = true");
 }
 
+/**
+ * Остановка рабочего потока FFT. Идемпотентна: повторный вызов при
+ * isInitialized == false завершается сразу.
+ *
+ * Семафор намеренно НЕ уничтожается: sentToFloatRingBufferFFT может
+ * сделать sem_post уже после join, и это должно остаться безопасным.
+ */
+void stopFFTLoop() {
+    if (!isInitialized)
+        return;
+
+    LOGE("!!! stopFFTLoop");
+
+    context1.exit = true;
+    sem_post(&context1.headwriteprotect);
+    pthread_join(context1.worker, nullptr);
+    isInitialized = false;
+
+    LOGE("!!! stopFFTLoop joined");
+}
+
 void *loop1(void *init) {
     LOGE("!!! loop()");
 
@@ -196,6 +217,15 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_generator2_Spectrogram_startFFTLoop(JNIEnv *env, jobject) {
     initFTTLoop();
+}
+
+/**
+ * Остановка потока FFT, вызывается при закрытии приложения
+ */
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_generator2_Spectrogram_stopFFTLoop(JNIEnv *env, jobject) {
+    stopFFTLoop();
 }
 
 /**
