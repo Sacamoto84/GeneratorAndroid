@@ -376,7 +376,8 @@ private:
     float binOf(float level, int channel) const {
         float y = level;
         if (layout_ == 1) {
-            y = (channel == 0) ? level * 0.5f - 0.5f : level * 0.5f + 0.5f;
+            // Канал 0 (левый, жёлтый) — верхняя половина, канал 1 — нижняя.
+            y = (channel == 0) ? level * 0.5f + 0.5f : level * 0.5f - 0.5f;
         }
         if (y < -1.0f) {
             y = -1.0f;

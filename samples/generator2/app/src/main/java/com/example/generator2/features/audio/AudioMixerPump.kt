@@ -42,7 +42,7 @@ class AudioMixerPump
 
     //PUBLIC
     val routeR = MutableStateFlow(ROUTESTREAM.GEN) //Выбор источника для вывода сигнала
-    val routeL = MutableStateFlow(ROUTESTREAM.OFF)
+    val routeL = MutableStateFlow(ROUTESTREAM.GEN)
 
     val invertL = MutableStateFlow(false)
     val invertR = MutableStateFlow(false)
@@ -283,11 +283,14 @@ class AudioMixerPump
             //───────────────────────────────────────────────┐
             // Переворот канала                              │
             //───────────────────────────────────────────────┤
+            // Интерлив AudioTrack: чётный сэмпл кадра —     │
+            // ЛЕВОЕ ухо (LRLR), поэтому в нормальном        │
+            // режиме outL идёт первым аргументом.           │
             val v = if (shuffle.value) {                  // │
-                bufMerge(outL, outR)                      // │
+                bufMerge(outR, outL)                      // │
             } else {                                      // │
                 //Нормальный режим                        // │
-                bufMerge(outR, outL)                      // │
+                bufMerge(outL, outR)                      // │
             }                                             // │
             //───────────────────────────────────────────────┘
             //Отравили в scope

@@ -10,6 +10,11 @@ val Teal200 = Color(0xFF03DAC5)
 val colorGreen = Color(0xFF4CB050)
 val colorOrange = Color(0xFFD8BD12)
 
+//Цвета идентичности каналов. Синхронизированы с фрагментным шейдером
+//осциллографа (MyGLRendererOscill): жёлтый vec3(1,1,0), магента vec3(1,0,1).
+val colorChL = Color(0xFFFFFF00) //левый канал, жёлтый
+val colorChR = Color(0xFFFF00FF) //правый канал, магента
+
 val backgroundColor = Color(0xffECEFF1)
 
 

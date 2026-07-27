@@ -168,7 +168,8 @@ class MyGLRendererOscill : GLSurfaceView.Renderer {
 
     private var lastUpdateNs = 0L
 
-    val bools = intArrayOf(0, 1, 1) //oneTwo 0-one 1-two, L 1-true, R
+    //[0] oneTwo 0-one 1-two; [1] L (жёлтый, visibility.x); [2] R (магента, visibility.y)
+    val bools = intArrayOf(0, 1, 1)
 
     private val vertexShaderCode =
         """
@@ -215,8 +216,10 @@ void main() {
     float first = 1.0 - exp(-energy.r * gain);
     float second = 1.0 - exp(-energy.g * gain);
 
-    vec3 color = vec3(1.0, 0.0, 1.0) * first * visibility.x
-               + vec3(1.0, 1.0, 0.0) * second * visibility.y;
+    // Канал 0 (чётный сэмпл интерлива) = левый = жёлтый,
+    // канал 1 = правый = магента. Цвета = colorChL/colorChR из theme/Color.kt.
+    vec3 color = vec3(1.0, 1.0, 0.0) * first * visibility.x
+               + vec3(1.0, 0.0, 1.0) * second * visibility.y;
 
     fragColor = vec4(color + vec3(0.0, 0.15, 0.0), 1.0);
 }
@@ -415,8 +418,8 @@ void main() {
         glUniform1f(gainHandle, TONEMAP_GAIN * NativePhosphor.BINS)
         glUniform2f(
             visibilityHandle,
-            if (bools[2] == 1) 1.0f else 0.0f,
-            if (bools[1] == 1) 1.0f else 0.0f
+            if (bools[1] == 1) 1.0f else 0.0f,
+            if (bools[2] == 1) 1.0f else 0.0f
         )
 
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
