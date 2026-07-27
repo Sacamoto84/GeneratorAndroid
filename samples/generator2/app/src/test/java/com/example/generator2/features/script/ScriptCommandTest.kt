@@ -90,6 +90,15 @@ class ScriptCommandTest {
         assertEquals(
             Cmd.ReadGen(0, 1, GenBlock.CR, GenParam.FR), parseCommand("READ F0 CRL FR")
         )
+        assertEquals(
+            Cmd.GenValue(2, GenBlock.CR, GenParam.FR, Operand.Const(1f)),
+            parseCommand("CRR FR 1")
+        )
+        assertEquals(Cmd.GenMod(1, GenBlock.AM, "Sine"), parseCommand("AML MOD Sine"))
+        assertEquals(
+            Cmd.GenValue(1, GenBlock.FM, GenParam.DEV, Operand.Const(1f)),
+            parseCommand("FML DEV 1")
+        )
     }
 
     @Test
@@ -98,6 +107,10 @@ class ScriptCommandTest {
         assertEquals(parseCommand("CHR CR ON"), parseCommand("CH2 CR ON"))
         assertEquals(parseCommand("CRL FR 440"), parseCommand("CR1 FR 440"))
         assertEquals(parseCommand("FMR DEV 100"), parseCommand("FM2 DEV 100"))
+        assertEquals(parseCommand("CRR FR 440"), parseCommand("CR2 FR 440"))
+        assertEquals(parseCommand("AML MOD Sine"), parseCommand("AM1 MOD Sine"))
+        assertEquals(parseCommand("AMR MOD Sine"), parseCommand("AM2 MOD Sine"))
+        assertEquals(parseCommand("FML DEV 100"), parseCommand("FM1 DEV 100"))
     }
 
     //╰───────────────────────────────────────────────────────────────────────╯
@@ -223,6 +236,12 @@ class ScriptCommandTest {
     fun `READ BASE и DEV только у FM`() {
         assertThrows(ScriptException::class.java) { parseCommand("READ F1 CR1 BASE", 0) }
         assertThrows(ScriptException::class.java) { parseCommand("READ F1 AM1 DEV", 0) }
+    }
+
+    @Test
+    fun `READ с невалидным номером канала падает`() {
+        assertThrows(ScriptException::class.java) { parseCommand("READ F0 CR3 FR") }
+        assertThrows(ScriptException::class.java) { parseCommand("READ F0 CRX FR") }
     }
 
     //╭─ Операнд наружу ──────────────────────────────────────────────────────╮
