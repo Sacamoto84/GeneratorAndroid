@@ -15,9 +15,12 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 import java.util.LinkedList
+import kotlin.coroutines.coroutineContext
 import kotlin.system.measureNanoTime
 import kotlin.system.measureTimeMillis
 
@@ -90,12 +93,14 @@ class AudioMixerPump
         var init = false
 
         while (!init) {
+            coroutineContext.ensureActive()
             init = try {
                 exoplayer.player
                 true
             } catch (e: UninitializedPropertyAccessException) {
                 false
             }
+            if (!init) delay(1)
         }
 
         var outL: FloatArray
@@ -114,8 +119,11 @@ class AudioMixerPump
 //                }
 //            }
 
+        try {
+
         while (true) {
 
+            coroutineContext.ensureActive()
 
             if (exoplayer.isPlayingD.value) {
 
@@ -297,8 +305,38 @@ class AudioMixerPump
 
         }
 
+        } finally {
+            Timber.w("AudioMixerPump: цикл завершён, освобождаем AudioOut")
+            audioOut.destroy()
+        }
 
+    }
 
+    /**
+     * Освобождение аудиожелеза. Вызывается ТОЛЬКО из главного потока и ТОЛЬКО
+     * после того, как корутина run() завершилась — иначе памп продолжит писать
+     * в уже освобождённый AudioTrack.
+     *
+     * ExoPlayer.release() обязан выполняться на том же потоке, где плеер был
+     * создан (главный), поэтому SoundService зовёт shutdown() из onDestroy /
+     * обработчика ACTION_CLOSE, а не из корутины пампа.
+     *
+     * Идемпотентен: AudioOut.destroy() обнуляет out, повторный вызов — no-op.
+     */
+    fun shutdown() {
+        Timber.w("AudioMixerPump shutdown")
+
+        try {
+            audioOut.destroy()
+        } catch (e: Exception) {
+            Timber.e(e, "Ошибка освобождения AudioOut")
+        }
+
+        try {
+            exoplayer.player.release()
+        } catch (e: Exception) {
+            Timber.e(e, "Ошибка освобождения ExoPlayer")
+        }
     }
 
 

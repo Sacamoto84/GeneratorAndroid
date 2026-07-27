@@ -49,6 +49,11 @@ object Spectrogram {
     external fun startFFTLoop()
 
     /**
+     * Остановка потока FFT. Идемпотентна — повторный вызов безопасен.
+     */
+    external fun stopFFTLoop()
+
+    /**
      * Отправить порцию данных в буфер FloatRingBufferFFT
      */
     external fun sentToFloatRingBufferFFT(buf : FloatArray, len : Int, samplerate : Int)
