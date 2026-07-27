@@ -326,7 +326,11 @@ class AudioMixerPump
     fun shutdown() {
         Timber.w("AudioMixerPump shutdown")
 
-        audioOut.destroy()
+        try {
+            audioOut.destroy()
+        } catch (e: Exception) {
+            Timber.e(e, "Ошибка освобождения AudioOut")
+        }
 
         try {
             exoplayer.player.release()
