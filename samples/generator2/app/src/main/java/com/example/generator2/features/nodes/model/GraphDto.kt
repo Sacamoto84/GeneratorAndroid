@@ -104,6 +104,7 @@ private fun NodeDto.toDomain(): GraphNode {
 
             "STEP" -> NodeBody.Step(
                 params = StepParams(
+                    //ch1/ch2 — легаси-имена JSON; в домене это chL/chR (см. объявление полей)
                     chL = (ch1 ?: ChannelDto()).toDomain(nodeId),
                     chR = (ch2 ?: ChannelDto()).toDomain(nodeId),
                 ),
@@ -188,6 +189,7 @@ private fun GraphNode.toDto(): NodeDto {
         is NodeBody.Step -> base.copy(
             type = "STEP",
             delayMs = b.delayMs,
+            //Поля DTO ch1/ch2 — легаси-имена JSON, домен отдаёт chL/chR
             ch1 = b.params.chL.toDto(),
             ch2 = b.params.chR.toDto(),
         )

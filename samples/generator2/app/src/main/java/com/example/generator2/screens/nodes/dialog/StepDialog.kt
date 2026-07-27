@@ -87,19 +87,19 @@ fun StepDialog(
                         params = if (ch == 1) params.copy(chL = updated) else params.copy(chR = updated)
                     }
 
-                    Group("CH$ch · Несущая", listOf(p.carrierEnabled, p.carrierFr, p.carrierMod)) {
+                    Group("${chLabel(ch)} · Несущая", listOf(p.carrierEnabled, p.carrierFr, p.carrierMod)) {
                         BoolRow("Канал включён", p.carrierEnabled) { update(p.copy(carrierEnabled = it)) }
                         OperandRow("Частота, Гц", p.carrierFr) { update(p.copy(carrierFr = it)) }
                         ModRow("Форма", p.carrierMod, carrierNames) { update(p.copy(carrierMod = it)) }
                     }
 
-                    Group("CH$ch · AM", listOf(p.amEnabled, p.amFr, p.amMod)) {
+                    Group("${chLabel(ch)} · AM", listOf(p.amEnabled, p.amFr, p.amMod)) {
                         BoolRow("AM включена", p.amEnabled) { update(p.copy(amEnabled = it)) }
                         OperandRow("Частота, Гц", p.amFr) { update(p.copy(amFr = it)) }
                         ModRow("Форма", p.amMod, modNames) { update(p.copy(amMod = it)) }
                     }
 
-                    Group("CH$ch · FM", listOf(p.fmEnabled, p.fmBase, p.fmDev, p.fmFr, p.fmMod)) {
+                    Group("${chLabel(ch)} · FM", listOf(p.fmEnabled, p.fmBase, p.fmDev, p.fmFr, p.fmMod)) {
                         BoolRow("FM включена", p.fmEnabled) { update(p.copy(fmEnabled = it)) }
                         OperandRow("Несущая (BASE), Гц", p.fmBase) { update(p.copy(fmBase = it)) }
                         OperandRow("Девиация, Гц", p.fmDev) { update(p.copy(fmDev = it)) }

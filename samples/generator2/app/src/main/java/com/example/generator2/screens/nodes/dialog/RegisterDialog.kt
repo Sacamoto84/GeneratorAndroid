@@ -74,6 +74,9 @@ fun RegisterDialog(
     }
 }
 
+//Подпись канала нод-редактора: 1 = CHL (левый), 2 = CHR (правый)
+internal fun chLabel(ch: Int) = if (ch == 1) "CHL" else "CHR"
+
 /** Список коротких вариантов; наружу отдаёт индекс выбранного */
 @Composable
 internal fun Picker(current: String, options: List<String>, onPick: (Int) -> Unit) {
