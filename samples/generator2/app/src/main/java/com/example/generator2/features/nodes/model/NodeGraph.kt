@@ -45,8 +45,8 @@ data class ChannelParams(
         ).count { it != null }
 }
 
-data class StepParams(val ch1: ChannelParams, val ch2: ChannelParams) {
-    val checkedCount: Int get() = ch1.checkedCount + ch2.checkedCount
+data class StepParams(val chL: ChannelParams, val chR: ChannelParams) {
+    val checkedCount: Int get() = chL.checkedCount + chR.checkedCount
 }
 
 sealed interface NodeBody {

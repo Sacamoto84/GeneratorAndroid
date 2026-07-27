@@ -27,8 +27,8 @@ class NodeGraphEndToEndTest {
      */
     private fun sweep(): NodeGraph {
         val params = StepParams(
-            ch1 = ChannelParams(carrierFr = Operand.Reg(1)),
-            ch2 = ChannelParams(),
+            chL = ChannelParams(carrierFr = Operand.Reg(1)),
+            chR = ChannelParams(),
         )
         return newGraph()
             .withNode(

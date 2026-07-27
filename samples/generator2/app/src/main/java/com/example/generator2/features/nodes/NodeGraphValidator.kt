@@ -167,7 +167,7 @@ private fun warnings(
             add(Issue(n.id, Severity.WARNING, "Шаг ничего не делает: ни одного параметра, задержка ноль"))
         }
 
-        listOf(1 to step.params.ch1, 2 to step.params.ch2).forEach { (ch, p) ->
+        listOf(1 to step.params.chL, 2 to step.params.chR).forEach { (ch, p) ->
             if (p.carrierFr != null && p.fmBase != null) {
                 add(
                     Issue(

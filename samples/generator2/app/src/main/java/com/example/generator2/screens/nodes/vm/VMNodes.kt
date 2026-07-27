@@ -167,7 +167,7 @@ class VMNodes @Inject constructor(
     fun snapshotFromGenerator(): StepParams {
         val d = gen.liveData
         return StepParams(
-            ch1 = ChannelParams(
+            chL = ChannelParams(
                 carrierEnabled = d.chL_EN.value,
                 carrierFr = Operand.Const(d.chL_Carrier_Fr.value),
                 carrierMod = d.chL_Carrier_Filename.value,
@@ -182,7 +182,7 @@ class VMNodes @Inject constructor(
                 fmFr = Operand.Const(d.chL_FM_Fr.value),
                 fmMod = d.chL_FM_Filename.value,
             ),
-            ch2 = ChannelParams(
+            chR = ChannelParams(
                 carrierEnabled = d.chR_EN.value,
                 carrierFr = Operand.Const(d.chR_Carrier_Fr.value),
                 carrierMod = d.chR_Carrier_Filename.value,

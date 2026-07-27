@@ -81,10 +81,10 @@ fun StepDialog(
                     .weight(1f, fill = false)
                     .verticalScroll(rememberScrollState()),
             ) {
-                listOf(1 to params.ch1, 2 to params.ch2).forEach { (ch, p) ->
+                listOf(1 to params.chL, 2 to params.chR).forEach { (ch, p) ->
 
                     val update: (ChannelParams) -> Unit = { updated ->
-                        params = if (ch == 1) params.copy(ch1 = updated) else params.copy(ch2 = updated)
+                        params = if (ch == 1) params.copy(chL = updated) else params.copy(chR = updated)
                     }
 
                     Group("CH$ch · Несущая", listOf(p.carrierEnabled, p.carrierFr, p.carrierMod)) {

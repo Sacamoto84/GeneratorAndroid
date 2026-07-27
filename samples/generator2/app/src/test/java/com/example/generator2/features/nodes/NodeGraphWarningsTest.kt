@@ -44,8 +44,8 @@ class NodeGraphWarningsTest {
     @Test
     fun `CR FR и FM BASE вместе это предупреждение`() {
         val params = StepParams(
-            ch1 = ChannelParams(carrierFr = Operand.Const(1000f), fmBase = Operand.Const(2000f)),
-            ch2 = ChannelParams(),
+            chL = ChannelParams(carrierFr = Operand.Const(1000f), fmBase = Operand.Const(2000f)),
+            chR = ChannelParams(),
         )
         assertTrue(warnings(selfLoop(100L, params)).any { it.text.contains("одно и то же поле") })
     }
@@ -53,8 +53,8 @@ class NodeGraphWarningsTest {
     @Test
     fun `неизвестное имя формы это предупреждение`() {
         val params = StepParams(
-            ch1 = ChannelParams(carrierMod = "Небывалая", amMod = "02_HWave"),
-            ch2 = ChannelParams(),
+            chL = ChannelParams(carrierMod = "Небывалая", amMod = "02_HWave"),
+            chR = ChannelParams(),
         )
         val w = warnings(selfLoop(100L, params), carrier = setOf("Sine"), mod = setOf("02_HWave"))
         assertTrue(w.any { it.text.contains("Небывалая") })

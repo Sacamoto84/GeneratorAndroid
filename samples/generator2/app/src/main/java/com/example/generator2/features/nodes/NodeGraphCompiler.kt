@@ -175,7 +175,7 @@ private fun emit(node: GraphNode, graph: NodeGraph, address: Map<NodeId, Int>): 
  * Значения раньше включения не случайны: блок оживает уже на нужной частоте,
  * а не на прежней с последующим скачком.
  */
-internal fun StepParams.assignmentLines(): List<String> = ch1.lines(1) + ch2.lines(2)
+internal fun StepParams.assignmentLines(): List<String> = chL.lines(1) + chR.lines(2)
 
 private fun ChannelParams.lines(ch: Int): List<String> = buildList {
     carrierMod?.let { add("CR$ch MOD $it") }

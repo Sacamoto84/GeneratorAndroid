@@ -37,6 +37,7 @@ data class NodeDto(
     val y: Float? = null,
     // STEP
     val delayMs: Long? = null,
+    //Легаси-имена полей JSON сохранённых графов — НЕ переименовывать в chL/chR
     val ch1: ChannelDto? = null,
     val ch2: ChannelDto? = null,
     // REGISTER
@@ -103,8 +104,8 @@ private fun NodeDto.toDomain(): GraphNode {
 
             "STEP" -> NodeBody.Step(
                 params = StepParams(
-                    ch1 = (ch1 ?: ChannelDto()).toDomain(nodeId),
-                    ch2 = (ch2 ?: ChannelDto()).toDomain(nodeId),
+                    chL = (ch1 ?: ChannelDto()).toDomain(nodeId),
+                    chR = (ch2 ?: ChannelDto()).toDomain(nodeId),
                 ),
                 delayMs = delayMs ?: 0L,
             )
@@ -187,8 +188,8 @@ private fun GraphNode.toDto(): NodeDto {
         is NodeBody.Step -> base.copy(
             type = "STEP",
             delayMs = b.delayMs,
-            ch1 = b.params.ch1.toDto(),
-            ch2 = b.params.ch2.toDto(),
+            ch1 = b.params.chL.toDto(),
+            ch2 = b.params.chR.toDto(),
         )
 
         is NodeBody.Delay -> base.copy(

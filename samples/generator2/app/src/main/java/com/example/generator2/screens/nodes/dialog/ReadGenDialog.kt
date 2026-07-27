@@ -59,7 +59,7 @@ fun ReadGenDialog(
                     //сменили блок на не-FM — BASE/DEV недоступны, откатываем на FR
                     if (block != GenBlock.FM) param = GenParam.FR
                 }
-                Picker("CH$ch", listOf("CH1", "CH2")) { ch = it + 1 }
+                Picker(if (ch == 1) "CHL" else "CHR", listOf("CHL", "CHR")) { ch = it + 1 }
                 Picker(param.name, params.map { it.name }) { param = params[it] }
             }
 

@@ -18,8 +18,8 @@ class NodeGraphCompilerBranchTest {
      */
     private fun sweep(): NodeGraph {
         val params = StepParams(
-            ch1 = ChannelParams(carrierFr = Operand.Reg(1)),
-            ch2 = ChannelParams(),
+            chL = ChannelParams(carrierFr = Operand.Reg(1)),
+            chR = ChannelParams(),
         )
         return newGraph()
             .withNode(GraphNode(NodeId(3), "Разгон", 0f, 0f, NodeBody.Step(params, 100L)))
@@ -107,8 +107,8 @@ class NodeGraphCompilerBranchTest {
         //аргумента, и он бросает ScriptException. Через UI такое имя не
         //набрать, но самопроверка обязана поймать любой битый вывод компилятора.
         val params = StepParams(
-            ch1 = ChannelParams(carrierMod = ""),
-            ch2 = ChannelParams(),
+            chL = ChannelParams(carrierMod = ""),
+            chR = ChannelParams(),
         )
         val g = newGraph()
             .withNode(GraphNode(NodeId(3), "Шаг", 0f, 0f, NodeBody.Step(params, 0L)))

@@ -21,12 +21,12 @@ class GraphDtoTest {
                 NodeId(2), "Разгон", 220f, 100f,
                 NodeBody.Step(
                     StepParams(
-                        ch1 = ChannelParams(
+                        chL = ChannelParams(
                             carrierEnabled = true,
                             carrierFr = Operand.Reg(1),
                             amMod = "02_HWave",
                         ),
-                        ch2 = ChannelParams(),
+                        chR = ChannelParams(),
                     ),
                     delayMs = 100L,
                 ),
@@ -80,7 +80,7 @@ class GraphDtoTest {
             "\"edges\":[]}"
         val node = gson.fromJson(json, GraphDto::class.java).toDomain().node(NodeId(1))!!
         val step = node.body as NodeBody.Step
-        assertNull(step.params.ch1.carrierFr)
+        assertNull(step.params.chL.carrierFr)
         assertEquals(0, step.params.checkedCount)
     }
 

@@ -30,12 +30,12 @@ class NodeGraphCompilerTest {
     @Test
     fun `шаг печатает значения потом переключатели потом задержку и переход`() {
         val params = StepParams(
-            ch1 = ChannelParams(
+            chL = ChannelParams(
                 carrierEnabled = true,
                 carrierFr = Operand.Const(1000f),
                 carrierMod = "Sine",
             ),
-            ch2 = ChannelParams(),
+            chR = ChannelParams(),
         )
         val g = newGraph()
             .withNode(GraphNode(NodeId(3), "Шаг", 0f, 0f, NodeBody.Step(params, 500L)))
@@ -73,8 +73,8 @@ class NodeGraphCompilerTest {
     @Test
     fun `второй канал печатается после первого`() {
         val params = StepParams(
-            ch1 = ChannelParams(carrierFr = Operand.Const(100f)),
-            ch2 = ChannelParams(amFr = Operand.Reg(3)),
+            chL = ChannelParams(carrierFr = Operand.Const(100f)),
+            chR = ChannelParams(amFr = Operand.Reg(3)),
         )
         val g = newGraph()
             .withNode(GraphNode(NodeId(3), "Шаг", 0f, 0f, NodeBody.Step(params, 0L)))
