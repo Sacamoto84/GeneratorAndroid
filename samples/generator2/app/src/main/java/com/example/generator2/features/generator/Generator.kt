@@ -16,8 +16,8 @@ class Generator {
     var itemlistAM: ArrayList<itemList> = ArrayList()      //Создать список
     var itemlistFM: ArrayList<itemList> = ArrayList()      //Создать список
 
-    val ch1: StructureCh = StructureCh(ch = 0)
-    val ch2: StructureCh = StructureCh(ch = 1)
+    val chL: StructureCh = StructureCh(ch = 0)
+    val chR: StructureCh = StructureCh(ch = 1)
 
     var sampleRate: Int = 48000
 
@@ -44,7 +44,7 @@ class Generator {
         if (!liveData.mono.value) {
 
             l = if (liveData.chL_EN.value)
-                RenderChannel().renderChanel(liveData, ch1, numFrames / 2, sampleRate)
+                RenderChannel().renderChanel(liveData, chL, numFrames / 2, sampleRate)
             else {
                 if (numFrames / 2 != zeroBufferSize)
                 {
@@ -55,7 +55,7 @@ class Generator {
             }
 
             r = if (liveData.chR_EN.value)
-                RenderChannel().renderChanel(liveData, ch2, numFrames / 2, sampleRate)
+                RenderChannel().renderChanel(liveData, chR, numFrames / 2, sampleRate)
 
             else {
 
@@ -69,7 +69,7 @@ class Generator {
             }
         } else {
             //Mono
-            val m = RenderChannel().renderChanel(liveData, ch1, numFrames / 2, sampleRate)
+            val m = RenderChannel().renderChanel(liveData, chL, numFrames / 2, sampleRate)
             l = m
             r = m
         }
@@ -86,8 +86,8 @@ class Generator {
     }
 
     fun createFm(ch: Int) {
-        val buf = if (ch == 0) ch1.calculate_buffer_fm else ch2.calculate_buffer_fm
-        val source = if (ch == 0) ch1.buffer_fm else ch2.buffer_fm
+        val buf = if (ch == 0) chL.calculate_buffer_fm else chR.calculate_buffer_fm
+        val source = if (ch == 0) chL.buffer_fm else chR.buffer_fm
 
         //Режим выбора частот: 0 - несущая ± девиация, 1 - минимум/максимум
         val mode = if (ch == 0) liveData.parameterInt0.value else liveData.parameterInt1.value
@@ -163,7 +163,7 @@ class Generator {
     fun updateFm(ch: Int) {
         createFm(ch)
         RenderChannel().sendBuffer(
-            ch, 2, if (ch == 0) ch1.calculate_buffer_fm else ch2.calculate_buffer_fm
+            ch, 2, if (ch == 0) chL.calculate_buffer_fm else chR.calculate_buffer_fm
         )
     }
 
@@ -217,7 +217,7 @@ data class DataLiveData(
 
     var chRAmDepth: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC Глубина AM модуляции
 
-    // Мастер-громкость CH1
+    // Мастер-громкость CHL
     var chL_Master_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),        //PR PS PC
     var chL_Master_Mode: MutableStateFlow<Int> = MutableStateFlow(1),              //PR PS PC 1=Плавный 2=Вкл/Выкл 3=Кнопка
     var chL_Master_Period: MutableStateFlow<Float> = MutableStateFlow(2f),         //PR PS PC сек 0.1..100
@@ -225,7 +225,7 @@ data class DataLiveData(
     var chL_Master_TOn: MutableStateFlow<Float> = MutableStateFlow(1f),            //PR PS PC сек 0.1..100
     var chL_Master_TOff: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC сек 0.1..100
 
-    // Мастер-громкость CH2
+    // Мастер-громкость CHR
     var chR_Master_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),        //PR PS PC
     var chR_Master_Mode: MutableStateFlow<Int> = MutableStateFlow(1),              //PR PS PC
     var chR_Master_Period: MutableStateFlow<Float> = MutableStateFlow(2f),         //PR PS PC
@@ -233,7 +233,7 @@ data class DataLiveData(
     var chR_Master_TOn: MutableStateFlow<Float> = MutableStateFlow(1f),            //PR PS PC
     var chR_Master_TOff: MutableStateFlow<Float> = MutableStateFlow(1f),           //PR PS PC
 
-    // Метаморфоза несущей CH1
+    // Метаморфоза несущей CHL
     var chL_Morph_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),               //PR PS PC
     var chL_Morph_Mode: MutableStateFlow<Int> = MutableStateFlow(1),                     //PR PS PC 0=Ступень 1=Плавно
     var chL_Morph_Time: MutableStateFlow<Float> = MutableStateFlow(2f),                  //PR PS PC сек 0.1..100, длительность шага
@@ -244,7 +244,7 @@ data class DataLiveData(
     var chL_Morph_Slot1_Filename: MutableStateFlow<String> = MutableStateFlow("Square"), //PR PS PC
     var chL_Morph_Slot2_Filename: MutableStateFlow<String> = MutableStateFlow("Ramp"),   //PR PS PC
 
-    // Метаморфоза несущей CH2
+    // Метаморфоза несущей CHR
     var chR_Morph_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),               //PR PS PC
     var chR_Morph_Mode: MutableStateFlow<Int> = MutableStateFlow(1),                     //PR PS PC 0=Ступень 1=Плавно
     var chR_Morph_Time: MutableStateFlow<Float> = MutableStateFlow(2f),                  //PR PS PC сек 0.1..100, длительность шага
@@ -264,14 +264,14 @@ data class DataLiveData(
     //Имя текущего пресета
     val presetsName: MutableStateFlow<String> = MutableStateFlow(""),         //PR PS(name) PC
 
-    val chLFmMin: MutableStateFlow<Float> = MutableStateFlow(1000.0f), //PR PS PC CH1 FM min
-    val chLFmMax: MutableStateFlow<Float> = MutableStateFlow(2000.0f), //PR PS PC CH1 FM max
-    val chRFmMin: MutableStateFlow<Float> = MutableStateFlow(1500.0f), //PR PS PC CH2 FM min
-    val chRFmMax: MutableStateFlow<Float> = MutableStateFlow(2500.0f), //PR PS PC CH2 FM max
+    val chLFmMin: MutableStateFlow<Float> = MutableStateFlow(1000.0f), //PR PS PC CHL FM min
+    val chLFmMax: MutableStateFlow<Float> = MutableStateFlow(2000.0f), //PR PS PC CHL FM max
+    val chRFmMin: MutableStateFlow<Float> = MutableStateFlow(1500.0f), //PR PS PC CHR FM min
+    val chRFmMax: MutableStateFlow<Float> = MutableStateFlow(2500.0f), //PR PS PC CHR FM max
 
 
-    val parameterInt0: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс
-    val parameterInt1: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CH2 режим выбора частот FM модуляции 0-обычный 1-минимум макс
+    val parameterInt0: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CHL режим выбора частот FM модуляции 0-обычный 1-минимум макс
+    val parameterInt1: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CHR режим выбора частот FM модуляции 0-обычный 1-минимум макс
 
     var count: Int = 0
 

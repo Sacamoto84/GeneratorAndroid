@@ -44,9 +44,9 @@ fun CardCarrier(str: String = "CH0", gen: Generator) {
         if (str == "CH0") gen.liveData.chL_Carrier_Fr.collectAsState() else gen.liveData.chR_Carrier_Fr.collectAsState()
 
     val fmSelectMode: State<Int?> = if (str == "CH0")
-        gen.liveData.parameterInt0.collectAsState() //CH1 режим выбора частот FM модуляции 0-обычный 1-минимум макс
+        gen.liveData.parameterInt0.collectAsState() //CHL режим выбора частот FM модуляции 0-обычный 1-минимум макс
     else
-        gen.liveData.parameterInt1.collectAsState() //CH2 режим выбора частот FM модуляции 0-обычный 1-минимум макс
+        gen.liveData.parameterInt1.collectAsState() //CHR режим выбора частот FM модуляции 0-обычный 1-минимум макс
 
     val fmEN: State<Boolean> =
         if (str == "CH0") gen.liveData.chL_FM_EN.collectAsState() else gen.liveData.chR_FM_EN.collectAsState()
