@@ -255,15 +255,32 @@ Java_com_example_generator2_Spectrogram_sentToFloatRingBufferFFT(JNIEnv *env, jo
 
     const float rate = fftSampleRate(static_cast<float>(samplerate));
 
-    if (pProcessorL->m_sampleRate != rate) {
-        pProcessorL->m_sampleRate = rate;
-        pScaleL->PreBuild(pProcessorL);
-        decimator.reset();
-    }
+    // Смена частоты дискретизации — редкое событие (переключение выхода mp3),
+    // поэтому обычный блокирующий захват scaleLock здесь допустим: разовое
+    // ожидание пары мс на аудиопотоке не критично, а без мьютекса PreBuild
+    // переписывал бы m_pBins, пока рабочий поток читает их внутри Build.
+    // Обычный путь (частота не менялась) остаётся без блокировки.
+    if (pProcessorL->m_sampleRate != rate || pProcessorR->m_sampleRate != rate) {
+        pthread_mutex_lock(&context1.scaleLock);
 
-    if (pProcessorR->m_sampleRate != rate) {
-        pProcessorR->m_sampleRate = rate;
-        pScaleR->PreBuild(pProcessorR);
+        if (pProcessorL->m_sampleRate != rate) {
+            pProcessorL->m_sampleRate = rate;
+            // Если скалера ещё нет — бины пересчитает initFTTLoop/SetScaler
+            // при его создании (оба вызывают PreBuild).
+            if (pScaleL != nullptr) {
+                pScaleL->PreBuild(pProcessorL);
+            }
+            decimator.reset();
+        }
+
+        if (pProcessorR->m_sampleRate != rate) {
+            pProcessorR->m_sampleRate = rate;
+            if (pScaleR != nullptr) {
+                pScaleR->PreBuild(pProcessorR);
+            }
+        }
+
+        pthread_mutex_unlock(&context1.scaleLock);
     }
 
     ///LOGD("!!! sentToFloatRingBufferFFT..start");
