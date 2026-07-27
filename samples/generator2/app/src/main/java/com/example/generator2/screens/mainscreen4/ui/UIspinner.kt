@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.style.TextAlign
@@ -39,7 +40,8 @@ object UIspinner {
         transparent: Boolean = false,
         modifier: Modifier = Modifier,
         filename: State<String>,
-        gen: Generator
+        gen: Generator,
+        enable: Boolean = true
     ) {
 
         val expanded = remember { mutableStateOf(false) }
@@ -51,6 +53,7 @@ object UIspinner {
             "AM" -> itemlist = gen.itemlistAM
             "FM" -> itemlist = gen.itemlistFM
             "MASTER" -> itemlist = gen.itemlistAM
+            "MORPH0", "MORPH1", "MORPH2" -> itemlist = gen.itemlistCarrier
         }
 
         //Текущий текст
@@ -62,6 +65,9 @@ object UIspinner {
                 "AM" -> currentValue = gen.liveData.ch1_AM_Filename.value
                 "FM" -> currentValue = gen.liveData.ch1_FM_Filename.value
                 "MASTER" -> currentValue = gen.liveData.ch1_Master_Filename.value
+                "MORPH0" -> currentValue = gen.liveData.ch1_Morph_Slot0_Filename.value
+                "MORPH1" -> currentValue = gen.liveData.ch1_Morph_Slot1_Filename.value
+                "MORPH2" -> currentValue = gen.liveData.ch1_Morph_Slot2_Filename.value
             }
         } else {
             when (Mod) {
@@ -69,6 +75,9 @@ object UIspinner {
                 "AM" -> currentValue = gen.liveData.ch2_AM_Filename.value
                 "FM" -> currentValue = gen.liveData.ch2_FM_Filename.value
                 "MASTER" -> currentValue = gen.liveData.ch2_Master_Filename.value
+                "MORPH0" -> currentValue = gen.liveData.ch2_Morph_Slot0_Filename.value
+                "MORPH1" -> currentValue = gen.liveData.ch2_Morph_Slot1_Filename.value
+                "MORPH2" -> currentValue = gen.liveData.ch2_Morph_Slot2_Filename.value
             }
         }
 
@@ -90,7 +99,8 @@ object UIspinner {
         )
         {
             Row(modifier = Modifier
-                .clickable {
+                .alpha(if (enable) 1f else 0.35f)
+                .clickable(enabled = enable) {
                     expanded.value = !expanded.value
                 }
                 .background(color = if (transparent) Color(0x00000000) else Color(0xFF13161B)),
@@ -152,6 +162,9 @@ object UIspinner {
                                         "AM" -> gen.liveData.ch1_AM_Filename.value = currentValue
                                         "FM" -> gen.liveData.ch1_FM_Filename.value = currentValue
                                         "MASTER" -> gen.liveData.ch1_Master_Filename.value = currentValue
+                                        "MORPH0" -> gen.liveData.ch1_Morph_Slot0_Filename.value = currentValue
+                                        "MORPH1" -> gen.liveData.ch1_Morph_Slot1_Filename.value = currentValue
+                                        "MORPH2" -> gen.liveData.ch1_Morph_Slot2_Filename.value = currentValue
                                     }
                                 } else {
                                     when (Mod) {
@@ -161,7 +174,9 @@ object UIspinner {
                                         "AM" -> gen.liveData.ch2_AM_Filename.value = currentValue
                                         "FM" -> gen.liveData.ch2_FM_Filename.value = currentValue
                                         "MASTER" -> gen.liveData.ch2_Master_Filename.value = currentValue
-
+                                        "MORPH0" -> gen.liveData.ch2_Morph_Slot0_Filename.value = currentValue
+                                        "MORPH1" -> gen.liveData.ch2_Morph_Slot1_Filename.value = currentValue
+                                        "MORPH2" -> gen.liveData.ch2_Morph_Slot2_Filename.value = currentValue
                                     }
                                 }
 
