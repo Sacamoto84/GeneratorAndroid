@@ -82,7 +82,9 @@ class SoundService : Service() {
             return START_NOT_STICKY
         }
 
-        // startForeground строго первым: Android 12+ бросает
+        // startForeground строго первым в пути запуска (ветка ACTION_CLOSE не
+        // проходит через startForegroundService и обязательства не несёт):
+        // Android 12+ бросает
         // ForegroundServiceDidNotStartInTimeException, если между
         // startForegroundService и startForeground прошло больше 5 секунд,
         // а инициализация пампа ждёт ExoPlayer.
@@ -197,7 +199,8 @@ class SoundService : Service() {
             this,
             0,
             Intent(this, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP
             },
             PendingIntent.FLAG_IMMUTABLE
         )
