@@ -49,7 +49,7 @@ phosphor grid: канал 0 = чётный = L = жёлтый = верхняя �
 **Files:**
 - Create: `app/src/test/java/com/example/generator2/features/audio/BufMergeTest.kt`
 
-- [ ] **Step 1: Написать тест**
+- [x] **Step 1: Написать тест**
 
 ```kotlin
 package com.example.generator2.features.audio
@@ -81,12 +81,12 @@ class BufMergeTest {
 }
 ```
 
-- [ ] **Step 2: Запустить тест**
+- [x] **Step 2: Запустить тест**
 
 Run: `.\gradlew.bat :app:testDebugUnitTest --tests "com.example.generator2.features.audio.BufMergeTest"`
 Expected: PASS (bufMerge/split уже ведут себя так; тест фиксирует конвенцию). Если `split` вернул пару в другом порядке — остановиться и перепроверить `split.kt` (return должен быть `Pair(leftChannel, rightChannel)`).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add app/src/test/java/com/example/generator2/features/audio/BufMergeTest.kt
@@ -105,7 +105,7 @@ git commit -m "test: конвенция интерлива bufMerge/split — ч
 - Modify: `app/src/main/cpp/scope/PhosphorGrid.h:375-380`
 - Modify: `app/src/main/java/com/example/generator2/theme/Color.kt`
 
-- [ ] **Step 1: Дефолты роутов в AudioMixerPump.kt**
+- [x] **Step 1: Дефолты роутов в AudioMixerPump.kt**
 
 Было (строки 44-45):
 ```kotlin
@@ -118,7 +118,7 @@ git commit -m "test: конвенция интерлива bufMerge/split — ч
     val routeL = MutableStateFlow(ROUTESTREAM.GEN)
 ```
 
-- [ ] **Step 2: Порядок bufMerge в AudioMixerPump.kt**
+- [x] **Step 2: Порядок bufMerge в AudioMixerPump.kt**
 
 Было (строки 283-292):
 ```kotlin
@@ -150,7 +150,7 @@ git commit -m "test: конвенция интерлива bufMerge/split — ч
             //───────────────────────────────────────────────┘
 ```
 
-- [ ] **Step 3: Константы цветов в theme/Color.kt**
+- [x] **Step 3: Константы цветов в theme/Color.kt**
 
 После строки `val colorOrange = Color(0xFFD8BD12)` добавить:
 ```kotlin
@@ -160,7 +160,7 @@ val colorChL = Color(0xFFFFFF00) //левый канал, жёлтый
 val colorChR = Color(0xFFFF00FF) //правый канал, магента
 ```
 
-- [ ] **Step 4: Цвета в шейдере MyGLRendererOscill.kt**
+- [x] **Step 4: Цвета в шейдере MyGLRendererOscill.kt**
 
 Было (строки 216-221, внутри fragmentShaderCode):
 ```glsl
@@ -181,7 +181,7 @@ val colorChR = Color(0xFFFF00FF) //правый канал, магента
                + vec3(1.0, 0.0, 1.0) * second * visibility.y;
 ```
 
-- [ ] **Step 5: Wiring visibility в MyGLRendererOscill.kt**
+- [x] **Step 5: Wiring visibility в MyGLRendererOscill.kt**
 
 Было (строки 416-420):
 ```kotlin
@@ -210,7 +210,7 @@ val colorChR = Color(0xFFFF00FF) //правый канал, магента
     val bools = intArrayOf(0, 1, 1)
 ```
 
-- [ ] **Step 6: Верх/низ в PhosphorGrid.h**
+- [x] **Step 6: Верх/низ в PhosphorGrid.h**
 
 Было (строки 376-380):
 ```cpp
@@ -232,12 +232,12 @@ val colorChR = Color(0xFFFF00FF) //правый канал, магента
         }
 ```
 
-- [ ] **Step 7: Собрать (включая NDK)**
+- [x] **Step 7: Собрать (включая NDK)**
 
 Run: `.\gradlew.bat :app:assembleDebug`
 Expected: BUILD SUCCESSFUL
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add app/src/main/java/com/example/generator2/features/audio/AudioMixerPump.kt app/src/main/java/com/example/generator2/features/scope/opengl/render/MyGLRendererOscill.kt app/src/main/cpp/scope/PhosphorGrid.h app/src/main/java/com/example/generator2/theme/Color.kt
@@ -254,12 +254,12 @@ git commit -m "fix(audio): левый канал реально играет с�
 - Modify: все `*.kt` в `app/src/main/java` и `app/src/test/java` (механически)
 - Modify: `app/src/main/java/com/example/generator2/features/presets/presetsSaveFile.kt`, `presetsReadFile.kt`, `presetsToLiveData.kt` (возврат ключей + комментарий)
 
-- [ ] **Step 1: Проверить, что лишних строковых литералов нет**
+- [x] **Step 1: Проверить, что лишних строковых литералов нет**
 
 Run: `rg '"ch[12]' app/src/main/java --files-with-matches`
 Expected: только три файла `features/presets/presets*.kt` (readme.md не в счёт — это не .kt). Если появились другие файлы — остановиться и добавить их в Step 3 по той же схеме.
 
-- [ ] **Step 2: Массовая замена (PowerShell)**
+- [x] **Step 2: Массовая замена (PowerShell)**
 
 ```powershell
 $files = Get-ChildItem app/src/main/java,app/src/test/java -Recurse -Filter *.kt
@@ -273,7 +273,7 @@ foreach ($f in $files) {
 }
 ```
 
-- [ ] **Step 3: Вернуть легаси-ключи в файлах пресетов**
+- [x] **Step 3: Вернуть легаси-ключи в файлах пресетов**
 
 ```powershell
 Get-ChildItem app/src/main/java/com/example/generator2/features/presets -Filter *.kt | ForEach-Object {
@@ -287,7 +287,7 @@ Get-ChildItem app/src/main/java/com/example/generator2/features/presets -Filter 
     satchel["ch1_EN"] = gen.liveData.chL_EN.value
 ```
 
-- [ ] **Step 4: Комментарий на границе сериализации**
+- [x] **Step 4: Комментарий на границе сериализации**
 
 В начало каждого из трёх файлов пресетов (после package/imports) добавить:
 ```kotlin
@@ -295,7 +295,7 @@ Get-ChildItem app/src/main/java/com/example/generator2/features/presets -Filter 
 //НЕ переименовывать в chL_/chR_: сломаются пресеты пользователей.
 ```
 
-- [ ] **Step 5: Проверить чистоту замены**
+- [x] **Step 5: Проверить чистоту замены**
 
 Run: `rg '"ch[LR]' app/src/main/java`
 Expected: пусто (все строковые ключи вернулись к ch1_/ch2_).
@@ -303,12 +303,12 @@ Expected: пусто (все строковые ключи вернулись к
 Run: `rg 'ch[12]_' app/src/main/java app/src/test/java --glob '*.kt'`
 Expected: только строковые литералы в `features/presets/*.kt` (внутри кавычек). Идентификаторов `ch1_`/`ch2_` не осталось.
 
-- [ ] **Step 6: Собрать и прогнать тесты**
+- [x] **Step 6: Собрать и прогнать тесты**
 
 Run: `.\gradlew.bat :app:testDebugUnitTest`
 Expected: BUILD SUCCESSFUL, все тесты PASS. Если компиляция упала — смотреть места, где идентификатор не подпал под шаблоны (исправить руками по тому же словарю замен).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add -A
@@ -326,7 +326,7 @@ git commit -m "refactor(gen): liveData ch1_/ch2_ → chL_/chR_, ключи пр�
 - Modify: `app/src/main/java/com/example/generator2/features/generator/Spinner_Send_Buffer.kt`
 - Modify: прочие файлы каталога по результату grep
 
-- [ ] **Step 1: Замена по границе слова в features/generator**
+- [x] **Step 1: Замена по границе слова в features/generator**
 
 ```powershell
 Get-ChildItem app/src/main/java/com/example/generator2/features/generator -Filter *.kt | ForEach-Object {
@@ -349,17 +349,17 @@ Get-ChildItem app/src/main/java/com/example/generator2/features/generator -Filte
 ```
 Поле `StructureCh.ch: Int` (0/1 — нативный индекс) НЕ трогаем.
 
-- [ ] **Step 2: Найти использования вне features/generator**
+- [x] **Step 2: Найти использования вне features/generator**
 
 Run: `rg '\.ch1\b|\.ch2\b' app/src/main/java app/src/test/java --glob '*.kt'`
 Expected: остаются только `params.ch1/params.ch2` в features/nodes и `ch1/ch2` в GraphDto.kt (их черёд — Task 7). Если нашлись обращения `gen.ch1`/`gen.ch2` в других местах (например screens/) — заменить на `gen.chL`/`gen.chR` руками.
 
-- [ ] **Step 3: Собрать и прогнать тесты**
+- [x] **Step 3: Собрать и прогнать тесты**
 
 Run: `.\gradlew.bat :app:testDebugUnitTest`
 Expected: BUILD SUCCESSFUL, PASS
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add -A
@@ -378,7 +378,7 @@ git commit -m "refactor(gen): объекты gen.ch1/ch2 → chL/chR"
 - Modify: `app/src/main/java/com/example/generator2/screens/mainscreen4/mainscreen4.kt:169,199`
 - Modify: `app/src/main/java/com/example/generator2/screens/mainscreen4/card/cardCarrier.kt`, `cardCard.kt`, `cardAM.kt`, `cardFM.kt`, `cardMaster.kt`, `cardMorph.kt`, `atom/buttonChEn.kt`, `ui/UIspinner.kt`
 
-- [ ] **Step 1: Переименовать значения enum**
+- [x] **Step 1: Переименовать значения enum**
 
 Spinner_Send_Buffer.kt строка 8, было:
 ```kotlin
@@ -389,7 +389,7 @@ enum class GeneratorCH { CH0, CH1 }
 enum class GeneratorCH { CHL, CHR }
 ```
 
-- [ ] **Step 2: Глобальная замена ссылок на enum**
+- [x] **Step 2: Глобальная замена ссылок на enum**
 
 ```powershell
 Get-ChildItem app/src/main/java,app/src/test/java -Recurse -Filter *.kt | ForEach-Object {
@@ -399,7 +399,7 @@ Get-ChildItem app/src/main/java,app/src/test/java -Recurse -Filter *.kt | ForEac
 }
 ```
 
-- [ ] **Step 3: Карточки — параметр-строку на enum**
+- [x] **Step 3: Карточки — параметр-строку на enum**
 
 Образец (cardCarrier.kt). Было:
 ```kotlin
@@ -434,17 +434,17 @@ Run: `rg '"CH0"|"CH1"' app/src/main/java/com/example/generator2/screens/mainscre
                         CardCard(GeneratorCH.CHR, vm.audioMixerPump.gen)
 ```
 
-- [ ] **Step 4: Проверить, что строк не осталось**
+- [x] **Step 4: Проверить, что строк не осталось**
 
 Run: `rg '"CH0"|"CH1"|"CH2"' app/src/main/java/com/example/generator2/screens/mainscreen4 app/src/main/java/com/example/generator2/features/generator`
 Expected: пусто.
 
-- [ ] **Step 5: Собрать и прогнать тесты**
+- [x] **Step 5: Собрать и прогнать тесты**
 
 Run: `.\gradlew.bat :app:testDebugUnitTest`
 Expected: BUILD SUCCESSFUL, PASS. Компилятор укажет пропущенные call-site — исправить по образцу Step 3.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add -A
@@ -463,7 +463,7 @@ git commit -m "refactor(ui): enum GeneratorCH.CHL/CHR вместо строк CH
 - Modify: `app/src/main/java/com/example/generator2/screens/scripting/ui/ScriptKeyboard.kt:267-318,873`
 - Modify: `app/src/main/java/com/example/generator2/screens/scripting/atom/ScriptItem.kt:60-77`
 
-- [ ] **Step 1: Написать падающие тесты алиасов**
+- [x] **Step 1: Написать падающие тесты алиасов**
 
 Добавить в ScriptCommandTest.kt после теста `команды генератора`:
 ```kotlin
@@ -495,12 +495,12 @@ git commit -m "refactor(ui): enum GeneratorCH.CHL/CHR вместо строк CH
 ```
 Сигнатура подтверждена: `Cmd.ReadGen(val dst: Int, val ch: Int, val block: GenBlock, val param: GenParam)` (ScriptCommand.kt:117).
 
-- [ ] **Step 2: Запустить тесты — убедиться, что падают**
+- [x] **Step 2: Запустить тесты — убедиться, что падают**
 
 Run: `.\gradlew.bat :app:testDebugUnitTest --tests "com.example.generator2.features.script.ScriptCommandTest"`
 Expected: FAIL — `новые имена каналов CHL CHR` падает с «не разобран номер канала» / «неизвестная команда CHL».
 
-- [ ] **Step 3: Реализовать алиасы в парсере**
+- [x] **Step 3: Реализовать алиасы в парсере**
 
 ScriptCommand.kt, функция channel (строки 181-186), было:
 ```kotlin
@@ -545,12 +545,12 @@ ScriptCommand.kt, функция channel (строки 181-186), было:
 ```
 `block(head.dropLast(1))` и `block(src.dropLast(1))` в READ работают без изменений («CRL».dropLast(1) == «CR»).
 
-- [ ] **Step 4: Запустить тесты — зелёные**
+- [x] **Step 4: Запустить тесты — зелёные**
 
 Run: `.\gradlew.bat :app:testDebugUnitTest --tests "com.example.generator2.features.script.ScriptCommandTest"`
 Expected: PASS
 
-- [ ] **Step 5: Клавиатура выдаёт новые имена, клавиши окрашены по каналу**
+- [x] **Step 5: Клавиатура выдаёт новые имена, клавиши окрашены по каналу**
 
 ScriptKeyboard.kt. Сначала дать KeyX параметр цвета (строка 184), было:
 ```kotlin
@@ -596,7 +596,7 @@ ScriptKeyboard.kt. Сначала дать KeyX параметр цвета (с�
                     if (listCommand[0] in listOf("CRL", "CRR", "CR1", "CR2"))
 ```
 
-- [ ] **Step 6: Раскраска команд в ScriptItem.kt**
+- [x] **Step 6: Раскраска команд в ScriptItem.kt**
 
 Было (строки 60-77):
 ```kotlin
@@ -643,12 +643,12 @@ ScriptKeyboard.kt. Сначала дать KeyX параметр цвета (с�
 ```
 Добавить импорты `com.example.generator2.theme.colorChL`, `com.example.generator2.theme.colorChR`.
 
-- [ ] **Step 7: Собрать и прогнать все тесты**
+- [x] **Step 7: Собрать и прогнать все тесты**
 
 Run: `.\gradlew.bat :app:testDebugUnitTest`
 Expected: PASS
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add -A
@@ -665,7 +665,7 @@ git commit -m "feat(script): команды CHL/CHR с легаси-алиаса
 - Modify: `app/src/main/java/com/example/generator2/screens/nodes/dialog/ReadGenDialog.kt:62`
 - Modify: по grep — `NodeGraphCompiler.kt`, `NodeGraphValidator.kt`, `screens/nodes/vm/VMNodes.kt`, `screens/nodes/dialog/StepDialog.kt`, тесты nodes
 
-- [ ] **Step 1: Домен StepParams**
+- [x] **Step 1: Домен StepParams**
 
 NodeGraph.kt, было (строки 48-50):
 ```kotlin
@@ -680,7 +680,7 @@ data class StepParams(val chL: ChannelParams, val chR: ChannelParams) {
 }
 ```
 
-- [ ] **Step 2: DTO — имена JSON остаются ch1/ch2**
+- [x] **Step 2: DTO — имена JSON остаются ch1/ch2**
 
 GraphDto.kt, свойства DTO (строки 40-41) НЕ переименовывать, добавить комментарий:
 ```kotlin
@@ -709,12 +709,12 @@ GraphDto.kt, свойства DTO (строки 40-41) НЕ переименов
             ch2 = b.params.chR.toDto(),
 ```
 
-- [ ] **Step 3: Обновить остальные ссылки домена**
+- [x] **Step 3: Обновить остальные ссылки домена**
 
 Run: `rg '\.ch1\b|\.ch2\b|\bch1\b|\bch2\b' app/src/main/java/com/example/generator2/features/nodes app/src/main/java/com/example/generator2/screens/nodes app/src/test/java/com/example/generator2/features/nodes -n`
 Каждое `params.ch1`/`.ch1` доменного типа → `chL` (аналогично ch2 → chR). Свойства DTO `ch1/ch2` в GraphDto.kt и JSON-строки в тестах GraphDtoTest не трогать (это формат файла).
 
-- [ ] **Step 4: Пикер канала в ReadGenDialog**
+- [x] **Step 4: Пикер канала в ReadGenDialog**
 
 Было (строка 62):
 ```kotlin
@@ -725,17 +725,17 @@ Run: `rg '\.ch1\b|\.ch2\b|\bch1\b|\bch2\b' app/src/main/java/com/example/generat
                 Picker(if (ch == 1) "CHL" else "CHR", listOf("CHL", "CHR")) { ch = it + 1 }
 ```
 
-- [ ] **Step 5: Компилятор нод**
+- [x] **Step 5: Компилятор нод**
 
 Run: `rg 'CH|CR|AM|FM' app/src/main/java/com/example/generator2/features/nodes/NodeGraphCompiler.kt -n --glob '*.kt'`
 Компилятор генерирует текст скрипт-команд. Если он собирает токены с цифрой (`"CR$ch"`, `"CH$ch"`) — оставить как есть: цифровые токены остаются валидными алиасами, старые графы и золотые тесты не ломаются.
 
-- [ ] **Step 6: Собрать и прогнать тесты**
+- [x] **Step 6: Собрать и прогнать тесты**
 
 Run: `.\gradlew.bat :app:testDebugUnitTest`
 Expected: PASS (включая все NodeGraph*-тесты)
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add -A
@@ -751,12 +751,12 @@ git commit -m "refactor(nodes): домен StepParams chL/chR, формат JSON
 - Modify: `app/src/main/java/com/example/generator2/features/mp3/compose/Mp3Route.kt:48`
 - Modify: `app/src/main/java/com/example/generator2/features/scope/Scope.kt:435,450,652,666`
 
-- [ ] **Step 1: Найти все места с зелёной/оранжевой идентичностью канала**
+- [x] **Step 1: Найти все места с зелёной/оранжевой идентичностью канала**
 
 Run: `rg 'colorGreen|colorOrange' app/src/main/java -n`
 Expected: полоса в cardCarrier (и, возможно, других карточках), бейдж в Mp3Route. Каждое место, где цвет выбирается по каналу, перевести на colorChL/colorChR (места, где colorGreen используется НЕ для идентичности канала, не трогать).
 
-- [ ] **Step 2: Полоса карточки с лейблом**
+- [x] **Step 2: Полоса карточки с лейблом**
 
 cardCarrier.kt, было (строки 62-69):
 ```kotlin
@@ -785,7 +785,7 @@ cardCarrier.kt, было (строки 62-69):
 ```
 Добавить импорты: `colorChL`, `colorChR`, `androidx.compose.ui.text.font.FontWeight`, `androidx.compose.ui.unit.sp`. Тот же шаблон — в остальных карточках с полосой из Step 1.
 
-- [ ] **Step 3: Бейдж Mp3Route**
+- [x] **Step 3: Бейдж Mp3Route**
 
 Было (строка 48):
 ```kotlin
@@ -797,7 +797,7 @@ cardCarrier.kt, было (строки 62-69):
 ```
 Импорты colorGreen/colorOrange в файле удалить, если больше не используются.
 
-- [ ] **Step 4: Scope UI на константы темы**
+- [x] **Step 4: Scope UI на константы темы**
 
 Scope.kt, кнопки видимости трасс, было (строки 435, 450):
 ```kotlin
@@ -824,7 +824,7 @@ Scope.kt, кнопки видимости трасс, было (строки 435
                     color = if (oscillSync.value == OSCILLSYNC.R) colorChR else colorTextDisabled
 ```
 
-- [ ] **Step 5: Цвет пикера каналов в нодах**
+- [x] **Step 5: Цвет пикера каналов в нодах**
 
 RegisterDialog.kt, сигнатура Picker (строка 79), было:
 ```kotlin
@@ -854,12 +854,12 @@ ReadGenDialog.kt, вызов из Task 7, было:
                 ) { ch = it + 1 }
 ```
 
-- [ ] **Step 6: Собрать**
+- [x] **Step 6: Собрать**
 
 Run: `.\gradlew.bat :app:assembleDebug`
 Expected: BUILD SUCCESSFUL
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add -A
@@ -870,17 +870,17 @@ git commit -m "feat(ui): единые цвета каналов — жёлтый
 
 ### Task 9: Финальная верификация
 
-- [ ] **Step 1: Все юнит-тесты**
+- [x] **Step 1: Все юнит-тесты**
 
 Run: `.\gradlew.bat :app:testDebugUnitTest`
 Expected: BUILD SUCCESSFUL, 0 failed
 
-- [ ] **Step 2: Полная сборка**
+- [x] **Step 2: Полная сборка**
 
 Run: `.\gradlew.bat :app:assembleDebug`
 Expected: BUILD SUCCESSFUL
 
-- [ ] **Step 3: Контроль границ сериализации**
+- [x] **Step 3: Контроль границ сериализации**
 
 Run: `rg '"ch1_|"ch2_|"ch1Am|"ch2Am|"ch1Fm|"ch2Fm' app/src/main/java/com/example/generator2/features/presets -c`
 Expected: числа > 0 (легаси-ключи на месте).
@@ -890,7 +890,7 @@ Expected: обе строки DTO на месте.
 
 Лиссажу: живой путь подачи — `Scope.kt` `NativeFloatDirectBuffer.add(v)` → `getByteBufferSmallLissagu` (пары интерлива рисуются как X=чётный, Y=нечётный). После фикса X = левый канал, Y = правый — стандартная конвенция X-Y-осциллографа; фигура транспонируется относительно старого (принятое поведение, подписей осей в UI нет). Канал `channelAudioOutLissagu` в AudioMixerPump закомментирован — не путать с живым путём.
 
-- [ ] **Step 4: Ручная проверка на устройстве (чек-лист)**
+- [ ] **Step 4: Ручная проверка на устройстве (чек-лист)** — НЕ ВЫПОЛНЕНО, требует живого устройства с наушниками
 
 1. Включить только CHL, надеть наушники: звук строго в ЛЕВОМ ухе; на осциллографе — жёлтая трасса в верхней половине.
 2. Включить только CHR: звук справа, магента-трасса снизу.
@@ -903,7 +903,7 @@ Expected: обе строки DTO на месте.
 9. Waterfall/спектрограмма: сигнал CHL отображается как левый.
 10. Лиссажу: сигнал только в CHL двигает точку по горизонтали (X = левый), только в CHR — по вертикали.
 
-- [ ] **Step 5: Отметить выполнение плана**
+- [x] **Step 5: Отметить выполнение плана**
 
 Проставить все чекбоксы, закоммитить обновлённый план:
 ```bash
