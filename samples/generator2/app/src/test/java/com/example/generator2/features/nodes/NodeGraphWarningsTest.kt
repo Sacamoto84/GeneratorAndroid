@@ -11,7 +11,8 @@ class NodeGraphWarningsTest {
         graph: NodeGraph,
         carrier: Set<String> = emptySet(),
         mod: Set<String> = emptySet(),
-    ) = validate(graph, carrier, mod).filter { it.severity == Severity.WARNING }
+        fm: Set<String> = mod,
+    ) = validate(graph, carrier, mod, fm).filter { it.severity == Severity.WARNING }
 
     /** Старт -> Шаг -> сам себя. Задержку задаём параметром. */
     private fun selfLoop(delayMs: Long, params: StepParams = empty()): NodeGraph =
@@ -59,6 +60,34 @@ class NodeGraphWarningsTest {
         val w = warnings(selfLoop(100L, params), carrier = setOf("Sine"), mod = setOf("02_HWave"))
         assertTrue(w.any { it.text.contains("Небывалая") })
         assertTrue(w.none { it.text.contains("02_HWave") })
+    }
+
+    @Test
+    fun `формы AM и FM проверяются по своим библиотекам`() {
+        //У FM с недавних пор своя папка ModFM, поэтому форма, известная только
+        //библиотеке AM, в слоте FM уже неизвестна — и наоборот
+        val params = StepParams(
+            chL = ChannelParams(amMod = "только_в_AM", fmMod = "только_в_FM"),
+            chR = ChannelParams(),
+        )
+
+        val w = warnings(
+            selfLoop(100L, params),
+            mod = setOf("только_в_AM"),
+            fm = setOf("только_в_FM"),
+        )
+
+        assertTrue(w.none { it.text.contains("только_в_AM") })
+        assertTrue(w.none { it.text.contains("только_в_FM") })
+
+        val swapped = warnings(
+            selfLoop(100L, params),
+            mod = setOf("только_в_FM"),
+            fm = setOf("только_в_AM"),
+        )
+
+        assertTrue(swapped.any { it.text.contains("только_в_AM") })
+        assertTrue(swapped.any { it.text.contains("только_в_FM") })
     }
 
     private fun empty() = StepParams(ChannelParams(), ChannelParams())

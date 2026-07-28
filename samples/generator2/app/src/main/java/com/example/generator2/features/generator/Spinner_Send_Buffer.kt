@@ -23,10 +23,13 @@ fun Spinner_Send_Buffer(
     //val buf = readFileMod2048byte(path) //Здесь должны прочитать файл и записать в массив;
 
 
-    //Несущая и все слоты метаморфозы берутся из библиотеки несущих
+    //Несущая и все слоты метаморфозы берутся из библиотеки несущих,
+    //FM из своей библиотеки ModFM, AM и мастер-громкость из Mod
     val list = when (Mod) {
         GeneratorMOD.CR, GeneratorMOD.MORPH0, GeneratorMOD.MORPH1, GeneratorMOD.MORPH2 ->
             gen.itemlistCarrier
+
+        GeneratorMOD.FM -> gen.itemlistFM
 
         else -> gen.itemlistAM
     }

@@ -353,11 +353,18 @@ class AudioMixerPump
         val s2 = GlobalScope.async(Dispatchers.IO) {
             val t111 = measureTimeMillis {
                 Timber.tag("Время работы").i("secondDeferred start")
+
+                //AM и FM читают форму по-разному: AM отображает таблицу в 0..1
+                //(множитель громкости), FM в -1..1 (знак девиации). Поэтому и
+                //библиотеки разные: Mod для AM с мастером, ModFM для FM
                 val arrFilesMod = listFilesInAssetsFolder(App.application, "Mod")
-                //listFileInDir(appPath.mod) //Получение списка файлов в папке Mod //6ms
                 for (i in arrFilesMod.indices) {
                     gen.itemlistAM.add(itemList("Mod", arrFilesMod[i], 1)) //648ms -> 369 -> 207
-                    gen.itemlistFM.add(itemList("Mod", arrFilesMod[i], 0)) // all 65ms
+                }
+
+                val arrFilesFm = listFilesInAssetsFolder(App.application, "ModFM")
+                for (i in arrFilesFm.indices) {
+                    gen.itemlistFM.add(itemList("ModFM", arrFilesFm[i], 0)) // all 65ms
                 }
             }
             Timber.tag("Время работы").i("secondDeferred stop : $t111 ms")

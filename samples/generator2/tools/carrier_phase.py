@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Правка таблиц несущих в app/src/main/assets/Carrier.
+Правка волновых таблиц в app/src/main/assets: Carrier (несущие) и Mod
+(модуляция AM, FM и мастер-громкости).
 
 Формат файла: 1024 значения uint16 little-endian, диапазон 0..4095,
 середина шкалы 2048. Один файл — один период волны, поэтому 1024 отсчёта
@@ -13,10 +14,16 @@
 
 Порядок: сначала инверсия, потом сдвиг.
 
+Соглашения о начале периода разные:
+  Carrier — период начинается на переходе через середину снизу вверх;
+  Mod     — период начинается с минимума, огибающая нарастает с нуля;
+  ModFM   — таблица биполярная (-1..1), период начинается на середине.
+
 Примеры:
   python tools/carrier_phase.py --show
+  python tools/carrier_phase.py --dir mod --show
   python tools/carrier_phase.py Dnramp --invert --shift 256
-  python tools/carrier_phase.py HWave2 --invert --shift -128 --dry-run
+  python tools/carrier_phase.py --dir mod 09_Ramp --shift 767 --dry-run
 """
 
 import argparse
@@ -28,7 +35,12 @@ SIZE = 1024
 MAX = 4095
 MID = 2047.5
 
-CARRIER_DIR = Path(__file__).resolve().parent.parent / "app/src/main/assets/Carrier"
+ASSETS = Path(__file__).resolve().parent.parent / "app/src/main/assets"
+DIRS = {
+    "carrier": ASSETS / "Carrier",  # формы несущей, читаются как -1..1
+    "mod": ASSETS / "Mod",          # AM и мастер-громкость, читаются как 0..1
+    "modfm": ASSETS / "ModFM",      # FM, читается как -1..1
+}
 
 
 def load(path: Path) -> list[int]:
@@ -65,18 +77,21 @@ def describe(values: list[int]) -> str:
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("name", nargs="?", help="имя таблицы без .dat, например Dnramp")
+    p.add_argument("--dir", choices=sorted(DIRS), default="carrier", help="каталог таблиц")
     p.add_argument("--invert", action="store_true", help="отразить по амплитуде")
     p.add_argument("--shift", type=int, default=0, help="циклический сдвиг влево в отсчётах")
     p.add_argument("--dry-run", action="store_true", help="показать результат, файл не трогать")
     p.add_argument("--show", action="store_true", help="показать фазу всех таблиц и выйти")
     args = p.parse_args()
 
+    directory = DIRS[args.dir]
+
     if args.show or not args.name:
-        for f in sorted(CARRIER_DIR.glob("*.dat")):
-            print(f"{f.stem:10} {describe(load(f))}")
+        for f in sorted(directory.glob("*.dat")):
+            print(f"{f.stem:14} {describe(load(f))}")
         return
 
-    path = CARRIER_DIR / f"{args.name}.dat"
+    path = directory / f"{args.name}.dat"
     if not path.exists():
         sys.exit(f"нет файла {path}")
 

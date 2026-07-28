@@ -25,13 +25,15 @@ data class Issue(val nodeId: NodeId?, val severity: Severity, val text: String)
  * gen.itemlistAM), а тянуть сюда Generator значило бы потерять тестируемость.
  *
  * @param carrierNames имена, известные генератору для несущей
- * @param modNames имена, известные генератору для AM и FM — список у них общий
+ * @param modNames имена, известные генератору для AM и мастер-громкости
+ * @param fmNames имена форм FM: своя библиотека, по умолчанию совпадает с [modNames]
  */
 fun validate(
     graph: NodeGraph,
     carrierNames: Set<String> = emptySet(),
     modNames: Set<String> = emptySet(),
-): List<Issue> = structureErrors(graph) + warnings(graph, carrierNames, modNames)
+    fmNames: Set<String> = modNames,
+): List<Issue> = structureErrors(graph) + warnings(graph, carrierNames, modNames, fmNames)
 
 //╭─ Ошибки ──────────────────────────────────────────────────────────────╮
 
@@ -140,6 +142,7 @@ private fun warnings(
     graph: NodeGraph,
     carrierNames: Set<String>,
     modNames: Set<String>,
+    fmNames: Set<String>,
 ): List<Issue> = buildList {
 
     //Цикл без единой задержки. Устройство не повиснет — в Script есть
@@ -176,7 +179,7 @@ private fun warnings(
                     )
                 )
             }
-            unknownWaveforms(p, carrierNames, modNames).forEach { name ->
+            unknownWaveforms(p, carrierNames, modNames, fmNames).forEach { name ->
                 add(Issue(n.id, Severity.WARNING, "Форма «$name» генератору неизвестна"))
             }
         }
@@ -186,7 +189,7 @@ private fun warnings(
 /**
  * Имена форм, которых генератор не знает.
  *
- * Несущая ищется в gen.itemlistCarrier, AM и FM — оба в gen.itemlistAM
+ * Несущая ищется в gen.itemlistCarrier, AM в gen.itemlistAM, FM в gen.itemlistFM
  * (см. Spinner_Send_Buffer). Неизвестное имя движок молча игнорирует,
  * поэтому и предупреждение, а не ошибка.
  */
@@ -194,10 +197,11 @@ private fun unknownWaveforms(
     p: ChannelParams,
     carrierNames: Set<String>,
     modNames: Set<String>,
+    fmNames: Set<String>,
 ): List<String> = buildList {
     p.carrierMod?.let { if (carrierNames.isNotEmpty() && it !in carrierNames) add(it) }
     p.amMod?.let { if (modNames.isNotEmpty() && it !in modNames) add(it) }
-    p.fmMod?.let { if (modNames.isNotEmpty() && it !in modNames) add(it) }
+    p.fmMod?.let { if (fmNames.isNotEmpty() && it !in fmNames) add(it) }
 }
 
 /**

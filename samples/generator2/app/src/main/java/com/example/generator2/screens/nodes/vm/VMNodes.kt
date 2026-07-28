@@ -75,7 +75,8 @@ class VMNodes @Inject constructor(
     /** Своя консоль: consoleLog экрана скриптов глобальный, логи бы смешались */
     val console = Console2()
 
-    private val issuesState = derivedStateOf { validate(graph, carrierNames(), modNames()) }
+    private val issuesState =
+        derivedStateOf { validate(graph, carrierNames(), modNames(), fmNames()) }
 
     val issues: List<Issue> get() = issuesState.value
 
@@ -122,7 +123,7 @@ class VMNodes @Inject constructor(
     }
 
     fun run() {
-        when (val result = compile(graph, carrierNames(), modNames())) {
+        when (val result = compile(graph, carrierNames(), modNames(), fmNames())) {
             is CompileResult.Ok -> {
                 compiled = result
                 result.warnings.forEach { console.println("! ${it.text}") }
@@ -157,8 +158,11 @@ class VMNodes @Inject constructor(
     /** Имена форм несущей, известные генератору */
     fun carrierNames(): Set<String> = gen.itemlistCarrier.map { it.name }.toSet()
 
-    /** Имена форм модуляции: у AM и FM список общий */
+    /** Имена форм AM и мастер-громкости — библиотека Mod */
     fun modNames(): Set<String> = gen.itemlistAM.map { it.name }.toSet()
+
+    /** Имена форм FM — своя библиотека ModFM */
+    fun fmNames(): Set<String> = gen.itemlistFM.map { it.name }.toSet()
 
     /**
      * Текущее состояние генератора в параметры Шага: накрутил на главном

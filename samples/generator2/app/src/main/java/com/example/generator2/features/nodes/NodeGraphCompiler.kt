@@ -44,9 +44,10 @@ fun compile(
     graph: NodeGraph,
     carrierNames: Set<String> = emptySet(),
     modNames: Set<String> = emptySet(),
+    fmNames: Set<String> = modNames,
 ): CompileResult {
 
-    val issues = validate(graph, carrierNames, modNames)
+    val issues = validate(graph, carrierNames, modNames, fmNames)
     val errors = issues.filter { it.severity == Severity.ERROR }
     val warnings = issues.filter { it.severity == Severity.WARNING }
     if (errors.isNotEmpty()) return CompileResult.Failed(errors, warnings)
