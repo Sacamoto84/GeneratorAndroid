@@ -17,6 +17,14 @@ google-services.json
 .cxx
 local.properties
 
+# Артефакты сборки: собираются локально, в репозитории им не место
+*.apk
+*.aab
+app/debug/
+app/release/
+*.trace
+/.idea/stat.log
+
 # graphify: граф знаний и его кэш, пересобирается локально
 graphify-out/
 
