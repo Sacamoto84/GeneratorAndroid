@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -129,37 +130,43 @@ fun NodeCanvas(
             graph.nodes.forEach { node ->
                 val dimmed = linking && !canBeTarget(node.id)
 
-                NodeCard(
-                    node = node,
-                    isSelected = node.id == selected,
-                    isActive = node.id == activeNode,
-                    isDimmed = dimmed,
-                    modifier = Modifier
-                        .offset {
-                            IntOffset(
-                                with(density) { node.x.dp.toPx() }.roundToInt(),
-                                with(density) { node.y.dp.toPx() }.roundToInt(),
-                            )
-                        }
-                        .pointerInput(node.id, linking) {
-                            detectTapGestures { onSelect(node.id) }
-                        }
-                        .pointerInput(node.id, linking) {
-                            if (linking) return@pointerInput
-                            detectDragGestures { change, drag ->
-                                change.consume()
-                                //Дельта приходит в локальных координатах слоя,
-                                //то есть уже без масштаба: делить на scale не надо.
-                                //Если на устройстве нода при зуме отстаёт от пальца
-                                //или обгоняет его — поделите на scale здесь.
-                                onMove(
-                                    node.id,
-                                    drag.x / density.density,
-                                    drag.y / density.density,
+                //Ключ обязателен: withNode() переставляет изменённую ноду в конец
+                //списка, и без него Compose опознавал бы карточки по позиции.
+                //При первом же сдвиге ноды позиции разъезжались, pointerInput
+                //пересоздавался и обрывал перетаскивание на середине жеста.
+                key(node.id) {
+                    NodeCard(
+                        node = node,
+                        isSelected = node.id == selected,
+                        isActive = node.id == activeNode,
+                        isDimmed = dimmed,
+                        modifier = Modifier
+                            .offset {
+                                IntOffset(
+                                    with(density) { node.x.dp.toPx() }.roundToInt(),
+                                    with(density) { node.y.dp.toPx() }.roundToInt(),
                                 )
                             }
-                        },
-                )
+                            .pointerInput(node.id, linking) {
+                                detectTapGestures { onSelect(node.id) }
+                            }
+                            .pointerInput(node.id, linking) {
+                                if (linking) return@pointerInput
+                                detectDragGestures { change, drag ->
+                                    change.consume()
+                                    //Дельта приходит в локальных координатах слоя,
+                                    //то есть уже без масштаба: делить на scale не надо.
+                                    //Если на устройстве нода при зуме отстаёт от пальца
+                                    //или обгоняет его — поделите на scale здесь.
+                                    onMove(
+                                        node.id,
+                                        drag.x / density.density,
+                                        drag.y / density.density,
+                                    )
+                                }
+                            },
+                    )
+                }
             }
         }
     }
