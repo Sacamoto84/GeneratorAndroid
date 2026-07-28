@@ -21,7 +21,21 @@
 #-renamesourcefileattribute SourceFile
 -dontobfuscate
 
+# JNI связывается по именам вида Java_<пакет>_<класс>_<метод>. Пока стоит
+# -dontobfuscate это работает само, но правила ниже держат связку независимо
+# от него: без них снятие -dontobfuscate роняет приложение в рантайме на первом
+# же обращении к генератору или спектрограмме.
+-keepclasseswithmembernames,includedescriptorclasses class * {
+    native <methods>;
+}
 
+# Классы, чьи поля и методы натив читает через JNI по имени
+-keep class com.example.generator2.Spectrogram { *; }
+-keep class com.example.generator2.features.generator.RenderChannel { *; }
+-keep class com.example.generator2.features.generator.StructureCh { *; }
+-keep class com.example.generator2.features.scope.NativeCanvas { *; }
+-keep class com.example.generator2.features.scope.NativePhosphor { *; }
+-keep class com.example.generator2.features.scope.NativeFloatDirectBuffer { *; }
 
 -optimizationpasses 5
 #-optimizations !code/simplification/arithmetic

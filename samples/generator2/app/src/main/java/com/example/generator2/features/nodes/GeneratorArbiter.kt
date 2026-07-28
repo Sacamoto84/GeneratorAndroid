@@ -24,13 +24,14 @@ class GeneratorArbiter {
     /** Забрать генератор себе, остановив прежнего владельца */
     fun acquire(who: RunOwner) {
         //Обработчик зовём вне synchronized: он останавливает чужой движок,
-        //и держать на этом замок арбитра незачем
-        val loser = synchronized(this) {
+        //и держать на этом замок арбитра незачем. Саму мапу читаем под замком —
+        //иначе чтение гонялось бы с register() из другого потока
+        val stop = synchronized(this) {
             val previous = owner
             owner = who
-            previous.takeIf { it != RunOwner.NONE && it != who }
+            previous.takeIf { it != RunOwner.NONE && it != who }?.let { stoppers[it] }
         }
-        loser?.let { stoppers[it]?.invoke() }
+        stop?.invoke()
     }
 
     fun release(who: RunOwner) {

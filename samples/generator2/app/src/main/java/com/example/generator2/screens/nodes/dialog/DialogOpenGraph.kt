@@ -34,7 +34,7 @@ fun DialogOpenGraph(names: List<String>, onPick: (String) -> Unit, onDismiss: ()
             }
 
             LazyColumn {
-                items(names) { name ->
+                items(names, key = { it }) { name ->
                     Text(
                         name,
                         color = Color.White,

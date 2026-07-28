@@ -328,7 +328,8 @@ class AudioMixerPump
         }
 
         try {
-            exoplayer.player.release()
+            //release() снимает слушателя и опрос позиции, а не только сам плеер
+            exoplayer.release()
         } catch (e: Exception) {
             Timber.e(e, "Ошибка освобождения ExoPlayer")
         }

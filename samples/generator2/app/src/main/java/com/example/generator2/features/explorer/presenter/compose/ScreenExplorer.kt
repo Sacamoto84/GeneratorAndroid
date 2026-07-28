@@ -51,7 +51,8 @@ fun ScreenExplorer(vm: ScreenExplorerViewModel) {
         {
             Spacer(modifier = Modifier.height(2.dp))
             LazyColumn(modifier = Modifier.fillMaxSize(), state = rememberLazyListState()) {
-                items(vm.listItems){ item ->
+                //Имя уникально внутри каталога, spec отделяет служебный элемент «наверх»
+                items(vm.listItems, key = { "${it.spec}-${it.name}" }) { item ->
                     ScreenExplorerDrawItem(item) { vm.onClick_DrawItem(item) }
                 }
             }

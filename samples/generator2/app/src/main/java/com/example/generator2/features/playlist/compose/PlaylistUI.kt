@@ -49,12 +49,14 @@ fun PlaylistUI(vm: VMPlayList) {
             )
         ) {
 
-            items(playlists) { playlist ->
+            //Ключи с префиксом: оба блока идут по одному списку в одном
+            //LazyColumn, а ключ обязан быть уникальным на весь список
+            items(playlists, key = { "name-${it.playlistName}" }) { playlist ->
                 Text(text = playlist.playlistName, modifier = Modifier.background(Color.Magenta))
             }
 
 
-            items(playlists) { playlist ->
+            items(playlists, key = { "add-${it.playlistName}" }) { playlist ->
                 Text(text = "Добавить", modifier = Modifier.background(Color.Magenta))
             }
 

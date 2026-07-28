@@ -6,13 +6,15 @@ import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
 import androidx.media3.exoplayer.ExoPlayer
-import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -42,6 +44,8 @@ class PlayerMP3(val context: Context) {
 
 
     lateinit var listener: Player.Listener
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
 
 
@@ -75,10 +79,13 @@ class PlayerMP3(val context: Context) {
     }
 
 
-    @OptIn(DelicateCoroutinesApi::class)
+    /**
+     * Опрос позиции воспроизведения. Живёт в scope плеера, а не в GlobalScope:
+     * [release] обрывает его вместе с самим плеером.
+     */
     fun loop() {
-        GlobalScope.launch(Dispatchers.Main) {
-            while (true) {
+        scope.launch {
+            while (isActive) {
 
                 try {
                     currentTime.value = player.currentPosition.coerceAtLeast(0L)
@@ -91,8 +98,18 @@ class PlayerMP3(val context: Context) {
         }
     }
 
+    /**
+     * Освободить плеер: снять слушателя, остановить опрос позиции, отдать ресурсы.
+     *
+     * Вызывать с того же потока, где плеер создан (главный) — этого требует ExoPlayer.
+     */
+    fun release() {
+        scope.cancel()
+        player.removeListener(listener)
+        player.release()
+    }
 
-    @OptIn(DelicateCoroutinesApi::class)
+
     private fun listener() {
         listener = object : Player.Listener {
 

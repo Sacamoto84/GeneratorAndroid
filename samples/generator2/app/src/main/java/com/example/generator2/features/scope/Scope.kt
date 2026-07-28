@@ -66,6 +66,8 @@ import com.example.generator2.theme.colorChL
 import com.example.generator2.theme.colorChR
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -166,14 +168,33 @@ class Scope {
     val oscillSync = mutableStateOf(OSCILLSYNC.L)
 
 
+    //Маршрутизатор аудиоданных живёт здесь, а не в анонимном scope: без ссылки
+    //на scope петля не останавливалась никогда, даже после остановки движка
+    private val routerScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    private var routerJob: Job? = null
+
     init {
         Timber.i("!!! init Scope")
         dataRouter()
     }
 
+    /**
+     * Остановить маршрутизацию аудиоданных.
+     *
+     * Пока не вызывается: подача в FFT-петлю привязана к жизни сервиса, и её
+     * отключение — отдельная задача про потребителя спектрограммы.
+     */
+    fun stopDataRouter() {
+        routerJob?.cancel()
+        routerJob = null
+    }
+
     private fun dataRouter() {
 
-        CoroutineScope(Dispatchers.IO).launch {
+        routerJob?.cancel()
+
+        routerJob = routerScope.launch {
 
             while (isActive) {
                 val buf = channelAudioOut.receive()
@@ -253,7 +274,12 @@ class Scope {
     fun Oscilloscope(modifier: Modifier = Modifier) {
 
         var scopeW by remember { mutableFloatStateOf(0f) }
-        var view: MyGLSurfaceView? = remember { null }
+
+        // Ссылка на GL-вью обязана пережить рекомпозицию. Обычная локальная var
+        // пересоздаётся на каждой, а эффекты продолжают держать переменную первой
+        // композиции: после пересоздания surface рендер дёргался бы у мёртвого вью.
+        val view = remember { mutableStateOf<MyGLSurfaceView?>(null) }
+
         val shaderRenderer = remember { MyGLRendererOscill() }
 
         LaunchedEffect(key1 = true) {
@@ -265,7 +291,7 @@ class Scope {
                     shaderRenderer.bools[0] = if (isOneTwo.value) 1 else 0
                     shaderRenderer.bools[1] = if (isVisibleL.value) 1 else 0
                     shaderRenderer.bools[2] = if (isVisibleR.value) 1 else 0
-                    view?.requestRender()
+                    view.value?.requestRender()
                 }
             }
         }
@@ -277,7 +303,7 @@ class Scope {
         val lifecycle = LocalLifecycleOwner.current.lifecycle
 
         DisposableEffect(Unit) {
-            view?.onResume()
+            view.value?.onResume()
             enableOscill.value = true
 
             val lifecycleObserver = ScreenLifecycleObserver(
@@ -297,10 +323,10 @@ class Scope {
                 Timber.i("!!! onDispose Oscilloscope()")
                 lifecycle.removeObserver(lifecycleObserver)
                 enableOscill.value = false
-                view?.onPause()
+                view.value?.onPause()
                 shaderRenderer.deleteProgram()
-                view?.onDestroy()
-                view = null
+                view.value?.onDestroy()
+                view.value = null
             }
         }
 
@@ -336,7 +362,7 @@ class Scope {
                 },
             //contentAlignment = Alignment.TopStart,
         ) {
-            GLShaderOscill(renderer = shaderRenderer, update = { view = it })
+            GLShaderOscill(renderer = shaderRenderer, update = { view.value = it })
 
             Text(
                 text = sweepLabel(compressorCount.floatValue),
@@ -352,15 +378,17 @@ class Scope {
     @Composable
     fun Lissagu() {
 
-        var view: MyGLSurfaceView? = remember { null }
+        // См. комментарий в Oscilloscope(): ссылка должна пережить рекомпозицию
+        val view = remember { mutableStateOf<MyGLSurfaceView?>(null) }
+
         val shaderRenderer = remember { MyGLRendererLissagu() }
 
         LaunchedEffect(key1 = true) {
             withContext(Dispatchers.IO) {
-                while (true) {
+                while (isActive) {
                     deferredLissagu.receive()
                     shaderRenderer.updateVerticesDirect()
-                    view?.requestRender()
+                    view.value?.requestRender()
                 }
             }
         }
@@ -368,7 +396,7 @@ class Scope {
         val lifecycle = LocalLifecycleOwner.current.lifecycle
 
         DisposableEffect(Unit) {
-            view?.onResume()
+            view.value?.onResume()
             enableLissagu.value = true
 
             val lifecycleObserver = ScreenLifecycleObserver(
@@ -388,16 +416,16 @@ class Scope {
                 Timber.i("!!! onDispose Lissagu()")
                 lifecycle.removeObserver(lifecycleObserver)
                 enableLissagu.value = false
-                view?.onPause()
+                view.value?.onPause()
                 shaderRenderer.deleteProgram()
-                view?.onDestroy()
-                view = null
+                view.value?.onDestroy()
+                view.value = null
             }
         }
 
         GLShaderLissagu(
             renderer = shaderRenderer,
-            update = { view = it },
+            update = { view.value = it },
             modifier = Modifier
                 .height(100.dp)
                 .width(100.dp)

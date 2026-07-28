@@ -168,7 +168,7 @@ fun DialogSaveAs(
 
                     LazyColumn {
 
-                        items(files) {
+                        items(files, key = { it }) {
 
                             //onScan отдаёт имена уже без расширения
                             val str = it
