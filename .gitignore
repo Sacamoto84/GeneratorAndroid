@@ -16,3 +16,5 @@ local.properties
 samples/generator2/app/.cxx
 *.bin
 *.lock
+# Локальные git-worktree: их каталоги не должны попадать в индекс
+.worktrees/
