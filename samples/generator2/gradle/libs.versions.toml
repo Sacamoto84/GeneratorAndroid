@@ -19,12 +19,12 @@ composeExtendedGestures = "3.1"
 composeMarkdown = "0.3.1"
 constraintlayout = "2.2.1"
 coreKtx = "1.19.0"
+datastore = "1.2.1"
 coreSplashscreen = "1.2.0"
 dagger = "2.60.1"
 githubSkeptickLibres = "1.2.4"
 gitlabArturboschDetekt = "1.23.8"
 glide = "5.0.9"
-googleGmsGoogleServices = "4.5.0"
 gradleToolchainsFoojayResolverConvention = "0.10.0"
 gson = "2.14.0"
 hilt = "1.4.0"
@@ -37,6 +37,7 @@ jtransforms = "3.2"
 kdownloader = "1.0.4"
 kotlin = "2.4.10"
 kotlinStdlib = "2.4.0"
+kotlinxSerializationJson = "1.11.0"
 libresCompose = "1.2.3"
 lifecycle = "2.11.0"
 material3 = "1.4.0"
@@ -72,6 +73,7 @@ android = { group = "com.github.adrielcafe.pufferdb", name = "android", version.
 android-assetcopier = { group = "com.github.flipagram", name = "android-assetcopier", version.ref = "androidAssetcopier" }
 androidsvg-aar = { group = "com.caverock", name = "androidsvg-aar", version.ref = "androidsvgAar" }
 androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt" }
+androidx-datastore = { group = "androidx.datastore", name = "datastore", version.ref = "datastore" }
 androidx-lifecycle-runtime-compose-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
@@ -121,6 +123,7 @@ jaudiotagger = { group = "com.github.Adonai", name = "jaudiotagger", version.ref
 jtransforms = { group = "com.github.wendykierp", name = "JTransforms", version.ref = "jtransforms" }
 kdownloader = { group = "com.github.varungulatii", name = "Kdownloader", version.ref = "kdownloader" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlib" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 libres-compose = { group = "io.github.skeptick.libres", name = "libres-compose", version.ref = "libresCompose" }
 appmetrica = { group = "io.appmetrica.analytics", name = "analytics", version.ref = "appmetrica" }
 appmetrica-ndk-crashes = { group = "io.appmetrica.analytics", name = "analytics-ndk-crashes", version.ref = "appmetricaNdkCrashes" }
@@ -145,9 +148,9 @@ baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprof
 bugsnag-android-gradle = { id = "com.bugsnag.android.gradle", version.ref = "bugsnagAndroidGradle" }
 google-dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "googleDaggerHiltAndroid" }
 google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "googleDevtoolsKsp" }
-google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 foojay-resolver = { id = "org.gradle.toolchains.foojay-resolver-convention", version.ref = "gradleToolchainsFoojayResolverConvention" }
 io-github-skeptick-libres = { id = "io.github.skeptick.libres", version.ref = "ioGithubSkeptickLibres" }
 gitlab-arturbosch-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "gitlabArturboschDetekt" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 jetbrains-kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "jetbrainsKotlinPluginCompose" }
+jetbrains-kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

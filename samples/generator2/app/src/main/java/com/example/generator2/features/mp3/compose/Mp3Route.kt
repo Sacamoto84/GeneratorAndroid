@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +29,7 @@ import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.audio.ROUTESTREAM
 import com.example.generator2.theme.colorChL
 import com.example.generator2.theme.colorChR
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 
 @Suppress("NonSkippableComposable")
@@ -112,7 +112,7 @@ fun Mp3Route(ch: String = "R", route: ROUTESTREAM, audioMixerPump: AudioMixerPum
         Spacer(modifier = Modifier.width(16.dp))
 
         val colorInvert =
-            if (ch == "R") audioMixerPump.invertR.collectAsState().value else audioMixerPump.invertL.collectAsState().value
+            if (ch == "R") audioMixerPump.invertR.collectAsStateWithLifecycle().value else audioMixerPump.invertL.collectAsStateWithLifecycle().value
 
         Icon(
             modifier = Modifier

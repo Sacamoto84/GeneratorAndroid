@@ -23,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -74,6 +73,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 enum class OSCILLSYNC {  NONE, R, L }
 
@@ -166,7 +167,7 @@ class Scope {
 
 
     init {
-        println("!!! init Scope")
+        Timber.i("!!! init Scope")
         dataRouter()
     }
 
@@ -213,7 +214,7 @@ class Scope {
                 Row {
                     Oscilloscope(modifier = Modifier.weight(1f))
 
-                    if (isUseLissagu.collectAsState().value) {
+                    if (isUseLissagu.collectAsStateWithLifecycle().value) {
                         Lissagu()
                     }
                 }
@@ -271,7 +272,7 @@ class Scope {
 
         // Рендер идёт непрерывно по vsync, поэтому паузу нельзя больше
         // держать на том, что requestRender() не зовут.
-        shaderRenderer.isPaused = isPause.collectAsState().value
+        shaderRenderer.isPaused = isPause.collectAsStateWithLifecycle().value
 
         val lifecycle = LocalLifecycleOwner.current.lifecycle
 
@@ -281,11 +282,11 @@ class Scope {
 
             val lifecycleObserver = ScreenLifecycleObserver(
                 onPauseAction = {
-                    println("!!! lifecycleObserver onPauseAction Oscilloscope()")
+                    Timber.i("!!! lifecycleObserver onPauseAction Oscilloscope()")
                     enableOscill.value = false
                 },
                 onResumeAction = {
-                    println("!!! lifecycleObserver onResumeAction Oscilloscope()")
+                    Timber.i("!!! lifecycleObserver onResumeAction Oscilloscope()")
                     enableOscill.value = true
                 }
             )
@@ -293,7 +294,7 @@ class Scope {
             lifecycle.addObserver(lifecycleObserver)
 
             onDispose {
-                println("!!! onDispose Oscilloscope()")
+                Timber.i("!!! onDispose Oscilloscope()")
                 lifecycle.removeObserver(lifecycleObserver)
                 enableOscill.value = false
                 view?.onPause()
@@ -372,11 +373,11 @@ class Scope {
 
             val lifecycleObserver = ScreenLifecycleObserver(
                 onPauseAction = {
-                    println("!!! lifecycleObserver onPauseAction Oscilloscope()")
+                    Timber.i("!!! lifecycleObserver onPauseAction Oscilloscope()")
                     enableLissagu.value = false
                 },
                 onResumeAction = {
-                    println("!!! lifecycleObserver onResumeAction Oscilloscope()")
+                    Timber.i("!!! lifecycleObserver onResumeAction Oscilloscope()")
                     enableLissagu.value = true
                 }
             )
@@ -384,7 +385,7 @@ class Scope {
             lifecycle.addObserver(lifecycleObserver)
 
             onDispose {
-                println("!!! onDispose Lissagu()")
+                Timber.i("!!! onDispose Lissagu()")
                 lifecycle.removeObserver(lifecycleObserver)
                 enableLissagu.value = false
                 view?.onPause()
@@ -410,9 +411,9 @@ class Scope {
 
         val fontSize = 24.sp
 
-        val stateIsVisibleL = isVisibleL.collectAsState().value
-        val stateIsVisibleR = isVisibleR.collectAsState().value
-        val stateIsOneTwo = isOneTwo.collectAsState().value
+        val stateIsVisibleL = isVisibleL.collectAsStateWithLifecycle().value
+        val stateIsVisibleR = isVisibleR.collectAsStateWithLifecycle().value
+        val stateIsOneTwo = isOneTwo.collectAsStateWithLifecycle().value
 
         Row(
             modifier = Modifier

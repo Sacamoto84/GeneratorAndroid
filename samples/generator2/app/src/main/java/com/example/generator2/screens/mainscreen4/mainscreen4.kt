@@ -24,7 +24,6 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,6 +47,7 @@ import com.example.generator2.screens.mainscreen4.card.MasterButton
 import com.example.generator2.screens.mainscreen4.top.TopBarAudioSource
 import com.example.generator2.theme.colorDarkBackground
 import timber.log.Timber
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -59,7 +59,7 @@ fun Mainsreen4(vm: VMMain4, vmPresets: presetsVM) {
 
     Timber.e("mainsreen4")
 
-    if (Presets.isOpenDialogNewFile.collectAsState().value) {
+    if (Presets.isOpenDialogNewFile.collectAsStateWithLifecycle().value) {
         DialogPresetsNewFile(vm.audioMixerPump.gen, vmPresets)
     }
 
@@ -69,7 +69,7 @@ fun Mainsreen4(vm: VMMain4, vmPresets: presetsVM) {
             Column {
                 WidgetUpdate(vm.update)
                 Text(
-                    text = vm.audioMixerPump.gen.liveData.presetsName.collectAsState().value,
+                    text = vm.audioMixerPump.gen.liveData.presetsName.collectAsStateWithLifecycle().value,
                     color = Color.LightGray,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
@@ -98,7 +98,7 @@ fun Mainsreen4(vm: VMMain4, vmPresets: presetsVM) {
     )
     { it ->
 
-        val mono by vm.audioMixerPump.gen.liveData.mono.collectAsState()
+        val mono by vm.audioMixerPump.gen.liveData.mono.collectAsStateWithLifecycle()
 
         val animateHeight by animateDpAsState(
             targetValue = if (!mono) 314.dp else 0.dp,

@@ -18,11 +18,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.generator2.features.playlist.VMPlayList
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun PlaylistUI(vm: VMPlayList) {
+
+    //Список приезжает после чтения файла на IO, поэтому наблюдаемый
+    val playlists = vm.playlist.list.collectAsStateWithLifecycle().value
 
     Scaffold(
         topBar = {
@@ -45,12 +49,12 @@ fun PlaylistUI(vm: VMPlayList) {
             )
         ) {
 
-            items(vm.playlist.list) { playlist ->
+            items(playlists) { playlist ->
                 Text(text = playlist.playlistName, modifier = Modifier.background(Color.Magenta))
             }
 
 
-            items(vm.playlist.list) { playlist ->
+            items(playlists) { playlist ->
                 Text(text = "Добавить", modifier = Modifier.background(Color.Magenta))
             }
 

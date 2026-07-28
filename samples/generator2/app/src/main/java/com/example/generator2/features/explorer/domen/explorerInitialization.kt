@@ -95,7 +95,7 @@ fun explorerInitialization(context: Context) {
         }
         node.value.path = s
         //node.value.isS3 = false
-        println("!!! >"+node.value.toString())
+        Timber.i("!!! >"+node.value.toString())
     }
 
     //В каждый элемент дерева добавить поле path
@@ -132,7 +132,7 @@ fun explorerInitialization(context: Context) {
 //        else
 //            node.value.isDirectory = true
 
-        println("!!! S3> "+node.value.toString())
+        Timber.i("!!! S3> "+node.value.toString())
     }
 
 
@@ -173,7 +173,7 @@ fun explorerInitialization(context: Context) {
 
         node.value.isInit = true
 
-        println(node.value.toString())
+        Timber.i(node.value.toString())
     }
 
 

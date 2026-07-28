@@ -7,6 +7,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Path
 import com.example.generator2.screens.editor.ui.Four
 import com.example.generator2.screens.editor.ui.MotionEvent
+import timber.log.Timber
 
 //Тип рисования
 enum class PaintingState {
@@ -273,7 +274,7 @@ class EditorMatModel {
 
     fun createPointLoop(size: Size = sizeCanvas): Four<MutableList<Offset>, MutableList<Offset>, Path, Path> {
 
-        println("------------------- createPointLoop")
+        Timber.i("------------------- createPointLoop")
 
         val gainX = 1024 / editWight * gainXX.value
         val k = sizeCanvas.height / sizeCanvas.width

@@ -15,7 +15,6 @@ import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,6 +26,7 @@ import com.example.generator2.screens.mainscreen4.atom.LR
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.theme.colorLightBackground
 import com.siddroid.holi.colors.MaterialColor
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun CardCommander(vm: VMMain4) {
@@ -41,7 +41,7 @@ fun CardCommander(vm: VMMain4) {
     {
 
         Row(Modifier.fillMaxSize(), Arrangement.Start, Alignment.CenterVertically) {
-            val mono = vm.audioMixerPump.gen.liveData.mono.collectAsState()
+            val mono = vm.audioMixerPump.gen.liveData.mono.collectAsStateWithLifecycle()
             val color = if (mono.value) MaterialColor.GREEN_400 else colorDarkBackground
 
             Spacer(
@@ -62,8 +62,8 @@ fun CardCommander(vm: VMMain4) {
 
             LR(vm.audioMixerPump.gen)
 
-            val shuffle = vm.audioMixerPump.gen.liveData.shuffle.collectAsState()
-            val invert = vm.audioMixerPump.gen.liveData.invert.collectAsState()
+            val shuffle = vm.audioMixerPump.gen.liveData.shuffle.collectAsStateWithLifecycle()
+            val invert = vm.audioMixerPump.gen.liveData.invert.collectAsStateWithLifecycle()
             val time = 160
 
             Crossfade(targetState = mono.value, animationSpec = tween(time), label = "")

@@ -11,7 +11,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -21,6 +20,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.generator2.R
 import com.example.generator2.features.explorer.presenter.ScreenExplorerViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 
 @Suppress("NonSkippableComposable")
@@ -31,7 +31,7 @@ fun ScreenExplorerBottomBar(vm: ScreenExplorerViewModel) {
     val navigator = LocalNavigator.currentOrThrow
 
     Column {
-        val node = vm.dataRepository.currentNode//.collectAsState().value
+        val node = vm.dataRepository.currentNode//.collectAsStateWithLifecycle().value
         var s = if (node.value.isS3) node.value.uri.replace("https://ru-spb-s3.hexcore.cloud", "") else node.value.path //.substringAfter(vm.appPath.sdcard)
         if (s == "") s = "/"
 

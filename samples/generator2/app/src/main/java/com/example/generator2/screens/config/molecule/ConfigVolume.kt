@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,6 +17,7 @@ import com.example.generator2.screens.config.Config_header
 import com.example.generator2.screens.config.DefScreenConfig
 import com.example.generator2.screens.config.atom.editConfig
 import com.example.generator2.screens.config.vm.VMConfig
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun ConfigVolume(vm: VMConfig) {
@@ -37,7 +37,7 @@ fun ConfigVolume(vm: VMConfig) {
                 .padding(start = 8.dp)
         )
 
-        val value0 = vm.gen.liveData.maxVolume0.collectAsState()
+        val value0 = vm.gen.liveData.maxVolume0.collectAsStateWithLifecycle()
         editConfig(
             Modifier.width(DefScreenConfig.widthEdit).height(DefScreenConfig.heightEdit), "", value = value0, min = 0f, max = 1f,
             onDone = {
@@ -62,7 +62,7 @@ fun ConfigVolume(vm: VMConfig) {
                 .padding(start = 8.dp)
         )
 
-        val value1 = vm.gen.liveData.maxVolume1.collectAsState()
+        val value1 = vm.gen.liveData.maxVolume1.collectAsStateWithLifecycle()
         editConfig(
             Modifier.width(DefScreenConfig.widthEdit).height(DefScreenConfig.heightEdit), "", value = value1, min = 0f, max = 1f,
             onDone = {

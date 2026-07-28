@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -23,14 +22,15 @@ import com.example.generator2.features.generator.GeneratorCH
 import com.example.generator2.screens.mainscreen4.ms4SwitchWidth
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.screens.common.modifier.noRippleClickable
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun ButtonChEn(ch: GeneratorCH, gen: Generator) {
 
     val chEN: State<Boolean> = if (ch == GeneratorCH.CHL) {
-        gen.liveData.chL_EN.collectAsState()
+        gen.liveData.chL_EN.collectAsStateWithLifecycle()
     } else {
-        gen.liveData.chR_EN.collectAsState()
+        gen.liveData.chR_EN.collectAsStateWithLifecycle()
     }
 
 // Кнопка включения канала

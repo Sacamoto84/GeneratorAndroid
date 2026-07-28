@@ -36,7 +36,6 @@ import com.example.generator2.common.snackbar.SnackBar
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.presets.Presets
 import com.example.generator2.features.presets.presetsGetListName
-import com.example.generator2.features.presets.presetsSaveFile
 import com.example.generator2.features.presets.presetsVM
 import com.example.generator2.theme.colorLightBackground2
 import kotlinx.coroutines.delay
@@ -98,15 +97,17 @@ fun DialogPresetsNewFile(gen: Generator, vm: presetsVM) {
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
 
-                        presetsSaveFile(value, path = vm.appPath.presets, gen = gen)
+                        //Список пресетов обновляем в колбэке: до конца записи
+                        //файла в папке ещё нет
+                        vm.savePreset(value) {
+                            Presets.presetList.clear()
+                            Presets.presetList = presetsGetListName(vm.appPath)
+                            PresetsDialogRecompose.intValue++
+                        }
+
                         SnackBar.success("Пресет «$value» сохранён")
 
                         Presets.isOpenDialogNewFile.value = false
-
-                        Presets.presetList.clear()
-                        Presets.presetList = presetsGetListName(vm.appPath)
-
-                        PresetsDialogRecompose.intValue++
 
 
                     }),

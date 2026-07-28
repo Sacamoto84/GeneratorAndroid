@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.example.generator2.screens.editor.EditorMatModel
 import com.example.generator2.screens.editor.PaintingState
 import com.smarttoolfactory.gesture.pointerMotionEvents
+import timber.log.Timber
 
 enum class MotionEvent {
     Idle, Down, Move, Up
@@ -72,7 +73,7 @@ fun EditorCanvas() {
 
             if (disposable) {
                 disposable = false
-                println("disposable")
+                Timber.i("disposable")
 
                 //Позиция на редакторе
                 model.currentPosition.value = Offset(size.width / 2, size.height / 2 + mouseOffset)
@@ -121,7 +122,7 @@ fun EditorCanvas() {
                                     model.currentPosition.value.x,
                                     model.currentPosition.value.y - mouseOffset
                                 )
-                            ) //println("..PaintLine")
+                            ) //Timber.i("..PaintLine")
                         }
 
                         PaintingState.PaintPoint -> {
@@ -136,7 +137,7 @@ fun EditorCanvas() {
                 }
 
                 MotionEvent.Up -> { //path.lineTo(currentPosition.x, currentPosition.y)
-                    model.motionEvent.value = MotionEvent.Idle //println(model.motionEvent)
+                    model.motionEvent.value = MotionEvent.Idle //Timber.i(model.motionEvent)
                 }
 
                 else -> {}

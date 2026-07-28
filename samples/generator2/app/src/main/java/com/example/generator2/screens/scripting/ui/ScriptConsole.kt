@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.generator2.screens.scripting.atom.ScriptItem
 import com.example.generator2.screens.scripting.vm.VMScripting
+import timber.log.Timber
 
 @Composable
 fun ScriptConsole(
@@ -27,7 +28,7 @@ fun ScriptConsole(
     global: VMScripting,
 ) {
 
-    println("ScriptConsole selectLine:$selectLine")
+    Timber.i("ScriptConsole selectLine:$selectLine")
 //
     var indexSelect by remember { mutableIntStateOf(0) }
 

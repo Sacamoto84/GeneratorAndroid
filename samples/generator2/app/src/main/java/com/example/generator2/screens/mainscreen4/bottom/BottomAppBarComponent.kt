@@ -22,7 +22,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.generator2.R
 import com.example.generator2.features.presets.Presets
-import com.example.generator2.features.presets.presetsSaveFile
+import cafe.adriel.voyager.core.model.screenModelScope
+import com.example.generator2.features.presets.presetsSaveInBackground
 import com.example.generator2.features.script.Script
 import com.example.generator2.screens.mainscreen4.VMMain4
 import com.example.generator2.theme.colorLightBackground
@@ -76,7 +77,12 @@ fun M4BottomAppBarComponent(
                             if ((vm.audioMixerPump.gen.liveData.presetsName.value == "") || (vm.audioMixerPump.gen.liveData.presetsName.value == "default")) {
                                 Presets.isOpenDialogNewFile.value = true
                             } else {
-                                presetsSaveFile(vm.audioMixerPump.gen.liveData.presetsName.value, path = vm.appPath.presets, gen = vm.audioMixerPump.gen)
+                                presetsSaveInBackground(
+                                    name = vm.audioMixerPump.gen.liveData.presetsName.value,
+                                    path = vm.appPath.presets,
+                                    gen = vm.audioMixerPump.gen,
+                                    scope = vm.screenModelScope
+                                )
                             }
                         },
                         onLongClick = {

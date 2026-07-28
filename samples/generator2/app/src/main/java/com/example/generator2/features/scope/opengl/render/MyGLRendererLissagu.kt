@@ -32,6 +32,7 @@ import java.nio.FloatBuffer
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
+import timber.log.Timber
 
 class MyGLRendererLissagu: GLSurfaceView.Renderer {
 
@@ -88,7 +89,7 @@ void main() {
 
     init {
 
-        println("!!! init MyGLRenderer")
+        Timber.i("!!! init MyGLRenderer")
 
         // Инициализация для OpenGL ES 3.0
         val bb = ByteBuffer.allocateDirect(vertices.size * 4)
@@ -101,7 +102,7 @@ void main() {
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
-        println("!!! init onSurfaceCreated")
+        Timber.i("!!! init onSurfaceCreated")
 
         //Устанавливаем цвет, который будет очищен
         glClearColor(0.0f, 0.15f, 0.0f, 1f)
@@ -206,7 +207,7 @@ void main() {
     }
 
     fun deleteProgram() {
-        println("!!! init deleteProgram")
+        Timber.i("!!! init deleteProgram")
         if (program != 0) {
             glDeleteProgram(program)
             //GLES20.glDeleteShader(vertexShader)

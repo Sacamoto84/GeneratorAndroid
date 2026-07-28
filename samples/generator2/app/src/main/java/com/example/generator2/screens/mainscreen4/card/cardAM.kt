@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,15 +31,17 @@ import com.example.generator2.screens.mainscreen4.ui.MainscreenTextBoxAndDropdow
 import com.example.generator2.screens.mainscreen4.ui.UIspinner
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.screens.common.modifier.noRippleClickable
+import timber.log.Timber
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 
 @Composable
 fun CardAM(ch: GeneratorCH, gen: Generator) {
 
     val amEN: State<Boolean?> = if (ch == GeneratorCH.CHL) {
-        gen.liveData.chL_AM_EN.collectAsState()
+        gen.liveData.chL_AM_EN.collectAsStateWithLifecycle()
     } else {
-        gen.liveData.chR_AM_EN.collectAsState()
+        gen.liveData.chR_AM_EN.collectAsStateWithLifecycle()
     }
 
     Column {
@@ -57,9 +58,9 @@ fun CardAM(ch: GeneratorCH, gen: Generator) {
         ) {
 
             val amFr: State<Float?> = if (ch == GeneratorCH.CHL) {
-                gen.liveData.chL_AM_Fr.collectAsState()
+                gen.liveData.chL_AM_Fr.collectAsStateWithLifecycle()
             } else {
-                gen.liveData.chR_AM_Fr.collectAsState()
+                gen.liveData.chR_AM_Fr.collectAsStateWithLifecycle()
             }
 
 
@@ -101,7 +102,7 @@ fun CardAM(ch: GeneratorCH, gen: Generator) {
 
             val sensing =
                 if (amFr.value!! < 10.0F) LiveConstrain.sensetingSliderAmFm.floatValue else LiveConstrain.sensetingSliderAmFm.floatValue * 10f
-            println("sensing $sensing")
+            Timber.i("sensing $sensing")
             MainscreenTextBoxAndDropdownMenu(
                 str = String.format("%.1f", amFr.value),
                 modifier = Modifier.weight(1f),
@@ -116,9 +117,9 @@ fun CardAM(ch: GeneratorCH, gen: Generator) {
             )
 
             val amDepth: State<Float?> = if (ch == GeneratorCH.CHL) {
-                gen.liveData.chLAmDepth.collectAsState()
+                gen.liveData.chLAmDepth.collectAsStateWithLifecycle()
             } else {
-                gen.liveData.chRAmDepth.collectAsState()
+                gen.liveData.chRAmDepth.collectAsStateWithLifecycle()
             }
 
             InfinitySlider(
@@ -144,8 +145,8 @@ fun CardAM(ch: GeneratorCH, gen: Generator) {
                     .padding(top = 0.dp, start = 8.dp, end = 8.dp)
                     .wrapContentWidth()
                     .clip(shape = RoundedCornerShape(4.dp)),
-                filename = if (ch == GeneratorCH.CHL) gen.liveData.chL_AM_Filename.collectAsState()
-                else gen.liveData.chL_AM_Filename.collectAsState(), gen = gen
+                filename = if (ch == GeneratorCH.CHL) gen.liveData.chL_AM_Filename.collectAsStateWithLifecycle()
+                else gen.liveData.chL_AM_Filename.collectAsStateWithLifecycle(), gen = gen
 
             )
 

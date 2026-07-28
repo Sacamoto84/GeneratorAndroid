@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.util.UnstableApi
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.initialization.Initialization
-import com.example.generator2.features.noSQL.KEY_NOSQL_CONFIG2
+import com.example.generator2.features.settings.Settings
 import com.example.generator2.util.UtilsKT
 import com.example.generator2.util.findActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,7 +42,7 @@ class SplashScreenActivity : AppCompatActivity() {
     lateinit var appPath: AppPath
 
     @Inject
-    lateinit var global: Global
+    lateinit var settings: Settings
 
     //@Inject
     //lateinit var update: Update
@@ -109,10 +109,8 @@ class SplashScreenActivity : AppCompatActivity() {
                 return
             }
 
-            //noSQLConfig2.write(KEY_NOSQL_CONFIG2.LANGUAGE.value, "ru")
-
-            //Читаем язык
-            LibresSettings.languageCode = global.noSQLConfig2.read(KEY_NOSQL_CONFIG2.LANGUAGE.value, "ru")
+            //Читаем язык. Нужен до первого кадра, поэтому синхронно
+            LibresSettings.languageCode = settings.blockingGet().language
 
             val myTextView: TextView = findViewById(R.id.myTextView)
             myTextView.text = MainRes.string.splashLoading
@@ -130,7 +128,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
                 val endTime = System.currentTimeMillis()
                 val elapsedTime = endTime - startTimeSplashScreenActivity
-                println("Время выполнения кода: $elapsedTime мс")
+                Timber.i("Время выполнения кода: $elapsedTime мс")
                 Timber.tag("Время работы").i("!!! SplashActivity завершена: $elapsedTime мс!!!")
 
 

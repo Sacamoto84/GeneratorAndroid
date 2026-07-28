@@ -19,7 +19,6 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -54,15 +53,17 @@ import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.theme.colorLightBackground2
 import com.example.generator2.screens.common.modifier.noRippleClickable
 import kotlinx.coroutines.flow.update
+import timber.log.Timber
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 
 @Composable
 fun CardFM(ch: GeneratorCH, gen: Generator) {
 
     val fmEN: State<Boolean?> =
-        if (ch == GeneratorCH.CHL) gen.liveData.chL_FM_EN.collectAsState() else gen.liveData.chR_FM_EN.collectAsState()
+        if (ch == GeneratorCH.CHL) gen.liveData.chL_FM_EN.collectAsStateWithLifecycle() else gen.liveData.chR_FM_EN.collectAsStateWithLifecycle()
     val fmFr: State<Float?> =
-        if (ch == GeneratorCH.CHL) gen.liveData.chL_FM_Fr.collectAsState() else gen.liveData.chR_FM_Fr.collectAsState()
+        if (ch == GeneratorCH.CHL) gen.liveData.chL_FM_Fr.collectAsStateWithLifecycle() else gen.liveData.chR_FM_Fr.collectAsStateWithLifecycle()
 
     Column()
     {
@@ -188,8 +189,8 @@ fun CardFM(ch: GeneratorCH, gen: Generator) {
                     .clip(shape = RoundedCornerShape(4.dp))
                     .background(Color.Black),
 
-                filename = if (ch == GeneratorCH.CHL) gen.liveData.chL_FM_Filename.collectAsState()
-                else gen.liveData.chR_FM_Filename.collectAsState(), gen = gen
+                filename = if (ch == GeneratorCH.CHL) gen.liveData.chL_FM_Filename.collectAsStateWithLifecycle()
+                else gen.liveData.chR_FM_Filename.collectAsStateWithLifecycle(), gen = gen
             )
 
         }
@@ -212,9 +213,9 @@ fun CardFM(ch: GeneratorCH, gen: Generator) {
 private fun SecondLine(ch: GeneratorCH, gen: Generator) {
 
     val fmSelectMode: State<Int?> = if (ch == GeneratorCH.CHL) {
-        gen.liveData.parameterInt0.collectAsState() //CHL режим выбора частот FM модуляции 0-обычный 1-минимум макс
+        gen.liveData.parameterInt0.collectAsStateWithLifecycle() //CHL режим выбора частот FM модуляции 0-обычный 1-минимум макс
     } else {
-        gen.liveData.parameterInt1.collectAsState() //CHR режим выбора частот FM модуляции 0-обычный 1-минимум макс
+        gen.liveData.parameterInt1.collectAsStateWithLifecycle() //CHR режим выбора частот FM модуляции 0-обычный 1-минимум макс
     }
 
     Row {
@@ -249,9 +250,9 @@ private fun SecondLine(ch: GeneratorCH, gen: Generator) {
 private fun SecondLineMode1(ch: GeneratorCH, gen: Generator) {
 
     val fmMin: State<Float> =
-        if (ch == GeneratorCH.CHL) gen.liveData.chLFmMin.collectAsState() else gen.liveData.chRFmMin.collectAsState()
+        if (ch == GeneratorCH.CHL) gen.liveData.chLFmMin.collectAsStateWithLifecycle() else gen.liveData.chRFmMin.collectAsStateWithLifecycle()
     val fmMax: State<Float> =
-        if (ch == GeneratorCH.CHL) gen.liveData.chLFmMax.collectAsState() else gen.liveData.chRFmMax.collectAsState()
+        if (ch == GeneratorCH.CHL) gen.liveData.chLFmMax.collectAsStateWithLifecycle() else gen.liveData.chRFmMax.collectAsStateWithLifecycle()
 
     Row(
         Modifier
@@ -325,15 +326,15 @@ private fun SecondLineMode1(ch: GeneratorCH, gen: Generator) {
 private fun SecondLineMode0(ch: GeneratorCH, gen: Generator) {
 
     val carrierFr: State<Float?> = if (ch == GeneratorCH.CHL) {
-        gen.liveData.chL_Carrier_Fr.collectAsState()
+        gen.liveData.chL_Carrier_Fr.collectAsStateWithLifecycle()
     } else {
-        gen.liveData.chR_Carrier_Fr.collectAsState()
+        gen.liveData.chR_Carrier_Fr.collectAsStateWithLifecycle()
     }
 
     val fmDev: State<Float?> = if (ch == GeneratorCH.CHL) {
-        gen.liveData.chL_FM_Dev.collectAsState()
+        gen.liveData.chL_FM_Dev.collectAsStateWithLifecycle()
     } else {
-        gen.liveData.chR_FM_Dev.collectAsState()
+        gen.liveData.chR_FM_Dev.collectAsStateWithLifecycle()
     }
 
     //Девиация, при которой нижняя частота не опускается ниже FM_FREQ_MIN
@@ -398,13 +399,13 @@ private fun Volume(ch: GeneratorCH, gen: Generator) {
     VolumeControl(
 
         value = if (ch == GeneratorCH.CHL)
-            gen.liveData.currentVolume0.collectAsState().value
+            gen.liveData.currentVolume0.collectAsStateWithLifecycle().value
         else
-            gen.liveData.currentVolume1.collectAsState().value,
+            gen.liveData.currentVolume1.collectAsStateWithLifecycle().value,
 
         onValueChange = { it1 ->
 
-            println("onValueChange $it1")
+            Timber.i("onValueChange $it1")
 
             if (ch == GeneratorCH.CHL) {
                 gen.liveData.currentVolume0.update { it1 }

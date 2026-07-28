@@ -31,7 +31,7 @@ class MyAudioProcessor(private var isPlayingD: MutableStateFlow<Boolean>, privat
     //Настраиваем выходной формат на Float
     override fun configure(inputAudioFormat: AudioProcessor.AudioFormat): AudioProcessor.AudioFormat {
         Timber.e("configure")
-        println("Audio Processor: $inputAudioFormat")
+        Timber.i("Audio Processor: $inputAudioFormat")
         if (inputAudioFormat.encoding != C.ENCODING_PCM_16BIT) {
             throw AudioProcessor.UnhandledAudioFormatException(inputAudioFormat)
         }

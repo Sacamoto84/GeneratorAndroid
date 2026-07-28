@@ -27,7 +27,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +45,7 @@ import com.example.generator2.features.presets.Presets
 import com.example.generator2.features.presets.presetsGetListName
 import com.example.generator2.features.presets.presetsVM
 import com.siddroid.holi.colors.MaterialColor
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 
 val PresetsDialogRecompose = mutableIntStateOf(0)
@@ -69,11 +69,11 @@ fun DialogPresets(vm: presetsVM) {
     ) {
 
 
-        if (Presets.isOpenDialogRename.collectAsState().value) {
+        if (Presets.isOpenDialogRename.collectAsStateWithLifecycle().value) {
             DialogPresetsRename(Presets.isOpenDialogDeleteRenameName, vm)
         }
 
-        if (Presets.isOpenDialogDelete.collectAsState().value) {
+        if (Presets.isOpenDialogDelete.collectAsStateWithLifecycle().value) {
             DialogPresetsDelete(Presets.isOpenDialogDeleteRenameName, vm)
         }
 

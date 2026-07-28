@@ -13,7 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,32 +36,33 @@ import com.example.generator2.theme.colorChL
 import com.example.generator2.theme.colorChR
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.screens.common.modifier.noRippleClickable
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 
 @Composable
 fun CardCarrier(ch: GeneratorCH, gen: Generator) {
 
     val chEN: State<Boolean> =
-        if (ch == GeneratorCH.CHL) gen.liveData.chL_EN.collectAsState() else gen.liveData.chR_EN.collectAsState()
+        if (ch == GeneratorCH.CHL) gen.liveData.chL_EN.collectAsStateWithLifecycle() else gen.liveData.chR_EN.collectAsStateWithLifecycle()
 
     val carrierFr: State<Float> =
-        if (ch == GeneratorCH.CHL) gen.liveData.chL_Carrier_Fr.collectAsState() else gen.liveData.chR_Carrier_Fr.collectAsState()
+        if (ch == GeneratorCH.CHL) gen.liveData.chL_Carrier_Fr.collectAsStateWithLifecycle() else gen.liveData.chR_Carrier_Fr.collectAsStateWithLifecycle()
 
     val fmSelectMode: State<Int?> = if (ch == GeneratorCH.CHL)
-        gen.liveData.parameterInt0.collectAsState() //CHL режим выбора частот FM модуляции 0-обычный 1-минимум макс
+        gen.liveData.parameterInt0.collectAsStateWithLifecycle() //CHL режим выбора частот FM модуляции 0-обычный 1-минимум макс
     else
-        gen.liveData.parameterInt1.collectAsState() //CHR режим выбора частот FM модуляции 0-обычный 1-минимум макс
+        gen.liveData.parameterInt1.collectAsStateWithLifecycle() //CHR режим выбора частот FM модуляции 0-обычный 1-минимум макс
 
     val fmEN: State<Boolean> =
-        if (ch == GeneratorCH.CHL) gen.liveData.chL_FM_EN.collectAsState() else gen.liveData.chR_FM_EN.collectAsState()
+        if (ch == GeneratorCH.CHL) gen.liveData.chL_FM_EN.collectAsStateWithLifecycle() else gen.liveData.chR_FM_EN.collectAsStateWithLifecycle()
 
     //Несущая заблокирована только когда FM включена в режиме минимум/максимум
     val carrierEnable = fmSelectMode.value == 0 || !fmEN.value
 
     //Форму несущей задаёт метаморфоза, пока она включена
     val morphEN: State<Boolean> =
-        if (ch == GeneratorCH.CHL) gen.liveData.chL_Morph_EN.collectAsState()
-        else gen.liveData.chR_Morph_EN.collectAsState()
+        if (ch == GeneratorCH.CHL) gen.liveData.chL_Morph_EN.collectAsStateWithLifecycle()
+        else gen.liveData.chR_Morph_EN.collectAsStateWithLifecycle()
 
     Column {
 
@@ -72,7 +72,7 @@ fun CardCarrier(ch: GeneratorCH, gen: Generator) {
                 .heightIn(min = 16.dp)
                 .fillMaxWidth(), contentAlignment = Alignment.Center
         ) {
-            val mono = gen.liveData.mono.collectAsState().value
+            val mono = gen.liveData.mono.collectAsStateWithLifecycle().value
             Text(
                 text = if (mono) "MONO" else if (ch == GeneratorCH.CHL) "CHL" else "CHR",
                 color = Color.Black,
@@ -176,8 +176,8 @@ fun CardCarrier(ch: GeneratorCH, gen: Generator) {
                     .padding(start = 8.dp, end = 8.dp)
                     .wrapContentWidth()
                     .clip(shape = RoundedCornerShape(4.dp)),
-                filename = if (ch == GeneratorCH.CHL) gen.liveData.chL_Carrier_Filename.collectAsState()
-                else gen.liveData.chR_Carrier_Filename.collectAsState(), gen = gen,
+                filename = if (ch == GeneratorCH.CHL) gen.liveData.chL_Carrier_Filename.collectAsStateWithLifecycle()
+                else gen.liveData.chR_Carrier_Filename.collectAsStateWithLifecycle(), gen = gen,
                 enable = !morphEN.value
             )
 

@@ -43,11 +43,11 @@ fun Spinner_Send_Buffer(
         when (Mod) {
             GeneratorMOD.AM -> {
                 gen.chL.buffer_am =  byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, 0f, 1f)
-                RenderChannel().sendBuffer(0, 1, gen.chL.buffer_am)
+                RenderChannel.sendBuffer(0, 1, gen.chL.buffer_am)
             }
             GeneratorMOD.MASTER -> {
                 gen.chL.buffer_master = byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, 0f, 1f)
-                RenderChannel().sendBuffer(0, 3, gen.chL.buffer_master)
+                RenderChannel.sendBuffer(0, 3, gen.chL.buffer_master)
             }
             GeneratorMOD.FM -> {
                 gen.chL.buffer_fm =  byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, -1f, 1f)//byteToFloatArrayLittleEndian4096(buf)
@@ -57,11 +57,11 @@ fun Spinner_Send_Buffer(
                 val slot = Mod.ordinal - GeneratorMOD.MORPH0.ordinal
                 gen.chL.buffer_morph[slot] =
                     byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, -1f, 1f)
-                RenderChannel().sendBuffer(0, 4 + slot, gen.chL.buffer_morph[slot])
+                RenderChannel.sendBuffer(0, 4 + slot, gen.chL.buffer_morph[slot])
             }
             else -> {
                 gen.chL.buffer_carrier = byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, -1f, 1f)//byteToFloatArrayLittleEndian4096(buf)
-                RenderChannel().sendBuffer(0, 0, gen.chL.buffer_carrier)
+                RenderChannel.sendBuffer(0, 0, gen.chL.buffer_carrier)
             }
 
         }
@@ -69,11 +69,11 @@ fun Spinner_Send_Buffer(
         when (Mod) {
             GeneratorMOD.AM -> {
                 gen.chR.buffer_am = byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, 0f, 1f) //byteToFloatArrayLittleEndianAM(buf)
-                RenderChannel().sendBuffer(1, 1, gen.chR.buffer_am)
+                RenderChannel.sendBuffer(1, 1, gen.chR.buffer_am)
             }
             GeneratorMOD.MASTER -> {
                 gen.chR.buffer_master = byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, 0f, 1f)
-                RenderChannel().sendBuffer(1, 3, gen.chR.buffer_master)
+                RenderChannel.sendBuffer(1, 3, gen.chR.buffer_master)
             }
             //ArrayUtils.byteToShortArrayLittleEndian(buf)
             GeneratorMOD.FM -> {
@@ -84,10 +84,10 @@ fun Spinner_Send_Buffer(
                 val slot = Mod.ordinal - GeneratorMOD.MORPH0.ordinal
                 gen.chR.buffer_morph[slot] =
                     byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, -1f, 1f)
-                RenderChannel().sendBuffer(1, 4 + slot, gen.chR.buffer_morph[slot])
+                RenderChannel.sendBuffer(1, 4 + slot, gen.chR.buffer_morph[slot])
             }
             else -> {gen.chR.buffer_carrier = byteToFloatArrayLittleEndianMap(buf, 0f, 4095f, -1f, 1f)//byteToFloatArrayLittleEndian4096(buf)
-                RenderChannel().sendBuffer(1, 0, gen.chR.buffer_carrier)
+                RenderChannel.sendBuffer(1, 0, gen.chR.buffer_carrier)
             }
         }
     }

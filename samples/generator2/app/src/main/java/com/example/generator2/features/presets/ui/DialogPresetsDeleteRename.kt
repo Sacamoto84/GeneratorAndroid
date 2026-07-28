@@ -39,6 +39,7 @@ import com.example.generator2.features.presets.presetsVM
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.theme.colorLightBackground
 import java.io.File
+import timber.log.Timber
 
 private val Corner = 8.dp
 
@@ -47,7 +48,7 @@ fun DialogPresetsDeleteRename(name: String, vm: presetsVM) {
 
     val context = LocalContext.current
 
-    println("DialogDeleteRename name:$name")
+    Timber.i("DialogDeleteRename name:$name")
 
     var value by remember { mutableStateOf("") }
 
@@ -98,9 +99,9 @@ fun DialogPresetsDeleteRename(name: String, vm: presetsVM) {
                         val newFile = File(vm.appPath.presets + "/${value}.txt")
 
                         if (oldFile.renameTo(newFile)) {
-                            println("Файл успешно переименован.")
+                            Timber.i("Файл успешно переименован.")
                         } else {
-                            println("Не удалось переименовать файл.")
+                            Timber.i("Не удалось переименовать файл.")
                         }
 
                         Presets.presetList.clear()

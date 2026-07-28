@@ -21,59 +21,38 @@ class Generator {
 
     var sampleRate: Int = 48000
 
-    var zeroBufferSize = 1024
-    var zeroBuffer = FloatArray(zeroBufferSize)
+    //Буферы рендера переиспользуются между блоками: аллокация на каждый
+    //аудиоблок давала паузы GC в реальном времени. Содержимое действительно
+    //до следующего вызова renderAudio, дальше него их держать нельзя.
+    private var bufL = FloatArray(0)
+    private var bufR = FloatArray(0)
+    private var result = bufL to bufR
 
     fun renderAudio(numFrames: Int = 1024): Pair<FloatArray, FloatArray> {
 
         if (numFrames == 0) Timber.e("numFrames == 0")
 
-        // val startTime = System.nanoTime()
-        //  val l = FloatArray(numFrames / 2)
-        //  val r = FloatArray(numFrames / 2)
+        val frames = numFrames / 2
 
-        //val startTime = System.nanoTime()
+        if (bufL.size != frames) {
+            bufL = FloatArray(frames)
+            bufR = FloatArray(frames)
+            result = bufL to bufR
+        }
 
-        //ret
-        //val endTime = System.nanoTime()
-        //val duration = endTime - startTime
-        //println("Time taken to allocate ret: ${duration/1000} us")
-        val l: FloatArray
-        val r: FloatArray
+        //Выключенный канал renderChanel сам заполняет тишиной
+        RenderChannel.renderChanel(liveData, chL, frames, sampleRate, bufL)
 
         if (!liveData.mono.value) {
-
-            l = if (liveData.chL_EN.value)
-                RenderChannel().renderChanel(liveData, chL, numFrames / 2, sampleRate)
-            else {
-                if (numFrames / 2 != zeroBufferSize)
-                {
-                    zeroBufferSize = numFrames / 2
-                    zeroBuffer = FloatArray(zeroBufferSize)
-                }
-                zeroBuffer
-            }
-
-            r = if (liveData.chR_EN.value)
-                RenderChannel().renderChanel(liveData, chR, numFrames / 2, sampleRate)
-
-            else {
-
-                if (numFrames / 2 != zeroBufferSize)
-                {
-                    zeroBufferSize = numFrames / 2
-                    zeroBuffer = FloatArray(zeroBufferSize)
-                }
-                zeroBuffer
-
-            }
+            RenderChannel.renderChanel(liveData, chR, frames, sampleRate, bufR)
         } else {
-            //Mono
-            val m = RenderChannel().renderChanel(liveData, chL, numFrames / 2, sampleRate)
-            l = m
-            r = m
+            //Моно: правый канал - копия левого. Раньше оба канала указывали на
+            //один массив, из-за чего инверсия одного канала в AudioMixerPump
+            //применялась к обоим сразу
+            bufL.copyInto(bufR)
         }
-        return Pair(l, r)
+
+        return result
     }
 
     /**
@@ -162,7 +141,7 @@ class Generator {
     /** Пересчитать буфер FM и отдать его в нативный рендер */
     fun updateFm(ch: Int) {
         createFm(ch)
-        RenderChannel().sendBuffer(
+        RenderChannel.sendBuffer(
             ch, 2, if (ch == 0) chL.calculate_buffer_fm else chR.calculate_buffer_fm
         )
     }

@@ -22,6 +22,7 @@ import com.example.generator2.R
 import com.example.generator2.strings.MainResStrings
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.theme.colorLightBackground
+import timber.log.Timber
 
 private val Corner = 8.dp
 
@@ -45,7 +46,7 @@ fun DialogDeleteRename(
     onClickDelete: () -> Unit
 ) {
 
-    println("DialogDeleteRename name:$name")
+    Timber.i("DialogDeleteRename name:$name")
 
     var value by remember { mutableStateOf(name) }
 

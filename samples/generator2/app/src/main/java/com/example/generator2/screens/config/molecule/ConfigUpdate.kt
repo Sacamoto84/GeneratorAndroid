@@ -7,7 +7,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -17,12 +16,13 @@ import com.example.generator2.screens.config.DefScreenConfig
 import com.example.generator2.screens.config.atom.ConfigLineText
 import com.example.generator2.screens.config.atom.ConfigLineTextSwitch
 import com.example.generator2.screens.config.vm.VMConfig
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun ConfigUpdate(vm: VMConfig) {
     Column {
 
-        ConfigLineTextSwitch(MainRes.string.autoUpdate, vm.update.autoupdate.collectAsState().value,  { vm.update.autoupdate(it) } )
+        ConfigLineTextSwitch(MainRes.string.autoUpdate, vm.update.autoupdate.collectAsStateWithLifecycle().value,  { vm.update.autoupdate(it) } )
         ConfigLineText(MainRes.string.currentVersion, vm.update.currentVersion)
         ConfigLineText(MainRes.string.externalVersion, vm.update.externalVersion)
 

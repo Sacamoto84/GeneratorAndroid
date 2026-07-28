@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.media3.common.util.UnstableApi
 import com.example.generator2.theme.Generator2Theme
 import kotlinx.coroutines.delay
+import timber.log.Timber
 
 
 class PermissionScreenActivity : ComponentActivity() {
@@ -35,7 +36,7 @@ class PermissionScreenActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        println("Запуск PermissionScreenActivity")
+        Timber.i("Запуск PermissionScreenActivity")
 
         setContent {
 

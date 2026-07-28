@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -16,12 +15,13 @@ import androidx.compose.ui.unit.dp
 import com.example.generator2.strings.MainResStrings
 import com.example.generator2.features.update.UPDATESTATE
 import com.example.generator2.features.update.Update
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun WidgetUpdate(update: Update) {
 
-    val state = update.state.collectAsState().value //Получить текущее состояние
-    val p = update.percent.collectAsState()
+    val state = update.state.collectAsStateWithLifecycle().value //Получить текущее состояние
+    val p = update.percent.collectAsStateWithLifecycle()
 
     if (state == UPDATESTATE.DOWNLOADING)
 

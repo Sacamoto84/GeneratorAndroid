@@ -5,13 +5,14 @@ import androidx.media3.common.util.UnstableApi
 import cafe.adriel.pufferdb.android.AndroidPufferDB
 import com.example.generator2.App
 import com.example.generator2.AppPath
-import com.example.generator2.Global
 import com.example.generator2.PermissionStorage
 import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.generator.observe
 import com.example.generator2.features.presets.presetsInit
 import com.example.generator2.features.presets.presetsReadFile
 import com.example.generator2.features.presets.presetsToLiveData
+import com.example.generator2.features.settings.Settings
+import com.example.generator2.model.LiveConstrain
 import com.example.generator2.util.Utils
 import com.example.generator2.util.UtilsKT
 import kotlinx.coroutines.Deferred
@@ -31,7 +32,7 @@ class Initialization
     val context: Context,
     val utils: UtilsKT,
     val appPath: AppPath,
-    val global: Global,
+    val settings: Settings,
     val audioMixerPump: AudioMixerPump,
 ) {
 
@@ -144,9 +145,20 @@ class Initialization
                 Timber.tag("Время работы").i("t4 2")
 
                 Timber.tag("Время работы").i("t4 3")
-                global.mmkv.readConstrain() //4ms
+                val config = settings.get()
+                LiveConstrain.sensetingSliderCr.floatValue = config.sensitivitySliderCr
+                LiveConstrain.sensetingSliderFmDev.floatValue = config.sensitivitySliderFmDev
+                LiveConstrain.sensetingSliderAmFm.floatValue = config.sensitivitySliderAmFm
                 Timber.tag("Время работы").i("t4 4")
                 presetsToLiveData(presetsReadFile("default", path = appPath.config), audioMixerPump.gen) //67ms
+
+                //Максимальная громкость усилителя - настройка устройства, а не часть
+                //пресета, поэтому применяется поверх загруженного пресета
+                val liveData = audioMixerPump.gen.liveData
+                liveData.maxVolume0.value = config.maxVolume0
+                liveData.maxVolume1.value = config.maxVolume1
+                liveData.volume0.value = liveData.currentVolume0.value * config.maxVolume0
+                liveData.volume1.value = liveData.currentVolume1.value * config.maxVolume1
                 Timber.tag("Время работы").i("t4 5")
 
                 //Проверка поддержки 192k
@@ -170,7 +182,7 @@ class Initialization
 
         val endTime = System.currentTimeMillis()
         val elapsedTime = endTime - startTime
-        println("Время выполнения кода: $elapsedTime мс")
+        Timber.i("Время выполнения кода: $elapsedTime мс")
         Timber.tag("Время работы").i("!!! Инициализация завершена: $elapsedTime мс!!!")
 
         isInitialized = true

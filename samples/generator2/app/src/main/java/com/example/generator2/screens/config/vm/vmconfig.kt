@@ -10,16 +10,20 @@ import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat.startActivity
 import cafe.adriel.voyager.core.model.ScreenModel
-import com.example.generator2.Global
+import cafe.adriel.voyager.core.model.screenModelScope
 import com.example.generator2.R
+import com.example.generator2.common.snackbar.SnackBar
 import com.example.generator2.features.update.UPDATESTATE
 import com.example.generator2.features.update.Update
 import com.example.generator2.features.generator.Generator
-import com.example.generator2.features.noSQL.KEY_NOSQL_CONFIG2
+import com.example.generator2.features.settings.Settings
+import com.example.generator2.model.LiveConstrain
 import com.yagmurerdogan.toasticlib.Toastic
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.skeptick.libres.LibresSettings
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import timber.log.Timber
 
 @SuppressLint("StaticFieldLeak")
 class VMConfig @Inject constructor(
@@ -27,7 +31,7 @@ class VMConfig @Inject constructor(
     private val context: Context,
     val gen: Generator,
     val update: Update,
-    val global: Global
+    val settings: Settings
 ) : ScreenModel {
 
     val recompose = mutableStateOf(0)
@@ -54,27 +58,49 @@ class VMConfig @Inject constructor(
 
         } catch (ignored: java.lang.Exception) {
             Toast.makeText(context, "Error ignored $ignored", Toast.LENGTH_LONG).show()
-            println(ignored)
+            Timber.e(ignored)
         }
 
     }
 
-    fun saveVolume() = global.mmkv.saveVolume(gen) //backup.json.saveJsonVolume()
-    fun saveConstrain() = global.mmkv.saveConstrain() //backup.json.saveJsonConstrain()
+    /** Сохранить максимальную громкость обоих каналов */
+    fun saveVolume() = screenModelScope.launch {
+        settings.update {
+            it.copy(
+                maxVolume0 = gen.liveData.maxVolume0.value,
+                maxVolume1 = gen.liveData.maxVolume1.value
+            )
+        }
+    }
+
+    /** Сохранить чувствительность слайдеров */
+    fun saveConstrain() = screenModelScope.launch {
+        settings.update {
+            it.copy(
+                sensitivitySliderCr = LiveConstrain.sensetingSliderCr.floatValue,
+                sensitivitySliderFmDev = LiveConstrain.sensetingSliderFmDev.floatValue,
+                sensitivitySliderAmFm = LiveConstrain.sensetingSliderAmFm.floatValue
+            )
+        }
+    }
 
     fun toastSaveVolume() {
-        Toastic.toastic(
-            context = context,
-            message = "Volume Saved",
-            duration = Toastic.LENGTH_SHORT,
-            type = Toastic.SUCCESS,
-            //isIconAnimated = true,
-            customIcon = R.drawable.info3,
-            font = R.font.jetbrains,
-            customBackground = R.drawable.toast_bg,
-            textColor = Color.WHITE,
-            //customIconAnimation = androidx.appcompat.R.anim.abc_slide_out_bottom
-        ).show()
+
+        SnackBar.success("Volume Saved")
+
+//        Toastic.toastic(
+//            context = context,
+//            message = "Volume Saved",
+//            duration = Toastic.LENGTH_SHORT,
+//            type = Toastic.SUCCESS,
+//            //isIconAnimated = true,
+//            customIcon = R.drawable.info3,
+//            font = R.font.jetbrains,
+//            customBackground = R.drawable.toast_bg,
+//            textColor = Color.WHITE,
+//            //customIconAnimation = androidx.appcompat.R.anim.abc_slide_out_bottom
+//        ).show()
+
     }
 
 
@@ -103,15 +129,14 @@ class VMConfig @Inject constructor(
         val out = when (str) {
             "Русский", "ru" -> "ru"
             "English", "en" -> "en"
-            else ->
-                "ru"
+            else -> "ru"
         }
 
         //Читаем язык
         LibresSettings.languageCode = out
 
-        //Сохранение в базу
-        global.noSQLConfig2.write(KEY_NOSQL_CONFIG2.LANGUAGE.value, out)
+        //Сохранение в настройки
+        screenModelScope.launch { settings.update { it.copy(language = out) } }
 
     }
 ///////////////////////////

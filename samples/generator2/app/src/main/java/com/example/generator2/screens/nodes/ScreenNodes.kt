@@ -10,7 +10,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +37,7 @@ import com.example.generator2.screens.nodes.dialog.StepDialog
 import com.example.generator2.screens.nodes.top.NodesTopBar
 import com.example.generator2.screens.nodes.ui.GeneratedScriptView
 import com.example.generator2.screens.nodes.vm.VMNodes
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun ScreenNodes(vm: VMNodes) {
@@ -45,7 +45,7 @@ fun ScreenNodes(vm: VMNodes) {
     var pickerOpen by remember { mutableStateOf(false) }
     var issuesOpen by remember { mutableStateOf(false) }
     var scriptOpen by remember { mutableStateOf(false) }
-    val activeNode by vm.runner.activeNode.collectAsState(initial = null)
+    val activeNode by vm.runner.activeNode.collectAsStateWithLifecycle(initialValue = null)
 
     Scaffold(
         //Тёмный фон под цвет холста: иначе при появлении и исчезании
@@ -83,7 +83,7 @@ fun ScreenNodes(vm: VMNodes) {
         },
         bottomBar = {
             Column {
-                val registers by vm.runner.registers.collectAsState()
+                val registers by vm.runner.registers.collectAsStateWithLifecycle()
                 RunSheet(registers = registers, console = vm.console)
 
                 val node = vm.selected?.let { vm.graph.node(it) }
@@ -261,7 +261,7 @@ fun ScreenNodes(vm: VMNodes) {
     }
 
     if (scriptOpen) {
-        val pc by vm.runner.pc.collectAsState()
+        val pc by vm.runner.pc.collectAsStateWithLifecycle()
         GeneratedScriptView(
             //Показываем свежую компиляцию: граф мог измениться после прогона
             result = vm.compileNow(),

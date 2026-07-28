@@ -1,11 +1,15 @@
 package com.example.generator2.features.generator
 
-class RenderChannel {
+/**
+ * Обёртка нативного рендера канала.
+ *
+ * Без состояния, поэтому object: раньше на каждый аудиоблок создавался новый
+ * экземпляр, что давало лишний мусор в реальном времени.
+ */
+object RenderChannel {
 
-    companion object {
-        init {
-            System.loadLibrary("plasma")
-        }
+    init {
+        System.loadLibrary("plasma")
     }
 
     external fun jniRenderChannel(
@@ -46,12 +50,19 @@ class RenderChannel {
 
     external fun sendBuffer(ch: Int, modulation: Int, data: FloatArray)
 
+    /**
+     * Рендер одного канала в готовый буфер [out] длиной [numFrames].
+     *
+     * Буфер приходит снаружи и переиспользуется между блоками — аллокация на
+     * каждый аудиоблок давала паузы GC в реальном времени.
+     */
     fun renderChanel(
         liveData: DataLiveData,
         ch: StructureCh,
         numFrames: Int,
         sampleRate: Int,
-    ): FloatArray {
+        out: FloatArray,
+    ) {
 
         val rC: UInt
         val rAM: UInt
@@ -131,7 +142,13 @@ class RenderChannel {
             )
         }
 
-        val mBuffer = FloatArray(numFrames)
+        //Выключенный канал нативный код не трогает (ранний return по !en_ch),
+        //поэтому переиспользуемый буфер обязан быть очищен здесь, иначе в эфир
+        //уйдёт предыдущий блок
+        if (!enCH) {
+            out.fill(0f)
+            return
+        }
 
         val rMaster = masterPeriodToR(masterPeriod, sampleRate)
         val onSamples = secToSamples(masterTOn, sampleRate)
@@ -181,14 +198,12 @@ class RenderChannel {
             morphSlotMask,
 
             ch.ch, //номер канала
-            mBuffer
+            out
         )
 
         //val endTime = System.nanoTime()
         //val duration = endTime - startTime
         //println("Time JNI>>>: ${duration / 1000 - 3} us")
-
-        return mBuffer
 
     }
 

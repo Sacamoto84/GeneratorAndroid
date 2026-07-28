@@ -205,7 +205,7 @@ class AudioMixerPump
 //                    println("Частота вызова: " + duration + " ms AVG: ${calculator2.getAvg()} ms")
 
                 while (exoplayer.streamOut.tryReceive().isSuccess) {
-                    println("Очистка канала")
+                    Timber.i("Очистка канала")
                 }
 
                 //8192 LR-4096    192k -> 21.3ms 48k->85.4ms

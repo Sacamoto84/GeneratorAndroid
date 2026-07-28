@@ -4,11 +4,12 @@ import android.content.Context
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import com.example.generator2.AppPath
-import com.example.generator2.Global
 import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.features.initialization.Initialization
+import com.example.generator2.features.playlist.PlaylistStore
 import com.example.generator2.features.script.Script
+import com.example.generator2.features.settings.Settings
 import com.example.generator2.screens.scripting.ui.ScriptKeyboard
 import com.example.generator2.util.UtilsKT
 import dagger.Module
@@ -17,6 +18,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import timber.log.Timber
+import java.io.File
 import javax.inject.Singleton
 
 @Module
@@ -72,6 +74,13 @@ object HomeActivityModule {
 
     @Provides
     @Singleton
+    fun providePlaylistStore(appPath: AppPath): PlaylistStore {
+        Timber.tag("Время работы").i("..DI providePlaylistStore()")
+        return PlaylistStore(File(appPath.config, "playlist.db"))
+    }
+
+    @Provides
+    @Singleton
     fun providePath(@ApplicationContext context: Context): AppPath {
         Timber.tag("Время работы").i("..DI providePath()")
         return AppPath(context)
@@ -84,7 +93,7 @@ object HomeActivityModule {
         @ApplicationContext context: Context,
         utils: UtilsKT,
         appPath: AppPath,
-        global: Global,
+        settings: Settings,
         audioMixerPump: AudioMixerPump,
     ): Initialization {
 
@@ -94,7 +103,7 @@ object HomeActivityModule {
             context = context,
             utils = utils,
             appPath = appPath,
-            global = global,
+            settings = settings,
             audioMixerPump = audioMixerPump,
         )
     }

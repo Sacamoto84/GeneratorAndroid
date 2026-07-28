@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.os.Environment
 import java.io.File
+import timber.log.Timber
 
 private enum class Folder(val value: String) {
     CARRIER("Carrier"),
@@ -39,10 +40,6 @@ class AppPath(
         EnvironmentStorage.EXTERNAL_STORAGE -> Environment.getExternalStorageDirectory() // /storage/sdcard0
     }
 
-
-
-
-
     /**
      * Путь до sdcard
      */
@@ -64,8 +61,8 @@ class AppPath(
     val assets = "file:///android_asset/"
 
     init {
-        println("---AppPath---")
-        println("sdcard: $sdcard")
+        Timber.i("---AppPath---")
+        Timber.i("sdcard: $sdcard")
 
         File(main).mkdirs()
         File(carrier).mkdirs()

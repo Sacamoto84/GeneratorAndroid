@@ -18,7 +18,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -32,6 +31,7 @@ import com.example.generator2.features.mp3.formatMinSec
 import com.example.generator2.screens.mainscreen4.VMMain4
 import com.example.generator2.theme.Purple200
 import com.example.generator2.theme.colorLightBackground
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 
 @Composable
@@ -48,20 +48,20 @@ fun MP3Control(vm: VMMain4) {
 
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "P:${vm.audioMixerPump.exoplayer.currentTime.collectAsState().value.formatMinSec()}",
+                text = "P:${vm.audioMixerPump.exoplayer.currentTime.collectAsStateWithLifecycle().value.formatMinSec()}",
                 color = Color.Yellow
             )
             Text(
-                text = "D:${vm.audioMixerPump.exoplayer.durationMs.collectAsState().value.formatMinSec()}",
+                text = "D:${vm.audioMixerPump.exoplayer.durationMs.collectAsStateWithLifecycle().value.formatMinSec()}",
                 color = Color.Yellow
             )
         }
 
         Slider(
             modifier = Modifier.fillMaxWidth(),
-            value = vm.audioMixerPump.exoplayer.currentTime.collectAsState().value.toFloat(),
+            value = vm.audioMixerPump.exoplayer.currentTime.collectAsStateWithLifecycle().value.toFloat(),
             onValueChange = { timeMs: Float -> vm.audioMixerPump.exoplayer.player.seekTo(timeMs.toLong()) },
-            valueRange = 0f..vm.audioMixerPump.exoplayer.durationMs.collectAsState().value.toFloat(),
+            valueRange = 0f..vm.audioMixerPump.exoplayer.durationMs.collectAsStateWithLifecycle().value.toFloat(),
             colors = SliderDefaults.colors(thumbColor = Purple200, activeTickColor = Purple200)
         )
 
@@ -140,14 +140,14 @@ fun MP3Control(vm: VMMain4) {
         //Text(text = ":${exoplayer.bitrate}", color = Color.Yellow)
         //Text(text = ":${exoplayer.averageBitrate}", color = Color.Yellow)
 
-        Text(text = "AudioOut:${AudioOut.AudioSampleRate.collectAsState().value} Hz", color = Color.Yellow)
+        Text(text = "AudioOut:${AudioOut.AudioSampleRate.collectAsStateWithLifecycle().value} Hz", color = Color.Yellow)
 
 
         Row(modifier = Modifier.fillMaxWidth()) {
 
             Column {
-                Mp3Route("L", vm.audioMixerPump.routeL.collectAsState().value, vm.audioMixerPump)
-                Mp3Route("R", vm.audioMixerPump.routeR.collectAsState().value, vm.audioMixerPump)
+                Mp3Route("L", vm.audioMixerPump.routeL.collectAsStateWithLifecycle().value, vm.audioMixerPump)
+                Mp3Route("R", vm.audioMixerPump.routeR.collectAsStateWithLifecycle().value, vm.audioMixerPump)
             }
 
             Icon(
@@ -164,7 +164,7 @@ fun MP3Control(vm: VMMain4) {
                     .padding(4.dp),
                 painter = painterResource(id = R.drawable.shuffle74),
                 contentDescription = "",
-                tint = if (vm.audioMixerPump.shuffle.collectAsState().value) Color.Green else Color.DarkGray
+                tint = if (vm.audioMixerPump.shuffle.collectAsStateWithLifecycle().value) Color.Green else Color.DarkGray
             )
 
             //Стерео Моно
@@ -177,7 +177,7 @@ fun MP3Control(vm: VMMain4) {
                         onClick = { vm.audioMixerPump.gen.liveData.mono.value = !vm.audioMixerPump.gen.liveData.mono.value })
                     .border(1.dp, Color.Gray)
                     .padding(4.dp),
-                painter = if (vm.audioMixerPump.gen.liveData.mono.collectAsState().value) painterResource(R.drawable.mono)
+                painter = if (vm.audioMixerPump.gen.liveData.mono.collectAsStateWithLifecycle().value) painterResource(R.drawable.mono)
                 else painterResource(R.drawable.stereo),
                 contentDescription = null, tint = Color.LightGray
             )

@@ -9,13 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.generator2.features.scope.OSCILLSYNC
 import com.example.generator2.screens.mainscreen4.VMMain4
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Suppress("NonSkippableComposable")
 @Composable
@@ -61,7 +61,7 @@ fun TopBarAudioSource(vm: VMMain4) {
         ) {
             Text(
                 text = "OSCILL",
-                color = if (vm.audioMixerPump.scope.isUse.collectAsState().value) Color.Green else Color.Gray
+                color = if (vm.audioMixerPump.scope.isUse.collectAsStateWithLifecycle().value) Color.Green else Color.Gray
             )
         }
 

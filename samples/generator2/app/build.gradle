@@ -3,12 +3,11 @@ plugins {
     alias libs.plugins.jetbrains.kotlin.android
     alias libs.plugins.google.devtools.ksp
     alias libs.plugins.google.dagger.hilt.android
-    alias libs.plugins.google.gms.google.services
     //id 'androidx.baselineprofile'
 
     alias libs.plugins.io.github.skeptick.libres
 
-    //id 'org.jetbrains.kotlin.plugin.serialization'
+    alias libs.plugins.jetbrains.kotlin.plugin.serialization
 
 // Apply the Bugsnag plugin
 //    id  'com.bugsnag.android.gradle'
@@ -331,25 +330,6 @@ dependencies {
     //mplementation 'com.github.arnab-kundu:Storage:1.0.2'
 
 
-    //Google Sign-In for Android
-//    implementation 'com.google.android.gms:play-services-auth:20.4.1'
-//    implementation 'com.google.android.gms:play-services-location:21.0.1'
-
-    // Import the Firebase BoM
-//    implementation platform('com.google.firebase:firebase-bom:31.1.1')
-
-    // Add the dependency for the Firebase SDK for Google Analytics
-//    implementation 'com.google.firebase:firebase-analytics-ktx:21.2.0'
-
-    // TODO: Add the dependencies for any other Firebase products you want to use
-    // See https://firebase.google.com/docs/android/setup#available-libraries
-    // For example, add the dependencies for Firebase Authentication and Cloud Firestore
-//    implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'//Аутентификация
-//    implementation 'com.google.firebase:firebase-firestore-ktx:24.4.4' //Облако Firestore
-//    implementation 'com.google.firebase:firebase-storage-ktx:20.1.0'  //Облачное хранилище
-//    implementation 'com.google.firebase:firebase-auth:21.1.0'
-//    implementation 'com.firebaseui:firebase-ui-auth:8.0.2'
-
     //splashscreen
     //implementation("androidx.core:core-splashscreen:1.0.0")
 
@@ -389,6 +369,10 @@ dependencies {
     implementation libs.satchel.core
     // Storers
     implementation libs.satchel.storer.encrypted.file
+
+    //Настройки приложения: типизированный DataStore + JSON
+    implementation libs.androidx.datastore
+    implementation libs.kotlinx.serialization.json
 
     //https://github.com/aclassen/ComposeReorderable
     implementation(libs.reorderable)

@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import com.example.generator2.R
 import com.example.generator2.theme.colorChL
 import com.example.generator2.theme.colorChR
+import timber.log.Timber
 
 class ScriptItem {
 
@@ -51,7 +52,7 @@ class ScriptItem {
         //Разобрать строку на список команд
         val listCMD = str().split(" ")
         if (listCMD.isEmpty()) {
-            println("convertStringToPairTextAndColor: Error listCMD == 0")
+            Timber.i("convertStringToPairTextAndColor: Error listCMD == 0")
             return x
         }
 

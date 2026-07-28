@@ -46,8 +46,9 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import com.example.generator2.screens.root.ScreenRoot
 import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.lifecycle.lifecycleScope
 import com.example.generator2.features.audio.AudioMixerPump
-import com.example.generator2.features.presets.presetsSaveFile
+import com.example.generator2.features.presets.presetsSaveInBackground
 import com.example.generator2.theme.Generator2Theme
 import com.example.generator2.theme.colorDarkBackground
 import com.example.generator2.util.Utils
@@ -176,10 +177,12 @@ class MainActivity : ComponentActivity() {
 
 
     override fun onPause() {
-        presetsSaveFile("default", appPath.config, audioMixerPump.gen)
-        //R.drawable.add
+        //Снимок состояния снимается здесь и сейчас, файл пишется на IO: 80
+        //значений на sdcard в UI-потоке подвешивали каждое сворачивание
+        presetsSaveInBackground("default", appPath.config, audioMixerPump.gen, lifecycleScope)
+
         super.onPause()
-        println("...................onPause")
+        Timber.i("...................onPause")
         //exitProcess(0)
     }
 

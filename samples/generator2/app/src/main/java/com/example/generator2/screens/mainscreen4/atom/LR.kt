@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.example.generator2.R
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.theme.colorDarkBackground
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 private val m: Modifier = Modifier
     .fillMaxHeight()
@@ -48,10 +48,10 @@ fun LR(gen: Generator) {
         verticalAlignment = Alignment.CenterVertically
     )
     {
-        val mono = gen.liveData.mono.collectAsState()
-        val shuffle = gen.liveData.shuffle.collectAsState()
-        val enL = gen.liveData.enL.collectAsState()
-        val enR = gen.liveData.enR.collectAsState()
+        val mono = gen.liveData.mono.collectAsStateWithLifecycle()
+        val shuffle = gen.liveData.shuffle.collectAsStateWithLifecycle()
+        val enL = gen.liveData.enL.collectAsStateWithLifecycle()
+        val enR = gen.liveData.enR.collectAsStateWithLifecycle()
 
         val colorL = if (enL.value) {
             if (!shuffle.value) Color.White else {

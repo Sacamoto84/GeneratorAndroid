@@ -2,21 +2,25 @@ package com.example.generator2.features.update
 
 import android.content.Context
 import com.example.generator2.AppPath
-import com.example.generator2.Global
 import com.example.generator2.features.update.mono.getVersionName
 import com.example.generator2.features.update.mono.gitHubReleaseFiles
 import com.example.generator2.features.update.mono.gitHubReleaseTags
 import com.example.generator2.features.update.mono.installAPK
-import com.example.generator2.features.noSQL.KEY_NOSQL_CONFIG2
+import com.example.generator2.features.settings.Settings
 import com.kdownloader.KDownloader
 import io.appmetrica.analytics.AppMetrica
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import com.example.generator2.features.update.mono.ping
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import timber.log.Timber
@@ -36,9 +40,11 @@ enum class UPDATESTATE {
 @Singleton
 class Update @Inject constructor(
     val appPath: AppPath,
-    val global: Global,
+    private val settings: Settings,
     @ApplicationContext val context: Context
 ) {
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private val owner = "Sacamoto84"
     private val repo = "GeneratorAndroid"
@@ -63,17 +69,15 @@ class Update @Inject constructor(
 //    private static final String LATEST_RELEASE_URL = "https://github.com/Dar9586/NClientV2/releases/latest";
 
     /**
-     * Автообновление
+     * Автообновление. Источник истины — настройки, здесь только зеркало для UI.
      */
-    var autoupdate = MutableStateFlow( false)
+    val autoupdate: StateFlow<Boolean> = settings.data
+        .map { it.autoUpdate }
+        .stateIn(scope, SharingStarted.Eagerly, false)
 
-
-
-
-    //Сохранить автосохранение
-    fun autoupdate(onoff : Boolean = false){
-        autoupdate.value = onoff
-        global.noSQLConfig2.write(KEY_NOSQL_CONFIG2.UPDATEAUTO.value, onoff)
+    //Сохранить автообновление
+    fun autoupdate(onoff: Boolean = false) {
+        scope.launch { settings.update { it.copy(autoUpdate = onoff) } }
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -81,7 +85,7 @@ class Update @Inject constructor(
 
         GlobalScope.launch(Dispatchers.IO) {
 
-            autoupdate.value = global.noSQLConfig2.read(KEY_NOSQL_CONFIG2.UPDATEAUTO.value, false)
+            val autoUpdateEnabled = settings.get().autoUpdate
 
             currentVersion = getVersionName(context) //"2.0.0.7"
 
@@ -121,18 +125,6 @@ class Update @Inject constructor(
                 return@launch
             }
 
-            val s3url = "http://77.91.87.34:10000/gen3/$externalVersion.Release.apk"
-
-            if (ping(s3url))
-                url = s3url
-            else
-                AppMetrica.reportEvent(
-                    "Update",
-                    mapOf<String, Any>("message" to "Отсутствуют файл в S3 $externalVersion.Release.apk")
-                )
-
-            //url = "http://77.91.87.34:10000/gen3/2.4.0.0.Release.apk"
-
             //Определение веса версий
             try {
                 val c = currentVersion.split(".")
@@ -145,7 +137,7 @@ class Update @Inject constructor(
                 Timber.i("e=$e ee=$ee")
 
                 //cc=2007 ee=2006
-                if ((ee > cc) and (autoupdate.value))
+                if ((ee > cc) and autoUpdateEnabled)
                     state.value = UPDATESTATE.DOWNLOADING
 
                 //visibleDialogNew.value = true //Показ диалога обновления
@@ -178,14 +170,14 @@ class Update @Inject constructor(
                         kDownloader.enqueue(
                             request,
                             onStart = {
-                                println("Запуск закачки")
+                                Timber.i("Запуск закачки")
                             },
                             onProgress = { it1 ->
-                                println("progress $it1")
+                                Timber.i("progress $it1")
                                 percent.value = it1 / 100f
                             },
                             onCompleted = {
-                                println("onCompleted закачки")
+                                Timber.i("onCompleted закачки")
                                 state.value = UPDATESTATE.DOWNLOADED //Загрузка завершена
                             },
                         )

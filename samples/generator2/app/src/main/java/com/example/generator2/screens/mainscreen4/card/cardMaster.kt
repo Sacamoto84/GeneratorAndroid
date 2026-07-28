@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,14 +31,15 @@ import com.example.generator2.screens.mainscreen4.textStyleButtonOnOff
 import com.example.generator2.screens.mainscreen4.ui.MainscreenTextBoxAndDropdownMenu
 import com.example.generator2.screens.mainscreen4.ui.UIspinner
 import com.example.generator2.theme.colorDarkBackground
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun CardMaster(ch: GeneratorCH, gen: Generator) {
 
     val isChL = ch == GeneratorCH.CHL
 
-    val en by (if (isChL) gen.liveData.chL_Master_EN else gen.liveData.chR_Master_EN).collectAsState()
-    val mode by (if (isChL) gen.liveData.chL_Master_Mode else gen.liveData.chR_Master_Mode).collectAsState()
+    val en by (if (isChL) gen.liveData.chL_Master_EN else gen.liveData.chR_Master_EN).collectAsStateWithLifecycle()
+    val mode by (if (isChL) gen.liveData.chL_Master_Mode else gen.liveData.chR_Master_Mode).collectAsStateWithLifecycle()
 
     Column {
 
@@ -97,7 +97,7 @@ fun CardMaster(ch: GeneratorCH, gen: Generator) {
         Row(Modifier.padding(top = 2.dp), verticalAlignment = Alignment.CenterVertically) {
             when (mode) {
                 MASTER_MODE_SLOW -> {
-                    val period by (if (isChL) gen.liveData.chL_Master_Period else gen.liveData.chR_Master_Period).collectAsState()
+                    val period by (if (isChL) gen.liveData.chL_Master_Period else gen.liveData.chR_Master_Period).collectAsStateWithLifecycle()
                     MainscreenTextBoxAndDropdownMenu(
                         str = String.format("%.1f", period),
                         modifier = Modifier.weight(1f),
@@ -117,15 +117,15 @@ fun CardMaster(ch: GeneratorCH, gen: Generator) {
                             .padding(top = 0.dp, start = 8.dp, end = 8.dp)
                             .wrapContentWidth()
                             .clip(shape = RoundedCornerShape(4.dp)),
-                        filename = if (isChL) gen.liveData.chL_Master_Filename.collectAsState()
-                        else gen.liveData.chR_Master_Filename.collectAsState(),
+                        filename = if (isChL) gen.liveData.chL_Master_Filename.collectAsStateWithLifecycle()
+                        else gen.liveData.chR_Master_Filename.collectAsStateWithLifecycle(),
                         gen = gen
                     )
                 }
 
                 MASTER_MODE_ONOFF -> {
-                    val tOn by (if (isChL) gen.liveData.chL_Master_TOn else gen.liveData.chR_Master_TOn).collectAsState()
-                    val tOff by (if (isChL) gen.liveData.chL_Master_TOff else gen.liveData.chR_Master_TOff).collectAsState()
+                    val tOn by (if (isChL) gen.liveData.chL_Master_TOn else gen.liveData.chR_Master_TOn).collectAsStateWithLifecycle()
+                    val tOff by (if (isChL) gen.liveData.chL_Master_TOff else gen.liveData.chR_Master_TOff).collectAsStateWithLifecycle()
                     MainscreenTextBoxAndDropdownMenu(
                         str = "ON " + String.format("%.1f", tOn),
                         modifier = Modifier.weight(1f),

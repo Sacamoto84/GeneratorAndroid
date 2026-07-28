@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,10 +21,11 @@ import com.example.generator2.common.haptic.Haptic
 import com.example.generator2.features.generator.Generator
 import com.example.generator2.screens.mainscreen4.textStyleButtonOnOff
 import com.example.generator2.theme.colorDarkBackground
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun MasterButton(gen: Generator) {
-    val pressed by gen.liveData.masterButton.collectAsState()
+    val pressed by gen.liveData.masterButton.collectAsStateWithLifecycle()
     Box(
         modifier = Modifier
             .fillMaxWidth()

@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import com.example.generator2.screens.editor.EditorMatModel
+import timber.log.Timber
 
 @Composable
 fun EditorPreviewCarrier(model: EditorMatModel) {
@@ -117,7 +118,7 @@ fun EditorPreviewCarrier(model: EditorMatModel) {
                 }
             }
 
-            println("recompose EditorPreviewCarrier Canvas")
+            Timber.i("recompose EditorPreviewCarrier Canvas")
 
             //Вертикальная линия
             drawLine(
