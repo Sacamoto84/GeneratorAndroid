@@ -6,6 +6,7 @@ import androidx.media3.common.util.UnstableApi
 import com.example.generator2.AppPath
 import com.example.generator2.features.audio.AudioMixerPump
 import com.example.generator2.features.generator.Generator
+import com.example.generator2.features.generator.GeneratorObserver
 import com.example.generator2.features.initialization.Initialization
 import com.example.generator2.features.playlist.PlaylistStore
 import com.example.generator2.features.script.Script
@@ -95,6 +96,7 @@ object HomeActivityModule {
         appPath: AppPath,
         settings: Settings,
         audioMixerPump: AudioMixerPump,
+        generatorObserver: GeneratorObserver,
     ): Initialization {
 
         Timber.tag("Время работы").i("..DI provideInitialization()")
@@ -105,6 +107,7 @@ object HomeActivityModule {
             appPath = appPath,
             settings = settings,
             audioMixerPump = audioMixerPump,
+            generatorObserver = generatorObserver,
         )
     }
 

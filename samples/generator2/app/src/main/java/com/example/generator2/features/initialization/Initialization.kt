@@ -7,7 +7,7 @@ import com.example.generator2.App
 import com.example.generator2.AppPath
 import com.example.generator2.PermissionStorage
 import com.example.generator2.features.audio.AudioMixerPump
-import com.example.generator2.features.generator.observe
+import com.example.generator2.features.generator.GeneratorObserver
 import com.example.generator2.features.presets.presetsInit
 import com.example.generator2.features.presets.presetsReadFile
 import com.example.generator2.features.presets.presetsToLiveData
@@ -34,6 +34,7 @@ class Initialization
     val appPath: AppPath,
     val settings: Settings,
     val audioMixerPump: AudioMixerPump,
+    val generatorObserver: GeneratorObserver,
 ) {
 
     var isInitialized = false  //Признак того что произошла инициализация
@@ -176,7 +177,8 @@ class Initialization
 
         //s1.await()
         //s2.await()
-        observe(audioMixerPump.gen) //30ms
+        //Повторный запуск инициализации не удваивает подписки: start() снимает прежние
+        generatorObserver.start() //30ms
         s3.await()
         s4.await()
 

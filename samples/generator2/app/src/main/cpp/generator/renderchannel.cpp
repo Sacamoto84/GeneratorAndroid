@@ -133,12 +133,12 @@ struct MorphRunner {
     /** Подтянуть указатели к текущей паре слотов. */
     void refresh() {
         if (!on) {
-            pA = ch->buffer_carrier;
-            pB = ch->buffer_carrier;
+            pA = ch->buffer_carrier.read();
+            pB = pA;
             return;
         }
-        pA = ch->buffer_morph[ch->morph_slot];
-        pB = ch->buffer_morph[ch->morph_slot_next];
+        pA = ch->buffer_morph[ch->morph_slot].read();
+        pB = ch->buffer_morph[ch->morph_slot_next].read();
     }
 
     /** Значение несущей по фазовому индексу + продвижение шага на сэмпл. */
@@ -250,6 +250,13 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
     MorphRunner morph;
     morph.init(pStructureCh, morph_en, morph_mode, morph_steps, morph_mask, sample_rate);
 
+    // Указатели на таблицы берём по одному на блок: пока идёт рендер, sendBuffer
+    // может готовить новую форму, но опубликует её только целиком и только к
+    // следующему блоку
+    const float *table_am = pStructureCh->buffer_am.read();
+    const float *table_fm = pStructureCh->buffer_fm.read();
+    const float *table_master = pStructureCh->buffer_master.read();
+
     if (!en_fm && !en_am) {
         for (int i = 0; i < num_frames; i++) {
             pStructureCh->phase_accumulator_carrier += r_c32;
@@ -263,7 +270,7 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
 
             pStructureCh->phase_accumulator_am += r_am32;
             tempArrayElements[i] = volume * morph.sample(pStructureCh->phase_accumulator_carrier >> 22)
-                                   * (pStructureCh->buffer_am[pStructureCh->phase_accumulator_am >> 22] * am_depth + 1.0f - am_depth);
+                                   * (table_am[pStructureCh->phase_accumulator_am >> 22] * am_depth + 1.0f - am_depth);
         }
     }
 
@@ -274,7 +281,7 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
 
             pStructureCh->phase_accumulator_carrier +=
                     static_cast<unsigned int>(convertHzToR(
-                            pStructureCh->buffer_fm[pStructureCh->phase_accumulator_fm >> 22], sampleRate));
+                            table_fm[pStructureCh->phase_accumulator_fm >> 22], sampleRate));
 
             tempArrayElements[i] = volume * morph.sample(pStructureCh->phase_accumulator_carrier >> 22);
         }
@@ -288,11 +295,11 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
 
             delta = MAX32/sampleRate;
 
-            pStructureCh->phase_accumulator_carrier += static_cast<uint32_t>(static_cast<float>(delta) * pStructureCh->buffer_fm[pStructureCh->phase_accumulator_fm >> 22]);
+            pStructureCh->phase_accumulator_carrier += static_cast<uint32_t>(static_cast<float>(delta) * table_fm[pStructureCh->phase_accumulator_fm >> 22]);
             pStructureCh->phase_accumulator_am += r_am32;
 
             tempArrayElements[i] = volume * morph.sample(pStructureCh->phase_accumulator_carrier >> 22) *
-                           (pStructureCh->buffer_am[pStructureCh->phase_accumulator_am >> 22] * am_depth + 1.0f - am_depth);
+                           (table_am[pStructureCh->phase_accumulator_am >> 22] * am_depth + 1.0f - am_depth);
         }
 
     }
@@ -306,7 +313,7 @@ Java_com_example_generator2_features_generator_RenderChannel_jniRenderChannel(JN
         } else if (!master_en) {
             target = 1.0f;
         } else if (master_mode == 1) {                       // Плавный
-            target = pStructureCh->buffer_master[pStructureCh->phase_accumulator_master >> 22];
+            target = table_master[pStructureCh->phase_accumulator_master >> 22];
             pStructureCh->phase_accumulator_master += (uint32_t) r_master;
         } else if (master_mode == 2) {                       // Вкл/Выкл
             target = pStructureCh->master_onoff_on ? 1.0f : 0.0f;
@@ -351,29 +358,29 @@ Java_com_example_generator2_features_generator_RenderChannel_sendBuffer(JNIEnv *
 ) {
     StructureCh *pStructureCh = &structureCh[ch];
 
-    float *destination = nullptr;
+    WaveTable *destination = nullptr;
 
     switch (modulation) {
         case 0 : {
-            destination = pStructureCh->buffer_carrier;
+            destination = &pStructureCh->buffer_carrier;
             break;
         }
         case 1 : {
-            destination = pStructureCh->buffer_am;
+            destination = &pStructureCh->buffer_am;
             break;
         }
         case 2 : {
-            destination = pStructureCh->buffer_fm;
+            destination = &pStructureCh->buffer_fm;
             break;
         }
         case 3 : {
-            destination = pStructureCh->buffer_master;
+            destination = &pStructureCh->buffer_master;
             break;
         }
         case 4 :
         case 5 :
         case 6 : {
-            destination = pStructureCh->buffer_morph[modulation - 4];
+            destination = &pStructureCh->buffer_morph[modulation - 4];
             break;
         }
 
@@ -381,10 +388,18 @@ Java_com_example_generator2_features_generator_RenderChannel_sendBuffer(JNIEnv *
             break;
     }
 
+    if (destination == nullptr) return;
+
+    if (env->GetArrayLength(data) < WAVE_TABLE_SIZE) return;
+
     jfloat *elements = env->GetFloatArrayElements(data, nullptr);
-    for (int i = 0; i < 1024; i++) {
-        destination[i] = elements[i];
-    }
-    env->ReleaseFloatArrayElements(data, elements, 0);
+    if (elements == nullptr) return;
+
+    // Форма уезжает в свободный слот и публикуется целиком: рендер её увидит
+    // только со следующего блока
+    destination->write(elements);
+
+    // JNI_ABORT: массив мы не меняли, копировать обратно нечего
+    env->ReleaseFloatArrayElements(data, elements, JNI_ABORT);
 
 }
