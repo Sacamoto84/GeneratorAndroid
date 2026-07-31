@@ -149,7 +149,27 @@ class MyGLRendererOscill : GLSurfaceView.Renderer {
     private var configuredRoll: Boolean? = null
     private var configuredSweep: Float = 0f
 
+    // Сбрасывать вместе с остальными не нужно: configuredColumns = 0 не
+    // совпадёт ни с одной реальной шириной и сам заставит переконфигурировать.
+    private var configuredTrigger: Boolean = false
+
+    /**
+     * Развёртка. Пишет петля подачи данных, читает GL-поток — отсюда
+     * @Volatile: из неё же выводится rollMode, а значит и эффективный
+     * триггер, и устаревшее чтение перевернуло бы оба.
+     */
+    @Volatile
     var compressorCount: Float = 0f
+
+    /**
+     * Синхронизация кадра по фронту. Ставится, когда оба канала несут один
+     * сигнал: только тогда они встают по одному фронту. Решает про это
+     * вызывающая сторона — она одна знает, откуда пришёл поток.
+     *
+     * Пишет петля подачи данных, читает GL-поток — отсюда @Volatile.
+     */
+    @Volatile
+    var triggerSync: Boolean = false
 
     /**
      * Пауза. Аккумулятор продолжает наполняться из аудиопотока, поэтому на
@@ -288,17 +308,30 @@ void main() {
         val layout = bools[0]
         val columns = columnsFor(width)
 
+        // В roll-ленте начало кадра задаёт голова записи, триггер там не
+        // работает. Гасим его здесь, а не только в нативе: иначе переключение
+        // моно в ленте дёргало бы configure() впустую, а тот перевыделяет
+        // нативную сетку.
+        val trigger = triggerSync && !rollMode
+
         if (configuredColumns != columns ||
             configuredLayout != layout ||
             configuredRoll != rollMode ||
-            configuredSweep != compressorCount
+            configuredSweep != compressorCount ||
+            configuredTrigger != trigger
         ) {
-            NativePhosphor.configure(columns, layout, rollMode, compressorCount)
+            NativePhosphor.configure(columns, layout, rollMode, compressorCount, trigger)
             configuredSweep = compressorCount
             configuredColumns = columns
             configuredLayout = layout
             configuredRoll = rollMode
+            configuredTrigger = trigger
             ensureTexture(columns)
+            // Сетка пересобрана: и накопленное в ней, и залитое в текстуру
+            // считалось от прежней геометрии. Просим отдать себя целиком —
+            // ensureTexture мог выйти рано, если ширина не менялась, а
+            // configure() при неизменной геометрии ничего не пометит грязным.
+            NativePhosphor.invalidate()
             // Смещение теперь считается от другой сетки — начинаем заново.
             smoothingActive = false
         }
@@ -450,10 +483,6 @@ void main() {
 
         textureColumns = columns
         textureHasData = false
-
-        // Текстура новая и пустая, но configure() мог уйти в быстрый выход и
-        // ничего не пометить грязным. Просим сетку отдать себя целиком.
-        NativePhosphor.invalidate()
     }
 
     /** Заливает грязный кольцевой диапазон, разбивая его на куски по краю сетки. */

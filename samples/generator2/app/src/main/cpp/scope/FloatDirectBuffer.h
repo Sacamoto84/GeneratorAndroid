@@ -95,6 +95,13 @@ public:
         return itemSize * itemCount;
     }
 
+    /**
+     * Сколько float накоплено с начала массива. Столько истории доступно
+     * назад от головы записи: за окном может лежать ещё что-то, а может и
+     * ничего — сразу после переноса окна в начало массива остаётся ровно оно.
+     */
+    std::size_t available() const { return wP; }
+
 private:
     bool isValidConfiguration(jint _itemSize, jint _itemCount) const {
         if (_itemSize <= 0) {

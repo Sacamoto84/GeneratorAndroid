@@ -55,7 +55,13 @@ class AudioMixerPump
     var audioOut: AudioOut = AudioOut(a48, 200, AudioFormat.ENCODING_PCM_FLOAT)
     private val isDeviceSupport192k = audioOut.isDeviceSupport192k.or(true)
 
-    val scope = Scope()
+    //Осциллографу уходит уже смикшированный поток, а не выход генератора:
+    //одного флага mono мало, при MP3 или OFF в любом из ушей каналы разные
+    val scope = Scope {
+        gen.liveData.mono.value &&
+            routeL.value == ROUTESTREAM.GEN &&
+            routeR.value == ROUTESTREAM.GEN
+    }
 
     val exoplayer = PlayerMP3(context)
 

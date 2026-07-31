@@ -80,7 +80,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 enum class OSCILLSYNC {  NONE, R, L }
 
-class Scope {
+class Scope(
+    /**
+     * Оба канала несут один сигнал.
+     *
+     * Подставляет AudioMixerPump: осциллограф не знает ни о генераторе, ни о
+     * маршрутизации, а на экран к нему приходит уже смикшированный поток.
+     * Синхронизация кадра по фронту корректна только когда в обоих ушах одно
+     * и то же, то есть генератор в моно И оба маршрута идут с него.
+     *
+     * Лямбда, а не StateFlow: значение опрашивается на каждом пакете, а
+     * захваченная ссылка на конкретный флоу протухла бы при подмене liveData.
+     */
+    private val isMonoOut: () -> Boolean = { false }
+) {
 
     // Начальное значение: дальше AudioMixerPump подставит частоту,
     // на которой реально открылся аудиовыход.
@@ -288,6 +301,7 @@ class Scope {
                     //delay(1)
                     deferredOscill.receive()//.await()//channelDataStreamOutCompressorIndex.receive()
                     shaderRenderer.compressorCount = compressorCount.floatValue
+                    shaderRenderer.triggerSync = isMonoOut()
                     shaderRenderer.bools[0] = if (isOneTwo.value) 1 else 0
                     shaderRenderer.bools[1] = if (isVisibleL.value) 1 else 0
                     shaderRenderer.bools[2] = if (isVisibleR.value) 1 else 0
