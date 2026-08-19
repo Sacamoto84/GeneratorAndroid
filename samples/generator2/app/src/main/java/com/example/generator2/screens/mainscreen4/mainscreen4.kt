@@ -40,6 +40,7 @@ import com.example.generator2.features.mp3.compose.MP3Control
 import com.example.generator2.features.presets.Presets
 import com.example.generator2.features.presets.presetsVM
 import com.example.generator2.features.presets.ui.DialogPresetsNewFile
+import com.example.generator2.features.scope.OscilloscopeCompose
 import com.example.generator2.features.update.ui.WidgetUpdate
 import com.example.generator2.screens.mainscreen4.bottom.M4BottomAppBarComponent
 import com.example.generator2.screens.mainscreen4.card.CardCard
@@ -153,7 +154,7 @@ fun Mainsreen4(vm: VMMain4, vmPresets: presetsVM) {
                 TopBarAudioSource(vm)
 
                 //Осциллограф
-                vm.audioMixerPump.scope.OscilloscopeCompose()
+                OscilloscopeCompose(vm.audioMixerPump.scope)
 
 
                 //}

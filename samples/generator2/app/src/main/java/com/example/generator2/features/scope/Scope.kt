@@ -1,69 +1,8 @@
 package com.example.generator2.features.scope
 
-
-import android.graphics.Typeface
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.example.generator2.R
 import com.example.generator2.Spectrogram
-import com.example.generator2.features.opengl.MyGLSurfaceView
-import com.example.generator2.features.scope.opengl.render.GLShaderLissagu
-import com.example.generator2.features.scope.opengl.render.GLShaderOscill
-import com.example.generator2.features.scope.opengl.render.MyGLRendererLissagu
-import com.example.generator2.features.scope.opengl.render.MyGLRendererOscill
-import com.example.generator2.theme.Generator2Theme
-import com.example.generator2.theme.colorChL
-import com.example.generator2.theme.colorChR
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -71,15 +10,18 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 enum class OSCILLSYNC {  NONE, R, L }
 
+/**
+ * Осциллограф: состояние, каналы данных и маршрутизация аудиопотока.
+ *
+ * Разметка живёт отдельно — ScopeUi.kt рисует сам экран, ScopePanel.kt
+ * панель управления под ним.
+ */
 class Scope(
     /**
      * Оба канала несут один сигнал.
@@ -92,7 +34,7 @@ class Scope(
      * Лямбда, а не StateFlow: значение опрашивается на каждом пакете, а
      * захваченная ссылка на конкретный флоу протухла бы при подмене liveData.
      */
-    private val isMonoOut: () -> Boolean = { false }
+    internal val isMonoOut: () -> Boolean = { false }
 ) {
 
     // Начальное значение: дальше AudioMixerPump подставит частоту,
@@ -111,28 +53,8 @@ class Scope(
 
     val isPause = MutableStateFlow(false)
 
-
-    //val bitmapPool = BitmapPool(4)
-    //val floatArrayPool = FloatArrayPool(4)
-
     //============== Lissagu ===================
     val isUseLissagu = MutableStateFlow(true)
-
-
-    private val textPaint = Paint().asFrameworkPaint().apply {
-        isAntiAlias = true
-        textSize = 20f
-        color = Color.Gray.toArgb()
-        typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
-    }
-
-    private val textPaintPause = Paint().asFrameworkPaint().apply {
-        isAntiAlias = true
-        textSize = 40f
-        color = Color.White.toArgb()
-        typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
-    }
-
 
     /*
        1   |   26 ms  | 38.28 Hz |   1152 |   2304
@@ -150,25 +72,25 @@ class Scope(
     val compressorCount = mutableFloatStateOf(256f)
 
     /** Подпись развёртки: целое от единицы и выше, ниже — доля пакета. */
-    private fun sweepLabel(value: Float): String =
+    internal fun sweepLabel(value: Float): String =
         if (value >= 1f) value.toInt().toString()
         else "1/${(1f / value).toInt()}"
 
-    private fun compressonCountAdd() {
+    /** Растянуть развёртку, но не длиннее буфера истории. */
+    internal fun compressorCountUp() {
         compressorCount.floatValue = (compressorCount.floatValue * 2).coerceAtMost(256f)
     }
 
-    private fun compressonCountDiv() {
+    /** Сжать развёртку до одной восьмой пакета — короче сетка не строится. */
+    internal fun compressorCountDown() {
         compressorCount.floatValue = (compressorCount.floatValue / 2.0f).coerceAtLeast(0.125f)
     }
 
     /** ## Выход аудиоданных -> dataRouter */
     val channelAudioOut = Channel<FloatArray>(capacity = 16, BufferOverflow.DROP_OLDEST)
 
-
     /** Сжатые данные после компрессора */
     val channelDataStreamOutCompressor = Channel<FloatArray>(capacity = Channel.RENDEZVOUS)
-
 
     /** Разрешение на обновление нового кадра осцилографа, признак того что нужно перерисовать */
     val enableOscill = MutableStateFlow(true)
@@ -179,7 +101,6 @@ class Scope(
     val deferredLissagu = Channel<Int>(capacity = 1, BufferOverflow.DROP_OLDEST)
 
     val oscillSync = mutableStateOf(OSCILLSYNC.L)
-
 
     //Маршрутизатор аудиоданных живёт здесь, а не в анонимном scope: без ссылки
     //на scope петля не останавливалась никогда, даже после остановки движка
@@ -231,565 +152,4 @@ class Scope(
         }
     }
 
-
-    @Suppress("NonSkippableComposable")
-    @Composable
-    fun OscilloscopeCompose() {
-
-        LazyColumn(
-            userScrollEnabled = false,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(242.dp)
-                .border(1.dp, Color.Gray)
-        ) {
-
-            item {
-                Row {
-                    Oscilloscope(modifier = Modifier.weight(1f))
-
-                    if (isUseLissagu.collectAsStateWithLifecycle().value) {
-                        Lissagu()
-                    }
-                }
-            }
-
-            item {
-                Divider()
-            }
-            item {
-                // Кнопок больше, чем влезает в ширину экрана, поэтому строка
-                // прокручивается: иначе крайние просто обрезаются и до них
-                // не добраться.
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState())
-                ) {
-                    PanelButton()
-                    //Spacer(modifier = Modifier.width(8.dp))
-                    //OscilloscopeControl()
-
-                }
-            }
-            item {
-                Divider()
-            }
-
-        }
-
-
-    }
-
-
-    @Suppress("NonSkippableComposable")
-    @Composable
-    fun Oscilloscope(modifier: Modifier = Modifier) {
-
-        var scopeW by remember { mutableFloatStateOf(0f) }
-
-        // Ссылка на GL-вью обязана пережить рекомпозицию. Обычная локальная var
-        // пересоздаётся на каждой, а эффекты продолжают держать переменную первой
-        // композиции: после пересоздания surface рендер дёргался бы у мёртвого вью.
-        val view = remember { mutableStateOf<MyGLSurfaceView?>(null) }
-
-        val shaderRenderer = remember { MyGLRendererOscill() }
-
-        LaunchedEffect(key1 = true) {
-            withContext(Dispatchers.IO) {
-                while (isActive) {
-                    //delay(1)
-                    deferredOscill.receive()//.await()//channelDataStreamOutCompressorIndex.receive()
-                    shaderRenderer.compressorCount = compressorCount.floatValue
-                    shaderRenderer.triggerSync = isMonoOut()
-                    shaderRenderer.bools[0] = if (isOneTwo.value) 1 else 0
-                    shaderRenderer.bools[1] = if (isVisibleL.value) 1 else 0
-                    shaderRenderer.bools[2] = if (isVisibleR.value) 1 else 0
-                    view.value?.requestRender()
-                }
-            }
-        }
-
-        // Рендер идёт непрерывно по vsync, поэтому паузу нельзя больше
-        // держать на том, что requestRender() не зовут.
-        shaderRenderer.isPaused = isPause.collectAsStateWithLifecycle().value
-
-        val lifecycle = LocalLifecycleOwner.current.lifecycle
-
-        DisposableEffect(Unit) {
-            view.value?.onResume()
-            enableOscill.value = true
-
-            val lifecycleObserver = ScreenLifecycleObserver(
-                onPauseAction = {
-                    Timber.i("!!! lifecycleObserver onPauseAction Oscilloscope()")
-                    enableOscill.value = false
-                },
-                onResumeAction = {
-                    Timber.i("!!! lifecycleObserver onResumeAction Oscilloscope()")
-                    enableOscill.value = true
-                }
-            )
-
-            lifecycle.addObserver(lifecycleObserver)
-
-            onDispose {
-                Timber.i("!!! onDispose Oscilloscope()")
-                lifecycle.removeObserver(lifecycleObserver)
-                enableOscill.value = false
-                view.value?.onPause()
-                shaderRenderer.deleteProgram()
-                view.value?.onDestroy()
-                view.value = null
-            }
-        }
-
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .then(modifier)
-                .onGloballyPositioned { coordinates ->
-                    scopeW = coordinates.size.width.toFloat()
-                }
-                .pointerInput(Unit) {
-                    detectTapGestures { offset ->
-
-                        val x = offset.x
-
-                        isPause.value = (x in scopeW / 3..scopeW * 2 / 3) xor isPause.value
-
-                        compressorCount.floatValue = when {
-                            x < scopeW / 3 -> {
-                                //isPause.update { false }
-                                (compressorCount.floatValue * 2).coerceAtMost(256f)
-                            }
-
-                            x > scopeW * 2 / 3 -> {
-                                //isPause.update { false }
-                                (compressorCount.floatValue / 2).coerceAtLeast(0.125f)
-                            }
-
-                            else -> compressorCount.floatValue
-                        }
-                    }
-                },
-            //contentAlignment = Alignment.TopStart,
-        ) {
-            GLShaderOscill(renderer = shaderRenderer, update = { view.value = it })
-
-            Text(
-                text = sweepLabel(compressorCount.floatValue),
-                color = Color.LightGray,
-                fontSize = 12.sp
-            )
-
-        }
-
-    }
-
-    @Suppress("NonSkippableComposable")
-    @Composable
-    fun Lissagu() {
-
-        // См. комментарий в Oscilloscope(): ссылка должна пережить рекомпозицию
-        val view = remember { mutableStateOf<MyGLSurfaceView?>(null) }
-
-        val shaderRenderer = remember { MyGLRendererLissagu() }
-
-        LaunchedEffect(key1 = true) {
-            withContext(Dispatchers.IO) {
-                while (isActive) {
-                    deferredLissagu.receive()
-                    shaderRenderer.updateVerticesDirect()
-                    view.value?.requestRender()
-                }
-            }
-        }
-
-        val lifecycle = LocalLifecycleOwner.current.lifecycle
-
-        DisposableEffect(Unit) {
-            view.value?.onResume()
-            enableLissagu.value = true
-
-            val lifecycleObserver = ScreenLifecycleObserver(
-                onPauseAction = {
-                    Timber.i("!!! lifecycleObserver onPauseAction Oscilloscope()")
-                    enableLissagu.value = false
-                },
-                onResumeAction = {
-                    Timber.i("!!! lifecycleObserver onResumeAction Oscilloscope()")
-                    enableLissagu.value = true
-                }
-            )
-
-            lifecycle.addObserver(lifecycleObserver)
-
-            onDispose {
-                Timber.i("!!! onDispose Lissagu()")
-                lifecycle.removeObserver(lifecycleObserver)
-                enableLissagu.value = false
-                view.value?.onPause()
-                shaderRenderer.deleteProgram()
-                view.value?.onDestroy()
-                view.value = null
-            }
-        }
-
-        GLShaderLissagu(
-            renderer = shaderRenderer,
-            update = { view.value = it },
-            modifier = Modifier
-                .height(100.dp)
-                .width(100.dp)
-        )
-
-    }
-    
-    @Suppress("NonSkippableComposable")
-    @Composable
-    fun PanelButton() {
-
-        val fontSize = 24.sp
-
-        val stateIsVisibleL = isVisibleL.collectAsStateWithLifecycle().value
-        val stateIsVisibleR = isVisibleR.collectAsStateWithLifecycle().value
-        val stateIsOneTwo = isOneTwo.collectAsStateWithLifecycle().value
-
-        Row(
-            modifier = Modifier
-                .height(40.dp)
-                .fillMaxWidth()
-                .background(Color.Cyan),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-
-            Row {
-                Box(
-                    modifier = m
-                        .clickable(onClick = { isVisibleL.value = isVisibleL.value.not() })
-                        .border(1.dp, Color.Gray)
-                        .background(if (stateIsVisibleL) colorEnabled else Color.Black),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "L",
-                        color = if (stateIsVisibleL) colorChL else colorTextDisabled,
-                        fontSize = fontSize,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-                Box(
-                    modifier = m
-                        .clickable(onClick = { isVisibleR.value = isVisibleR.value.not() })
-                        .border(1.dp, Color.Gray)
-                        .background(if (stateIsVisibleR) colorEnabled else Color.Black),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "R",
-                        color = if (stateIsVisibleR) colorChR else colorTextDisabled,
-                        fontSize = fontSize,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                Box(
-                    modifier = m
-                        .clickable(onClick = { isOneTwo.value = isOneTwo.value.not() })
-                        .border(1.dp, Color.Gray)
-                        .background(if (stateIsOneTwo) colorEnabled else Color.Black)
-                        .rotate(90f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = if (stateIsOneTwo) "•" else "••",
-                        color = Color.White,
-                        fontSize = fontSize
-                    )
-                }
-            }
-
-
-//            if (isPause.collectAsState().value) {
-//                Text(
-//                    text = "Pause",
-//                    color = Color.Red,
-//                    fontSize = 24.sp
-//                )
-//            }
-
-
-            Box(
-                modifier = Modifier
-                    .height(40.dp)
-                    .width(64.dp)
-                    .border(1.dp, Color.Gray)
-                    .background(Color.Black)
-                    .clickable {
-                        isPause.value =  isPause.value.not()
-                    }
-
-                , contentAlignment = Alignment.Center
-            ) {
-                Text("Pause", color = Color.White)
-            }
-
-
-            //Spacer(modifier = Modifier.width(8.dp))
-
-
-            Row {
-
-
-                //Знак Плюс
-                Box(
-                    modifier = m
-                        .clickable(onClick = { compressonCountAdd() })
-                        .border(1.dp, Color.Gray)
-                        .background(Color.Black)
-                        .drawBehind {
-                            drawLine(
-                                Color.White,
-                                start = Offset(size.width * 1 / 3f, size.height / 2f),
-                                end = Offset(size.width * 2 / 3f, size.height / 2f),
-                                strokeWidth = 3.dp.toPx()
-                            )
-
-                            drawLine(
-                                Color.White,
-                                start = Offset(size.width * 1 / 2f, size.height / 3f),
-                                end = Offset(size.width * 1 / 2f, size.height * 2f / 3f),
-                                strokeWidth = 3.dp.toPx()
-                            )
-
-                        })
-
-
-                Text(
-                    text = sweepLabel(compressorCount.floatValue),
-                    modifier = Modifier
-                        .width(64.dp)
-                        .height(40.dp)
-                        //.border(1.dp, Color.Gray)
-                        .wrapContentHeight(Alignment.CenterVertically)
-                        .background(Color.Black),
-                    color = Color.White,
-                    fontSize = 24.sp,
-                    textAlign = TextAlign.Center, fontFamily = FontFamily(Font(R.font.nunito))
-                )
-
-                //Знак минус
-                Box(
-                    modifier = m
-                        .clickable(onClick = { compressonCountDiv() })
-                        .border(1.dp, Color.Gray)
-                        .background(Color.Black)
-                        .drawBehind {
-                            drawLine(
-                                Color.White,
-                                start = Offset(size.width * 1 / 3f, size.height / 2f),
-                                end = Offset(size.width * 2 / 3f, size.height / 2f),
-                                strokeWidth = 3.dp.toPx()
-                            )
-                        })
-            }
-
-/////////////////////////////////////// Кнопка лиссажу ///////////////////////////////////////
-            Box(
-                modifier = m
-                    .clickable(onClick = { isUseLissagu.value = isUseLissagu.value.not() })
-                    .border(1.dp, Color.Green)
-                    .background(Color.Black)
-                    .drawBehind {
-                        // Размеры овала
-                        val ovalWidth = size.height * 0.75f
-                        val ovalHeight = ovalWidth * 0.45f
-
-                        // Центр канвы
-                        val canvasCenter = Offset(x = size.width / 2, y = size.height / 2)
-
-                        // Верхний левый угол для центрирования овала
-                        val topLeft = Offset(
-                            x = canvasCenter.x - ovalWidth / 2,
-                            y = canvasCenter.y - ovalHeight / 2
-                        )
-
-                        // Поворачиваем канву
-                        rotate(degrees = -45f, pivot = canvasCenter) {
-                            drawOval(
-                                color = Color.White,
-                                topLeft = topLeft,
-                                size = Size(width = ovalWidth, height = ovalHeight),
-                                style = Stroke(width = 1.dp.toPx())
-                            )
-                        }
-
-                        drawLine(
-                            Color.White,
-                            start = Offset(size.width * 0.1f, size.height / 2f),
-                            end = Offset(size.width * 0.9f, size.height / 2f),
-                            strokeWidth = 1.dp.toPx()
-                        )
-
-                        drawLine(
-                            Color.White,
-                            start = Offset(size.width * 1 / 2f, size.height * 0.2f),
-                            end = Offset(size.width * 1 / 2f, size.height * 0.8f),
-                            strokeWidth = 1.dp.toPx()
-                        )
-
-
-                    }
-            )
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-
-        }
-
-
-    }
-
-    private val m = Modifier
-        .height(40.dp)
-        .width(40.dp)
-//.border(1.dp, Color.Gray)
-//.background(Color.Black)
-
-    private val colorEnabled = Color.Black
-    private val colorTextEnabled = Color.Green
-    private val colorTextDisabled = Color.Gray
-
-    @Suppress("NonSkippableComposable")
-    @Composable
-    fun OscilloscopeControl() {
-
-        val a = 8.dp
-
-        Row {
-
-            Box(
-                modifier = m
-                    .clip(RoundedCornerShape(topStart = a, bottomStart = a))
-                    .border(
-                        //Толщина, а не только цвет: активная кнопка различима без цветовосприятия
-                        if (oscillSync.value == OSCILLSYNC.NONE) 2.dp else 1.dp,
-                        if (oscillSync.value == OSCILLSYNC.NONE) colorTextEnabled else Color.Gray,
-                        RoundedCornerShape(topStart = a, bottomStart = a)
-                    )
-                    .clickable(onClick = { oscillSync.value = OSCILLSYNC.NONE })
-                    .background(if (oscillSync.value == OSCILLSYNC.NONE) colorEnabled else Color.Black),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "N",
-                    color = if (oscillSync.value == OSCILLSYNC.NONE) colorTextEnabled else colorTextDisabled
-                )
-            }
-
-            Box(
-                modifier = m
-                    .border(
-                        if (oscillSync.value == OSCILLSYNC.L) 2.dp else 1.dp,
-                        if (oscillSync.value == OSCILLSYNC.L) colorChL else Color.Gray
-                    )
-                    .clickable(onClick = { oscillSync.value = OSCILLSYNC.L })
-                    .background(if (oscillSync.value == OSCILLSYNC.L) colorEnabled else Color.Black),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "L",
-                    color = if (oscillSync.value == OSCILLSYNC.L) colorChL else colorTextDisabled
-                )
-            }
-
-            Box(
-                modifier = m
-                    .clip(RoundedCornerShape(topEnd = a, bottomEnd = a))
-                    .border(
-                        if (oscillSync.value == OSCILLSYNC.R) 2.dp else 1.dp,
-                        if (oscillSync.value == OSCILLSYNC.R) colorChR else Color.Gray,
-                        RoundedCornerShape(topEnd = a, bottomEnd = a)
-                    )
-                    .clickable(onClick = { oscillSync.value = OSCILLSYNC.R })
-                    .background(if (oscillSync.value == OSCILLSYNC.R) colorEnabled else Color.Black),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "R",
-                    color = if (oscillSync.value == OSCILLSYNC.R) colorChR else colorTextDisabled
-                )
-            }
-
-        }
-    }
-
-
 }
-
-
-class ScreenLifecycleObserver(
-    private val onPauseAction: () -> Unit,
-    private val onResumeAction: () -> Unit
-) : LifecycleObserver {
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun onPause() {
-        onPauseAction()
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onResume() {
-        onResumeAction()
-    }
-}
-
-@Preview
-@Composable
-fun OscilloscopePreview() {
-    Generator2Theme {
-        val scope = remember { Scope() }
-        scope.Oscilloscope()
-    }
-}
-
-@Preview
-@Composable
-fun LissaguPreview() {
-    Generator2Theme {
-        val scope = remember { Scope() }
-        scope.Lissagu()
-    }
-}
-
-@Preview
-@Composable
-fun PanelButtonPreview() {
-    Generator2Theme {
-        val scope = remember { Scope() }
-        scope.PanelButton()
-    }
-}
-
-@Preview
-@Composable
-fun OscilloscopeControlPreview() {
-    Generator2Theme {
-        val scope = remember { Scope() }
-        scope.OscilloscopeControl()
-    }
-}
-
-@Preview
-@Composable
-fun OscilloscopeComposePreview() {
-    Generator2Theme {
-        val scope = remember { Scope() }
-        scope.OscilloscopeCompose()
-    }
-}
-
-
