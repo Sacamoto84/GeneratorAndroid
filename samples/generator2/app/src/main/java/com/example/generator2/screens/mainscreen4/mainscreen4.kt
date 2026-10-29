@@ -161,11 +161,12 @@ fun Mainsreen4(vm: VMMain4, vmPresets: presetsVM) {
                 //}
 
 
-                WaterfallComposeView()
+                val threePhase by vm.audioMixerPump.gen.liveData.tp_EN.collectAsStateWithLifecycle()
+
+                //В 3-фазе частота одна — спектр смотреть незачем
+                if (!threePhase) WaterfallComposeView()
 
                 MP3Control(vm)
-
-                val threePhase by vm.audioMixerPump.gen.liveData.tp_EN.collectAsStateWithLifecycle()
 
                 //Режим «3-фаза» заменяет карточки каналов
                 if (threePhase) CardThreePhase(vm.audioMixerPump.gen)
