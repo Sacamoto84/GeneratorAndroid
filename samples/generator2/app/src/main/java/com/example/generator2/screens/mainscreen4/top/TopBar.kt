@@ -52,6 +52,20 @@ fun TopBarAudioSource(vm: VMMain4) {
             )
         }
 
+        //Режим «3-фаза»: вместо CHL/CHR один синус и точка в круге
+        val threePhase = vm.audioMixerPump.gen.liveData.tp_EN
+        Box(
+            modifier = m
+                .weight(1f)
+                .clickable(onClick = { threePhase.value = threePhase.value.not() }),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "3Φ",
+                color = if (threePhase.collectAsStateWithLifecycle().value) Color.Green else Color.Gray
+            )
+        }
+
         Box(
             modifier = m
                 .weight(1f)

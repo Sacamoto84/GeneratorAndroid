@@ -44,6 +44,7 @@ import com.example.generator2.features.scope.OscilloscopeCompose
 import com.example.generator2.features.update.ui.WidgetUpdate
 import com.example.generator2.screens.mainscreen4.bottom.M4BottomAppBarComponent
 import com.example.generator2.screens.mainscreen4.card.CardCard
+import com.example.generator2.screens.mainscreen4.card.CardThreePhase
 import com.example.generator2.screens.mainscreen4.card.MasterButton
 import com.example.generator2.screens.mainscreen4.top.TopBarAudioSource
 import com.example.generator2.theme.colorDarkBackground
@@ -164,7 +165,11 @@ fun Mainsreen4(vm: VMMain4, vmPresets: presetsVM) {
 
                 MP3Control(vm)
 
-                Column()
+                val threePhase by vm.audioMixerPump.gen.liveData.tp_EN.collectAsStateWithLifecycle()
+
+                //Режим «3-фаза» заменяет карточки каналов
+                if (threePhase) CardThreePhase(vm.audioMixerPump.gen)
+                else Column()
                 {
                     //CardCarrier(GeneratorCH.CHL)
                     MasterButton(vm.audioMixerPump.gen)
@@ -176,7 +181,7 @@ fun Mainsreen4(vm: VMMain4, vmPresets: presetsVM) {
                     //Spacer(modifier = Modifier.height(8.dp))
                 }
 
-                AnimatedContent(
+                if (!threePhase) AnimatedContent(
                     targetState = mono,
                     transitionSpec = {
                         val time = 400
