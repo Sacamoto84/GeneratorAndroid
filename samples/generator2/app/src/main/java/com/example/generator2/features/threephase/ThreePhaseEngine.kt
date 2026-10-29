@@ -2,6 +2,8 @@ package com.example.generator2.features.threephase
 
 import com.example.generator2.features.threephase.patterns.ThreePhasePattern
 import com.example.generator2.features.threephase.patterns.ThreePhasePatternSet
+import kotlin.math.exp
+import kotlin.math.ln
 import kotlin.math.min
 
 /**
@@ -15,7 +17,10 @@ import kotlin.math.min
  * первом блоке большего размера). [k] пишет наблюдатель калибровки,
  * [displayAlpha]/[displayBeta] читает UI.
  */
-class ThreePhaseEngine(val patterns: ThreePhasePatternSet = ThreePhasePatternSet()) {
+class ThreePhaseEngine(
+    val patterns: ThreePhasePatternSet = ThreePhasePatternSet(),
+    private val smoothingTau: Double = RESTIM_SMOOTHING_TAU,
+) {
 
     companion object {
         /** Сэмплов на контрольную точку: ≥ 1.5 кГц при 48 кГц. */
@@ -23,6 +28,13 @@ class ThreePhaseEngine(val patterns: ThreePhasePatternSet = ThreePhasePatternSet
 
         /** Переход между паттернами, с реального времени. */
         const val PATTERN_CROSSFADE_SEC = 0.3
+
+        /**
+         * Сглаживание позиции как у оси restim: 60 раз в секунду новое значение
+         * догоняется линейной рампой за 1/30 с, то есть за 1/60 с проходится
+         * половина пути — это первый порядок с τ = 1 / (60 · ln 2) ≈ 24 мс.
+         */
+        val RESTIM_SMOOTHING_TAU = 1.0 / (60 * ln(2.0))
     }
 
     /** Матрица калибровки [ThreePhaseMath.channelMatrix], подменяется целиком. */
@@ -52,6 +64,31 @@ class ThreePhaseEngine(val patterns: ThreePhasePatternSet = ThreePhasePatternSet
     private var fromAlpha = 0f
     private var fromBeta = 0f
     private var fadeElapsed = PATTERN_CROSSFADE_SEC
+
+    //Калибровка прошлого блока — для рампы, см. blockParams
+    private var prevK: FloatArray? = null
+    private var prevCenter = Float.NaN
+    private val params = FloatArray(10)
+
+    /**
+     * Параметры блока для нативного рендера:
+     * `[K₀ 4 шт., K₁ 4 шт., центр₀, центр₁]` — от значений прошлого блока к
+     * текущим. Натив рампирует их по блоку, и смена калибровки не щёлкает.
+     * Массив переиспользуется, действителен до следующего вызова.
+     */
+    fun blockParams(centerReductionPct: Float): FloatArray {
+        val kNow = k
+        val kFrom = prevK ?: kNow
+        for (i in 0..3) {
+            params[i] = kFrom[i]
+            params[4 + i] = kNow[i]
+        }
+        params[8] = if (prevCenter.isNaN()) centerReductionPct else prevCenter
+        params[9] = centerReductionPct
+        prevK = kNow
+        prevCenter = centerReductionPct
+        return params
+    }
 
     /**
      * Заполнить [points] на блок из [frames] сэмплов. Точка `j` соответствует
@@ -93,6 +130,15 @@ class ThreePhaseEngine(val patterns: ThreePhasePatternSet = ThreePhasePatternSet
                 val t = min(1.0, fadeElapsed / PATTERN_CROSSFADE_SEC).toFloat()
                 a = fromAlpha + (a - fromAlpha) * t
                 b = fromBeta + (b - fromBeta) * t
+            }
+
+            //Скачки (палец, амплитуда, рывковые паттерны) растягиваются как в restim
+            if (smoothingTau > 0) {
+                val k = (1 - exp(-dtReal / smoothingTau)).toFloat()
+                val prevA = points[2 * (j - 1)]
+                val prevB = points[2 * (j - 1) + 1]
+                a = prevA + (a - prevA) * k
+                b = prevB + (b - prevB) * k
             }
 
             points[2 * j] = a

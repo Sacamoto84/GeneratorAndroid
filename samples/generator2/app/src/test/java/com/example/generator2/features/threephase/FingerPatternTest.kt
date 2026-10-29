@@ -5,22 +5,24 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import kotlin.math.exp
 
 class FingerPatternTest {
 
     @Test
-    fun `пока палец на круге точка сглаженно идёт за ним`() {
+    fun `пока палец на круге точка сразу под ним`() {
+        //Сглаживание общее для всех паттернов и живёт в движке
         val p = FingerPattern()
         p.touchDown(0.5f, 0f, 0.0)
         assertTrue(p.isTouching)
 
         p.update(0.02)
-        assertEquals(0.5f * (1 - exp(-1.0)).toFloat(), p.alpha, 1e-4f)
+        assertEquals(0.5f, p.alpha, 0f)
+        assertEquals(0f, p.beta, 0f)
 
-        repeat(50) { p.update(0.02) }
-        assertEquals(0.5f, p.alpha, 1e-3f)
-        assertEquals(0f, p.beta, 1e-3f)
+        p.touchMove(-0.3f, 0.4f, 0.1)
+        p.update(0.02)
+        assertEquals(-0.3f, p.alpha, 0f)
+        assertEquals(0.4f, p.beta, 0f)
     }
 
     @Test

@@ -36,6 +36,28 @@ class Generator {
     /** Режим «3-фаза»: положение точки по паттерну, калибровка. */
     val threePhase = ThreePhaseEngine()
 
+    /**
+     * Инверсия каналов генератора, выставляет микшер перед каждым блоком.
+     * Применяется здесь, а не в микшере: в блоке смены режима старый источник
+     * уходит в кроссфейд уже со своей инверсией — иначе на стыке щелчок.
+     * 3-фаза не инвертируется: инверсия меняет местами Neutral и низ круга.
+     */
+    @Volatile
+    var invertL = false
+
+    @Volatile
+    var invertR = false
+
+    /** Режим, в котором отрендерен последний блок. Микшер сверяется с ним, а не с `tp_EN`. */
+    var renderedThreePhase = false
+        private set
+
+    //Нативные рендеры; тесты подменяют их — JVM библиотеку не загрузит
+    internal var channelRenderer: (frames: Int, outL: FloatArray, outR: FloatArray) -> Unit =
+        ::renderChannelsNative
+    internal var threePhaseRenderer: (frames: Int, outL: FloatArray, outR: FloatArray) -> Unit =
+        ::renderThreePhaseNative
+
     //Второй источник на блок переключения режима — для кроссфейда
     private var fadeL = FloatArray(0)
     private var fadeR = FloatArray(0)
@@ -56,22 +78,30 @@ class Generator {
         }
 
         val threePhaseOn = liveData.tp_EN.value
-        if (threePhaseOn) renderThreePhase(frames, bufL, bufR)
+        if (threePhaseOn) threePhaseRenderer(frames, bufL, bufR)
         else renderChannels(frames, bufL, bufR)
 
         //Смена режима без щелчка: старый источник плавно уходит в новый
         if (threePhaseOn != lastThreePhase) {
             lastThreePhase = threePhaseOn
             if (threePhaseOn) renderChannels(frames, fadeL, fadeR)
-            else renderThreePhase(frames, fadeL, fadeR)
+            else threePhaseRenderer(frames, fadeL, fadeR)
             val n = (MODE_CROSSFADE_SEC * sampleRate).toInt().coerceIn(1, frames.coerceAtLeast(1))
             crossfadeFrom(fadeL, fadeR, bufL, bufR, n)
         }
 
+        renderedThreePhase = threePhaseOn
         return result
     }
 
+    /** Каналы CHL/CHR вместе с их инверсией. */
     private fun renderChannels(frames: Int, outL: FloatArray, outR: FloatArray) {
+        channelRenderer(frames, outL, outR)
+        if (invertL) for (i in 0 until frames) outL[i] = -outL[i]
+        if (invertR) for (i in 0 until frames) outR[i] = -outR[i]
+    }
+
+    private fun renderChannelsNative(frames: Int, outL: FloatArray, outR: FloatArray) {
         //Выключенный канал renderChanel сам заполняет тишиной
         RenderChannel.renderChanel(liveData, chL, frames, sampleRate, outL)
 
@@ -85,7 +115,7 @@ class Generator {
         }
     }
 
-    private fun renderThreePhase(frames: Int, outL: FloatArray, outR: FloatArray) {
+    private fun renderThreePhaseNative(frames: Int, outL: FloatArray, outR: FloatArray) {
         val d = liveData
         val n = threePhase.fillPoints(
             frames, sampleRate, d.tp_Pattern.value, d.tp_Velocity.value, d.tp_Amplitude.value
@@ -93,7 +123,7 @@ class Generator {
         RenderThreePhase.jniRender(
             frames, sampleRate,
             threePhase.points, n, ThreePhaseEngine.STEP,
-            threePhase.k, d.tp_Carrier_Fr.value, d.tp_Volume.value, d.tp_Center.value,
+            threePhase.blockParams(d.tp_Center.value), d.tp_Carrier_Fr.value, d.tp_Volume.value,
             d.maxVolume0.value, d.maxVolume1.value,
             outL, outR,
         )

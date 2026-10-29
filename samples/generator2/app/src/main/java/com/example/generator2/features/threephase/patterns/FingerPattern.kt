@@ -1,7 +1,6 @@
 package com.example.generator2.features.threephase.patterns
 
 import java.util.concurrent.atomic.AtomicLong
-import kotlin.math.exp
 
 /** Нарисованная пальцем траектория, время от первой точки, секунды. */
 class Trajectory(val time: DoubleArray, val alpha: FloatArray, val beta: FloatArray) {
@@ -11,7 +10,7 @@ class Trajectory(val time: DoubleArray, val alpha: FloatArray, val beta: FloatAr
 /**
  * Ручной паттерн «Палец», аналог Mouse в restim.
  *
- * Палец на круге — точка сглаженно идёт за ним, траектория записывается.
+ * Палец на круге — точка идёт за ним, траектория записывается.
  * Отпустил — записанное крутится по кругу в исходном темпе. Траектории нет —
  * точка стоит.
  *
@@ -22,9 +21,6 @@ class Trajectory(val time: DoubleArray, val alpha: FloatArray, val beta: FloatAr
 class FingerPattern : ThreePhasePattern {
 
     private companion object {
-        /** Постоянная времени сглаживания пальца, с. */
-        const val SMOOTH_TAU = 0.02
-
         /** Маркер «пальца нет»: точка стоит, где стоит. */
         val NO_FINGER = pack(Float.NaN, Float.NaN)
 
@@ -109,7 +105,7 @@ class FingerPattern : ThreePhasePattern {
     override fun update(dt: Double) {
         val trajectory = published
         if (touching || trajectory == null) {
-            followFinger(dt)
+            followFinger()
             return
         }
 
@@ -121,14 +117,13 @@ class FingerPattern : ThreePhasePattern {
         interpolate(trajectory, progress)
     }
 
-    private fun followFinger(dt: Double) {
+    /** Точка под пальцем; сглаживание общее для всех паттернов — в движке. */
+    private fun followFinger() {
         val v = live.get()
         val targetAlpha = unpackAlpha(v)
         if (targetAlpha.isNaN()) return
-        val targetBeta = unpackBeta(v)
-        val k = (1 - exp(-dt / SMOOTH_TAU)).toFloat()
-        alpha += (targetAlpha - alpha) * k
-        beta += (targetBeta - beta) * k
+        alpha = targetAlpha
+        beta = unpackBeta(v)
     }
 
     private fun interpolate(trajectory: Trajectory, t: Double) {

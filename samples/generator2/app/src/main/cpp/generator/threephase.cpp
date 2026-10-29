@@ -39,7 +39,7 @@ ThreePhaseState state;
 
 void threePhaseRender(ThreePhaseState &s, int numFrames, int sampleRate,
                       const float *points, int pointCount, int step,
-                      const float *k, float carrierHz, float volume, float centerReductionPct,
+                      const float *params, float carrierHz, float volume,
                       float maxVolume0, float maxVolume1,
                       float *outL, float *outR) {
 
@@ -47,7 +47,12 @@ void threePhaseRender(ThreePhaseState &s, int numFrames, int sampleRate,
     volume = std::clamp(volume, 0.0f, 1.0f);
     maxVolume0 = std::clamp(maxVolume0, 0.0f, 1.0f);
     maxVolume1 = std::clamp(maxVolume1, 0.0f, 1.0f);
-    const float c = std::clamp(centerReductionPct, 0.0f, 20.0f) / 100.0f;
+
+    //Калибровка: от прошлого блока к текущему
+    const float *k0 = params;
+    const float *k1 = params + 4;
+    const float c0 = std::clamp(params[8], 0.0f, 20.0f) / 100.0f;
+    const float c1 = std::clamp(params[9], 0.0f, 20.0f) / 100.0f;
 
     const auto dPhase = (uint32_t) (4294967296.0 / sampleRate * carrierHz);
 
@@ -55,6 +60,9 @@ void threePhaseRender(ThreePhaseState &s, int numFrames, int sampleRate,
     const float dv = volume - v0;
 
     for (int i = 0; i < numFrames; i++) {
+
+        //Доля пройденного блока для рамп громкости и калибровки
+        const float u = (float) (i + 1) / (float) numFrames;
 
         //Позиция: линейно между контрольными точками
         const int j = i / step;
@@ -85,11 +93,12 @@ void threePhaseRender(ThreePhaseState &s, int numFrames, int sampleRate,
         const float sa = t11 * x + t12 * y;
         const float sb = t12 * x + t22 * y;
 
-        const float l = k[0] * sa + k[1] * sb;
-        const float rr = k[2] * sa + k[3] * sb;
+        //Строки K — выпуклая смесь строк с нормой ≤ 1, поэтому и рампа не выходит за 1
+        const float l = (k0[0] + (k1[0] - k0[0]) * u) * sa + (k0[1] + (k1[1] - k0[1]) * u) * sb;
+        const float rr = (k0[2] + (k1[2] - k0[2]) * u) * sa + (k0[3] + (k1[3] - k0[3]) * u) * sb;
 
-        //Рампа громкости по блоку — ползунок не щёлкает
-        const float g = (v0 + dv * (float) (i + 1) / (float) numFrames) * (1.0f - c * (1.0f - r));
+        const float c = c0 + (c1 - c0) * u;
+        const float g = (v0 + dv * u) * (1.0f - c * (1.0f - r));
 
         outL[i] = std::clamp(l * g * maxVolume0, -1.0f, 1.0f);
         outR[i] = std::clamp(rr * g * maxVolume1, -1.0f, 1.0f);
@@ -104,7 +113,7 @@ Java_com_example_generator2_features_threephase_RenderThreePhase_jniRender(
         JNIEnv *env, jobject thiz,
         jint num_frames, jint sample_rate,
         jfloatArray points, jint point_count, jint step,
-        jfloatArray k, jfloat carrier_hz, jfloat volume, jfloat center_reduction_pct,
+        jfloatArray params, jfloat carrier_hz, jfloat volume,
         jfloat max_volume0, jfloat max_volume1,
         jfloatArray out_l, jfloatArray out_r) {
 
@@ -121,12 +130,12 @@ Java_com_example_generator2_features_threephase_RenderThreePhase_jniRender(
     }
 
     env->GetFloatArrayRegion(points, 0, (jsize) pointFloats, s.points.data());
-    float kk[4];
-    env->GetFloatArrayRegion(k, 0, 4, kk);
+    float p[THREE_PHASE_PARAMS];
+    env->GetFloatArrayRegion(params, 0, THREE_PHASE_PARAMS, p);
 
     threePhaseRender(s, num_frames, sample_rate,
                      s.points.data(), point_count, step,
-                     kk, carrier_hz, volume, center_reduction_pct,
+                     p, carrier_hz, volume,
                      max_volume0, max_volume1,
                      s.bufL.data(), s.bufR.data());
 

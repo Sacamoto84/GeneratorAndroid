@@ -14,7 +14,7 @@ object RenderThreePhase {
      * Отрендерить [numFrames] сэмплов в [outL]/[outR].
      *
      * @param points контрольные точки [ThreePhaseEngine.points], [pointCount] штук
-     * @param k матрица калибровки [ThreePhaseMath.channelMatrix]
+     * @param params калибровка и центр блока [ThreePhaseEngine.blockParams]
      * @param maxVolume0 потолок левого канала (Config)
      * @param maxVolume1 потолок правого канала (Config)
      */
@@ -24,10 +24,9 @@ object RenderThreePhase {
         points: FloatArray,
         pointCount: Int,
         step: Int,
-        k: FloatArray,
+        params: FloatArray,
         carrierHz: Float,
         volume: Float,
-        centerReductionPct: Float,
         maxVolume0: Float,
         maxVolume1: Float,
         outL: FloatArray,

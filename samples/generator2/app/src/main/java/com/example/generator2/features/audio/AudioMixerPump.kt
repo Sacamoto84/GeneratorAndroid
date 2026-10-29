@@ -125,6 +125,10 @@ class AudioMixerPump
 
             coroutineContext.ensureActive()
 
+            //Каналы генератора инвертирует сам генератор — см. Generator.invertL
+            gen.invertL = invertL.value
+            gen.invertR = invertR.value
+
             if (exoplayer.isPlayingD.value) {
 
 //                    val duration = Duration.between(lastEventTime, LocalDateTime.now()).toMillis()
@@ -272,17 +276,16 @@ class AudioMixerPump
             // Инверсия                                      │
             //───────────────────────────────────────────────┤
             //                                               │
-            // В 3-фазе инверсия меняет местами Neutral и    │
-            // низ круга — там она не применяется            │
-            val tp = gen.liveData.tp_EN.value             // │
+            // Здесь только MP3: каналы генератора уже        │
+            // инвертированы в Generator. В 3-фазе инверсия  │
+            // не применяется (меняет местами Neutral и низ) │
+            val tp = gen.renderedThreePhase               // │
             //                                               │
-            if (invertL.value && !tp) for (i in outL.indices) {
-                outL[i] = -outL[i]                        // │
-            }                                             // │
+            if (invertL.value && !tp && routeL.value == ROUTESTREAM.MP3)
+                for (i in outL.indices) outL[i] = -outL[i]//│
             //                                               │
-            if (invertR.value && !tp) for (i in outR.indices) {
-                outR[i] = -outR[i]                        // │
-            }                                             // │
+            if (invertR.value && !tp && routeR.value == ROUTESTREAM.MP3)
+                for (i in outR.indices) outR[i] = -outR[i]//│
             //───────────────────────────────────────────────┘
             //───────────────────────────────────────────────┐
             // Сборка интерлива LRLR (shuffle меняет уши)    │

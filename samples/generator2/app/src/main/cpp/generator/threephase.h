@@ -20,16 +20,21 @@ struct ThreePhaseState {
     std::vector<float> bufR;     // растут только при увеличении блока
 };
 
+/** Число float в params: K от/до (по 4), центр от/до. */
+constexpr int THREE_PHASE_PARAMS = 10;
+
 /**
  * Посэмпловый рендер: точка (alpha, beta) из линейной интерполяции
- * контрольных точек, squeeze-матрица restim, калибровочная матрица k (2×2),
- * приглушение центра, рампа громкости по блоку, потолок по каналам.
+ * контрольных точек, squeeze-матрица restim, калибровочная матрица K (2×2),
+ * приглушение центра, потолок по каналам. Громкость, K и центр линейно
+ * рампируются по блоку — смена ползунка или калибровки не щёлкает.
  *
  * points — [a0, b0, a1, b1, …], точка j соответствует сэмплу min(j·step, numFrames).
+ * params — [K₀ 4 шт., K₁ 4 шт., центр₀ %, центр₁ %], см. ThreePhaseEngine.blockParams.
  */
 void threePhaseRender(ThreePhaseState &s, int numFrames, int sampleRate,
                       const float *points, int pointCount, int step,
-                      const float *k, float carrierHz, float volume, float centerReductionPct,
+                      const float *params, float carrierHz, float volume,
                       float maxVolume0, float maxVolume1,
                       float *outL, float *outR);
 
