@@ -30,6 +30,14 @@ enum class ROUTESTREAM {
     OFF,
 }
 
+/**
+ * Маршрут, который реально звучит. В 3-фазе блок MP3 с выбором маршрута
+ * скрыт, поэтому выход всегда с генератора — иначе оставшийся MP3 или OFF
+ * глушил бы режим без видимой причины.
+ */
+fun effectiveRoute(route: ROUTESTREAM, threePhase: Boolean): ROUTESTREAM =
+    if (threePhase) ROUTESTREAM.GEN else route
+
 /** Частота дискретизации аудиовыхода по умолчанию. */
 val a48 = 48000
 
@@ -187,13 +195,13 @@ class AudioMixerPump
 
                 val (bufMp3L, bufMp3R) = split(bigBufMp3)
 //
-                outR = when (routeR.value) {
+                outR = when (effectiveRoute(routeR.value, gen.renderedThreePhase)) {
                     ROUTESTREAM.MP3 -> bufMp3R
                     ROUTESTREAM.GEN -> bufGenR
                     ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
                 }
 
-                outL = when (routeL.value) {
+                outL = when (effectiveRoute(routeL.value, gen.renderedThreePhase)) {
                     ROUTESTREAM.MP3 -> bufMp3L
                     ROUTESTREAM.GEN -> bufGenL
                     ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
@@ -258,13 +266,13 @@ class AudioMixerPump
 
                 //println("measure :${nanos / 1000.0} us bufferSize: $bufferSize среднее ${calculator.getAvg()}")
 
-                outR = when (routeR.value) {
+                outR = when (effectiveRoute(routeR.value, gen.renderedThreePhase)) {
                     ROUTESTREAM.MP3 -> FloatArray(buf.second.size)
                     ROUTESTREAM.GEN -> buf.second
                     ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
                 }
 
-                outL = when (routeL.value) {
+                outL = when (effectiveRoute(routeL.value, gen.renderedThreePhase)) {
                     ROUTESTREAM.MP3 -> FloatArray(buf.first.size)
                     ROUTESTREAM.GEN -> buf.first
                     ROUTESTREAM.OFF -> FloatArray(bufferSize / 2)
