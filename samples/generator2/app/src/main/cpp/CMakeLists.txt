@@ -21,6 +21,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         scope/PhosphorJni.cpp
 
         generator/renderchannel.cpp
+        generator/threephase.cpp
 
         spectrogram/plasma.cpp
         spectrogram/jniFFT.cpp

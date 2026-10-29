@@ -272,11 +272,15 @@ class AudioMixerPump
             // Инверсия                                      │
             //───────────────────────────────────────────────┤
             //                                               │
-            if (invertL.value) for (i in outL.indices) {  // │
+            // В 3-фазе инверсия меняет местами Neutral и    │
+            // низ круга — там она не применяется            │
+            val tp = gen.liveData.tp_EN.value             // │
+            //                                               │
+            if (invertL.value && !tp) for (i in outL.indices) {
                 outL[i] = -outL[i]                        // │
             }                                             // │
             //                                               │
-            if (invertR.value) for (i in outR.indices) {  // │
+            if (invertR.value && !tp) for (i in outR.indices) {
                 outR[i] = -outR[i]                        // │
             }                                             // │
             //───────────────────────────────────────────────┘

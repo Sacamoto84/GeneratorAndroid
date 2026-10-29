@@ -6,7 +6,9 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import com.example.generator2.features.threephase.ThreePhaseMath
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
@@ -74,6 +76,9 @@ class GeneratorObserver @Inject constructor(
                 channel = 1,
                 d.chR_FM_Dev, d.chR_Carrier_Fr, d.chRFmMin, d.chRFmMax, d.parameterInt1
             )
+
+            //Калибровка 3-фазы — пересчитать матрицу вне аудиопотока
+            threePhaseCalibration(d.tp_Calib_A, d.tp_Calib_B, d.tp_Calib_C)
         }
 
         Timber.i("GeneratorObserver: подписки запущены")
@@ -94,6 +99,15 @@ class GeneratorObserver @Inject constructor(
         mod: GeneratorMOD,
     ) = launch {
         filename.collect { Spinner_Send_Buffer(ch, mod, it, gen) }
+    }
+
+    private fun CoroutineScope.threePhaseCalibration(
+        a: StateFlow<Float>,
+        b: StateFlow<Float>,
+        c: StateFlow<Float>,
+    ) = launch {
+        combine(a, b, c) { x, y, z -> ThreePhaseMath.channelMatrix(x, y, z) }
+            .collect { gen.threePhase.k = it }
     }
 
     @OptIn(FlowPreview::class)

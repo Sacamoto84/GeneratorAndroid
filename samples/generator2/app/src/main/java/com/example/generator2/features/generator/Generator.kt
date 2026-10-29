@@ -1,5 +1,9 @@
 package com.example.generator2.features.generator
 
+import com.example.generator2.features.threephase.MODE_CROSSFADE_SEC
+import com.example.generator2.features.threephase.RenderThreePhase
+import com.example.generator2.features.threephase.ThreePhaseEngine
+import com.example.generator2.features.threephase.crossfadeFrom
 import com.example.generator2.features.threephase.patterns.ThreePhasePatterns
 import com.example.generator2.model.itemList
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +33,14 @@ class Generator {
     private var bufR = FloatArray(0)
     private var result = bufL to bufR
 
+    /** Режим «3-фаза»: положение точки по паттерну, калибровка. */
+    val threePhase = ThreePhaseEngine()
+
+    //Второй источник на блок переключения режима — для кроссфейда
+    private var fadeL = FloatArray(0)
+    private var fadeR = FloatArray(0)
+    private var lastThreePhase = false
+
     fun renderAudio(numFrames: Int = 1024): Pair<FloatArray, FloatArray> {
 
         if (numFrames == 0) Timber.e("numFrames == 0")
@@ -38,22 +50,53 @@ class Generator {
         if (bufL.size != frames) {
             bufL = FloatArray(frames)
             bufR = FloatArray(frames)
+            fadeL = FloatArray(frames)
+            fadeR = FloatArray(frames)
             result = bufL to bufR
         }
 
+        val threePhaseOn = liveData.tp_EN.value
+        if (threePhaseOn) renderThreePhase(frames, bufL, bufR)
+        else renderChannels(frames, bufL, bufR)
+
+        //Смена режима без щелчка: старый источник плавно уходит в новый
+        if (threePhaseOn != lastThreePhase) {
+            lastThreePhase = threePhaseOn
+            if (threePhaseOn) renderChannels(frames, fadeL, fadeR)
+            else renderThreePhase(frames, fadeL, fadeR)
+            val n = (MODE_CROSSFADE_SEC * sampleRate).toInt().coerceIn(1, frames.coerceAtLeast(1))
+            crossfadeFrom(fadeL, fadeR, bufL, bufR, n)
+        }
+
+        return result
+    }
+
+    private fun renderChannels(frames: Int, outL: FloatArray, outR: FloatArray) {
         //Выключенный канал renderChanel сам заполняет тишиной
-        RenderChannel.renderChanel(liveData, chL, frames, sampleRate, bufL)
+        RenderChannel.renderChanel(liveData, chL, frames, sampleRate, outL)
 
         if (!liveData.mono.value) {
-            RenderChannel.renderChanel(liveData, chR, frames, sampleRate, bufR)
+            RenderChannel.renderChanel(liveData, chR, frames, sampleRate, outR)
         } else {
             //Моно: правый канал - копия левого. Раньше оба канала указывали на
             //один массив, из-за чего инверсия одного канала в AudioMixerPump
             //применялась к обоим сразу
-            bufL.copyInto(bufR)
+            outL.copyInto(outR)
         }
+    }
 
-        return result
+    private fun renderThreePhase(frames: Int, outL: FloatArray, outR: FloatArray) {
+        val d = liveData
+        val n = threePhase.fillPoints(
+            frames, sampleRate, d.tp_Pattern.value, d.tp_Velocity.value, d.tp_Amplitude.value
+        )
+        RenderThreePhase.jniRender(
+            frames, sampleRate,
+            threePhase.points, n, ThreePhaseEngine.STEP,
+            threePhase.k, d.tp_Carrier_Fr.value, d.tp_Volume.value, d.tp_Center.value,
+            d.maxVolume0.value, d.maxVolume1.value,
+            outL, outR,
+        )
     }
 
     /**
