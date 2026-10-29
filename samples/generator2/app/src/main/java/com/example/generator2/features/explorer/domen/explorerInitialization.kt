@@ -81,13 +81,14 @@ fun explorerInitialization(context: Context) {
     //val bb = listAllS3url.map { it.url.substringAfter(server) }
 
     //Получить дерево всех аудиофайлов на телефоне
-    treeAllAudio = explorerTreeBuild(listAllFiles, isS3 = false, listAllFiles)
+    //Строим в локальной переменной: UI не должен видеть недостроенное дерево
+    val tree = explorerTreeBuild(listAllFiles, isS3 = false, listAllFiles)
 
     //Получить дерево всех аудиофайлов на S3
     val treeAllAudioS3 = explorerTreeBuildS3(listAllS3url.filter { !it.isDirectory } )
 
     //В каждый элемент дерева добавить поле path
-    traverseTree(treeAllAudio) { node ->
+    traverseTree(tree) { node ->
         val p = node.pathToRoot()
         var s = ""
         p.forEach { pp ->
@@ -140,7 +141,7 @@ fun explorerInitialization(context: Context) {
 
 
     //Итого, дерево из имени и пути к файлу
-    traverseTree(treeAllAudio) { node ->
+    traverseTree(tree) { node ->
 
         //////////////////
         /* Подсчет файлов в директориях */
@@ -178,14 +179,23 @@ fun explorerInitialization(context: Context) {
 
 
 
-    treeAllAudio.add(treeAllAudioS3)
+    tree.add(treeAllAudioS3)
+
+    //Публикуем готовое дерево одной записью
+    treeAllAudio = tree
 
 }
 
 
 fun tagInItemMp3(node: TreeNode<ExploreNodeItem>) {
     if ((node.value.isFormat == "") || (node.value.isDirectory)) return
-    val audioFile = AudioFileIO.read(File(node.value.path))
+    //Битый или неподдерживаемый файл не должен ронять сканирование всего дерева
+    val audioFile = try {
+        AudioFileIO.read(File(node.value.path))
+    } catch (e: Exception) {
+        Timber.e(e, "tagInItemMp3: ${node.value.path}")
+        return
+    }
     val header = audioFile.audioHeader
     node.value.lengthInSeconds = header.trackLength.toLong().formatSecondsToTime()
     node.value.sampleRate = header.sampleRate

@@ -20,6 +20,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.generator2.features.explorer.data.treeAllAudio
 import com.example.generator2.features.explorer.presenter.ScreenExplorerViewModel
 
 @Suppress("NonSkippableComposable")
@@ -27,7 +28,7 @@ import com.example.generator2.features.explorer.presenter.ScreenExplorerViewMode
 @Composable
 fun ScreenExplorer(vm: ScreenExplorerViewModel) {
 
-    LaunchedEffect(key1 = vm.dataRepository.currentNode) {
+    LaunchedEffect(key1 = vm.dataRepository.currentNode, key2 = treeAllAudio) {
         vm.scanNode()
     }
 

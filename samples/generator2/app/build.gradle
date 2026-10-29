@@ -1,6 +1,5 @@
 plugins {
     alias libs.plugins.android.application
-    alias libs.plugins.jetbrains.kotlin.android
     alias libs.plugins.google.devtools.ksp
     alias libs.plugins.google.dagger.hilt.android
     //id 'androidx.baselineprofile'
@@ -20,7 +19,7 @@ android {
 
     sourceSets {
         main {
-            kotlin.srcDirs +='src/main/libres/'
+            kotlin.srcDirs += ['src/main/libres/', "$buildDir/generated/libres/android/src"]
         }
     }
 
@@ -55,6 +54,12 @@ android {
     compileSdk 37
 
     namespace 'com.example.generator2'
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 
     defaultConfig {
         applicationId "com.example.generator2"
@@ -142,10 +147,6 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
     buildFeatures {
         compose true
         prefab true
@@ -178,6 +179,12 @@ android {
         renderscriptSupportModeEnabled true
     }
 
+}
+
+androidComponents {
+    beforeVariants(selector().all()) { variant ->
+        variant.enableUnitTest = true
+    }
 }
 
 dependencies {
@@ -481,7 +488,13 @@ tasks.configureEach { task ->
     if (task.name.contains("process") && task.name.contains("NavigationResources")) {
         task.dependsOn(libresTasks)
     }
+    if (task.name.contains("extractDeepLinks")) {
+        task.dependsOn(libresTasks)
+    }
     if (task.name.contains("ksp")) {
+        task.dependsOn(libresTasks)
+    }
+    if (task.name.contains("Kotlin") || task.name.contains("kotlin")) {
         task.dependsOn(libresTasks)
     }
 }

@@ -7,6 +7,7 @@ import com.example.generator2.App
 import com.example.generator2.AppPath
 import com.example.generator2.PermissionStorage
 import com.example.generator2.features.audio.AudioMixerPump
+import com.example.generator2.features.explorer.domen.explorerInitialization
 import com.example.generator2.features.generator.GeneratorObserver
 import com.example.generator2.features.presets.presetsInit
 import com.example.generator2.features.presets.presetsReadFile
@@ -71,7 +72,7 @@ class Initialization
         /* explorer */
         GlobalScope.launch(Dispatchers.IO) {
             val t = measureTimeMillis {
-                //explorerInitialization(context)
+                explorerInitialization(context)
             }
             Timber.tag("Время работы").i("Время инициализации explorer: $t ms") //6350ms на 157 файлов
         }

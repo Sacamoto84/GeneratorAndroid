@@ -17,6 +17,7 @@ import com.example.generator2.features.explorer.domen.explorerGetAllChildNode
 import com.example.generator2.features.explorer.domen.explorerMediaFormat
 import com.example.generator2.features.explorer.domen.tagInItemMp3
 import com.example.generator2.features.explorer.model.ExplorerItem
+import com.example.generator2.model.TreeNode
 import com.example.generator2.model.traverseTree
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -72,6 +73,11 @@ class ScreenExplorerViewModel @Inject constructor(
 
 
     fun scanNode() {
+        //Репозиторий мог запомнить пустое дерево до окончания фоновой инициализации
+        if (dataRepository.currentNode.root() !== treeAllAudio) {
+            dataRepository.currentNode = treeAllAudio
+        }
+
         val childs = explorerGetAllChildNode(dataRepository.currentNode)
 
         listItems.clear()
@@ -204,6 +210,12 @@ class ScreenExplorerViewModel @Inject constructor(
         audioMixerPump.exoplayer.player.playWhenReady = true
     }
 
+
+    private fun <T> TreeNode<T>.root(): TreeNode<T> {
+        var node = this
+        while (node.parent != null) node = node.parent!!
+        return node
+    }
 
     private fun Long.formatSecondsToTime(): String {
         return if (this == 0L) {
