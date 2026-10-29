@@ -34,15 +34,6 @@ fun PanelButtonPreview() {
 
 @Preview
 @Composable
-fun OscilloscopeControlPreview() {
-    Generator2Theme {
-        val scope = remember { Scope() }
-        OscilloscopeControl(scope)
-    }
-}
-
-@Preview
-@Composable
 fun OscilloscopeComposePreview() {
     Generator2Theme {
         val scope = remember { Scope() }

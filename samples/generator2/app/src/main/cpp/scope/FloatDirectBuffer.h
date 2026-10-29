@@ -102,6 +102,9 @@ public:
      */
     std::size_t available() const { return wP; }
 
+    /** Длина одного аудиопакета в float. */
+    std::size_t packet() const { return itemSize; }
+
 private:
     bool isValidConfiguration(jint _itemSize, jint _itemCount) const {
         if (_itemSize <= 0) {

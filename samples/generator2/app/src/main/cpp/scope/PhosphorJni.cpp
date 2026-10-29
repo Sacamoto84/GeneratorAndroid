@@ -6,7 +6,6 @@
 #include "FloatDirectBuffer.h"
 
 #include <algorithm>
-#include <cmath>
 #include <jni.h>
 
 PhosphorGrid phosphorGrid;
@@ -15,63 +14,66 @@ extern AudioHistoryBuffer audioHistoryBuffer;
 
 namespace {
 
-/**
- * Канал синхронизации — левый. Включается только в моно, где второй канал
- * повторяет первый: кадр встаёт сразу по обоим. В стерео каналы независимы,
- * один фронт удержал бы только свой — второй продолжил бы плыть, и разъезд
- * двух картинок читается хуже, чем общий дрейф.
- */
-constexpr int kTriggerChannel = 0;
+/** Канал синхронизации не выбран — кадр берётся прямо от головы записи. */
+constexpr int kTriggerOff = -1;
 
-/** Доля пика, ниже которой сигнал считается взведённым для фронта. */
+/** Доля полуразмаха под уровнем, ниже которой сигнал взводится для фронта. */
 constexpr float kTriggerArmFraction = 0.25f;
 
-/** Пик тише этого — тишина, синхронизировать не по чему. */
-constexpr float kTriggerMinPeak = 1e-3f;
+/** Полуразмах меньше этого — тишина, синхронизировать не по чему. */
+constexpr float kTriggerMinSwing = 1e-3f;
 
 /**
- * Ищет последний переход через ноль снизу вверх в запасе перед окном.
+ * Ищет последний переход уровня снизу вверх в запасе перед окном.
  *
  * Окно истории отсчитывается от позиции записи, а та двигается целыми
  * пакетами. Длина пакета не кратна периоду сигнала, поэтому фаза на левом
  * краю кадра каждый раз другая — картинка плывёт. Привязка левого края к
  * фронту убирает это ровно так же, как триггер настоящего осциллографа.
  *
+ * Уровень — середина размаха, а не ноль: сигнал со смещением может вовсе
+ * не переходить через ноль, и тогда синхронизироваться было бы не по чему.
+ *
  * Берётся именно последний фронт запаса: он ближе всех к голове записи,
  * значит кадр отстаёт от свежих данных не больше чем на период сигнала.
  *
  * @param interleaved начало запаса, чередующиеся сэмплы двух каналов.
  * @param searchFrames длина запаса в стереокадрах.
+ * @param channel 0 — левый, 1 — правый. Второй канал сдвигается вместе с ним.
  * @return смещение в кадрах от начала запаса; searchFrames, если фронта нет —
  * тогда кадр берётся без синхронизации, прямо от головы.
  */
 std::size_t findTriggerOffset(const float *interleaved,
-                              std::size_t searchFrames) {
+                              std::size_t searchFrames, int channel) {
     if (interleaved == nullptr || searchFrames < 2) {
         return searchFrames;
     }
 
-    float peak = 0.0f;
-    for (std::size_t i = 0; i < searchFrames; ++i) {
-        peak = std::max(peak,
-                        std::fabs(interleaved[i * 2 + kTriggerChannel]));
+    float low = interleaved[channel];
+    float high = low;
+    for (std::size_t i = 1; i < searchFrames; ++i) {
+        const float value = interleaved[i * 2 + channel];
+        low = std::min(low, value);
+        high = std::max(high, value);
     }
-    if (peak < kTriggerMinPeak) {
+    const float swing = (high - low) * 0.5f;
+    if (swing < kTriggerMinSwing) {
         return searchFrames;
     }
 
-    // Гистерезис: перед фронтом сигнал обязан уйти заметно ниже нуля. Без
-    // него шум у самой оси даёт пачку переходов подряд, и кадр цепляется
+    // Гистерезис: перед фронтом сигнал обязан уйти заметно ниже уровня. Без
+    // него шум у самого уровня даёт пачку переходов подряд, и кадр цепляется
     // каждый раз за другой — то же дрожание, только мельче.
-    const float armLevel = -peak * kTriggerArmFraction;
+    const float level = (high + low) * 0.5f;
+    const float armLevel = level - swing * kTriggerArmFraction;
 
     std::size_t found = searchFrames;
     bool armed = false;
     for (std::size_t i = 0; i < searchFrames; ++i) {
-        const float value = interleaved[i * 2 + kTriggerChannel];
+        const float value = interleaved[i * 2 + channel];
         if (value < armLevel) {
             armed = true;
-        } else if (armed && value >= 0.0f) {
+        } else if (armed && value >= level) {
             found = i;
             armed = false;
         }
@@ -83,7 +85,7 @@ int requestedColumns = 0;
 int requestedLayout = 0;
 bool requestedRollMode = true;
 float requestedSweep = 1.0f;
-bool requestedTrigger = false;
+int requestedTriggerChannel = kTriggerOff;
 unsigned lastRebuiltSerial = 0;
 bool hasRebuilt = false;
 
@@ -122,7 +124,7 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_generator2_features_scope_NativePhosphor_configure(
         JNIEnv * /* env */, jobject /* thiz */, jint columns, jint layout,
-        jboolean rollMode, jfloat sweep, jboolean trigger) {
+        jboolean rollMode, jfloat sweep, jint triggerChannel) {
     requestedColumns = columns;
     requestedLayout = layout;
     requestedRollMode = (rollMode == JNI_TRUE);
@@ -130,7 +132,9 @@ Java_com_example_generator2_features_scope_NativePhosphor_configure(
     // Сетку не трогает: триггер выбирает окно на стороне вызова rebuild(),
     // геометрия от него не зависит. Поэтому ensureConfigured() ниже увидит
     // прежние параметры и не станет чистить накопленное.
-    requestedTrigger = (trigger == JNI_TRUE);
+    requestedTriggerChannel =
+            (triggerChannel == 0 || triggerChannel == 1) ? triggerChannel
+                                                         : kTriggerOff;
     ensureConfigured();
 }
 
@@ -161,23 +165,28 @@ Java_com_example_generator2_features_scope_NativePhosphor_update(
             const std::size_t frames = phosphorGrid.framesInWindow();
             if (frames > 0) {
                 // Запас перед окном, в котором ищется фронт синхронизации.
-                // Дальше окна назад уходить незачем: там кадр всё равно не
-                // начнётся. Сколько истории есть на самом деле, знает только
-                // буфер — сразу после переноса окна в начало массива за ним
-                // не остаётся ничего, и тогда кадр идёт без синхронизации.
-                // Нулевой запас означает её отключение: смещение выйдет нулевым.
+                // Длиной в окно, но не короче пакета: на развёртках меньше
+                // единицы окно в миллисекунды, и низкий сигнал не успевал бы
+                // в нём сделать даже период. Глубже запас — больше отставание
+                // кадра от головы, поэтому дальше не уходим. Сколько истории
+                // есть на самом деле, знает только буфер — сразу после
+                // переноса окна в начало массива за ним не остаётся ничего, и
+                // тогда кадр идёт без синхронизации. Нулевой запас означает её
+                // отключение: смещение выйдет нулевым.
                 std::size_t searchFrames = 0;
-                if (requestedTrigger) {
+                if (requestedTriggerChannel != kTriggerOff) {
                     std::size_t spare = audioHistoryBuffer.available() / 2;
                     spare = (spare > frames) ? spare - frames : 0;
-                    searchFrames = std::min(spare, frames);
+                    const std::size_t depth =
+                            std::max(frames, audioHistoryBuffer.packet() / 2);
+                    searchFrames = std::min(spare, depth);
                 }
 
                 const float *window = audioHistoryBuffer.readSmall(
                         static_cast<jint>((frames + searchFrames) * 2));
                 if (window != nullptr) {
-                    const std::size_t offset =
-                            findTriggerOffset(window, searchFrames);
+                    const std::size_t offset = findTriggerOffset(
+                            window, searchFrames, requestedTriggerChannel);
                     phosphorGrid.rebuild(window + offset * 2, frames);
                 }
             }

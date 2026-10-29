@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,7 +22,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.text.font.Font
@@ -41,7 +41,6 @@ private val m = Modifier
     .width(40.dp)
 
 private val colorEnabled = Color.Black
-private val colorTextEnabled = Color.Green
 private val colorTextDisabled = Color.Gray
 
 /** Квадратная кнопка-переключатель с подписью. */
@@ -187,6 +186,12 @@ fun PanelButton(scope: Scope) {
                             strokeWidth = 3.dp.toPx()
                         )
                     })
+
+            SyncSourceButton(
+                source = scope.oscillSync.value,
+                sweep = scope.compressorCount.floatValue,
+                onClick = { scope.oscillSyncNext() }
+            )
         }
 
 /////////////////////////////////////// Кнопка лиссажу ///////////////////////////////////////
@@ -242,66 +247,53 @@ fun PanelButton(scope: Scope) {
 }
 
 /**
- * Кнопка выбора синхронизации.
+ * Источник синхронизации развёртки: нажатие перебирает L → R → N.
  *
- * Толщина рамки, а не только цвет: активная кнопка различима без
- * цветовосприятия.
+ * Подпись SYNC и скруглённая рамка отличают её от кнопок видимости L и R
+ * в начале панели. Толщина рамки, а не только цвет: работающая синхронизация
+ * различима без цветовосприятия. На развёртке длиннее [SYNC_MAX_SWEEP] выбор
+ * хранится, но не действует — буква гаснет до серой.
  */
 @Composable
-private fun SyncButton(
-    active: Boolean,
-    activeColor: Color,
-    label: String,
-    shape: Shape?,
+private fun SyncSourceButton(
+    source: OSCILLSYNC,
+    sweep: Float,
     onClick: () -> Unit
 ) {
-    val base = if (shape == null) m else m.clip(shape)
-    val bordered =
-        if (shape == null) base.border(if (active) 2.dp else 1.dp, if (active) activeColor else Color.Gray)
-        else base.border(if (active) 2.dp else 1.dp, if (active) activeColor else Color.Gray, shape)
-
-    Box(
-        modifier = bordered
-            .clickable(onClick = onClick)
-            .background(if (active) colorEnabled else Color.Black),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = label, color = if (active) activeColor else colorTextDisabled)
+    val shape = RoundedCornerShape(8.dp)
+    val inRange = sweep <= SYNC_MAX_SWEEP
+    val active = inRange && source != OSCILLSYNC.NONE
+    val color = when (source) {
+        OSCILLSYNC.L -> colorChL
+        OSCILLSYNC.R -> colorChR
+        OSCILLSYNC.NONE -> Color.White
     }
-}
 
-/** Выбор канала синхронизации развёртки: нет, левый, правый. */
-@Suppress("NonSkippableComposable")
-@Composable
-fun OscilloscopeControl(scope: Scope) {
-
-    val a = 8.dp
-
-    Row {
-
-        SyncButton(
-            active = scope.oscillSync.value == OSCILLSYNC.NONE,
-            activeColor = colorTextEnabled,
-            label = "N",
-            shape = RoundedCornerShape(topStart = a, bottomStart = a),
-            onClick = { scope.oscillSync.value = OSCILLSYNC.NONE }
+    Column(
+        modifier = m
+            .clip(shape)
+            .border(if (active) 2.dp else 1.dp, if (active) color else Color.Gray, shape)
+            .clickable(onClick = onClick)
+            .background(Color.Black),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "SYNC",
+            color = colorTextDisabled,
+            fontSize = 8.sp,
+            lineHeight = 8.sp
         )
-
-        SyncButton(
-            active = scope.oscillSync.value == OSCILLSYNC.L,
-            activeColor = colorChL,
-            label = "L",
-            shape = null,
-            onClick = { scope.oscillSync.value = OSCILLSYNC.L }
+        Text(
+            text = when (source) {
+                OSCILLSYNC.L -> "L"
+                OSCILLSYNC.R -> "R"
+                OSCILLSYNC.NONE -> "N"
+            },
+            color = if (inRange) color else colorTextDisabled,
+            fontSize = 18.sp,
+            lineHeight = 18.sp,
+            fontWeight = FontWeight.Bold
         )
-
-        SyncButton(
-            active = scope.oscillSync.value == OSCILLSYNC.R,
-            activeColor = colorChR,
-            label = "R",
-            shape = RoundedCornerShape(topEnd = a, bottomEnd = a),
-            onClick = { scope.oscillSync.value = OSCILLSYNC.R }
-        )
-
     }
 }

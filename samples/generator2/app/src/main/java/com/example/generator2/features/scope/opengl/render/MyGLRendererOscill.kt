@@ -47,6 +47,8 @@ import android.opengl.GLES30.glUseProgram
 import android.opengl.GLES30.glViewport
 import android.opengl.GLSurfaceView
 import com.example.generator2.features.scope.NativePhosphor
+import com.example.generator2.features.scope.OSCILLSYNC
+import com.example.generator2.features.scope.SYNC_MAX_SWEEP
 import java.nio.ByteOrder
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.microedition.khronos.egl.EGLConfig
@@ -57,6 +59,9 @@ import kotlin.math.sign
 
 /** Развёртки от этого значения и выше рисуются как бегущая лента. */
 private const val ROLL_THRESHOLD = 32f
+
+/** Канал синхронизации для NativePhosphor.configure(): без синхронизации. */
+private const val TRIGGER_OFF = -1
 
 /**
  * Яркость. Задаётся в единицах "след, размазанный ровно по всей высоте
@@ -151,7 +156,7 @@ class MyGLRendererOscill : GLSurfaceView.Renderer {
 
     // Сбрасывать вместе с остальными не нужно: configuredColumns = 0 не
     // совпадёт ни с одной реальной шириной и сам заставит переконфигурировать.
-    private var configuredTrigger: Boolean = false
+    private var configuredTriggerChannel: Int = TRIGGER_OFF
 
     /**
      * Развёртка. Пишет петля подачи данных, читает GL-поток — отсюда
@@ -162,14 +167,13 @@ class MyGLRendererOscill : GLSurfaceView.Renderer {
     var compressorCount: Float = 0f
 
     /**
-     * Синхронизация кадра по фронту. Ставится, когда оба канала несут один
-     * сигнал: только тогда они встают по одному фронту. Решает про это
-     * вызывающая сторона — она одна знает, откуда пришёл поток.
+     * Канал, по фронту которого стоит кадр. Второй канал рисуется с тем же
+     * сдвигом. Действует только на развёртке не длиннее [SYNC_MAX_SWEEP].
      *
      * Пишет петля подачи данных, читает GL-поток — отсюда @Volatile.
      */
     @Volatile
-    var triggerSync: Boolean = false
+    var syncSource: OSCILLSYNC = OSCILLSYNC.NONE
 
     /**
      * Пауза. Аккумулятор продолжает наполняться из аудиопотока, поэтому на
@@ -308,24 +312,30 @@ void main() {
         val layout = bools[0]
         val columns = columnsFor(width)
 
-        // В roll-ленте начало кадра задаёт голова записи, триггер там не
-        // работает. Гасим его здесь, а не только в нативе: иначе переключение
-        // моно в ленте дёргало бы configure() впустую, а тот перевыделяет
-        // нативную сетку.
-        val trigger = triggerSync && !rollMode
+        // На длинной развёртке триггер не работает, а roll-ленту она
+        // включает раньше. Гасим его здесь, а не только в нативе: иначе смена
+        // источника на длинной развёртке дёргала бы configure() впустую, а
+        // тот перевыделяет нативную сетку.
+        val triggerChannel =
+            if (compressorCount > SYNC_MAX_SWEEP) TRIGGER_OFF
+            else when (syncSource) {
+                OSCILLSYNC.L -> 0
+                OSCILLSYNC.R -> 1
+                OSCILLSYNC.NONE -> TRIGGER_OFF
+            }
 
         if (configuredColumns != columns ||
             configuredLayout != layout ||
             configuredRoll != rollMode ||
             configuredSweep != compressorCount ||
-            configuredTrigger != trigger
+            configuredTriggerChannel != triggerChannel
         ) {
-            NativePhosphor.configure(columns, layout, rollMode, compressorCount, trigger)
+            NativePhosphor.configure(columns, layout, rollMode, compressorCount, triggerChannel)
             configuredSweep = compressorCount
             configuredColumns = columns
             configuredLayout = layout
             configuredRoll = rollMode
-            configuredTrigger = trigger
+            configuredTriggerChannel = triggerChannel
             ensureTexture(columns)
             // Сетка пересобрана: и накопленное в ней, и залитое в текстуру
             // считалось от прежней геометрии. Просим отдать себя целиком —

@@ -17,25 +17,19 @@ import timber.log.Timber
 enum class OSCILLSYNC {  NONE, R, L }
 
 /**
+ * Самая длинная развёртка, на которой кадр синхронизируется по фронту.
+ * Дальше в кадре столько периодов, что дрейф фазы не заметен, а поиск фронта
+ * отодвигал бы кадр от свежих данных на целое окно.
+ */
+internal const val SYNC_MAX_SWEEP = 8f
+
+/**
  * Осциллограф: состояние, каналы данных и маршрутизация аудиопотока.
  *
  * Разметка живёт отдельно — ScopeUi.kt рисует сам экран, ScopePanel.kt
  * панель управления под ним.
  */
-class Scope(
-    /**
-     * Оба канала несут один сигнал.
-     *
-     * Подставляет AudioMixerPump: осциллограф не знает ни о генераторе, ни о
-     * маршрутизации, а на экран к нему приходит уже смикшированный поток.
-     * Синхронизация кадра по фронту корректна только когда в обоих ушах одно
-     * и то же, то есть генератор в моно И оба маршрута идут с него.
-     *
-     * Лямбда, а не StateFlow: значение опрашивается на каждом пакете, а
-     * захваченная ссылка на конкретный флоу протухла бы при подмене liveData.
-     */
-    internal val isMonoOut: () -> Boolean = { false }
-) {
+class Scope {
 
     // Начальное значение: дальше AudioMixerPump подставит частоту,
     // на которой реально открылся аудиовыход.
@@ -100,7 +94,20 @@ class Scope(
     val deferredOscill = Channel<Int>(capacity = 1, BufferOverflow.DROP_OLDEST) //CompletableDeferred<Long>()
     val deferredLissagu = Channel<Int>(capacity = 1, BufferOverflow.DROP_OLDEST)
 
+    /**
+     * Канал, по фронту которого стоит кадр. Действует только на развёртке
+     * не длиннее [SYNC_MAX_SWEEP], но выбор хранится и на более длинных.
+     */
     val oscillSync = mutableStateOf(OSCILLSYNC.L)
+
+    /** Следующий источник синхронизации по кругу: L → R → N → L. */
+    internal fun oscillSyncNext() {
+        oscillSync.value = when (oscillSync.value) {
+            OSCILLSYNC.L -> OSCILLSYNC.R
+            OSCILLSYNC.R -> OSCILLSYNC.NONE
+            OSCILLSYNC.NONE -> OSCILLSYNC.L
+        }
+    }
 
     //Маршрутизатор аудиоданных живёт здесь, а не в анонимном scope: без ссылки
     //на scope петля не останавливалась никогда, даже после остановки движка

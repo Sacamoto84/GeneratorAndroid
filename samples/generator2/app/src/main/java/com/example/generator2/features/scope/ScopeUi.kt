@@ -102,7 +102,7 @@ fun Oscilloscope(scope: Scope, modifier: Modifier = Modifier) {
             while (isActive) {
                 scope.deferredOscill.receive()
                 shaderRenderer.compressorCount = scope.compressorCount.floatValue
-                shaderRenderer.triggerSync = scope.isMonoOut()
+                shaderRenderer.syncSource = scope.oscillSync.value
                 shaderRenderer.bools[0] = if (scope.isOneTwo.value) 1 else 0
                 shaderRenderer.bools[1] = if (scope.isVisibleL.value) 1 else 0
                 shaderRenderer.bools[2] = if (scope.isVisibleR.value) 1 else 0

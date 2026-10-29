@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.generator2.features.scope.OSCILLSYNC
 import com.example.generator2.screens.mainscreen4.VMMain4
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
@@ -37,7 +36,7 @@ fun TopBarAudioSource(vm: VMMain4) {
         ) {
             Text(
                 text = "MP3",
-                color = if (vm.audioMixerPump.scope.oscillSync.value == OSCILLSYNC.NONE) Color.Green else Color.Gray
+                color = Color.Gray
             )
         }
 
@@ -49,7 +48,7 @@ fun TopBarAudioSource(vm: VMMain4) {
         ) {
             Text(
                 text = "GEN",
-                color = if (vm.audioMixerPump.scope.oscillSync.value == OSCILLSYNC.NONE) Color.Green else Color.Gray
+                color = Color.Gray
             )
         }
 
