@@ -1,5 +1,6 @@
 package com.example.generator2.features.generator
 
+import com.example.generator2.features.threephase.patterns.ThreePhasePatterns
 import com.example.generator2.model.itemList
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
@@ -251,6 +252,18 @@ data class DataLiveData(
 
     val parameterInt0: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CHL режим выбора частот FM модуляции 0-обычный 1-минимум макс
     val parameterInt1: MutableStateFlow<Int> = MutableStateFlow(0), //PR PS PC CHR режим выбора частот FM модуляции 0-обычный 1-минимум макс
+
+    // Режим «3-фаза» (по мотивам restim): вместо CHL/CHR один синус и точка в круге
+    val tp_EN: MutableStateFlow<Boolean> = MutableStateFlow(false),            //PR PS PC
+    val tp_Pattern: MutableStateFlow<String> = MutableStateFlow(ThreePhasePatterns.DEFAULT), //PR PS PC имя паттерна
+    val tp_Velocity: MutableStateFlow<Float> = MutableStateFlow(1.0f),         //PR PS PC скорость паттерна 0.1..10
+    val tp_Amplitude: MutableStateFlow<Float> = MutableStateFlow(1.0f),        //PR PS PC размер траектории 0..1
+    val tp_Carrier_Fr: MutableStateFlow<Float> = MutableStateFlow(700.0f),     //PR PS PC частота несущей, Гц
+    val tp_Volume: MutableStateFlow<Float> = MutableStateFlow(0.1f),           //PR PS PC громкость 0..1
+    val tp_Calib_A: MutableStateFlow<Float> = MutableStateFlow(0.0f),          //PR PS PC калибровка электрода N, дБ
+    val tp_Calib_B: MutableStateFlow<Float> = MutableStateFlow(0.0f),          //PR PS PC калибровка электрода L, дБ
+    val tp_Calib_C: MutableStateFlow<Float> = MutableStateFlow(0.0f),          //PR PS PC калибровка электрода R, дБ
+    val tp_Center: MutableStateFlow<Float> = MutableStateFlow(13.0f),          //PR PS PC приглушение центра, % 0..20
 
     var count: Int = 0
 

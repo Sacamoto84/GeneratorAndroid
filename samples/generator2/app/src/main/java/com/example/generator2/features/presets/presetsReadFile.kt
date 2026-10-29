@@ -1,6 +1,7 @@
 package com.example.generator2.features.presets
 
 import com.example.generator2.features.generator.DataLiveData
+import com.example.generator2.features.threephase.patterns.ThreePhasePatterns
 import com.example.generator2.features.storage.KvFile
 import com.example.generator2.features.storage.valueOr
 import java.io.File
@@ -119,6 +120,19 @@ fun presetsReadFile(name: String, path: String): DataLiveData {
 
     data.parameterInt0.value = values.valueOr("parameterInt0", 0)
     data.parameterInt1.value = values.valueOr("parameterInt1", 0)
+
+    //Режим «3-фаза». Старые пресеты ключей не знают — режим выключен
+    data.tp_EN.value = values.valueOr("tp_EN", false)
+    data.tp_Pattern.value = values.valueOr("tp_Pattern", ThreePhasePatterns.DEFAULT)
+        .takeIf { it in ThreePhasePatterns.NAMES } ?: ThreePhasePatterns.DEFAULT
+    data.tp_Velocity.value = values.valueOr("tp_Velocity", 1.0f)
+    data.tp_Amplitude.value = values.valueOr("tp_Amplitude", 1.0f)
+    data.tp_Carrier_Fr.value = values.valueOr("tp_Carrier_Fr", 700.0f)
+    data.tp_Volume.value = values.valueOr("tp_Volume", 0.1f)
+    data.tp_Calib_A.value = values.valueOr("tp_Calib_A", 0.0f)
+    data.tp_Calib_B.value = values.valueOr("tp_Calib_B", 0.0f)
+    data.tp_Calib_C.value = values.valueOr("tp_Calib_C", 0.0f)
+    data.tp_Center.value = values.valueOr("tp_Center", 13.0f)
 
     return data
 }

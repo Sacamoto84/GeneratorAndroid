@@ -57,6 +57,33 @@ class PresetsReadFileTest {
     }
 
     @Test
+    fun `старый пресет без tp ключей открывается с дефолтами`() {
+        writePreset("my", mapOf("ch1_EN" to true))
+
+        val data = presetsReadFile("my", folder.root.absolutePath)
+
+        assertEquals(false, data.tp_EN.value)
+        assertEquals("Circle", data.tp_Pattern.value)
+        assertEquals(1f, data.tp_Velocity.value, 0f)
+        assertEquals(1f, data.tp_Amplitude.value, 0f)
+        assertEquals(700f, data.tp_Carrier_Fr.value, 0f)
+        assertEquals(0.1f, data.tp_Volume.value, 0f)
+        assertEquals(0f, data.tp_Calib_A.value, 0f)
+        assertEquals(0f, data.tp_Calib_B.value, 0f)
+        assertEquals(0f, data.tp_Calib_C.value, 0f)
+        assertEquals(13f, data.tp_Center.value, 0f)
+    }
+
+    @Test
+    fun `неизвестный паттерн в пресете становится Circle`() {
+        writePreset("my", mapOf("tp_Pattern" to "Mouse"))
+
+        val data = presetsReadFile("my", folder.root.absolutePath)
+
+        assertEquals("Circle", data.tp_Pattern.value)
+    }
+
+    @Test
     fun `отсутствующий пресет даёт значения по умолчанию`() {
         val data = presetsReadFile("нет такого", folder.root.absolutePath)
 

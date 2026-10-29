@@ -90,6 +90,37 @@ class PresetsRoundTripTest {
     }
 
     @Test
+    fun `настройки 3-фазы переживают запись и чтение`() {
+        for (pattern in listOf("Tri-Phase panning (ᴒ)", "Tri-Phase panning (∧)")) {
+            val gen = Generator()
+            val d = gen.liveData
+            d.tp_EN.value = true
+            d.tp_Pattern.value = pattern
+            d.tp_Velocity.value = 2.5f
+            d.tp_Amplitude.value = 0.75f
+            d.tp_Carrier_Fr.value = 900f
+            d.tp_Volume.value = 0.3f
+            d.tp_Calib_A.value = -1.5f
+            d.tp_Calib_B.value = -16.73f
+            d.tp_Calib_C.value = -25.62f
+            d.tp_Center.value = 7.5f
+
+            val restored = roundTrip(gen)
+
+            assertEquals(true, restored.tp_EN.value)
+            assertEquals(pattern, restored.tp_Pattern.value)
+            assertEquals(2.5f, restored.tp_Velocity.value, 0f)
+            assertEquals(0.75f, restored.tp_Amplitude.value, 0f)
+            assertEquals(900f, restored.tp_Carrier_Fr.value, 0f)
+            assertEquals(0.3f, restored.tp_Volume.value, 0f)
+            assertEquals(-1.5f, restored.tp_Calib_A.value, 0f)
+            assertEquals(-16.73f, restored.tp_Calib_B.value, 0f)
+            assertEquals(-25.62f, restored.tp_Calib_C.value, 0f)
+            assertEquals(7.5f, restored.tp_Center.value, 0f)
+        }
+    }
+
+    @Test
     fun `имя пресета попадает в файл`() {
         val restored = roundTrip(Generator())
 

@@ -156,5 +156,17 @@ fun presetsSnapshot(name: String, gen: Generator): Map<String, Any> {
     values["parameterInt0"] = d.parameterInt0.value
     values["parameterInt1"] = d.parameterInt1.value
 
+    //Режим «3-фаза»
+    values["tp_EN"] = d.tp_EN.value
+    values["tp_Pattern"] = d.tp_Pattern.value
+    values["tp_Velocity"] = d.tp_Velocity.value
+    values["tp_Amplitude"] = d.tp_Amplitude.value
+    values["tp_Carrier_Fr"] = d.tp_Carrier_Fr.value
+    values["tp_Volume"] = d.tp_Volume.value
+    values["tp_Calib_A"] = d.tp_Calib_A.value
+    values["tp_Calib_B"] = d.tp_Calib_B.value
+    values["tp_Calib_C"] = d.tp_Calib_C.value
+    values["tp_Center"] = d.tp_Center.value
+
     return values
 }

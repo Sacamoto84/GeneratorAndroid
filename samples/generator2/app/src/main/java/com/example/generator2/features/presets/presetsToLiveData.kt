@@ -102,6 +102,17 @@ fun presetsToLiveData(data: DataLiveData, gen: Generator) {
 
     gen.liveData.parameterInt0.value = data.parameterInt0.value
     gen.liveData.parameterInt1.value = data.parameterInt1.value
+
+    gen.liveData.tp_EN.value = data.tp_EN.value
+    gen.liveData.tp_Pattern.value = data.tp_Pattern.value
+    gen.liveData.tp_Velocity.value = data.tp_Velocity.value
+    gen.liveData.tp_Amplitude.value = data.tp_Amplitude.value
+    gen.liveData.tp_Carrier_Fr.value = data.tp_Carrier_Fr.value
+    gen.liveData.tp_Volume.value = data.tp_Volume.value
+    gen.liveData.tp_Calib_A.value = data.tp_Calib_A.value
+    gen.liveData.tp_Calib_B.value = data.tp_Calib_B.value
+    gen.liveData.tp_Calib_C.value = data.tp_Calib_C.value
+    gen.liveData.tp_Center.value = data.tp_Center.value
     //gen.liveData.parameterInt2.value = data.parameterInt2.value
     //gen.liveData.parameterInt3.value = data.parameterInt3.value
     //gen.liveData.parameterInt4.value = data.parameterInt4.value
